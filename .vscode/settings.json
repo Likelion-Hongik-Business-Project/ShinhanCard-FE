@@ -1,0 +1,16 @@
+{
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": true,
+    "source.organizeImports": "explicit"
+  },
+  "eslint.nodePath": ".yarn/sdks",
+  "eslint.useFlatConfig": true,
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.formatOnSave": true
+}
