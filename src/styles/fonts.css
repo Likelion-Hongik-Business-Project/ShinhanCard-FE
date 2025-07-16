@@ -1,0 +1,88 @@
+@font-face {
+  font-family: "Pretendard";
+  src: url("../assets/fonts/PretendardVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@theme {
+  --text-heading1: 32px;
+  --text-heading1--font-weight: 700;
+  --text-heading1--line-height: 120%;
+  --text-heading1--letter-spacing: 0;
+
+  --text-heading2: 24px;
+  --text-heading2--font-weight: 400;
+  --text-heading2--line-height: 120%;
+  --text-heading2--letter-spacing: 0;
+
+  --text-heading2-sb: 24px;
+  --text-heading2-sb--font-weight: 600;
+  --text-heading2-sb--line-height: 120%;
+  --text-heading2-sb--letter-spacing: 0;
+
+  --text-heading2-b: 24px;
+  --text-heading2-b--font-weight: 700;
+  --text-heading2-b--line-height: 120%;
+  --text-heading2-b--letter-spacing: 0;
+
+  --text-heading3: 20px;
+  --text-heading3--font-weight: 400;
+  --text-heading3--line-height: 120%;
+  --text-heading3--letter-spacing: 0;
+
+  --text-heading3-sb: 20px;
+  --text-heading3-sb--font-weight: 600;
+  --text-heading3-sb--line-height: 120%;
+  --text-heading3-sb--letter-spacing: 0;
+
+  --text-heading3-b: 20px;
+  --text-heading3-b--font-weight: 700;
+  --text-heading3-b--line-height: 120%;
+  --text-heading3-b--letter-spacing: 0;
+
+  --text-body1: 18px;
+  --text-body1--font-weight: 400;
+  --text-body1--line-height: 120%;
+  --text-body1--letter-spacing: 0;
+
+  --text-body1-b: 18px;
+  --text-body1-b--font-weight: 700;
+  --text-body1-b--line-height: 120%;
+  --text-body1-b--letter-spacing: 0;
+
+  --text-body2: 16px;
+  --text-body2--font-weight: 400;
+  --text-body2--line-height: 150%;
+  --text-body2--letter-spacing: 0;
+
+  --text-body2-sb: 16px;
+  --text-body2-sb--font-weight: 600;
+  --text-body2-sb--line-height: 150%;
+  --text-body2-sb--letter-spacing: 0;
+
+  --text-body2-b: 16px;
+  --text-body2-b--font-weight: 700;
+  --text-body2-b--line-height: 150%;
+  --text-body2-b--letter-spacing: 0;
+
+  --text-detail1: 14px;
+  --text-detail1--font-weight: 400;
+  --text-detail1--line-height: 120%;
+  --text-detail1--letter-spacing: 0;
+
+  --text-detail1-b: 14px;
+  --text-detail1-b--font-weight: 700;
+  --text-detail1-b--line-height: 120%;
+  --text-detail1-b--letter-spacing: 0;
+
+  --text-detail2: 13px;
+  --text-detail2--font-weight: 400;
+  --text-detail2--line-height: 120%;
+  --text-detail2--letter-spacing: 0;
+
+  --text-detail3: 12px;
+  --text-detail3--font-weight: 400;
+  --text-detail3--line-height: 120%;
+  --text-detail3--letter-spacing: 0;
+}
