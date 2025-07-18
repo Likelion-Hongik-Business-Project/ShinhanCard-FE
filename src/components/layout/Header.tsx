@@ -4,7 +4,11 @@ import Menu from "@/assets/svgs/layout/menu.svg";
 import Profile from "@/assets/svgs/layout/profile.svg";
 import Search from "@/assets/svgs/layout/search.svg";
 
-const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+type Props = {
+  toggleSidebar: () => void;
+};
+
+const Header = ({ toggleSidebar }: Props) => {
   return (
     <header className="fixed h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
       <div className="flex items-center">
@@ -15,11 +19,11 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
           <input
             type="text"
             placeholder="검색"
-            className="w-full h-full bg-transparent outline-none text-gray-60 text-heading3 ml-4 placeholder:text-gray-60 placeholder:text-heading3"
+            className="w-full h-full bg-transparent outline-none text-gray-80 text-heading3 ml-4 placeholder:text-gray-60 placeholder:text-heading3"
           />
         </div>
       </div>
-      <div className="flex items-center space-x-7 p-[9px] ml-[86px] cursor-pointer">
+      <div className="flex items-center space-x-7 p-[9px] ml-[86px] cursor-pointer rounded-[8px] hover:bg-gray-10 transition">
         <div className="flex items-center space-x-4">
           <Profile />
           <span className="text-gray-80 text-heading2 whitespace-nowrap">
