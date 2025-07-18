@@ -12,8 +12,10 @@ body {
 }
 
 @theme {
+  --color-main-bright: #c2d3ff;
   --color-main: #19398c;
-
+  --color-main-dark: #0b225f 
+  
   --color-white: #ffffff;
   --color-gray-10: #f1f1f5;
   --color-gray-20: #dde2e7;

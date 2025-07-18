@@ -3,11 +3,17 @@ import { FC, SVGProps } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Bell from "@/assets/svgs/layout/bell.svg";
+import BellActive from "@/assets/svgs/layout/bell-active.svg";
 import Grid from "@/assets/svgs/layout/grid.svg";
+import GridActive from "@/assets/svgs/layout/grid-active.svg";
 import Home from "@/assets/svgs/layout/home.svg";
+import HomeActive from "@/assets/svgs/layout/home-active.svg";
 import Message from "@/assets/svgs/layout/message.svg";
+import MessageActive from "@/assets/svgs/layout/message-active.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
+import PencilActive from "@/assets/svgs/layout/pencil-active.svg";
 import Star from "@/assets/svgs/layout/star.svg";
+import StarActive from "@/assets/svgs/layout/star-active.svg";
 
 type Props = {
   isOpen: boolean;
@@ -43,18 +49,26 @@ const SideBar = ({ isOpen }: Props) => {
   return (
     <aside className="sticky left-0 top-16 mt-16 h-[calc(100vh-64px)] w-25 bg-white flex flex-col items-center">
       <ul className="pt-[52px] px-8 flex flex-col gap-6 items-center">
-        <SideBarIcon icon={Home} path="/" />
+        <SideBarIcon icon={Home} activeIcon={HomeActive} path="/" />
         <Divider small />
         <div className="h-[40px]" />
-        <SideBarIcon icon={Bell} path="/inbox" />
-        <SideBarIcon icon={Message} path="/assigned" />
+        <SideBarIcon icon={Bell} activeIcon={BellActive} path="/inbox" />
+        <SideBarIcon
+          icon={Message}
+          activeIcon={MessageActive}
+          path="/assigned"
+        />
         <Divider small />
         <div className="h-[40px]" />
-        <SideBarIcon icon={Grid} path={`/team/${id}`} />
-        <SideBarIcon icon={Grid} />
+        <SideBarIcon icon={Grid} activeIcon={GridActive} path={`/team/${id}`} />
+        <SideBarIcon icon={Grid} activeIcon={GridActive} />
         <Divider small />
-        <SideBarIcon icon={Pencil} path="/my-questions" />
-        <SideBarIcon icon={Star} path="/scrap" />
+        <SideBarIcon
+          icon={Pencil}
+          activeIcon={PencilActive}
+          path="/my-questions"
+        />
+        <SideBarIcon icon={Star} activeIcon={StarActive} path="/scrap" />
       </ul>
     </aside>
   );
@@ -85,7 +99,7 @@ const SideBarItem = ({ icon: Icon, label, path }: SideBarItemProps) => {
         else openGroupSelector();
       }}
       className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
-        ${isActive ? "bg-gray-10" : "hover:bg-gray-10"}`}
+        ${isActive ? "bg-main-bright" : "hover:bg-gray-10"}`}
     >
       <Icon className="ml-2 w-5 h-5" />
       <span
@@ -99,12 +113,18 @@ const SideBarItem = ({ icon: Icon, label, path }: SideBarItemProps) => {
 
 type SideBarIconProps = {
   icon: FC<SVGProps<SVGSVGElement>>;
+  activeIcon: FC<SVGProps<SVGSVGElement>>;
   path?: string;
 };
 
 // 작은 사이드바 아이콘
-const SideBarIcon = ({ icon: Icon, path }: SideBarIconProps) => {
+const SideBarIcon = ({
+  icon: Icon,
+  activeIcon: ActiveIcon,
+  path,
+}: SideBarIconProps) => {
   const navigate = useNavigate();
+  const isActive = path === location.pathname;
   const openGroupSelector = () => {
     alert("그룹 셀렉터 열기");
     // 전체 버튼에서 필요한 그룹 셀렉터. -> 팀 셀렉터도 추가적으로 열려야 함.
@@ -115,9 +135,15 @@ const SideBarIcon = ({ icon: Icon, path }: SideBarIconProps) => {
         if (path) navigate(path);
         else openGroupSelector();
       }}
-      className="p-[10px] hover:bg-gray-10 rounded-[8px] transition cursor-pointer"
+      className={`p-[10px] rounded-[8px] transition cursor-pointer ${
+        isActive ? "bg-main-bright" : "hover:bg-gray-10"
+      }`}
     >
-      <Icon className="w-5 h-5" />
+      {isActive ? (
+        <ActiveIcon className="w-5 h-5" />
+      ) : (
+        <Icon className="w-5 h-5" />
+      )}
     </li>
   );
 };
