@@ -25,7 +25,7 @@ const SideBarLargeItem = ({ icon: Icon, label, path }: Props) => {
         else openGroupSelector();
       }}
       className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
-        ${isActive ? "bg-main-bright" : "hover:bg-gray-10"}`}
+        ${isActive ? "bg-gray-10" : "hover:bg-gray-10"}`}
     >
       <Icon className="ml-2 w-5 h-5" />
       <span
