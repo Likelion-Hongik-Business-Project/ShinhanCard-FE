@@ -4,13 +4,13 @@ import Menu from "@/assets/svgs/layout/menu.svg";
 import Profile from "@/assets/svgs/layout/profile.svg";
 import Search from "@/assets/svgs/layout/search.svg";
 
-const Header = () => {
+const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   return (
-    <header className="h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
+    <header className="fixed h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
       <div className="flex items-center">
-        <Menu className="w-6 h-6 cursor-pointer" />
+        <Menu onClick={toggleSidebar} className="w-6 h-6 cursor-pointer" />
         <Logo className="w-8 h-8 ml-10" />
-        <div className="ml-[215px] h-10 w-[640px] 1400:w-[700px] rounded-[30px] bg-gray-10 border border-gray-60 px-5 flex items-center">
+        <div className="border border-transparent focus-within:border-gray-60 transition ml-[215px] h-10 w-[640px] 1400:w-[700px] rounded-[30px] bg-gray-10 px-5 flex items-center">
           <Search className="w-5 h-5" />
           <input
             type="text"
