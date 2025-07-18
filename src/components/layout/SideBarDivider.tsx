@@ -1,9 +1,9 @@
-type DividerProps = {
+type Props = {
   small?: boolean;
 };
 
 // Divider
-const Divider = ({ small }: DividerProps) => (
+const SideBarDivider = ({ small }: Props) => (
   <div
     className={`${small ? "w-16" : "w-[240px]"} h-[2px] ${
       small ? "" : "mx-auto"
@@ -11,4 +11,4 @@ const Divider = ({ small }: DividerProps) => (
   />
 );
 
-export default Divider;
+export default SideBarDivider;

@@ -2,14 +2,14 @@ import { FC, SVGProps } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
-type SideBarItemProps = {
+type Props = {
   icon: FC<SVGProps<SVGSVGElement>>;
   label: string;
   path?: string;
 };
 
 // 큰 사이드바 아이템
-const SideBarItem = ({ icon: Icon, label, path }: SideBarItemProps) => {
+const SideBarLargeItem = ({ icon: Icon, label, path }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = path === location.pathname;
@@ -37,4 +37,4 @@ const SideBarItem = ({ icon: Icon, label, path }: SideBarItemProps) => {
   );
 };
 
-export default SideBarItem;
+export default SideBarLargeItem;

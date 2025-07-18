@@ -2,18 +2,18 @@ import { FC, SVGProps } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-type SideBarIconProps = {
+type Props = {
   icon: FC<SVGProps<SVGSVGElement>>;
   activeIcon: FC<SVGProps<SVGSVGElement>>;
   path?: string;
 };
 
-// 작은 사이드바 아이콘
-const SideBarIcon = ({
+// 작은 사이드바 아이템
+const SideBarSmallItem = ({
   icon: Icon,
   activeIcon: ActiveIcon,
   path,
-}: SideBarIconProps) => {
+}: Props) => {
   const navigate = useNavigate();
   const isActive = path === location.pathname;
   const openGroupSelector = () => {
@@ -39,4 +39,4 @@ const SideBarIcon = ({
   );
 };
 
-export default SideBarIcon;
+export default SideBarSmallItem;
