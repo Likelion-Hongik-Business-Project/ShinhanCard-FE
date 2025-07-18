@@ -29,7 +29,7 @@ const SideBarLargeItem = ({ icon: Icon, label, path }: Props) => {
     >
       <Icon className="ml-2 w-5 h-5" />
       <span
-        className={`ml-4 text-gray-80 ${isActive ? "text-heading3-b" : "text-heading3"}`}
+        className={`ml-4 text-gray-80 ${isActive ? "text-body1-b" : "text-body1"}`}
       >
         {label}
       </span>
