@@ -1,7 +1,3 @@
-import { FC, SVGProps } from "react";
-
-import { useLocation, useNavigate } from "react-router-dom";
-
 import Bell from "@/assets/svgs/layout/bell.svg";
 import BellActive from "@/assets/svgs/layout/bell-active.svg";
 import Grid from "@/assets/svgs/layout/grid.svg";
@@ -14,6 +10,9 @@ import Pencil from "@/assets/svgs/layout/pencil.svg";
 import PencilActive from "@/assets/svgs/layout/pencil-active.svg";
 import Star from "@/assets/svgs/layout/star.svg";
 import StarActive from "@/assets/svgs/layout/star-active.svg";
+import Divider from "@/components/layout/SideBarDivider";
+import SideBarIcon from "@/components/layout/SideBarIcon";
+import SideBarItem from "@/components/layout/SideBarItem";
 
 type Props = {
   isOpen: boolean;
@@ -75,88 +74,3 @@ const SideBar = ({ isOpen }: Props) => {
 };
 
 export default SideBar;
-
-type SideBarItemProps = {
-  icon: FC<SVGProps<SVGSVGElement>>;
-  label: string;
-  path?: string;
-};
-
-// 큰 사이드바 아이템
-const SideBarItem = ({ icon: Icon, label, path }: SideBarItemProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isActive = path === location.pathname;
-  const openGroupSelector = () => {
-    alert("그룹 셀렉터 열기");
-    // 전체 버튼에서 필요한 그룹 셀렉터. -> 팀 셀렉터도 추가적으로 열려야 함.
-  };
-
-  return (
-    <li
-      onClick={() => {
-        if (path) navigate(path);
-        else openGroupSelector();
-      }}
-      className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
-        ${isActive ? "bg-main-bright" : "hover:bg-gray-10"}`}
-    >
-      <Icon className="ml-2 w-5 h-5" />
-      <span
-        className={`ml-4 text-gray-80 ${isActive ? "text-heading3-b" : "text-heading3"}`}
-      >
-        {label}
-      </span>
-    </li>
-  );
-};
-
-type SideBarIconProps = {
-  icon: FC<SVGProps<SVGSVGElement>>;
-  activeIcon: FC<SVGProps<SVGSVGElement>>;
-  path?: string;
-};
-
-// 작은 사이드바 아이콘
-const SideBarIcon = ({
-  icon: Icon,
-  activeIcon: ActiveIcon,
-  path,
-}: SideBarIconProps) => {
-  const navigate = useNavigate();
-  const isActive = path === location.pathname;
-  const openGroupSelector = () => {
-    alert("그룹 셀렉터 열기");
-    // 전체 버튼에서 필요한 그룹 셀렉터. -> 팀 셀렉터도 추가적으로 열려야 함.
-  };
-  return (
-    <li
-      onClick={() => {
-        if (path) navigate(path);
-        else openGroupSelector();
-      }}
-      className={`p-[10px] rounded-[8px] transition cursor-pointer ${
-        isActive ? "bg-main-bright" : "hover:bg-gray-10"
-      }`}
-    >
-      {isActive ? (
-        <ActiveIcon className="w-5 h-5" />
-      ) : (
-        <Icon className="w-5 h-5" />
-      )}
-    </li>
-  );
-};
-
-type DividerProps = {
-  small?: boolean;
-};
-
-// Divider
-const Divider = ({ small }: DividerProps) => (
-  <div
-    className={`${small ? "w-16" : "w-[240px]"} h-[2px] ${
-      small ? "" : "mx-auto"
-    } bg-gray-20 my-2`}
-  />
-);
