@@ -25,8 +25,8 @@ if (existsSync(absPnpApiPath)) {
 }
 
 const wrapWithUserWrapper = existsSync(absUserWrapperPath)
-  ? (exports) => absRequire(absUserWrapperPath)(exports)
-  : (exports) => exports;
+  ? exports => absRequire(absUserWrapperPath)(exports)
+  : exports => exports;
 
 // Defer to the real eslint/use-at-your-own-risk your application uses
 module.exports = wrapWithUserWrapper(absRequire(`eslint/use-at-your-own-risk`));

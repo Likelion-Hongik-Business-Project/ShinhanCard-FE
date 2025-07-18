@@ -1,5 +1,5 @@
 const HomePage = () => {
-  return <>Home</>;
+  return <section className="w-full h-[835px] bg-gray-50">Home 홈</section>;
 };
 
 export default HomePage;
