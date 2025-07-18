@@ -9,6 +9,8 @@ type Props = {
 };
 
 const Header = ({ toggleSidebar }: Props) => {
+  const user = { name: "장윤영" }; // TODO: 사용자 정보 동적으로 가져오는 로직으로 변경 필요
+
   return (
     <header className="fixed h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
       <div className="flex items-center">
@@ -27,7 +29,7 @@ const Header = ({ toggleSidebar }: Props) => {
         <div className="flex items-center space-x-4">
           <Profile />
           <span className="text-gray-80 text-heading2 whitespace-nowrap">
-            장윤영
+            {user?.name || "이름"}
           </span>
         </div>
         <Down />
