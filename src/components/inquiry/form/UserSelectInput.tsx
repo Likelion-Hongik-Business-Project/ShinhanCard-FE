@@ -92,18 +92,18 @@ const UserMultiSelectInput = ({
         </div>
 
         {isOpen && (
-          <div className="absolute top-full mt-1 w-full bg-white rounded-[5px] p-2 shadow-02 flex flex-col z-50">
+          <div className="absolute top-full mt-1 w-full bg-white rounded-[5px]  shadow-02 flex flex-col z-50">
             {inputValue.trim() === "" ? (
               <DepartmentSelector onSelectUser={handleSelectUser} />
             ) : filteredUsers.length === 0 ? (
-              <>
-                <span className="text-detail1 text-gray-50 mb-4">
+              <div className="flex flex-col gap-4 p-2">
+                <span className="text-detail1 text-gray-50">
                   사용자를 선택하세요
                 </span>
                 <span className="text-detail1 bg-gray-10 py-2 px-1 flex items-center text-gray-60">
                   없음
                 </span>
-              </>
+              </div>
             ) : (
               <UserSearchList
                 users={filteredUsers}

@@ -98,20 +98,25 @@ const SelectDropdown = ({
               key={option}
               onClick={() => handleSelect(option)}
               className={clsx(
-                "cursor-pointer hover:bg-gray-10",
+                "cursor-pointer hover:bg-gray-10 active:text-detail1-b",
                 type === "user"
                   ? "flex gap-2 px-3 py-2 items-center"
                   : "flex justify-between items-center p-3",
-                option === value &&
-                  type !== "user" &&
-                  "text-main text-detail1-b"
+                option === value && "text-main text-detail1-b"
               )}
             >
               {type === "user" ? (
-                <>
+                <li
+                  key={option}
+                  onClick={() => handleSelect(option)}
+                  className={clsx(
+                    "flex items-center gap-2 w-full text-body2 cursor-pointer hover:bg-gray-10",
+                    "active:text-body2-b"
+                  )}
+                >
                   <ProfileIcon className="w-5 h-5" />
-                  <span className="text-body2 text-gray-90">{option}</span>
-                </>
+                  <span className=" text-gray-90">{option}</span>
+                </li>
               ) : (
                 <>
                   <span>{option}</span>
