@@ -64,7 +64,7 @@ const FileUploadItem = ({ file, onRemove }: FileUploadItemProps) => {
           </span>
 
           <button onClick={onRemove} className="cursor-pointer">
-            <Close />
+            <Close className="w-6 h-6" />
           </button>
         </div>
       </div>

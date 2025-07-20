@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useFakeProgress } from "@/hooks/useFakeProgress";
 
 import FileUploadItem from "./FileUploadItem";
@@ -17,7 +18,6 @@ const FileUploadBox = () => {
       status: "uploading" | "done";
     }[]
   >([]);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -38,6 +38,10 @@ const FileUploadBox = () => {
     setFiles(prev => [...prev, ...newFiles]);
   };
 
+  const { isDragging, dragEventProps } = useDragAndDrop({
+    onDrop: handleFileSelect,
+  });
+
   const handleRemove = (id: number) => {
     setFiles(prev => prev.filter(file => file.id !== id));
   };
@@ -46,7 +50,13 @@ const FileUploadBox = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-gray-10 rounded-lg border-main-dark flex flex-col justify-center items-center gap-4 border border-dashed h-40 py-6 px-4">
+      <div
+        {...dragEventProps}
+        className={clsx(
+          "bg-gray-10 rounded-lg border-main-dark flex flex-col justify-center items-center gap-4 border border-dashed h-40 py-6 px-4 transition-all",
+          isDragging && "bg-main-bright"
+        )}
+      >
         <input
           ref={inputRef}
           type="file"
@@ -57,13 +67,28 @@ const FileUploadBox = () => {
 
         <button
           onClick={handleClick}
-          className="px-6 flex gap-4 cursor-pointer items-center rounded-[15px] bg-white border border-gray-20 w-fit h-16"
+          className={clsx(
+            "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border",
+            isDragging ? "bg-white border-main" : "bg-white border-gray-20 "
+          )}
         >
-          <Upload />
-          <span className="text-heading3 text-gray-80">파일 선택하기</span>
+          <Upload className={clsx(isDragging ? "text-main" : "text-gray-60")} />
+          <span
+            className={clsx(
+              "text-heading3",
+              isDragging ? "text-main" : "text-gray-80"
+            )}
+          >
+            파일 선택하기
+          </span>
         </button>
 
-        <p className="text-gray-60 text-body2">
+        <p
+          className={clsx(
+            "text-body2",
+            isDragging ? "text-main" : "text-gray-60"
+          )}
+        >
           첨부할 파일을 여기에 끌어다 놓거나, 파일 선택하기 버튼을 눌러 직접
           선택해주세요.
         </p>
