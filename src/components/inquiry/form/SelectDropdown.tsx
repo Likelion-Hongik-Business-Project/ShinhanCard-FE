@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import clsx from "clsx";
 
 import Down from "@/assets/svgs/layout/down.svg";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 interface Props {
   options: string[];
@@ -18,6 +19,9 @@ const SelectDropdown = ({
   placeholder = "",
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClick(dropdownRef, () => setIsOpen(false));
 
   const handleSelect = (option: string) => {
     onChange(option);
@@ -29,7 +33,7 @@ const SelectDropdown = ({
   const isSelect = isOpen;
 
   return (
-    <div className="relative w-43">
+    <div className="relative w-43" ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
