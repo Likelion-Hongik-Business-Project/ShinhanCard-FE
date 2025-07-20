@@ -14,7 +14,7 @@ body {
 @theme {
   --color-main-bright: #c2d3ff;
   --color-main: #19398c;
-  --color-main-dark: #0b225f 
+  --color-main-dark: #0b225f;
   
   --color-white: #ffffff;
   --color-gray-10: #f1f1f5;
@@ -48,8 +48,9 @@ body {
   --shadow-01: 0px 4px 4px rgba(0, 0, 0, 0.1);
   --shadow-02: 2px 2px 10px 0px rgba(0, 0, 0, 0.1);
 
+  --breakpoint-1380: 1380px;
   --breakpoint-1400: 1400px;
-  --breakpoint-1840: 1840px;
+  --breakpoint-1600: 1600px;
 }
 
 @layer utilities {
