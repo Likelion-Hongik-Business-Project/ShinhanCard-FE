@@ -106,17 +106,10 @@ const SelectDropdown = ({
               )}
             >
               {type === "user" ? (
-                <li
-                  key={option}
-                  onClick={() => handleSelect(option)}
-                  className={clsx(
-                    "flex items-center gap-2 w-full text-body2 cursor-pointer hover:bg-gray-10",
-                    "active:text-body2-b"
-                  )}
-                >
+                <div className="w-full flex text-body2 gap-2 active:text-body2-b">
                   <ProfileIcon className="w-5 h-5" />
-                  <span className=" text-gray-90">{option}</span>
-                </li>
+                  <span className=" text-gray-90 ">{option}</span>
+                </div>
               ) : (
                 <>
                   <span>{option}</span>
