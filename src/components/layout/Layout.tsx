@@ -14,11 +14,13 @@ const Layout = () => {
       <div className="flex flex-1">
         <SideBar isOpen={isSidebarOpen} />
         <main
-          className={`bg-gray-10 flex flex-1 justify-center overflow-auto pt-16 transition-all duration-300 ${
-            isSidebarOpen ? "ml-[320px] px-[30px]" : "ml-[100px] px-[140px]"
+          className={`bg-gray-10 flex flex-1 justify-start overflow-auto pt-16 transition-all duration-300 ${
+            isSidebarOpen
+              ? "ml-[320px] 1600:justify-center"
+              : "ml-[100px] 1380:justify-center"
           }`}
         >
-          <div className="w-full py-20 min-w-[1120px] 1840:max-w-[1420px]">
+          <div className="w-full py-20 min-w-[1280px] max-w-[1580px] px-20">
             <Outlet />
           </div>
         </main>
