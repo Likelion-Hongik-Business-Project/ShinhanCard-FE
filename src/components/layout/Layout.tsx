@@ -18,7 +18,7 @@ const Layout = () => {
             isSidebarOpen ? "ml-[320px] px-[30px]" : "ml-[100px] px-[140px]"
           }`}
         >
-          <div className="w-full py-20 min-w-[900px] 1840:max-w-[1420px]">
+          <div className="w-full py-20 min-w-[1120px] 1840:max-w-[1420px]">
             <Outlet />
           </div>
         </main>
