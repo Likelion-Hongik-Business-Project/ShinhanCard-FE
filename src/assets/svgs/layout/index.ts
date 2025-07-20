@@ -18,3 +18,11 @@ export { default as Pencil } from "./pencil.svg";
 export { default as PencilActive } from "./pencil-active.svg";
 export { default as Star } from "./star.svg";
 export { default as StarActive } from "./star-active.svg";
+
+// Button 아이콘
+export { default as BlueMessage } from "./message-blue.svg";
+export { default as SkyMessage } from "./message-sky.svg";
+export { default as BluePencil } from "./pencil-blue.svg";
+export { default as SkyPencil } from "./pencil-sky.svg";
+export { default as BlueStar } from "./star-blue.svg";
+export { default as SkyStar } from "./star-sky.svg";
