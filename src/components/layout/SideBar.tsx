@@ -42,14 +42,7 @@ const SideBar = ({ isOpen }: Props) => {
         )}
       >
         <SideBarLargeItem icon={Home} label="홈" path="/" />
-        <SideBarDivider />
-        <p className="text-heading3-b text-gray-80 m-2">담당 문의</p>
         <SideBarLargeItem icon={Bell} label="수신함" path="/inbox" />
-        <SideBarLargeItem
-          icon={Message}
-          label="내 담당 문의"
-          path="/assigned"
-        />
         <SideBarDivider />
         <p className="text-heading3-b text-gray-80 m-2">게시판</p>
         <SideBarLargeItem
@@ -59,7 +52,17 @@ const SideBar = ({ isOpen }: Props) => {
         />
         <SideBarLargeItem icon={Grid} label="전체" />
         <SideBarDivider />
-        <SideBarLargeItem icon={Pencil} label="내 문의" path="/my-questions" />
+        <p className="text-heading3-b text-gray-80 m-2">내 스페이스</p>
+        <SideBarLargeItem
+          icon={Pencil}
+          label="내가 쓴 문의"
+          path="/my-questions"
+        />
+        <SideBarLargeItem
+          icon={Message}
+          label="내 담당 문의"
+          path="/assigned"
+        />
         <SideBarLargeItem icon={Star} label="스크랩" path="/scrap" />
       </ul>
 
@@ -73,13 +76,7 @@ const SideBar = ({ isOpen }: Props) => {
         )}
       >
         <SideBarSmallItem icon={Home} activeIcon={HomeActive} path="/" />
-        <SideBarDivider small />
         <SideBarSmallItem icon={Bell} activeIcon={BellActive} path="/inbox" />
-        <SideBarSmallItem
-          icon={Message}
-          activeIcon={MessageActive}
-          path="/assigned"
-        />
         <SideBarDivider small />
         <SideBarSmallItem
           icon={Grid}
@@ -92,6 +89,11 @@ const SideBar = ({ isOpen }: Props) => {
           icon={Pencil}
           activeIcon={PencilActive}
           path="/my-questions"
+        />
+        <SideBarSmallItem
+          icon={Message}
+          activeIcon={MessageActive}
+          path="/assigned"
         />
         <SideBarSmallItem icon={Star} activeIcon={StarActive} path="/scrap" />
       </ul>
