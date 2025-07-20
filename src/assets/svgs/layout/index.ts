@@ -1,5 +1,4 @@
 // Header 아이콘
-export { default as Down } from "./down.svg";
 export { default as Logo } from "./logo.svg";
 export { default as Menu } from "./menu.svg";
 export { default as Profile } from "./profile.svg";

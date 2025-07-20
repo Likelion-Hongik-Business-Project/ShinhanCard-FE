@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import clsx from "clsx";
 
-import Down from "@/assets/svgs/layout/down.svg";
+import Down from "@/assets/svgs/common/down.svg";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 interface Props {
