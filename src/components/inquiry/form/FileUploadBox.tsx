@@ -68,7 +68,7 @@ const FileUploadBox = () => {
         <button
           onClick={handleClick}
           className={clsx(
-            "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border",
+            "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border cursor-pointer",
             isDragging ? "bg-white border-main" : "bg-white border-gray-20 "
           )}
         >

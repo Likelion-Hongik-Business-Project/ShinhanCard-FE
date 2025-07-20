@@ -9,7 +9,7 @@ const InquiryFormPage = () => {
   const [team, setTeam] = useState("");
 
   return (
-    <section className="flex flex-col gap-2 w-full h-[835px]">
+    <section className="flex flex-col gap-2 w-full ">
       <h1 className="text-heading1 text-gray-80 mb-10">문의 작성하기</h1>
       <div className="flex gap-2">
         <SelectDropdown

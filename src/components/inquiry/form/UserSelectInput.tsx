@@ -78,6 +78,7 @@ const UserMultiSelectInput = ({
                   e.stopPropagation();
                   handleRemoveUser(user.id);
                 }}
+                className="cursor-pointer"
               >
                 <CloseIcon className="w-[18.833px] h-[18.833px]" />
               </button>
@@ -86,7 +87,7 @@ const UserMultiSelectInput = ({
           <input
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
-            className="flex-1 min-w-[80px] outline-none text-gray-100 placeholder:text-gray-30 bg-transparent"
+            className="flex-1 cursor-pointer outline-none text-gray-100 placeholder:text-gray-30 bg-transparent"
             placeholder={selectedUsers.length === 0 ? placeholder : ""}
           />
         </div>

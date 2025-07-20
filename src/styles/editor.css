@@ -1,0 +1,50 @@
+.toastui-editor-defaultUI-toolbar {
+  display: none;
+  background-color: white !important;
+  border: none !important;
+}
+
+.toastui-editor-toolbar {
+  height: 0px !important;
+}
+
+.toastui-editor-defaultUI {
+  border: none !important;
+  background-color: transparent;
+}
+
+.toastui-editor-mode-switch {
+  display: none !important;
+}
+
+.toastui-editor-defaultUI .ProseMirror {
+  padding: 0 !important;
+}
+
+.toastui-editor-contents {
+  font-family: Pretendard, sans-serif;
+  font-size: var(--text-body2);
+  font-weight: var(--text-body2-weight);
+  line-height: var(--text-body2-lineHeight);
+  color: var(--color-gray-80) !important;
+}
+
+.toastui-editor-md-preview {
+  display: none !important;
+}
+
+.ProseMirror .placeholder {
+  color: var(--color-gray-30) !important;
+}
+
+.toastui-editor-contents h1,
+h2,
+h3,
+h4 {
+  border-bottom: 0px !important;
+}
+
+.toastui-editor-contents p,
+del {
+  color: var(--color-gray-80) !important;
+}
