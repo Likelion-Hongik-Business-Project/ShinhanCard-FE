@@ -38,10 +38,13 @@ const SelectDropdown = ({
   const isSelect = isOpen;
 
   const borderStyle = clsx({
-    // default
-    "border border-gray-40 rounded-t-[5px]": type === "default" && isYet,
-    "border-t border-main rounded-t-[5px]": type === "default" && isDefault,
-    "border border-main rounded-t-[5px]": type === "default" && isSelect,
+    // default - 소속 선택
+    "border border-gray-40 bg-white rounded-t-[5px]":
+      type === "default" && isYet,
+    "border-t bg-white border-main rounded-t-[5px]":
+      type === "default" && isDefault,
+    "border border-main rounded-t-[5px] bg-white":
+      type === "default" && isSelect,
 
     // 나머지
     "border border-gray-40 rounded-[5px]": type !== "default" && isYet,
@@ -89,7 +92,7 @@ const SelectDropdown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute w-full border mt-2 rounded-[5px] bg-white z-10 max-h-[236px] overflow-y-auto text-detail1 text-gray-60 border-gray-20">
+        <ul className="absolute w-full border mt-2 rounded-[5px] bg-white z-10 max-h-[236px] overflow-y-auto scrollbar-hide text-detail1 text-gray-60 border-gray-20">
           {options.map(option => (
             <li
               key={option}
