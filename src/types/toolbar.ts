@@ -15,10 +15,5 @@ export type ToolbarButton =
   | "divider";
 
 export type EditorCommand =
-  | { command: "heading"; payload: { level: 1 | 2 | 3 | 4 } }
-  | { command: "bold" }
-  | { command: "italic" }
-  | { command: "strike" }
-  | { command: "quote" }
-  | { command: "link" }
-  | { command: "image" };
+  | { command: "bold" | "italic" | "strike" | "quote" | "link" | "image" }
+  | { command: "heading"; payload: { level: number } };
