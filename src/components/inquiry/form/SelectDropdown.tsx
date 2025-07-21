@@ -92,7 +92,7 @@ const SelectDropdown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute w-full border mt-2 rounded-[5px] bg-white z-10 max-h-[236px] overflow-y-auto scrollbar-hide text-detail1 text-gray-60 border-gray-20">
+        <ul className="absolute w-full border mt-2 rounded-[5px] bg-white z-50 max-h-[236px] overflow-y-auto scrollbar-hide text-detail1 text-gray-60 border-gray-20">
           {options.map(option => (
             <li
               key={option}
