@@ -10,9 +10,9 @@ const InquiryFormPage = () => {
     groupOptions,
     divisionOptions,
     teamOptions,
-    setTeam,
     handleGroupChange,
     handleDivisionChange,
+    handleTeamChange,
   } = useOrganizationSelector();
 
   return (
@@ -36,7 +36,7 @@ const InquiryFormPage = () => {
         <SelectDropdown
           options={teamOptions}
           value={team}
-          onChange={setTeam}
+          onChange={handleTeamChange}
           placeholder="팀 선택"
           disabled={!division}
         />
