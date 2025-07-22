@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import clsx from "clsx";
+
 import Down from "@/assets/svgs/common/down.svg";
 import Clock from "@/assets/svgs/common/inquiryList/clock.svg";
 import Hash from "@/assets/svgs/common/inquiryList/hash.svg";
@@ -8,12 +10,16 @@ import User from "@/assets/svgs/common/inquiryList/user.svg";
 import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
+import Up from "@/assets/svgs/common/up.svg";
+import StatusFilterModal from "@/components/common/inquiry/StatusFilterModal";
 import Pagination from "@/components/common/Pagination";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
 import { InquiryListItem } from "@/types/inquiry";
 
 type Props = {
   inquiries: InquiryListItem[];
+  selectedStatus: string;
+  setSelectedStatus: (status: string) => void;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -21,6 +27,8 @@ type Props = {
 
 const InquiryList = ({
   inquiries,
+  selectedStatus,
+  setSelectedStatus,
   currentPage,
   totalPages,
   onPageChange,
@@ -34,6 +42,7 @@ const InquiryList = ({
       {} as Record<number, boolean>
     )
   );
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   const handleToggleScrap = (id: number) => {
     setScrapStates(prev => ({
@@ -56,10 +65,63 @@ const InquiryList = ({
               <Hash />
               <span className="text-body1">문의 제목</span>
             </div>
-            <div className="px-4 flex items-center gap-2 w-40 whitespace-nowrap">
-              <Loader />
-              <span className="text-body1">문의 상태</span>
-              <Down className="text-gray-50 cursor-pointer" />
+            <div className="relative">
+              <button
+                onClick={() => setIsStatusModalOpen(prev => !prev)}
+                className={clsx(
+                  "px-4 flex items-center gap-2 whitespace-nowrap",
+                  {
+                    "text-gray-80 text-body1-b": isStatusModalOpen,
+                    "text-main text-body1-b":
+                      selectedStatus === "확인 중" && !isStatusModalOpen,
+                    [`${INQUIRY_STATUS_STYLES[selectedStatus]?.text} text-body1-b`]:
+                      selectedStatus !== "전체" &&
+                      selectedStatus !== "확인 중" &&
+                      !isStatusModalOpen,
+                    "text-gray-60 text-body1":
+                      selectedStatus === "전체" && !isStatusModalOpen,
+                  }
+                )}
+              >
+                <Loader
+                  className={clsx({
+                    "text-gray-80": isStatusModalOpen,
+                    "text-main":
+                      selectedStatus === "확인 중" && !isStatusModalOpen,
+                    [INQUIRY_STATUS_STYLES[selectedStatus]?.text]:
+                      selectedStatus !== "전체" &&
+                      selectedStatus !== "확인 중" &&
+                      !isStatusModalOpen,
+                    "text-gray-40":
+                      selectedStatus === "전체" && !isStatusModalOpen,
+                  })}
+                />
+                <span>문의 상태</span>
+                {isStatusModalOpen ? (
+                  <Up className="text-gray-80" />
+                ) : (
+                  <Down
+                    className={clsx({
+                      "text-main": selectedStatus === "확인 중",
+                      [INQUIRY_STATUS_STYLES[selectedStatus]?.text]:
+                        selectedStatus !== "전체" &&
+                        selectedStatus !== "확인 중",
+                      "text-gray-50": selectedStatus === "전체",
+                    })}
+                  />
+                )}
+              </button>
+
+              {isStatusModalOpen && (
+                <StatusFilterModal
+                  selectedStatus={selectedStatus}
+                  onSelectStatus={status => {
+                    setSelectedStatus(status);
+                    setIsStatusModalOpen(false);
+                  }}
+                  onClose={() => setIsStatusModalOpen(false)}
+                />
+              )}
             </div>
             <div className="px-4 flex items-center gap-2 w-[251px] whitespace-nowrap">
               <Clock />

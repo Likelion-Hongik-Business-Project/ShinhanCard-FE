@@ -10,6 +10,7 @@ const AssignedPage = () => {
   const [selectedTeamId, setSelectedTeamId] = useState(
     MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
   );
+  const [selectedStatus, setSelectedStatus] = useState("전체");
 
   const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size;
   const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count;
@@ -35,6 +36,12 @@ const AssignedPage = () => {
       created_at: item.created_at,
       is_scraped: item.is_scraped,
     }));
+
+  // 필터링 로직: 추후 쿼리 파라미터로 API 호출할 예정
+  const filteredInquiries =
+    selectedStatus === "전체"
+      ? currentItems
+      : currentItems.filter(item => item.status === selectedStatus);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -84,7 +91,9 @@ const AssignedPage = () => {
           />
 
           <InquiryList
-            inquiries={currentItems}
+            inquiries={filteredInquiries}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
