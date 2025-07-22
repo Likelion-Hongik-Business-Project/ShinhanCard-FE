@@ -3,7 +3,7 @@ import React from "react";
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "third";
+  variant?: "primary" | "secondary" | "third" | "forth";
   size?: "sm" | "md" | "lg";
   rounded?: "sm" | "md" | "lg" | "full";
   className?: string;
@@ -16,10 +16,12 @@ const variantStyles = {
   secondary:
     "bg-[var(--White,#FFF)] border border-[var(--Gray-50,#8A94A0)] text-[var(--Gray-50,#8A94A0)]",
   third: "bg-[var(--Main,#19398C)]",
+  forth:
+    "flex h-[64px] px-[24px] justify-center items-center gap-[16px] border border-[var(--Gray-30,#C6CCD1)] bg-[var(--White,#FFF)] hover:bg-[var(--Gray-20,#DDE2E7)]",
 };
 
 const sizeStyles = {
-  sm: "w-[139px] h-[64px] text-[20px]",
+  sm: "w-[72px] h-[64px]",
   md: "w-[263px] h-[64px] text-[20px]",
   lg: "w-[463px] h-[160px] text-[20px]",
 };

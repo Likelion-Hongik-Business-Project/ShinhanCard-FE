@@ -20,6 +20,8 @@ export { default as Star } from "./star.svg";
 export { default as StarActive } from "./star-active.svg";
 
 // Button 아이콘
+export { default as Heart } from "./heart.svg";
+export { default as HeartActive } from "./heart-active.svg";
 export { default as BlueMessage } from "./message-blue.svg";
 export { default as SkyMessage } from "./message-sky.svg";
 export { default as BluePencil } from "./pencil-blue.svg";

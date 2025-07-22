@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import Heart from "@/assets/svgs/layout/heart.svg";
+import HeartActive from "@/assets/svgs/layout/heart-active.svg";
 import BlueMessage from "@/assets/svgs/layout/message-blue.svg";
 import SkyMessage from "@/assets/svgs/layout/message-sky.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
@@ -32,6 +34,8 @@ const tabs = [
 ] as const;
 
 const UserSpacePage = () => {
+  const [isHearted, setIsHearted] = useState(false);
+
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]["key"]>("written");
 
@@ -47,7 +51,7 @@ const UserSpacePage = () => {
     <section className="w-full h-[835px] bg-gray-50 flex flex-col items-start p-0">
       <div className="flex w-full items-center gap-4">
         <div
-          className="w-[114px] h-[114px] rounded-full relative overflow-hidden"
+          className="w-[160px] h-[160px] rounded-full relative overflow-hidden"
           style={{
             aspectRatio: "1 / 1",
             background:
@@ -57,7 +61,7 @@ const UserSpacePage = () => {
           <Profile className="w-full h-full object-cover" />
         </div>
 
-        <div className="pl-[58px]">
+        <div className="pl-10">
           <h1 className="text-[32px] font-bold leading-[120%] text-black font-pretendard">
             장윤영님 스페이스
           </h1>
@@ -77,6 +81,18 @@ const UserSpacePage = () => {
           <span className="text-[20px] font-normal leading-[120%] font-pretendard text-white">
             장윤영님에게 문의 작성
           </span>
+        </Button>
+        <Button
+          variant="forth"
+          size="sm"
+          rounded="lg"
+          onClick={() => setIsHearted(prev => !prev)}
+        >
+          {isHearted ? (
+            <HeartActive className="w-[24px] h-[24px] aspect-square" />
+          ) : (
+            <Heart className="w-[24px] h-[24px] aspect-square" />
+          )}
         </Button>
       </div>
 
