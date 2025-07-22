@@ -8,10 +8,10 @@ import {
   Message,
   Pencil,
 } from "@/assets/svgs/home";
-// import HomeMember from "./HomeMember"; // 추후 구현
+import HomeMember from "@/components/Home/HomeMember";
 
 const buttonStyle =
-  "w-[320px] h-[160px] px-[40px] py-[24px] bg-white border rounded-[12px] flex flex-col justify-center items-start gap-2";
+  "w-full min-w-64 max-w-80 px-10 py-7.75 border-2 rounded-[13px] flex flex-col justify-center items-start";
 
 export default function HomeMain({
   answerCount,
@@ -41,47 +41,71 @@ export default function HomeMain({
     return (
       <button
         onClick={() => setActiveTab(type)}
-        className={`${buttonStyle} ${isActive ? "bg-[var(--color-state-progress-01)] border-[var(--color-main)]" : "border-[var(--color-gray-20)]"}`}
+        className={`${buttonStyle} ${isActive ? "bg-state-progress-01 border-main" : "bg-white border-2 border-gray-20"}`}
       >
-        {isActive ? <ActiveIcon /> : <DefaultIcon />}
-        <p className="text-[var(--color-gray-80)] text-[18px] font-bold">
+        <p className="text-gray-80 text-[48px] font-bold leading-[120%] font-pretendard">
           {count}
         </p>
-        <p className="text-[var(--color-gray-60)] text-[16px]">{label}</p>
+        <div className="flex w-full justify-between items-center gap-2">
+          <div className="flex h-full flex-col justify-end">
+            <p
+              className={`${isActive ? "text-gray-80" : "text-gray-60"} text-heading3-sb`}
+            >
+              {label}
+            </p>
+          </div>
+          {isActive ? <ActiveIcon /> : <DefaultIcon />}
+        </div>
       </button>
     );
   };
 
   return (
-    <div className="flex justify-between items-center gap-4 mb-8">
-      <div className="flex gap-4">
-        <Button
-          type="answer"
-          count={answerCount}
-          label="미확인 답변"
-          DefaultIcon={Pencil}
-          ActiveIcon={ActivePencil}
-        />
-        <Button
-          type="inquiry"
-          count={inquiryCount}
-          label="미확인 문의"
-          DefaultIcon={Message}
-          ActiveIcon={ActiveMessage}
-        />
-        <Button
-          type="interest"
-          count={interestCount}
-          label="관심 팀원"
-          DefaultIcon={Heart}
-          ActiveIcon={ActiveHeart}
-        />
+    <>
+      <div className="flex h-40 justify-between items-center gap-4 mb-20">
+        <div className="flex gap-4 w-full">
+          <Button
+            type="answer"
+            count={answerCount}
+            label="미확인 답변"
+            DefaultIcon={Pencil}
+            ActiveIcon={ActivePencil}
+          />
+          <Button
+            type="inquiry"
+            count={inquiryCount}
+            label="미확인 문의"
+            DefaultIcon={Message}
+            ActiveIcon={ActiveMessage}
+          />
+          <Button
+            type="interest"
+            count={interestCount}
+            label="관심 팀원"
+            DefaultIcon={Heart}
+            ActiveIcon={ActiveHeart}
+          />
+        </div>
+
+        <button className="flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 bg-main text-white rounded-[13px]">
+          <Pencil />
+          <p className="text-heading3 font-bold">문의 작성하기</p>
+        </button>
       </div>
 
-      <button className="flex items-center gap-[16px] px-[40px] py-[24px] bg-[var(--color-main)] text-white rounded-[12px]">
-        <Pencil />
-        문의 작성하기
-      </button>
-    </div>
+      <div className="w-full h-auto">
+        {activeTab === "answer" && (
+          <div className="w-full h-[512px] bg-gray-200 flex items-center justify-center text-xl text-gray-500">
+            임시 답변 컴포넌트 영역
+          </div>
+        )}
+        {activeTab === "inquiry" && (
+          <div className="w-full h-[512px] bg-gray-200 flex items-center justify-center text-xl text-gray-500">
+            임시 문의 컴포넌트 영역
+          </div>
+        )}
+        {activeTab === "interest" && <HomeMember />}
+      </div>
+    </>
   );
 }

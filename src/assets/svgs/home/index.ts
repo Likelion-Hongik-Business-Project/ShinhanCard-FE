@@ -8,4 +8,3 @@ export { default as ActivePencil } from "./pencil-blue.svg";
 export { default as Pencil } from "./pencil-sky.svg";
 export { default as PencilWrite } from "./pencil-white.svg";
 export { default as Plus } from "./plus.svg";
-export { default as Profile } from "./profile.png";
