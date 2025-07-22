@@ -6,16 +6,16 @@ import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { User } from "@/types/user";
 
 import DepartmentSelector from "./DepartmentSelector";
 import UserSearchList from "./UserSearchList";
-
-import { MOCK_USERS } from "@/mocks/usersMock";
 
 interface Props {
   label: string;
   placeholder: string;
   maxCount: number;
+  users: User[];
   isOpen: boolean;
   onDropdownToggle: (isOpen: boolean) => void;
 }
@@ -24,10 +24,11 @@ const UserMultiSelectInput = ({
   label,
   placeholder,
   maxCount,
+  users,
   isOpen,
   onDropdownToggle,
 }: Props) => {
-  const [selectedUsers, setSelectedUsers] = useState<typeof MOCK_USERS>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [inputValue, setInputValue] = useState("");
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,9 +39,9 @@ const UserMultiSelectInput = ({
     }
   });
 
-  const handleSelectUser = (user: (typeof MOCK_USERS)[0]) => {
-    if (selectedUsers.length >= maxCount) return;
+  const handleSelectUser = (user: User) => {
     if (selectedUsers.some(u => u.id === user.id)) return;
+    if (selectedUsers.length >= maxCount) return;
 
     setSelectedUsers(prev => [...prev, user]);
     setInputValue("");
@@ -50,7 +51,9 @@ const UserMultiSelectInput = ({
     setSelectedUsers(prev => prev.filter(u => u.id !== id));
   };
 
-  const filteredUsers = MOCK_USERS.filter(u => u.name.includes(inputValue));
+  const filteredUsers = users
+    .filter(u => u.user_name.includes(inputValue))
+    .filter(u => !selectedUsers.some(selected => selected.id === u.id));
 
   return (
     <div
@@ -61,6 +64,7 @@ const UserMultiSelectInput = ({
         <UserCheckIcon />
         <span className="text-body2 text-gray-60">{label}</span>
       </div>
+
       <div className="relative w-[728px]">
         <div
           className={clsx(
@@ -79,7 +83,7 @@ const UserMultiSelectInput = ({
             >
               <div className="flex gap-2 items-center">
                 <ProfileIcon />
-                <span>{user.name}</span>
+                <span>{user.user_name}</span>
               </div>
               <button
                 onClick={e => {

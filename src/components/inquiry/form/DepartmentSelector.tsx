@@ -1,11 +1,12 @@
 import { useState } from "react";
 
+import { User } from "@/types/user";
+
 import SelectDropdown from "./SelectDropdown";
 
-import { MOCK_USERS } from "@/mocks/usersMock";
-
+import { ORG_USERS } from "@/mocks/organizationMock";
 interface DepartmentSelectorProps {
-  onSelectUser: (user: (typeof MOCK_USERS)[0]) => void;
+  onSelectUser: (user: User) => void;
 }
 
 const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
@@ -13,6 +14,18 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
   const [division, setDivision] = useState("");
   const [team, setTeam] = useState("");
   const [userName, setUserName] = useState("");
+
+  const selectedGroup = ORG_USERS.find(g => g.group_name === group);
+  const divisionOptions =
+    selectedGroup?.divisions.map(d => d.division_name) || [];
+
+  const selectedDivision = selectedGroup?.divisions.find(
+    d => d.division_name === division
+  );
+  const teamOptions = selectedDivision?.teams.map(t => t.team_name) || [];
+
+  const selectedTeam = selectedDivision?.teams.find(t => t.team_name === team);
+  const userOptions = selectedTeam?.users.map(u => u.user_name) || [];
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -22,7 +35,7 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
 
       <div className="flex gap-2">
         <SelectDropdown
-          options={["그룹 1", "그룹 2", "그룹 3"]}
+          options={ORG_USERS.map(g => g.group_name)}
           value={group}
           onChange={value => {
             setGroup(value);
@@ -34,7 +47,7 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
           type="group"
         />
         <SelectDropdown
-          options={["소속본부 1", "소속본부 2"]}
+          options={divisionOptions}
           value={division}
           onChange={value => {
             setDivision(value);
@@ -46,7 +59,7 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
           disabled={!group}
         />
         <SelectDropdown
-          options={["팀 1", "팀 2"]}
+          options={teamOptions}
           value={team}
           onChange={value => {
             setTeam(value);
@@ -57,12 +70,20 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
           disabled={!division}
         />
         <SelectDropdown
-          options={MOCK_USERS.map(u => u.name)}
+          options={userOptions}
           value={userName}
           onChange={name => {
             setUserName(name);
-            const user = MOCK_USERS.find(u => u.name === name);
-            if (user) onSelectUser(user);
+            const user = selectedTeam?.users.find(u => u.user_name === name);
+            if (user) {
+              onSelectUser({
+                id: user.id,
+                user_name: user.user_name,
+                group_name: group,
+                division_name: division,
+                team_name: team,
+              });
+            }
           }}
           placeholder="이름"
           type="user"
