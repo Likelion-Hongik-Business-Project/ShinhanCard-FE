@@ -28,20 +28,34 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
       team_name: "C 팀",
     },
   ],
-  inquiries: Array.from({ length: 20 }, (_, index) => ({
-    inquiry_id: 1001 + index,
-    writer: {
-      user_id: 200 + (index % 3),
-      name: ["원채영", "심수연", "박규영"][index % 3],
-      profile_image_url: "",
-    },
-    title: `문의 제목 ${index + 1}`,
-    status: ["확인 전", "확인 중", "답변 완료"][
-      index % 3
-    ] as AssignedInquiryListResponse["inquiries"][number]["status"],
-    created_at: `2025-07-06T10:${(index % 60).toString().padStart(2, "0")}:00Z`,
-    is_scraped: index % 2 === 0,
-  })),
+  inquiries: Array.from({ length: 40 }, (_, index) => {
+    const inquiry_id = 2000 - index;
+    const totalMonths = (2025 - 2023) * 12 + 7 - 1;
+    const currentTotalMonths = totalMonths - index;
+
+    const year = 2023 + Math.floor(currentTotalMonths / 12);
+    const month = (currentTotalMonths % 12) + 1;
+    const day = (index % 28) + 1;
+    const hour = (index % 24).toString().padStart(2, "0");
+    const minute = (index % 60).toString().padStart(2, "0");
+
+    return {
+      inquiry_id,
+      writer: {
+        user_id: 300 + (index % 5),
+        name: ["장윤영", "심수연", "원채영", "박규영", "김홍엽"][index % 5],
+        profile_image_url: "",
+      },
+      title: `문의 제목 ${inquiry_id}`,
+      status: ["확인 전", "확인 중", "답변 완료"][
+        index % 3
+      ] as AssignedInquiryListResponse["inquiries"][number]["status"],
+      created_at: `${year}-${month.toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}T${hour}:${minute}:00Z`,
+      is_scraped: index % 2 === 0,
+    };
+  }),
   pagination: {
     page: 1,
     page_size: 10,
