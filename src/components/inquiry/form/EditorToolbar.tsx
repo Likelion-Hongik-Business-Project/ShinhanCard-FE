@@ -42,11 +42,8 @@ const EditorToolbar = ({
                 });
               } else {
                 execCommand({
-                  command: item.command as Exclude<
-                    EditorCommand["command"],
-                    "heading"
-                  >,
-                });
+                  command: item.command,
+                } as Extract<EditorCommand, { command: typeof item.command }>);
               }
             }}
             className={`cursor-pointer ${

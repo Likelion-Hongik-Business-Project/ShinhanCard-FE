@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-import EditorToolbar from "@/components/inquiry/form/EditorToolbar";
 import { useEditor } from "@/hooks/useEditor";
+
+import EditorToolbar from "./EditorToolbar";
 
 import "@/styles/editor.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -30,12 +31,14 @@ const InquiryEditor = () => {
 
       <div className="w-full h-[1px] bg-gray-10" />
 
-      <EditorToolbar
-        activeSet={activeSet}
-        execCommand={execCommand}
-        fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
-      />
+      <div className="flex p-2 gap-3 items-center">
+        <EditorToolbar
+          activeSet={activeSet}
+          execCommand={execCommand}
+          fileInputRef={fileInputRef}
+          handleFileChange={handleFileChange}
+        />
+      </div>
 
       <Editor
         ref={editorRef}

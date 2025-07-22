@@ -6,7 +6,6 @@ import {
   H4Icon,
   ImageIcon,
   ItalicIcon,
-  LinkIcon,
   QuotesIcon,
   StrikeIcon,
 } from "@/assets/svgs/inquiry/toolbar";
@@ -23,6 +22,5 @@ export const toolbarButtons: ToolbarButton[] = [
   { command: "strike", icon: () => <StrikeIcon />, key: "strike" },
   "divider",
   { command: "quote", icon: () => <QuotesIcon />, key: "quote" },
-  { command: "link", icon: () => <LinkIcon />, key: "link" },
   { command: "image", icon: () => <ImageIcon />, key: "image" },
 ];

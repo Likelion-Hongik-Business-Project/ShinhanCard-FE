@@ -5,6 +5,5 @@ export { default as H3Icon } from "./h3.svg";
 export { default as H4Icon } from "./h4.svg";
 export { default as ImageIcon } from "./image.svg";
 export { default as ItalicIcon } from "./italic.svg";
-export { default as LinkIcon } from "./link.svg";
 export { default as QuotesIcon } from "./quotes.svg";
 export { default as StrikeIcon } from "./strike.svg";
