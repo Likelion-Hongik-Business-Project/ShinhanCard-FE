@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import Upload from "@/assets/svgs/common/upload.svg";
 import InquiryList from "@/components/common/inquiry/InquiryList";
 import TeamTabs from "@/components/common/inquiry/TeamTabs";
 import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
@@ -49,10 +50,19 @@ const AssignedPage = () => {
 
   return (
     <section className="w-full">
-      <h1 className="text-gray-80 text-heading1 mb-4">내 담당 문의</h1>
-      <p className="text-gray-100 text-body1 mb-6">
-        총 <span className="text-body1-b">{totalInquiries}</span>건
-      </p>
+      <div className="flex justify-between mb-10">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-gray-80 text-heading1">내 담당 문의</h1>
+          <p className="text-gray-100 text-body1">
+            나의 담당 문의가 총{" "}
+            <span className="text-body1-b">{totalInquiries}</span>건 있습니다.
+          </p>
+        </div>
+        <button className="self-end px-6 flex gap-4 items-center bg-white cursor-pointer border border-gray-20 rounded-[15px] h-16">
+          <Upload />
+          <span className="text-gray-80 text-heading3">Export</span>
+        </button>
+      </div>
 
       <TeamTabs
         teams={MOCK_ASSIGNED_INQUIRY_RESPONSE.teams}

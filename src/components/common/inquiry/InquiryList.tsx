@@ -16,49 +16,53 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-export default function InquiryList({
+const InquiryList = ({
   inquiries,
   currentPage,
   totalPages,
   onPageChange,
-}: Props) {
+}: Props) => {
   return (
     <div>
       <div className="w-full bg-white overflow-hidden rounded-b-[15px] rounded-tr-[15px]">
         {/* 헤더 */}
-        <thead className="h-16 flex text-gray-60 border-[2px] border-gray-10 items-center">
-          <tr className="flex w-full">
-            <th className="ml-20 px-4 flex items-center gap-2 w-40 whitespace-nowrap">
+        <div className="h-16 flex text-gray-60 items-center">
+          <div className="flex w-full">
+            <div className="ml-20 px-4 flex items-center gap-2 w-40 whitespace-nowrap">
               <User />
               <span className="text-body1">작성자</span>
-            </th>
-            <th className="px-4 flex flex-1 items-center gap-2 min-w-[477px] whitespace-nowrap">
+            </div>
+            <div className="px-4 flex flex-1 items-center gap-2 min-w-[477px] whitespace-nowrap">
               <Hash />
               <span className="text-body1">문의 제목</span>
-            </th>
-            <th className="px-4 flex items-center gap-2 w-40 whitespace-nowrap">
+            </div>
+            <div className="px-4 flex items-center gap-2 w-40 whitespace-nowrap">
               <Loader />
               <span className="text-body1">문의 상태</span>
               <Down className="text-gray-50 cursor-pointer" />
-            </th>
-            <th className="px-4 flex items-center gap-2 w-[251px] whitespace-nowrap">
+            </div>
+            <div className="px-4 flex items-center gap-2 w-[251px] whitespace-nowrap">
               <Clock />
               <span className="text-body1">문의 일시 (전체)</span>
               <Down className="text-gray-50 cursor-pointer" />
-            </th>
-          </tr>
-        </thead>
+            </div>
+          </div>
+        </div>
 
         {/* 리스트 */}
         {inquiries.map(item => (
           <li
             key={item.id}
-            className="h-16 border-b-[2px] border-x-[2px] border-gray-10 bg-white flex w-full"
+            className="h-16 border-t-[2px] border-y-gray-10 bg-white flex w-full"
           >
             {/* 스크랩 */}
-            <div className="px-4 w-20 flex items-center">
-              {item.is_scraped ? <StarActive /> : <Star />}
-            </div>
+            <button className="px-4 w-20 flex items-center">
+              {item.is_scraped ? (
+                <StarActive />
+              ) : (
+                <Star className="text-gray-30" />
+              )}
+            </button>
             {/* 프로필 */}
             <div className="px-4 w-40 flex items-center gap-2">
               {item.leftProfiles.length > 0 && (
@@ -140,4 +144,6 @@ export default function InquiryList({
       </div>
     </div>
   );
-}
+};
+
+export default InquiryList;
