@@ -33,7 +33,7 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
     writer: {
       user_id: 200 + (index % 3),
       name: ["원채영", "심수연", "박규영"][index % 3],
-      profile_image_url: "https://via.placeholder.com/40",
+      profile_image_url: "",
     },
     title: `문의 제목 ${index + 1}`,
     status: ["확인 전", "확인 중", "답변 완료"][
