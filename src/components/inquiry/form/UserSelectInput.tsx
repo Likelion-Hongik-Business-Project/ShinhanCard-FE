@@ -5,6 +5,7 @@ import clsx from "clsx";
 import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { User } from "@/types/user";
 
@@ -31,6 +32,7 @@ const UserMultiSelectInput = ({
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [inputValue, setInputValue] = useState("");
 
+  const debouncedInput = useDebounce(inputValue, 300);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(containerRef, () => {
@@ -53,7 +55,7 @@ const UserMultiSelectInput = ({
 
   const filteredUsers = allUsers
     .filter(u =>
-      u.user_name.toLowerCase().includes(inputValue.trim().toLowerCase())
+      u.user_name.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
     .filter(u => !selectedUsers.some(selected => selected.id === u.id));
 
