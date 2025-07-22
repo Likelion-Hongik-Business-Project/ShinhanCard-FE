@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Down from "@/assets/svgs/common/down.svg";
 import Clock from "@/assets/svgs/common/inquiryList/clock.svg";
 import Hash from "@/assets/svgs/common/inquiryList/hash.svg";
@@ -6,6 +8,7 @@ import User from "@/assets/svgs/common/inquiryList/user.svg";
 import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
+import Pagination from "@/components/common/Pagination";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
 import { InquiryListItem } from "@/types/inquiry";
 
@@ -22,6 +25,23 @@ const InquiryList = ({
   totalPages,
   onPageChange,
 }: Props) => {
+  const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
+    inquiries.reduce(
+      (acc, item) => {
+        acc[item.id] = item.is_scraped;
+        return acc;
+      },
+      {} as Record<number, boolean>
+    )
+  );
+
+  const handleToggleScrap = (id: number) => {
+    setScrapStates(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
     <div>
       <div className="w-full bg-white overflow-hidden rounded-b-[15px] rounded-tr-[15px]">
@@ -32,7 +52,7 @@ const InquiryList = ({
               <User />
               <span className="text-body1">작성자</span>
             </div>
-            <div className="px-4 flex flex-1 items-center gap-2 min-w-[477px] whitespace-nowrap">
+            <div className="px-4 flex flex-1 items-center gap-2 min-w-[468px] whitespace-nowrap">
               <Hash />
               <span className="text-body1">문의 제목</span>
             </div>
@@ -56,13 +76,17 @@ const InquiryList = ({
             className="h-16 border-t-[2px] border-y-gray-10 bg-white flex w-full"
           >
             {/* 스크랩 */}
-            <button className="px-4 w-20 flex items-center">
-              {item.is_scraped ? (
-                <StarActive />
+            <button
+              className="px-4 w-20 flex items-center justify-center"
+              onClick={() => handleToggleScrap(item.id)}
+            >
+              {scrapStates[item.id] ? (
+                <StarActive className="cursor-pointer" />
               ) : (
-                <Star className="text-gray-30" />
+                <Star className="text-gray-30 cursor-pointer" />
               )}
             </button>
+
             {/* 프로필 */}
             <div className="px-4 w-40 flex items-center gap-2">
               {item.leftProfiles.length > 0 && (
@@ -115,33 +139,11 @@ const InquiryList = ({
       </div>
 
       {/* 페이지네이션 */}
-      <div className="flex justify-center items-center space-x-2 mt-4">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          &lt;
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => onPageChange(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1 ? "bg-blue-500 text-white" : "border"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          &gt;
-        </button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

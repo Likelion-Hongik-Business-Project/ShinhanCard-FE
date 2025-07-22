@@ -58,7 +58,7 @@ const AssignedPage = () => {
             <span className="text-body1-b">{totalInquiries}</span>건 있습니다.
           </p>
         </div>
-        <button className="self-end px-6 flex gap-4 items-center bg-white cursor-pointer border border-gray-20 rounded-[15px] h-16">
+        <button className="self-end px-6 flex gap-4 items-center bg-white hover:bg-gray-20 active:bg-gray-20 transition-colors cursor-pointer border border-gray-20 rounded-[15px] h-16">
           <Upload />
           <span className="text-gray-80 text-heading3">Export</span>
         </button>
