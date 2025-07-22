@@ -4,7 +4,7 @@ import { toolbarButtons } from "@/constants/toolbarButtons";
 import { isToolbarItem } from "@/utils/commandUtils";
 import { EditorCommand } from "@/types/toolbar";
 
-interface EditorToolbarProps {
+interface Props {
   fileInputRef: RefObject<HTMLInputElement | null>;
   activeSet: Set<string>;
   execCommand: (command: EditorCommand) => void;
@@ -16,7 +16,7 @@ const EditorToolbar = ({
   execCommand,
   fileInputRef,
   handleFileChange,
-}: EditorToolbarProps) => {
+}: Props) => {
   return (
     <div className="flex p-2 gap-3 items-center">
       {toolbarButtons.map((item, idx) => {

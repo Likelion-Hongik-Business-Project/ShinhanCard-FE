@@ -1,8 +1,8 @@
-interface ProgressBarProps {
+interface Props {
   value: number;
 }
 
-const ProgressBar = ({ value }: ProgressBarProps) => {
+const ProgressBar = ({ value }: Props) => {
   return (
     <div className="w-46 h-2 bg-[#d9d9d9] rounded-full overflow-hidden">
       <div

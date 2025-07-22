@@ -4,15 +4,12 @@ import { User } from "@/types/user";
 
 import UserMultiSelectInput from "./UserSelectInput";
 
-interface AssigneeSelectorProps {
+interface Props {
   onDropdownStateChange: (isOpen: boolean) => void;
   allUsers: User[];
 }
 
-const AssigneeSelector = ({
-  onDropdownStateChange,
-  allUsers,
-}: AssigneeSelectorProps) => {
+const AssigneeSelector = ({ onDropdownStateChange, allUsers }: Props) => {
   const [openedDropdownIndex, setOpenedDropdownIndex] = useState<number | null>(
     null
   );

@@ -3,11 +3,11 @@ import { User } from "@/types/user";
 
 import SelectDropdown from "./SelectDropdown";
 
-interface DepartmentSelectorProps {
+interface Props {
   onSelectUser: (user: User) => void;
 }
 
-const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
+const DepartmentSelector = ({ onSelectUser }: Props) => {
   const {
     group,
     division,

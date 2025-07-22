@@ -5,7 +5,7 @@ import File from "@/assets/svgs/inquiry/file.svg";
 
 import ProgressBar from "./ProgressBar";
 
-interface FileUploadItemProps {
+interface Props {
   file: {
     id: number;
     name: string;
@@ -18,7 +18,7 @@ interface FileUploadItemProps {
 
 const formatSize = (size: number) => `${Math.round(size / 1024)} KB`;
 
-const FileUploadItem = ({ file, onRemove }: FileUploadItemProps) => {
+const FileUploadItem = ({ file, onRemove }: Props) => {
   const { name, size, uploadedSize, status } = file;
   const isUploading = status === "uploading";
   const progress = (uploadedSize / size) * 100;

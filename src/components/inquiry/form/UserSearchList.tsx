@@ -1,12 +1,12 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import { User } from "@/types/user";
 
-interface UserSearchListProps {
+interface Props {
   users: User[];
   onSelectUser: (user: User) => void;
 }
 
-const UserSearchList = ({ users, onSelectUser }: UserSearchListProps) => (
+const UserSearchList = ({ users, onSelectUser }: Props) => (
   <div className="flex flex-col max-h-[249px] p-2">
     <span className="text-detail1 text-gray-50 mb-4">사용자를 선택하세요</span>
     <div className="flex flex-col max-h-50 overflow-y-auto scrollbar-hide">
