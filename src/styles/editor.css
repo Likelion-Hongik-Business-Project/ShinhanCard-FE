@@ -22,10 +22,10 @@
 }
 
 .toastui-editor-contents {
-  font-family: Pretendard, sans-serif;
-  font-size: var(--text-body2);
-  font-weight: var(--text-body2-weight);
-  line-height: var(--text-body2-lineHeight);
+  font-family: Pretendard, sans-serif !important;
+  font-size: var(--text-body2) !important;
+  font-weight: var(--text-body2-weight) !important;
+  line-height: var(--text-body2-lineHeight) !important;
   color: var(--color-gray-80) !important;
 }
 
@@ -36,7 +36,6 @@
 .ProseMirror .placeholder {
   color: var(--color-gray-30) !important;
 }
-
 .toastui-editor-contents h1,
 h2,
 h3,

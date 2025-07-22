@@ -1,9 +1,26 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { isHeadingCommand, isInlineCommand } from "@/utils/commandUtils";
 import { EditorCommand } from "@/types/toolbar";
 
+import { Editor as EditorCore } from "@toast-ui/editor";
 import { Editor } from "@toast-ui/react-editor";
+
+interface WysiwygEditor {
+  view: {
+    dom: HTMLElement;
+  };
+}
+
+interface SafeEditor extends EditorCore {
+  wwEditor: WysiwygEditor;
+
+  on(event: "caretChange", handler: () => void): void;
+  on(event: string, handler: (...args: unknown[]) => void): void;
+
+  off(event: "caretChange", handler: () => void): void;
+  off(event: string, handler?: (...args: unknown[]) => void): void;
+}
 
 export const useEditor = () => {
   const editorRef = useRef<Editor>(null);
@@ -11,7 +28,7 @@ export const useEditor = () => {
   const [activeSet, setActiveSet] = useState<Set<string>>(new Set());
 
   const execCommand = (params: EditorCommand) => {
-    const editorInstance = editorRef.current?.getInstance();
+    const editorInstance = editorRef.current?.getInstance() as EditorCore;
     if (!editorInstance) return;
 
     const newSet = new Set(activeSet);
@@ -25,14 +42,8 @@ export const useEditor = () => {
         newSet.add(params.command);
       }
     } else if (params.command === "quote") {
-      const isActive = newSet.has("quote");
-      if (isActive) {
-        editorInstance.exec("removeBlockQuote");
-        newSet.delete("quote");
-      } else {
-        editorInstance.exec("blockQuote");
-        newSet.add("quote");
-      }
+      editorInstance.exec("blockQuote");
+      newSet.add("quote");
     } else if (isHeadingCommand(params)) {
       const current = `h${params.payload.level}`;
       const isActive = newSet.has(current);
@@ -55,10 +66,52 @@ export const useEditor = () => {
     if (!file) return;
 
     const imageUrl = URL.createObjectURL(file);
-    const editorInstance = editorRef.current?.getInstance();
-    editorInstance?.insertText(`![이미지 설명](${imageUrl})`);
+    const editorInstance = editorRef.current?.getInstance() as EditorCore;
+    editorInstance.insertText(`![이미지 설명](${imageUrl})`);
     e.target.value = "";
   };
+
+  useEffect(() => {
+    const editorInstance = editorRef.current?.getInstance() as SafeEditor;
+    if (!editorInstance) return;
+
+    const handleCaretChange = () => {
+      const root = editorInstance.wwEditor.view.dom;
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      const range = selection.getRangeAt(0);
+      let node = range.startContainer as HTMLElement;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        node = node.parentElement!;
+      }
+
+      let isQuote = false;
+      while (node && node !== root) {
+        if (node.tagName === "BLOCKQUOTE") {
+          isQuote = true;
+          break;
+        }
+        node = node.parentElement!;
+      }
+
+      setActiveSet(prev => {
+        const newSet = new Set(prev);
+        if (!isQuote) {
+          newSet.delete("quote");
+        }
+        return newSet;
+      });
+    };
+
+    editorInstance.on("caretChange", handleCaretChange);
+
+    return () => {
+      editorInstance.off("caretChange", handleCaretChange);
+    };
+  }, []);
 
   return {
     editorRef,
