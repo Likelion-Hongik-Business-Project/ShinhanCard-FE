@@ -45,6 +45,7 @@ const InquiryEditor = () => {
         initialValue=""
         placeholder="본문의 내용을 입력하세요"
         language="ko"
+        height="auto"
         initialEditType="wysiwyg"
         hideModeSwitch={true}
         previewStyle="tab"

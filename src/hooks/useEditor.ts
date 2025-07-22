@@ -28,10 +28,17 @@ export const useEditor = () => {
   const [activeSet, setActiveSet] = useState<Set<string>>(new Set());
 
   const execCommand = (params: EditorCommand) => {
-    const editorInstance = editorRef.current?.getInstance() as EditorCore;
+    const editorInstance =
+      editorRef.current?.getInstance() as unknown as SafeEditor;
+
     if (!editorInstance) return;
 
     const newSet = new Set(activeSet);
+
+    if (params.command === "image") {
+      fileInputRef.current?.click();
+      return;
+    }
 
     if (isInlineCommand(params)) {
       const isActive = newSet.has(params.command);
@@ -66,8 +73,14 @@ export const useEditor = () => {
     if (!file) return;
 
     const imageUrl = URL.createObjectURL(file);
-    const editorInstance = editorRef.current?.getInstance() as EditorCore;
-    editorInstance.insertText(`![이미지 설명](${imageUrl})`);
+    const editorInstance =
+      editorRef.current?.getInstance() as unknown as SafeEditor;
+
+    editorInstance.exec("addImage", {
+      imageUrl,
+      altText: "이미지 설명",
+    });
+
     e.target.value = "";
   };
 

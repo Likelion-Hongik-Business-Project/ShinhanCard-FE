@@ -47,3 +47,22 @@ h4 {
 del {
   color: var(--color-gray-80) !important;
 }
+
+.toastui-editor-contents img {
+  max-width: 50% !important;
+}
+
+.toastui-editor-defaultUI {
+  min-height: 230px !important;
+  height: auto !important;
+}
+.toastui-editor-ww-container {
+  min-height: 230px !important;
+  height: auto !important;
+}
+
+.editor-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
