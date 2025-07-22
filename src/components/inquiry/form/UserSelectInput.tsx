@@ -15,7 +15,7 @@ interface Props {
   label: string;
   placeholder: string;
   maxCount: number;
-  users: User[];
+  allUsers: User[];
   isOpen: boolean;
   onDropdownToggle: (isOpen: boolean) => void;
 }
@@ -24,8 +24,8 @@ const UserMultiSelectInput = ({
   label,
   placeholder,
   maxCount,
-  users,
   isOpen,
+  allUsers,
   onDropdownToggle,
 }: Props) => {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -51,8 +51,10 @@ const UserMultiSelectInput = ({
     setSelectedUsers(prev => prev.filter(u => u.id !== id));
   };
 
-  const filteredUsers = users
-    .filter(u => u.user_name.includes(inputValue))
+  const filteredUsers = allUsers
+    .filter(u =>
+      u.user_name.toLowerCase().includes(inputValue.trim().toLowerCase())
+    )
     .filter(u => !selectedUsers.some(selected => selected.id === u.id));
 
   return (

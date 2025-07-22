@@ -55,12 +55,7 @@ const InquiryFormPage = () => {
           />
         </div>
 
-        <InquiryForm
-          group={group}
-          division={division}
-          team={team}
-          onDropdownStateChange={setIsDropdownOpen}
-        />
+        <InquiryForm onDropdownStateChange={setIsDropdownOpen} />
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">

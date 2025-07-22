@@ -6,12 +6,12 @@ import UserMultiSelectInput from "./UserSelectInput";
 
 interface AssigneeSelectorProps {
   onDropdownStateChange: (isOpen: boolean) => void;
-  users: User[];
+  allUsers: User[];
 }
 
 const AssigneeSelector = ({
   onDropdownStateChange,
-  users,
+  allUsers,
 }: AssigneeSelectorProps) => {
   const [openedDropdownIndex, setOpenedDropdownIndex] = useState<number | null>(
     null
@@ -35,7 +35,7 @@ const AssigneeSelector = ({
         label="답변 담당자"
         placeholder="필수입력"
         maxCount={3}
-        users={users}
+        allUsers={allUsers}
         isOpen={openedDropdownIndex === 0}
         onDropdownToggle={isOpen => handleToggle(0, isOpen)}
       />
@@ -43,7 +43,7 @@ const AssigneeSelector = ({
         label="답변 참조자"
         placeholder="선택입력"
         maxCount={5}
-        users={users}
+        allUsers={allUsers}
         isOpen={openedDropdownIndex === 1}
         onDropdownToggle={isOpen => handleToggle(1, isOpen)}
       />
