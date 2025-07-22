@@ -53,7 +53,7 @@ const InquiryList = ({
 
   return (
     <div>
-      <div className="w-full bg-white overflow-hidden rounded-b-[15px] rounded-tr-[15px]">
+      <div className="w-full bg-white rounded-b-[15px] rounded-tr-[15px]">
         {/* 헤더 */}
         <div className="h-16 flex text-gray-60 items-center">
           <div className="flex w-full">
@@ -69,7 +69,7 @@ const InquiryList = ({
               <button
                 onClick={() => setIsStatusModalOpen(prev => !prev)}
                 className={clsx(
-                  "px-4 flex items-center gap-2 whitespace-nowrap",
+                  "transition-colors cursor-pointer px-4 flex items-center gap-2 whitespace-nowrap",
                   {
                     "text-gray-80 text-body1-b": isStatusModalOpen,
                     "text-main text-body1-b":
@@ -135,7 +135,7 @@ const InquiryList = ({
         {inquiries.map(item => (
           <li
             key={item.id}
-            className="h-16 border-t-[2px] border-y-gray-10 bg-white flex w-full"
+            className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full"
           >
             {/* 스크랩 */}
             <button

@@ -13,7 +13,7 @@ const TeamTabs = ({ teams, selectedTeamId, onSelectTeam }: Props) => {
         <button
           key={team.team_id}
           onClick={() => onSelectTeam(team.team_id)}
-          className={`px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[2px] ${
+          className={`px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[1px] ${
             team.team_id === selectedTeamId
               ? "border-t-[2px] border-main bg-white pt-[18px]"
               : "bg-gray-20 text-gray-50"
