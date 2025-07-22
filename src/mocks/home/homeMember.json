@@ -1,9 +1,9 @@
 {
-    "interest_count": 3,
+    "interest_count": 4,
     "interest_member": [
         {
             "name": "원채영",
-            "team_id": "123",
+            "member_id": "123",
             "group_name": "경영기획",
             "division_name": "ICT 본부",
             "team_name": "Core 개발 2부",
@@ -11,7 +11,7 @@
         },
         {
             "name": "김태경",
-            "team_id": "123",
+            "member_id": "123",
             "group_name": "경영기획",
             "division_name": "ICT 본부",
             "team_name": "Core 개발 2부",
@@ -19,7 +19,87 @@
         },
         {
             "name": "김태경",
-            "team_id": "123",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
+            "group_name": "경영기획",
+            "division_name": "ICT 본부",
+            "team_name": "Core 개발 2부",
+            "profile_image_url": "/assets/images/profile.png"
+        },
+        {
+            "name": "원채영",
+            "member_id": "123",
             "group_name": "경영기획",
             "division_name": "ICT 본부",
             "team_name": "Core 개발 2부",

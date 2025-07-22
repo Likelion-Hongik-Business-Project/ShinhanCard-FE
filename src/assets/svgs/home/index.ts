@@ -1,7 +1,7 @@
 export { default as ActiveHeart } from "./heart-blue.svg";
-export { default as EmptyHeart } from "./heart-empty.svg";
 export { default as FilledHeart } from "./heart-filled.svg";
 export { default as Heart } from "./heart-sky.svg";
+export { default as User } from "./icon-user.svg";
 export { default as ActiveMessage } from "./message-blue.svg";
 export { default as Message } from "./message-sky.svg";
 export { default as ActivePencil } from "./pencil-blue.svg";

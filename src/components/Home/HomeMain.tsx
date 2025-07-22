@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 
 import {
   ActiveHeart,
@@ -13,6 +14,15 @@ import HomeMember from "@/components/Home/HomeMember";
 const buttonStyle =
   "w-full min-w-64 max-w-80 px-10 py-7.75 border-2 rounded-[13px] flex flex-col justify-center items-start";
 
+type InterestMember = {
+  name: string;
+  member_id: string;
+  group_name: string;
+  division_name: string;
+  team_name: string;
+  profile_image_url: string;
+};
+
 export default function HomeMain({
   answerCount,
   inquiryCount,
@@ -23,6 +33,18 @@ export default function HomeMain({
   interestCount: number;
 }) {
   const [activeTab, setActiveTab] = useState("answer");
+  const [homeMember, setHomeMember] = useState<{
+    interest_count: number;
+    interest_member: InterestMember[];
+  } | null>(null);
+
+  useEffect(() => {
+    if (activeTab === "interest") {
+      fetch("/src/mocks/home/homeMember.json")
+        .then(res => res.json())
+        .then(data => setHomeMember(data));
+    }
+  }, [activeTab]);
 
   const Button = ({
     type,
@@ -104,7 +126,12 @@ export default function HomeMain({
             임시 문의 컴포넌트 영역
           </div>
         )}
-        {activeTab === "interest" && <HomeMember />}
+        {activeTab === "interest" && homeMember && (
+          <HomeMember
+            interestCount={homeMember.interest_count}
+            interestMember={homeMember.interest_member}
+          />
+        )}
       </div>
     </>
   );
