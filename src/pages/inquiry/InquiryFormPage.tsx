@@ -1,25 +1,19 @@
-import { useState } from "react";
-
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
-
-import { ORGANIZATION } from "@/mocks/organizationMock";
+import { useOrganizationSelector } from "@/hooks/useOrganizationSelector";
 
 const InquiryFormPage = () => {
-  const [group, setGroup] = useState("");
-  const [division, setDivision] = useState("");
-  const [team, setTeam] = useState("");
-
-  const groupOptions = ORGANIZATION.map(item => item.group);
-  const selectedGroup = ORGANIZATION.find(item => item.group === group);
-  const divisionOptions = selectedGroup
-    ? selectedGroup.divisions.map(d => d.division_name)
-    : [];
-
-  const selectedDivision = selectedGroup?.divisions.find(
-    d => d.division_name === division
-  );
-  const teamOptions = selectedDivision ? selectedDivision.teams : [];
+  const {
+    group,
+    division,
+    team,
+    groupOptions,
+    divisionOptions,
+    teamOptions,
+    setTeam,
+    handleGroupChange,
+    handleDivisionChange,
+  } = useOrganizationSelector();
 
   return (
     <section className="flex flex-col gap-2 w-full">
@@ -29,20 +23,13 @@ const InquiryFormPage = () => {
         <SelectDropdown
           options={groupOptions}
           value={group}
-          onChange={value => {
-            setGroup(value);
-            setDivision("");
-            setTeam("");
-          }}
+          onChange={handleGroupChange}
           placeholder="그룹 선택"
         />
         <SelectDropdown
           options={divisionOptions}
           value={division}
-          onChange={value => {
-            setDivision(value);
-            setTeam("");
-          }}
+          onChange={handleDivisionChange}
           placeholder="본부 선택"
           disabled={!group}
         />

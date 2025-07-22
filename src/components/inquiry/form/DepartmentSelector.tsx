@@ -1,31 +1,25 @@
-import { useState } from "react";
-
+import { useOrganizationSelector } from "@/hooks/useOrganizationSelector";
 import { User } from "@/types/user";
 
 import SelectDropdown from "./SelectDropdown";
 
-import { ORG_USERS } from "@/mocks/organizationMock";
 interface DepartmentSelectorProps {
   onSelectUser: (user: User) => void;
 }
 
 const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
-  const [group, setGroup] = useState("");
-  const [division, setDivision] = useState("");
-  const [team, setTeam] = useState("");
-  const [userName, setUserName] = useState("");
-
-  const selectedGroup = ORG_USERS.find(g => g.group_name === group);
-  const divisionOptions =
-    selectedGroup?.divisions.map(d => d.division_name) || [];
-
-  const selectedDivision = selectedGroup?.divisions.find(
-    d => d.division_name === division
-  );
-  const teamOptions = selectedDivision?.teams.map(t => t.team_name) || [];
-
-  const selectedTeam = selectedDivision?.teams.find(t => t.team_name === team);
-  const userOptions = selectedTeam?.users.map(u => u.user_name) || [];
+  const {
+    group,
+    division,
+    team,
+    groupOptions,
+    divisionOptions,
+    teamOptions,
+    selectedTeam,
+    handleGroupChange,
+    handleDivisionChange,
+    handleTeamChange,
+  } = useOrganizationSelector();
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -35,25 +29,16 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
 
       <div className="flex gap-2">
         <SelectDropdown
-          options={ORG_USERS.map(g => g.group_name)}
+          options={groupOptions}
           value={group}
-          onChange={value => {
-            setGroup(value);
-            setDivision("");
-            setTeam("");
-            setUserName("");
-          }}
+          onChange={handleGroupChange}
           placeholder="그룹 선택"
           type="group"
         />
         <SelectDropdown
           options={divisionOptions}
           value={division}
-          onChange={value => {
-            setDivision(value);
-            setTeam("");
-            setUserName("");
-          }}
+          onChange={handleDivisionChange}
           placeholder="소속본부 선택"
           type="division"
           disabled={!group}
@@ -61,19 +46,15 @@ const DepartmentSelector = ({ onSelectUser }: DepartmentSelectorProps) => {
         <SelectDropdown
           options={teamOptions}
           value={team}
-          onChange={value => {
-            setTeam(value);
-            setUserName("");
-          }}
+          onChange={handleTeamChange}
           placeholder="팀 선택"
           type="team"
           disabled={!division}
         />
         <SelectDropdown
-          options={userOptions}
-          value={userName}
+          options={selectedTeam?.users.map(u => u.user_name) || []}
+          value={""}
           onChange={name => {
-            setUserName(name);
             const user = selectedTeam?.users.find(u => u.user_name === name);
             if (user) {
               onSelectUser({
