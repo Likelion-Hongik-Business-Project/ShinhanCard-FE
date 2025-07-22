@@ -12,8 +12,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => {
     <div className="flex justify-center items-center mt-10 gap-[9px]">
       <button
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="disabled:opacity-50 cursor-pointer"
+        disabled={totalPages <= 5 || currentPage === 1}
+        className="disabled:text-gray-30 cursor-pointer"
       >
         <Left className="w-6 h-6" />
       </button>
@@ -32,8 +32,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => {
       ))}
       <button
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="disabled:opacity-50 cursor-pointer"
+        disabled={totalPages <= 5 || currentPage === totalPages}
+        className="disabled:text-gray-30 cursor-pointer"
       >
         <Right className="w-6 h-6" />
       </button>
