@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { MOCK_USERS } from "@/constants/usersMock";
-
 import SelectDropdown from "./SelectDropdown";
+
+import { MOCK_USERS } from "@/mocks/usersMock";
 
 interface DepartmentSelectorProps {
   onSelectUser: (user: (typeof MOCK_USERS)[0]) => void;

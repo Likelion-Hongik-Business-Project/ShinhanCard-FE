@@ -5,29 +5,38 @@ import clsx from "clsx";
 import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
-import { MOCK_USERS } from "@/constants/usersMock";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 import DepartmentSelector from "./DepartmentSelector";
 import UserSearchList from "./UserSearchList";
 
-interface UserMultiSelectInputProps {
+import { MOCK_USERS } from "@/mocks/usersMock";
+
+interface Props {
   label: string;
   placeholder: string;
   maxCount: number;
+  isOpen: boolean;
+  onDropdownToggle: (isOpen: boolean) => void;
 }
 
 const UserMultiSelectInput = ({
   label,
   placeholder,
   maxCount,
-}: UserMultiSelectInputProps) => {
+  isOpen,
+  onDropdownToggle,
+}: Props) => {
   const [selectedUsers, setSelectedUsers] = useState<typeof MOCK_USERS>([]);
   const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  useOutsideClick(containerRef, () => setIsOpen(false));
+
+  useOutsideClick(containerRef, () => {
+    if (isOpen) {
+      onDropdownToggle(false);
+    }
+  });
 
   const handleSelectUser = (user: (typeof MOCK_USERS)[0]) => {
     if (selectedUsers.length >= maxCount) return;
@@ -52,7 +61,6 @@ const UserMultiSelectInput = ({
         <UserCheckIcon />
         <span className="text-body2 text-gray-60">{label}</span>
       </div>
-
       <div className="relative w-[728px]">
         <div
           className={clsx(
@@ -62,7 +70,7 @@ const UserMultiSelectInput = ({
               : "bg-white text-gray-30 border-none",
             "hover:bg-gray-10"
           )}
-          onClick={() => setIsOpen(true)}
+          onClick={() => onDropdownToggle(true)}
         >
           {selectedUsers.map(user => (
             <div
@@ -92,27 +100,29 @@ const UserMultiSelectInput = ({
           />
         </div>
 
-        {isOpen && (
-          <div className="absolute top-full mt-1 w-full bg-white rounded-[5px]  shadow-02 flex flex-col z-50">
-            {inputValue.trim() === "" ? (
-              <DepartmentSelector onSelectUser={handleSelectUser} />
-            ) : filteredUsers.length === 0 ? (
-              <div className="flex flex-col gap-4 p-2">
-                <span className="text-detail1 text-gray-50">
-                  사용자를 선택하세요
-                </span>
-                <span className="text-detail1 bg-gray-10 py-2 px-1 flex items-center text-gray-60">
-                  없음
-                </span>
-              </div>
-            ) : (
-              <UserSearchList
-                users={filteredUsers}
-                onSelectUser={handleSelectUser}
-              />
-            )}
-          </div>
-        )}
+        <div className="relative w-full">
+          {isOpen && (
+            <div className="absolute top-full mt-1 w-full bg-white rounded-[5px] shadow-02 flex flex-col z-50">
+              {inputValue.trim() === "" ? (
+                <DepartmentSelector onSelectUser={handleSelectUser} />
+              ) : filteredUsers.length === 0 ? (
+                <div className="flex flex-col gap-4 p-2">
+                  <span className="text-detail1 text-gray-50">
+                    사용자를 선택하세요
+                  </span>
+                  <span className="text-detail1 bg-gray-10 py-2 px-1 flex items-center text-gray-60">
+                    없음
+                  </span>
+                </div>
+              ) : (
+                <UserSearchList
+                  users={filteredUsers}
+                  onSelectUser={handleSelectUser}
+                />
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

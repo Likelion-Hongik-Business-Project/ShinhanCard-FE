@@ -1,5 +1,6 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { MOCK_USERS } from "@/constants/usersMock";
+
+import { MOCK_USERS } from "@/mocks/usersMock";
 
 interface UserSearchListProps {
   users: typeof MOCK_USERS;
