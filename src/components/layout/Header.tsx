@@ -28,7 +28,7 @@ const Header = ({ toggleSidebar }: Props) => {
             {user?.name || "이름"}
           </span>
         </div>
-        <Down />
+        <Down className="w-6 h-6" />
       </div>
     </header>
   );
