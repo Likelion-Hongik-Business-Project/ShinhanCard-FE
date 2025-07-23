@@ -11,7 +11,9 @@ const AssignedPage = () => {
     MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
   );
   const [selectedStatus, setSelectedStatus] = useState("전체");
-
+  const [dateFilter, setDateFilter] = useState<
+    { year: number; month: number }[]
+  >([]);
   const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size;
   const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count;
   const totalPages = Math.ceil(totalInquiries / ITEMS_PER_PAGE);
@@ -52,7 +54,8 @@ const AssignedPage = () => {
   const handleSelectTeam = (teamId: number) => {
     setSelectedTeamId(teamId);
     setCurrentPage(1);
-    // TODO: 여기서 API 호출로 해당 teamId의 데이터를 가져와야 함
+    setSelectedStatus("전체");
+    setDateFilter([]);
   };
 
   return (
@@ -97,6 +100,8 @@ const AssignedPage = () => {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
           />
         </>
       )}

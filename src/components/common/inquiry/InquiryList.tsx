@@ -11,6 +11,7 @@ import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
 import Up from "@/assets/svgs/common/up.svg";
+import DateFilterModal from "@/components/common/inquiry/DateFilterModal";
 import StatusFilterModal from "@/components/common/inquiry/StatusFilterModal";
 import Pagination from "@/components/common/Pagination";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
@@ -23,6 +24,10 @@ type Props = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  dateFilter: { year: number; month: number }[];
+  setDateFilter: React.Dispatch<
+    React.SetStateAction<{ year: number; month: number }[]>
+  >;
 };
 
 const InquiryList = ({
@@ -32,6 +37,8 @@ const InquiryList = ({
   currentPage,
   totalPages,
   onPageChange,
+  dateFilter,
+  setDateFilter,
 }: Props) => {
   const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
     inquiries.reduce(
@@ -44,6 +51,10 @@ const InquiryList = ({
   );
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [clickedButton, setClickedButton] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const isFiltering = dateFilter.length > 0;
+
+  const [clickedDateButton, setClickedDateButton] = useState(false);
 
   const handleToggleScrap = (id: number) => {
     setScrapStates(prev => ({
@@ -52,6 +63,17 @@ const InquiryList = ({
     }));
   };
 
+  const filteredInquiries = inquiries.filter(item => {
+    const date = new Date(item.created_at);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    if (dateFilter.length === 0) return true;
+
+    return dateFilter.some(
+      filter => filter.year === year && filter.month === month
+    );
+  });
   return (
     <div>
       <div className="w-full bg-white rounded-b-[15px] rounded-tr-[15px]">
@@ -127,16 +149,54 @@ const InquiryList = ({
                 />
               )}
             </div>
-            <div className="px-4 flex items-center gap-2 w-[251px] whitespace-nowrap">
-              <Clock />
-              <span className="text-body1">문의 일시 (전체)</span>
-              <Down className="text-gray-50 cursor-pointer" />
+            <div className="relative">
+              <button
+                onMouseDown={() => setClickedDateButton(true)}
+                onClick={() => setIsDateModalOpen(prev => !prev)}
+                className={clsx(
+                  "px-4 flex items-center gap-2 whitespace-nowrap transition-colors w-[251px]",
+                  {
+                    "text-gray-80 text-body1-b": isDateModalOpen,
+                    "text-main text-body1-b": isFiltering && !isDateModalOpen,
+                    "text-gray-60 text-body1": !isFiltering && !isDateModalOpen,
+                  }
+                )}
+              >
+                <Clock
+                  className={clsx({
+                    "text-gray-80": isDateModalOpen,
+                    "text-main": isFiltering && !isDateModalOpen,
+                    "text-gray-40": !isFiltering && !isDateModalOpen,
+                  })}
+                />
+                <span>문의 일시 {isFiltering ? "(필터링 중)" : "(전체)"}</span>
+                {isDateModalOpen ? (
+                  <Up className="text-gray-80" />
+                ) : (
+                  <Down
+                    className={clsx({
+                      "text-main": isFiltering,
+                      "text-gray-50": !isFiltering,
+                    })}
+                  />
+                )}
+              </button>
+
+              {isDateModalOpen && (
+                <DateFilterModal
+                  selectedItems={dateFilter}
+                  onChange={newItems => setDateFilter(newItems)}
+                  onClose={() => setIsDateModalOpen(false)}
+                  clickedButton={clickedDateButton}
+                  setClickedButton={setClickedDateButton}
+                />
+              )}
             </div>
           </div>
         </div>
 
         {/* 리스트 */}
-        {inquiries.map(item => (
+        {filteredInquiries.map(item => (
           <li
             key={item.id}
             className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full"
