@@ -46,3 +46,5 @@ export interface InquiryListItem {
   created_at: string;
   is_scraped: boolean;
 }
+
+export type YearMonth = { year: number; month: number };

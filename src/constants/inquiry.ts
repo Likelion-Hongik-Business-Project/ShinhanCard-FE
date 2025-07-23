@@ -6,6 +6,11 @@ export const INQUIRY_STATUSES: InquiryStatus[] = [
   "답변 완료",
 ];
 
+export const INQUIRY_STATUSES_WITH_ALL: (InquiryStatus | "전체")[] = [
+  "전체",
+  ...INQUIRY_STATUSES,
+];
+
 export const INQUIRY_STATUS_STYLES: Record<
   string,
   { bg: string; text: string; dot: string }

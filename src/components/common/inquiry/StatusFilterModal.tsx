@@ -1,36 +1,33 @@
 import { useEffect, useRef } from "react";
 
-import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
-
-const STATUSES = ["전체", "확인 전", "확인 중", "답변 완료"];
+import {
+  INQUIRY_STATUS_STYLES,
+  INQUIRY_STATUSES_WITH_ALL,
+} from "@/constants/inquiry";
 
 type Props = {
   selectedStatus: string;
   onSelectStatus: (status: string) => void;
   onClose: () => void;
-  clickedButton: boolean;
-  setClickedButton: (value: boolean) => void;
+  triggerRef: React.RefObject<HTMLElement | null>;
 };
 
 const StatusFilterModal = ({
   selectedStatus,
   onSelectStatus,
   onClose,
-  clickedButton,
-  setClickedButton,
+  triggerRef,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // 모달 영역과 버튼 둘 다 아닌 경우에만 닫힘
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        if (clickedButton) {
-          setClickedButton(false); // 버튼 클릭으로 인한 이벤트면 무시
-          return;
-        }
+      const target = event.target as Node;
+      const isClickInsideModal = modalRef.current?.contains(target);
+      const isClickOnTrigger = triggerRef.current?.contains(target);
+
+      if (!isClickInsideModal && !isClickOnTrigger) {
         onClose();
       }
     };
@@ -39,14 +36,14 @@ const StatusFilterModal = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose, clickedButton]);
+  }, [onClose]);
 
   return (
     <div
       ref={modalRef}
       className="absolute mt-5 left-0 bg-white border border-gray-10 shadow-01 rounded-[5px] w-[146px] py-4 z-50"
     >
-      {STATUSES.map(status => {
+      {INQUIRY_STATUSES_WITH_ALL.map(status => {
         const isSelected = selectedStatus === status;
         const isAll = status === "전체";
         const style = INQUIRY_STATUS_STYLES[status];

@@ -4,33 +4,33 @@ import clsx from "clsx";
 
 import Left from "@/assets/svgs/common/left.svg";
 import Right from "@/assets/svgs/common/right.svg";
-
-export type YearMonth = { year: number; month: number };
+import { YearMonth } from "@/types/inquiry";
 
 type Props = {
   selectedItems: YearMonth[];
   onChange: (items: YearMonth[]) => void;
   onClose: () => void;
-  clickedButton: boolean;
-  setClickedButton: (value: boolean) => void;
+  triggerRef: React.RefObject<HTMLElement | null>;
 };
 
 const DateFilterModal = ({
   selectedItems: initialSelected,
   onChange,
   onClose,
-  clickedButton,
-  setClickedButton,
+  triggerRef,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [selectedItems, setSelectedItems] = useState<YearMonth[]>([
     ...initialSelected,
   ]);
+
+  // 오늘 기준 월 계산
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
 
+  // 월 선택 토글 함수
   const toggleMonth = (month: number) => {
     const exists = selectedItems.some(
       item => item.year === year && item.month === month
@@ -44,32 +44,31 @@ const DateFilterModal = ({
     }
   };
 
+  // 필터링 초기화 함수
   const handleReset = () => {
     setSelectedItems([]);
     onChange([]);
     onClose();
   };
 
-  const handleApply = () => {
-    onChange(selectedItems);
-    onClose();
-  };
-
+  // 모달 영역과 버튼 둘 다 아닌 경우에만 닫힘
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+
       if (
-        !clickedButton &&
         modalRef.current &&
-        !modalRef.current.contains(e.target as Node)
+        !modalRef.current.contains(target) &&
+        !(triggerRef.current && triggerRef.current.contains(target))
       ) {
-        handleApply();
+        onChange(selectedItems);
+        onClose();
       }
-      setClickedButton(false);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [clickedButton, selectedItems]);
+  }, [selectedItems, onClose, onChange, triggerRef]);
 
   return (
     <div
@@ -77,6 +76,7 @@ const DateFilterModal = ({
       className="absolute mt-[21px] right-0 z-10 w-[520px] px-12 py-10 bg-white shadow-01 rounded-[14px]"
     >
       <div className="flex justify-between items-center mb-6">
+        {/* 연도 */}
         <div className="flex gap-1 items-center">
           <Left
             className="w-6 h-6 cursor-pointer text-main"
@@ -90,6 +90,7 @@ const DateFilterModal = ({
             />
           )}
         </div>
+        {/* 초기화 버튼 */}
         <button
           onClick={handleReset}
           className="px-4 py-2 text-detail2 bg-gray-10 text-gray-60 border border-gray-40 rounded-[5px] cursor-pointer"
@@ -98,6 +99,7 @@ const DateFilterModal = ({
         </button>
       </div>
 
+      {/* 월 */}
       <div className="grid grid-cols-3 gap-x-5 gap-y-4">
         {Array.from({ length: 12 }, (_, i) => {
           const month = i + 1;

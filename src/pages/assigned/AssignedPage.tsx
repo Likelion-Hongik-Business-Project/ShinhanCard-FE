@@ -6,23 +6,32 @@ import TeamTabs from "@/components/common/inquiry/TeamTabs";
 import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
 
 const AssignedPage = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTeamId, setSelectedTeamId] = useState(
-    MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
-  );
-  const [selectedStatus, setSelectedStatus] = useState("전체");
-  const [dateFilter, setDateFilter] = useState<
-    { year: number; month: number }[]
-  >([]);
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  // 페이지네이션
   const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size;
   const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count;
   const totalPages = Math.ceil(totalInquiries / ITEMS_PER_PAGE);
 
+  // 팀/필터 관련 상태
+  const [selectedTeamId, setSelectedTeamId] = useState(
+    MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
+  );
+  const [selectedStatus, setSelectedStatus] = useState("전체");
+  const [selectedDate, setSelectedDate] = useState<
+    { year: number; month: number }[]
+  >([]);
+
+  // 모달 상태
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+
+  // 페이지네이션 상태
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 현재 페이지 문의 index
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
 
+  // 현재 페이지 문의들: 추후 API 호출 이후 제거
   const currentItems = MOCK_ASSIGNED_INQUIRY_RESPONSE.inquiries
     .slice(startIndex, endIndex)
     .map(item => ({
@@ -47,19 +56,22 @@ const AssignedPage = () => {
       ? currentItems
       : currentItems.filter(item => item.status === selectedStatus);
 
+  // 팀 선택 -> TeamTabs
+  const handleSelectTeam = (teamId: number) => {
+    setSelectedTeamId(teamId);
+    setCurrentPage(1);
+    setSelectedStatus("전체");
+    setSelectedDate([]);
+  };
+
+  // 페이지 변경
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  const handleSelectTeam = (teamId: number) => {
-    setSelectedTeamId(teamId);
-    setCurrentPage(1);
-    setSelectedStatus("전체");
-    setDateFilter([]);
-  };
-
+  // 모달 토글 & 둘 모달 중 하나만 열리게
   const toggleStatusModal = () => {
     setIsStatusModalOpen(prev => !prev);
     setIsDateModalOpen(false);
@@ -68,6 +80,11 @@ const AssignedPage = () => {
   const toggleDateModal = () => {
     setIsDateModalOpen(prev => !prev);
     setIsStatusModalOpen(false);
+  };
+
+  // 엑셀 다운로드 함수
+  const handleExport = () => {
+    alert("엑셀 다운로드 기능");
   };
 
   return (
@@ -93,7 +110,10 @@ const AssignedPage = () => {
                 있습니다.
               </p>
             </div>
-            <button className="self-end px-6 flex gap-4 items-center bg-white hover:bg-gray-20 active:bg-gray-20 transition-colors cursor-pointer border border-gray-20 rounded-[15px] h-16">
+            <button
+              onClick={handleExport}
+              className="self-end px-6 flex gap-4 items-center bg-white hover:bg-gray-20 active:bg-gray-20 transition-colors cursor-pointer border border-gray-20 rounded-[15px] h-16"
+            >
               <Upload />
               <span className="text-gray-80 text-heading3">Export</span>
             </button>
@@ -107,13 +127,13 @@ const AssignedPage = () => {
 
           <InquiryList
             inquiries={filteredInquiries}
-            selectedStatus={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
             isStatusModalOpen={isStatusModalOpen}
             setIsStatusModalOpen={setIsStatusModalOpen}
             isDateModalOpen={isDateModalOpen}
