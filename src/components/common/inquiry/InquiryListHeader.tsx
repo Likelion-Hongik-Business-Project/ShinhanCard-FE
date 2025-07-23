@@ -128,7 +128,7 @@ const InquiryListHeader = ({
                 "text-gray-40": !isFiltering && !isDateModalOpen,
               })}
             />
-            <span>문의 일시 {isFiltering ? "(필터링 중)" : "(전체)"}</span>
+            <span>문의 일시 {isFiltering ? "(필터링중)" : "(전체)"}</span>
             {isDateModalOpen ? (
               <Up className="text-gray-80" />
             ) : (
