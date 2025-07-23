@@ -8,12 +8,16 @@ type Props = {
   selectedStatus: string;
   onSelectStatus: (status: string) => void;
   onClose: () => void;
+  clickedButton: boolean;
+  setClickedButton: (value: boolean) => void;
 };
 
 const StatusFilterModal = ({
   selectedStatus,
   onSelectStatus,
   onClose,
+  clickedButton,
+  setClickedButton,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +27,10 @@ const StatusFilterModal = ({
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
+        if (clickedButton) {
+          setClickedButton(false); // 버튼 클릭으로 인한 이벤트면 무시
+          return;
+        }
         onClose();
       }
     };
@@ -31,7 +39,7 @@ const StatusFilterModal = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose]);
+  }, [onClose, clickedButton]);
 
   return (
     <div

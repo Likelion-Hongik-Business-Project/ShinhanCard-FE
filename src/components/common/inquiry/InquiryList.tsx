@@ -43,6 +43,7 @@ const InquiryList = ({
     )
   );
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [clickedButton, setClickedButton] = useState(false);
 
   const handleToggleScrap = (id: number) => {
     setScrapStates(prev => ({
@@ -67,6 +68,7 @@ const InquiryList = ({
             </div>
             <div className="relative">
               <button
+                onMouseDown={() => setClickedButton(true)}
                 onClick={() => setIsStatusModalOpen(prev => !prev)}
                 className={clsx(
                   "transition-colors cursor-pointer px-4 flex items-center gap-2 whitespace-nowrap",
@@ -120,6 +122,8 @@ const InquiryList = ({
                     setIsStatusModalOpen(false);
                   }}
                   onClose={() => setIsStatusModalOpen(false)}
+                  clickedButton={clickedButton}
+                  setClickedButton={setClickedButton}
                 />
               )}
             </div>
