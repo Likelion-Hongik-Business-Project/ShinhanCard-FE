@@ -28,3 +28,4 @@ export { default as BluePencil } from "./pencil-blue.svg";
 export { default as SkyPencil } from "./pencil-sky.svg";
 export { default as BlueStar } from "./star-blue.svg";
 export { default as SkyStar } from "./star-sky.svg";
+export { default as Upload } from "./upload.svg";
