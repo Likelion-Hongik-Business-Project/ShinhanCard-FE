@@ -27,6 +27,9 @@ const DateFilterModal = ({
   const [selectedItems, setSelectedItems] = useState<YearMonth[]>([
     ...initialSelected,
   ]);
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
 
   const toggleMonth = (month: number) => {
     const exists = selectedItems.some(
@@ -80,10 +83,12 @@ const DateFilterModal = ({
             onClick={() => setYear(year - 1)}
           />
           <span className="text-heading2-b text-main">{year}</span>
-          <Right
-            className="w-6 h-6 cursor-pointer text-main"
-            onClick={() => setYear(year + 1)}
-          />
+          {year < currentYear && (
+            <Right
+              className="w-6 h-6 cursor-pointer text-main"
+              onClick={() => setYear(year + 1)}
+            />
+          )}
         </div>
         <button
           onClick={handleReset}
@@ -96,9 +101,18 @@ const DateFilterModal = ({
       <div className="grid grid-cols-3 gap-x-5 gap-y-4">
         {Array.from({ length: 12 }, (_, i) => {
           const month = i + 1;
+
+          // 미래 월이면 렌더링 자체 X
+          const isFuture =
+            year > currentYear ||
+            (year === currentYear && month > currentMonth);
+
+          if (isFuture) return null;
+
           const isSelected = selectedItems.some(
             item => item.year === year && item.month === month
           );
+
           return (
             <button
               key={month}
