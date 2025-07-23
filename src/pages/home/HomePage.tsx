@@ -8,6 +8,9 @@ import homepageData from "@/mocks/home/homepageData.json";
 interface HomeData {
   id: number;
   name: string;
+  group_name: string;
+  division_name: string;
+  team_name: string;
   profile_image_url: string;
   answer_count: number;
   inquiry_count: number;
@@ -31,6 +34,9 @@ const HomePage = () => {
           answerCount={data.answer_count}
           inquiryCount={data.inquiry_count}
           interestCount={data.interest_count}
+          groupName={data.group_name}
+          divisionName={data.division_name}
+          teamName={data.team_name}
         />
       </div>
     </section>

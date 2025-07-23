@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   ActiveHeart,
   ActiveMessage,
   ActivePencil,
   Heart,
+  HoverPencilWrite,
   Message,
   Pencil,
 } from "@/assets/svgs/home";
@@ -33,6 +33,7 @@ export default function HomeMain({
   interestCount: number;
 }) {
   const [activeTab, setActiveTab] = useState("answer");
+  const [isHovered, setIsHovered] = useState(false);
   const [homeMember, setHomeMember] = useState<{
     interest_count: number;
     interest_member: InterestMember[];
@@ -109,9 +110,19 @@ export default function HomeMain({
           />
         </div>
 
-        <button className="flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 bg-main text-white rounded-[13px]">
-          <Pencil />
-          <p className="text-heading3 font-bold">문의 작성하기</p>
+        <button
+          className={`flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 rounded-[13px] transition-colors text-white
+            ${isHovered ? "bg-main-dark" : "bg-main"}
+              `}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {isHovered ? <HoverPencilWrite /> : <Pencil />}
+          <p
+            className={`text-heading3 ${isHovered ? "text-gray-30" : "text-white"}`}
+          >
+            문의 작성하기
+          </p>
         </button>
       </div>
 

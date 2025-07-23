@@ -1,3 +1,5 @@
+import { useOutletContext } from "react-router-dom";
+
 import AddMember from "@/components/Home/AddMember";
 import MemberCard from "@/components/Home/MemberCard";
 
@@ -17,11 +19,15 @@ export default function HomeMember({
   interestCount: number;
   interestMember: InterestMember[];
 }) {
+  const { openAddMemberSidebar } = useOutletContext<{
+    openAddMemberSidebar: () => void;
+  }>();
+
   return (
     <div className="w-full h-auto">
       {interestCount === 0 && (
         <div className="w-full h-80 flex items-center justify-center border border-dashed border-gray-300 rounded-[16px]">
-          <AddMember />
+          <AddMember onClick={openAddMemberSidebar} />
         </div>
       )}
       {interestCount === 1 && (
@@ -30,7 +36,7 @@ export default function HomeMember({
             <MemberCard member={interestMember[0]} />
           </div>
           <div className="flex-1 h-80 flex items-center justify-center">
-            <AddMember />
+            <AddMember onClick={openAddMemberSidebar} />
           </div>
         </div>
       )}
@@ -45,7 +51,7 @@ export default function HomeMember({
             </div>
           </div>
           <div className="w-full h-80 flex items-center justify-center">
-            <AddMember />
+            <AddMember onClick={openAddMemberSidebar} />
           </div>
         </div>
       )}
@@ -63,7 +69,7 @@ export default function HomeMember({
             </div>
           </div>
           <div className="w-full h-80 flex items-center justify-center">
-            <AddMember />
+            <AddMember onClick={openAddMemberSidebar} />
           </div>
         </div>
       )}
@@ -100,7 +106,7 @@ export default function HomeMember({
                   <MemberCard member={interestMember[idx++]} />
                 </div>
                 <div className="flex-[2] h-full flex items-center justify-center">
-                  <AddMember />
+                  <AddMember onClick={openAddMemberSidebar} />
                 </div>
               </div>
             );
@@ -114,7 +120,7 @@ export default function HomeMember({
                   <MemberCard member={interestMember[idx++]} />
                 </div>
                 <div className="flex-1 h-full flex items-center justify-center">
-                  <AddMember />
+                  <AddMember onClick={openAddMemberSidebar} />
                 </div>
               </div>
             );
@@ -124,7 +130,7 @@ export default function HomeMember({
                 key="last-row-0"
                 className="w-full h-80 flex items-center justify-center"
               >
-                <AddMember />
+                <AddMember onClick={openAddMemberSidebar} />
               </div>
             );
           }

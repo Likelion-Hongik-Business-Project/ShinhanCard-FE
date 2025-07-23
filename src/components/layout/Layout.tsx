@@ -2,15 +2,21 @@ import { useState } from "react";
 
 import { Outlet } from "react-router-dom";
 
+import AddMemberSidebar from "@/components/Home/AddMemberSidebar";
 import Header from "@/components/layout/Header";
 import SideBar from "@/components/layout/SideBar";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
 
   return (
     <div className="h-screen flex flex-col">
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <AddMemberSidebar
+        isOpen={isAddMemberSidebarOpen}
+        onClose={() => setIsAddMemberSidebarOpen(false)}
+      />
       <div className="flex flex-1">
         <SideBar isOpen={isSidebarOpen} />
         <main
@@ -21,7 +27,11 @@ const Layout = () => {
           }`}
         >
           <div className="w-full py-20 min-w-[1280px] max-w-[1580px] px-20">
-            <Outlet />
+            <Outlet
+              context={{
+                openAddMemberSidebar: () => setIsAddMemberSidebarOpen(true),
+              }}
+            />
           </div>
         </main>
       </div>
