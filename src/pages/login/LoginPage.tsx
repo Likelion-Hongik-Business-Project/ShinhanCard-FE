@@ -9,31 +9,50 @@ import "@/styles/globals.css";
 const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
-  const [errorType, setErrorType] = useState<"invalid" | "notfound" | "none">(
-    "none"
-  );
+  const [errorTypeID, setErrorTypeID] = useState<
+    "invalid" | "notfound" | "none"
+  >("none");
+  const [errorTypePw, seterrorTypePw] = useState<"none" | "invalid">("none");
+
+  const validAccounts = [
+    { id: "test@test.com", pw: "1234" },
+    { id: "admin@sh.com", pw: "admin123" },
+  ];
 
   // 사번(이메일) 형식 유효성 검사
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (employeeId.length === 0) {
-      setErrorType("none");
+      setErrorTypeID("none");
     } else if (!emailRegex.test(employeeId)) {
-      setErrorType("invalid");
+      setErrorTypeID("invalid");
     } else {
-      // 사내 DB 확인 (예시)
-      const knownIds = ["test@test.com", "admin@sh.com"]; // 예시 DB
-      if (!knownIds.includes(employeeId)) {
-        setErrorType("notfound");
-      } else {
-        setErrorType("none");
-      }
+      const matched = validAccounts.find(acc => acc.id === employeeId);
+      setErrorTypeID(matched ? "none" : "notfound");
     }
   }, [employeeId]);
 
-  // 2. 로그인 버튼 활성화 조건
+  // 로그인 버튼 활성화 조건
   const isLoginEnabled = employeeId.length > 0 && password.length > 0;
+
+  // 로그인 처리 함수
+  const handleLogin = () => {
+    const matched = validAccounts.find(acc => acc.id === employeeId);
+
+    if (!matched) {
+      setErrorTypeID("notfound");
+      seterrorTypePw("none");
+    } else if (matched.pw !== password) {
+      setErrorTypeID("none");
+      seterrorTypePw("invalid"); // 비밀번호 오류 라벨 뜨게 함
+    } else {
+      // 로그인 성공
+      console.log("로그인 성공!");
+      setErrorTypeID("none");
+      seterrorTypePw("none");
+    }
+  };
 
   return (
     <div className="w-full h-screen bg-gray-10 flex items-center justify-center">
@@ -51,9 +70,13 @@ const LoginPage = () => {
           <IDInputField
             value={employeeId}
             setValue={setEmployeeId}
-            errorType={errorType}
+            errorTypeID={errorTypeID}
           />
-          <PasswordInputField value={password} setValue={setPassword} />
+          <PasswordInputField
+            value={password}
+            setValue={setPassword}
+            errorTypePw={errorTypePw}
+          />
         </div>
 
         {/* 로그인 버튼 */}
@@ -61,6 +84,8 @@ const LoginPage = () => {
           className={`mt-[24px] w-full px-[16px] py-[12px] ${
             isLoginEnabled ? "bg-main" : "bg-gray-40"
           } text-gray-10 text-body2 rounded-[8px] outline-[1px] outline-gray-30 flex items-center justify-center`}
+          disabled={!isLoginEnabled}
+          onClick={handleLogin}
         >
           로그인
         </button>

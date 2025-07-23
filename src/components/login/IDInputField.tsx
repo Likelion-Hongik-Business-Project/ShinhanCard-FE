@@ -9,10 +9,10 @@ import "@/styles/globals.css";
 interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수
-  errorType?: "none" | "invalid" | "notfound"; // 오류 상태
+  errorTypeID?: "none" | "invalid" | "notfound"; // 오류 상태
 }
 
-const IDInputField = ({ value, setValue, errorType = "none" }: Props) => {
+const IDInputField = ({ value, setValue, errorTypeID = "none" }: Props) => {
   const [isFocused, setIsFocused] = useState(false); // 포커스(클릭, 입력중) 여부
   const [isHovered, setIsHovered] = useState(false); // 호버 여부
 
@@ -20,9 +20,9 @@ const IDInputField = ({ value, setValue, errorType = "none" }: Props) => {
 
   /* 현재 상태 */
   const status =
-    errorType === "invalid" // 잘못된 형식
+    errorTypeID === "invalid" // 잘못된 형식
       ? "error"
-      : errorType === "notfound" // 존재하지 않는 사번
+      : errorTypeID === "notfound" // 존재하지 않는 사번
         ? "notfound"
         : isFocused // 클릭, 입력중
           ? "typing"

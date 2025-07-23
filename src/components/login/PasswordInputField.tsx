@@ -9,9 +9,14 @@ import "@/styles/globals.css";
 interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수
+  errorTypePw?: "none" | "invalid"; // 오류 상태
 }
 
-const PasswordInputField = ({ value, setValue }: Props) => {
+const PasswordInputField = ({
+  value,
+  setValue,
+  errorTypePw = "none",
+}: Props) => {
   const [isFocused, setIsFocused] = useState(false); // 포커스 상태
   const [isHovered, setIsHovered] = useState(false); // 호버 상태
   const [visible, setVisible] = useState(false); // 비밀번호 보이기/숨기기
@@ -21,13 +26,25 @@ const PasswordInputField = ({ value, setValue }: Props) => {
   const hasText = value.length > 0;
 
   /* label을 띄우는 조건 -> 텍스트가 입력된 상태, 포커스 상태 */
-  const showLabel = isFocused || hasText;
+  const showLabel = isFocused || hasText || errorTypePw !== "none";
+
+  // 상태 계산
+  const status =
+    errorTypePw === "invalid"
+      ? "error"
+      : isFocused
+        ? "typing"
+        : hasText
+          ? "done"
+          : "default";
 
   /* border 색상 */
   const borderColor =
-    isFocused || isHovered
-      ? "var(--color-state-progress-02)"
-      : "var(--color-gray-30)";
+    status === "error"
+      ? "var(--color-point-red)"
+      : isFocused || isHovered
+        ? "var(--color-state-progress-02)"
+        : "var(--color-gray-30)";
 
   /* 그림자 효과 */
   const boxShadow = isFocused
@@ -82,7 +99,19 @@ const PasswordInputField = ({ value, setValue }: Props) => {
       <div className="w-full flex justify-between items-center">
         <div className={`flex flex-col ${showLabel ? "gap-[4px]" : ""} w-full`}>
           {showLabel && (
-            <label className="text-detail3 text-gray-40">Password</label>
+            <label
+              className="text-detail3"
+              style={{
+                color:
+                  status === "error"
+                    ? "var(--color-point-red)"
+                    : "var(--color-gray-40)",
+              }}
+            >
+              {status === "error"
+                ? "비밀번호가 올바르지 않습니다."
+                : "Password"}
+            </label>
           )}
           <input
             ref={inputRef}
