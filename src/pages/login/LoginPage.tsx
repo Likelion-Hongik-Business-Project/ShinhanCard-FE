@@ -5,6 +5,10 @@ import IDInputField from "@/components/login/IDInputField";
 import PasswordInputField from "@/components/login/PasswordInputField";
 
 import "@/styles/globals.css";
+import {
+  MOCK_LOGIN_FAILURE_RESPONSE,
+  MOCK_LOGIN_RESPONSE,
+} from "@/mocks/auth/mockLoginResponse";
 
 const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
@@ -37,18 +41,18 @@ const LoginPage = () => {
   const isLoginEnabled = employeeId.length > 0 && password.length > 0;
 
   // 로그인 처리 함수
-  const handleLogin = () => {
-    const matched = validAccounts.find(acc => acc.id === employeeId);
+  const handleLogin = async () => {
+    const res =
+      employeeId === "test@test.com" && password === "1234"
+        ? MOCK_LOGIN_RESPONSE
+        : MOCK_LOGIN_FAILURE_RESPONSE;
 
-    if (!matched) {
-      setErrorTypeID("notfound");
-      seterrorTypePw("none");
-    } else if (matched.pw !== password) {
+    if (!res.is_success) {
+      console.error("로그인 실패:", res.message);
       setErrorTypeID("none");
-      seterrorTypePw("invalid"); // 비밀번호 오류 라벨 뜨게 함
+      seterrorTypePw("invalid");
     } else {
-      // 로그인 성공
-      console.log("로그인 성공!");
+      console.log("로그인 성공:", res.result?.access_token);
       setErrorTypeID("none");
       seterrorTypePw("none");
     }
