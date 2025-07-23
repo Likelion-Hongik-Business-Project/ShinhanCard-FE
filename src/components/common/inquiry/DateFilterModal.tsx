@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
+import Left from "@/assets/svgs/common/left.svg";
+import Right from "@/assets/svgs/common/right.svg";
+
 export type YearMonth = { year: number; month: number };
 
 type Props = {
@@ -56,27 +59,41 @@ const DateFilterModal = ({
         modalRef.current &&
         !modalRef.current.contains(e.target as Node)
       ) {
-        onClose();
+        handleApply();
       }
       setClickedButton(false);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [clickedButton]);
+  }, [clickedButton, selectedItems]);
 
   return (
     <div
       ref={modalRef}
-      className="absolute top-14 right-0 z-10 w-[320px] p-6 bg-white shadow-md rounded-[20px] border border-gray-20"
+      className="absolute mt-[21px] right-0 z-10 w-[520px] px-12 py-10 bg-white shadow-01 rounded-[14px]"
     >
       <div className="flex justify-between items-center mb-6">
-        <button onClick={() => setYear(year - 1)}>&lt;</button>
-        <span className="text-heading2-b text-main">{year}</span>
-        <button onClick={() => setYear(year + 1)}>&gt;</button>
+        <div className="flex gap-1 items-center">
+          <Left
+            className="w-6 h-6 cursor-pointer text-main"
+            onClick={() => setYear(year - 1)}
+          />
+          <span className="text-heading2-b text-main">{year}</span>
+          <Right
+            className="w-6 h-6 cursor-pointer text-main"
+            onClick={() => setYear(year + 1)}
+          />
+        </div>
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 text-detail2 bg-gray-10 text-gray-60 border border-gray-40 rounded-[5px] cursor-pointer"
+        >
+          필터링 초기화
+        </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-x-5 gap-y-4">
         {Array.from({ length: 12 }, (_, i) => {
           const month = i + 1;
           const isSelected = selectedItems.some(
@@ -87,31 +104,16 @@ const DateFilterModal = ({
               key={month}
               onClick={() => toggleMonth(month)}
               className={clsx(
-                "h-12 rounded-[10px] border",
+                "h-12 rounded-[8px] border w-32 bg-white cursor-pointer",
                 isSelected
-                  ? "text-main border-main font-bold"
-                  : "text-gray-40 border-gray-40"
+                  ? "text-main border-main text-body2-b"
+                  : "text-gray-60 border-gray-60 text-body2"
               )}
             >
               {month}월
             </button>
           );
         })}
-      </div>
-
-      <div className="flex justify-between">
-        <button
-          onClick={handleReset}
-          className="px-4 py-2 text-body1 text-gray-40 border border-gray-40 rounded-[10px]"
-        >
-          필터링 초기화
-        </button>
-        <button
-          onClick={handleApply}
-          className="px-4 py-2 text-body1 text-main border border-main rounded-[10px]"
-        >
-          적용
-        </button>
       </div>
     </div>
   );

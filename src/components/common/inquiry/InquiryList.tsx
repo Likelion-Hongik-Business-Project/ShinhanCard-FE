@@ -80,14 +80,19 @@ const InquiryList = ({
         {/* 헤더 */}
         <div className="h-16 flex text-gray-60 items-center">
           <div className="flex w-full">
+            {/* 작성자 */}
             <div className="ml-20 px-4 flex items-center gap-2 w-40 whitespace-nowrap">
               <User />
               <span className="text-body1">작성자</span>
             </div>
+
+            {/* 문의 제목 */}
             <div className="px-4 flex flex-1 items-center gap-2 min-w-[468px] whitespace-nowrap">
               <Hash />
               <span className="text-body1">문의 제목</span>
             </div>
+
+            {/* 문의 상태 */}
             <div className="relative">
               <button
                 onMouseDown={() => setClickedButton(true)}
@@ -149,12 +154,14 @@ const InquiryList = ({
                 />
               )}
             </div>
+
+            {/* 문의 일시 */}
             <div className="relative">
               <button
                 onMouseDown={() => setClickedDateButton(true)}
                 onClick={() => setIsDateModalOpen(prev => !prev)}
                 className={clsx(
-                  "px-4 flex items-center gap-2 whitespace-nowrap transition-colors w-[251px]",
+                  "px-4 cursor-pointer flex items-center gap-2 whitespace-nowrap transition-colors w-[251px]",
                   {
                     "text-gray-80 text-body1-b": isDateModalOpen,
                     "text-main text-body1-b": isFiltering && !isDateModalOpen,
