@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
@@ -12,8 +14,13 @@ type Props = {
 };
 
 const InquiryListItem = ({ item, isScraped, onToggleScrap }: Props) => {
+  const navigate = useNavigate();
+
   return (
-    <li className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
+    <li
+      onClick={() => navigate(`/inquiries/${item.id}`)}
+      className="cursor-pointer h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full"
+    >
       <button
         className="px-4 w-20 flex items-center justify-center"
         onClick={() => onToggleScrap(item.id)}
