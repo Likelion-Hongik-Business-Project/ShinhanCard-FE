@@ -28,6 +28,12 @@ type Props = {
   setDateFilter: React.Dispatch<
     React.SetStateAction<{ year: number; month: number }[]>
   >;
+  isStatusModalOpen: boolean;
+  setIsStatusModalOpen: (open: boolean) => void;
+  isDateModalOpen: boolean;
+  setIsDateModalOpen: (open: boolean) => void;
+  toggleStatusModal: () => void;
+  toggleDateModal: () => void;
 };
 
 const InquiryList = ({
@@ -39,6 +45,12 @@ const InquiryList = ({
   onPageChange,
   dateFilter,
   setDateFilter,
+  isStatusModalOpen,
+  setIsStatusModalOpen,
+  isDateModalOpen,
+  setIsDateModalOpen,
+  toggleStatusModal,
+  toggleDateModal,
 }: Props) => {
   const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
     inquiries.reduce(
@@ -49,9 +61,7 @@ const InquiryList = ({
       {} as Record<number, boolean>
     )
   );
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [clickedButton, setClickedButton] = useState(false);
-  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const isFiltering = dateFilter.length > 0;
 
   const [clickedDateButton, setClickedDateButton] = useState(false);
@@ -96,17 +106,13 @@ const InquiryList = ({
             <div className="relative">
               <button
                 onMouseDown={() => setClickedButton(true)}
-                onClick={() => setIsStatusModalOpen(prev => !prev)}
+                onClick={toggleStatusModal}
                 className={clsx(
                   "transition-colors cursor-pointer px-4 flex items-center gap-2 whitespace-nowrap",
                   {
                     "text-gray-80 text-body1-b": isStatusModalOpen,
-                    "text-main text-body1-b":
-                      selectedStatus === "확인 중" && !isStatusModalOpen,
                     [`${INQUIRY_STATUS_STYLES[selectedStatus]?.text} text-body1-b`]:
-                      selectedStatus !== "전체" &&
-                      selectedStatus !== "확인 중" &&
-                      !isStatusModalOpen,
+                      selectedStatus !== "전체" && !isStatusModalOpen,
                     "text-gray-60 text-body1":
                       selectedStatus === "전체" && !isStatusModalOpen,
                   }
@@ -115,12 +121,8 @@ const InquiryList = ({
                 <Loader
                   className={clsx({
                     "text-gray-80": isStatusModalOpen,
-                    "text-main":
-                      selectedStatus === "확인 중" && !isStatusModalOpen,
                     [INQUIRY_STATUS_STYLES[selectedStatus]?.text]:
-                      selectedStatus !== "전체" &&
-                      selectedStatus !== "확인 중" &&
-                      !isStatusModalOpen,
+                      selectedStatus !== "전체" && !isStatusModalOpen,
                     "text-gray-40":
                       selectedStatus === "전체" && !isStatusModalOpen,
                   })}
@@ -131,10 +133,8 @@ const InquiryList = ({
                 ) : (
                   <Down
                     className={clsx({
-                      "text-main": selectedStatus === "확인 중",
                       [INQUIRY_STATUS_STYLES[selectedStatus]?.text]:
-                        selectedStatus !== "전체" &&
-                        selectedStatus !== "확인 중",
+                        selectedStatus !== "전체",
                       "text-gray-50": selectedStatus === "전체",
                     })}
                   />
@@ -159,7 +159,7 @@ const InquiryList = ({
             <div className="relative">
               <button
                 onMouseDown={() => setClickedDateButton(true)}
-                onClick={() => setIsDateModalOpen(prev => !prev)}
+                onClick={toggleDateModal}
                 className={clsx(
                   "px-4 cursor-pointer flex items-center gap-2 whitespace-nowrap transition-colors w-[251px]",
                   {

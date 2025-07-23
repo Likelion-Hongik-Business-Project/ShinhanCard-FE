@@ -14,6 +14,8 @@ const AssignedPage = () => {
   const [dateFilter, setDateFilter] = useState<
     { year: number; month: number }[]
   >([]);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size;
   const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count;
   const totalPages = Math.ceil(totalInquiries / ITEMS_PER_PAGE);
@@ -56,6 +58,16 @@ const AssignedPage = () => {
     setCurrentPage(1);
     setSelectedStatus("전체");
     setDateFilter([]);
+  };
+
+  const toggleStatusModal = () => {
+    setIsStatusModalOpen(prev => !prev);
+    setIsDateModalOpen(false);
+  };
+
+  const toggleDateModal = () => {
+    setIsDateModalOpen(prev => !prev);
+    setIsStatusModalOpen(false);
   };
 
   return (
@@ -102,6 +114,12 @@ const AssignedPage = () => {
             onPageChange={handlePageChange}
             dateFilter={dateFilter}
             setDateFilter={setDateFilter}
+            isStatusModalOpen={isStatusModalOpen}
+            setIsStatusModalOpen={setIsStatusModalOpen}
+            isDateModalOpen={isDateModalOpen}
+            setIsDateModalOpen={setIsDateModalOpen}
+            toggleStatusModal={toggleStatusModal}
+            toggleDateModal={toggleDateModal}
           />
         </>
       )}
