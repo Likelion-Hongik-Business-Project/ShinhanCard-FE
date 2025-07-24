@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 
-import AddMember from "@/components/Home/AddMember";
-import MemberCard from "@/components/Home/MemberCard";
+import AddMember from "@/components/home/AddMember";
+import MemberCard from "@/components/home/MemberCard";
 
 type InterestMember = {
   name: string;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import HomeMain from "@/components/Home/HomeMain";
-import HomeProfile from "@/components/Home/HomeProfile";
+import HomeMain from "@/components/home/HomeMain";
+import HomeProfile from "@/components/home/HomeProfile";
 
 import homepageData from "@/mocks/home/homepageData.json";
 

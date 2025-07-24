@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Heart } from "@/assets/svgs/commons";
 import { Message, Pencil } from "@/assets/svgs/layout";
-import HomeMember from "@/components/Home/HomeMember";
+import HomeMember from "@/components/home/HomeMember";
 
 const buttonStyle =
   "w-full min-w-64 max-w-80 px-10 py-7.75 border-2 rounded-[13px] flex flex-col justify-center items-start";
