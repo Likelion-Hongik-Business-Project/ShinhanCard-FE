@@ -105,7 +105,7 @@ export default function HomeMember({
                 <div className="flex-1 h-full flex items-center justify-center">
                   <MemberCard member={interestMember[idx++]} />
                 </div>
-                <div className="flex-[2] h-full flex items-center justify-center">
+                <div className="flex-[2.052] h-full flex items-center justify-center">
                   <AddMember onClick={openAddMemberSidebar} />
                 </div>
               </div>

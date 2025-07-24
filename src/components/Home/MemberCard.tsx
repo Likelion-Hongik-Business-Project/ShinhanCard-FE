@@ -1,4 +1,5 @@
-import { FilledHeart, User } from "@/assets/svgs/home";
+import { FilledHeart } from "@/assets/svgs/commons";
+import { User } from "@/assets/svgs/home";
 
 type InterestMember = {
   name: string;

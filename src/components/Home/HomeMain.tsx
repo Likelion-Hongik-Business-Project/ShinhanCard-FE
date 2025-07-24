@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 
-import {
-  ActiveHeart,
-  ActiveMessage,
-  ActivePencil,
-  Heart,
-  HoverPencilWrite,
-  Message,
-  Pencil,
-} from "@/assets/svgs/home";
+import { Heart } from "@/assets/svgs/commons";
+import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeMember from "@/components/Home/HomeMember";
 
 const buttonStyle =
@@ -51,14 +44,12 @@ export default function HomeMain({
     type,
     count,
     label,
-    DefaultIcon,
-    ActiveIcon,
+    icon: Icon,
   }: {
     type: string;
     count: number;
     label: string;
-    DefaultIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    ActiveIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   }) => {
     const isActive = activeTab === type;
     return (
@@ -77,7 +68,11 @@ export default function HomeMain({
               {label}
             </p>
           </div>
-          {isActive ? <ActiveIcon /> : <DefaultIcon />}
+          <Icon
+            className={
+              isActive ? "text-main w-10 h-10" : "text-main-bright w-10 h-10"
+            }
+          />
         </div>
       </button>
     );
@@ -91,33 +86,34 @@ export default function HomeMain({
             type="answer"
             count={answerCount}
             label="미확인 답변"
-            DefaultIcon={Pencil}
-            ActiveIcon={ActivePencil}
+            icon={Pencil}
           />
           <Button
             type="inquiry"
             count={inquiryCount}
             label="미확인 문의"
-            DefaultIcon={Message}
-            ActiveIcon={ActiveMessage}
+            icon={Message}
           />
           <Button
             type="interest"
             count={interestCount}
             label="관심 팀원"
-            DefaultIcon={Heart}
-            ActiveIcon={ActiveHeart}
+            icon={Heart}
           />
         </div>
 
         <button
-          className={`flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 rounded-[13px] transition-colors text-white
+          className={`flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 rounded-[13px] transition-colors
             ${isHovered ? "bg-main-dark" : "bg-main"}
               `}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {isHovered ? <HoverPencilWrite /> : <Pencil />}
+          <Pencil
+            className={
+              isHovered ? "text-gray-30 w-10 h-10" : "text-white w-10 h-10"
+            }
+          />
           <p
             className={`text-heading3 ${isHovered ? "text-gray-30" : "text-white"}`}
           >
