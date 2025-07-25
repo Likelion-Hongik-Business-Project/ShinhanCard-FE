@@ -4,8 +4,6 @@ import XMarkGrayIcon from "@/assets/svgs/login/XMarkIcon_Gray.svg";
 import XMarkRedIcon from "@/assets/svgs/login/XMarkIcon_Red.svg";
 import XMarkYellowIcon from "@/assets/svgs/login/XMarkIcon_Yellow.svg";
 
-import "@/styles/globals.css";
-
 interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수

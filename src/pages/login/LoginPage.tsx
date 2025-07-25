@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 
-import logo from "@/assets/svgs/login/shinhanLogo_cut.png";
+import Logo from "@/assets/svgs/login/shinhanLogo_cut.svg";
 import IDInputField from "@/components/login/IDInputField";
 import PasswordInputField from "@/components/login/PasswordInputField";
-
-import "@/styles/globals.css";
-import {
-  MOCK_LOGIN_FAILURE_RESPONSE,
-  MOCK_LOGIN_RESPONSE,
-} from "@/mocks/auth/mockLoginResponse";
 
 const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
@@ -42,17 +36,16 @@ const LoginPage = () => {
 
   // 로그인 처리 함수
   const handleLogin = async () => {
-    const res =
-      employeeId === "test@test.com" && password === "1234"
-        ? MOCK_LOGIN_RESPONSE
-        : MOCK_LOGIN_FAILURE_RESPONSE;
+    const matched = validAccounts.find(
+      acc => acc.id === employeeId && acc.pw === password
+    );
 
-    if (!res.is_success) {
-      console.error("로그인 실패:", res.message);
+    if (!matched) {
+      console.error("로그인 실패: 잘못된 ID 또는 PW");
       setErrorTypeID("none");
       seterrorTypePw("invalid");
     } else {
-      console.log("로그인 성공:", res.result?.access_token);
+      console.log("로그인 성공");
       setErrorTypeID("none");
       seterrorTypePw("none");
     }
@@ -63,11 +56,7 @@ const LoginPage = () => {
       {/* 전체 wrapper: 360x475 */}
       <div className="w-[360px] h-[475px] flex flex-col items-center">
         {/* 로고 */}
-        <img
-          src={logo}
-          alt="Shinhan Logo"
-          className="w-[170.72864px] h-[151px]"
-        />
+        <Logo className="w-[171px] h-[151px]" />
 
         {/* 입력폼 영역 */}
         <div className="mt-[120px] w-full flex flex-col gap-[16px]">

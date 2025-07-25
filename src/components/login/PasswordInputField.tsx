@@ -4,8 +4,6 @@ import EyeIcon from "@/assets/svgs/login/EyeIcon.svg";
 import EyeOffIcon from "@/assets/svgs/login/EyeOffIcon.svg";
 import XMarkGrayIcon from "@/assets/svgs/login/XMarkIcon_Gray.svg";
 
-import "@/styles/globals.css";
-
 interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수
