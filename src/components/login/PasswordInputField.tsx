@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
+import clsx from "clsx";
+
 import EyeIcon from "@/assets/svgs/login/EyeIcon.svg";
 import EyeOffIcon from "@/assets/svgs/login/EyeOffIcon.svg";
 import XMarkGrayIcon from "@/assets/svgs/login/XMarkIcon_Gray.svg";
+import {
+  BORDER_COLOR_MAP,
+  InputStatus,
+  LABEL_COLOR_MAP,
+  PW_LABEL_TEXT,
+} from "@/constants/login";
 
 interface Props {
   value: string; // 입력값
@@ -27,27 +35,34 @@ const PasswordInputField = ({
   const showLabel = isFocused || hasText || errorTypePw !== "none";
 
   // 상태 계산
-  const status =
-    errorTypePw === "invalid"
-      ? "error"
-      : isFocused
-        ? "typing"
-        : hasText
-          ? "done"
-          : "default";
+  let status: InputStatus;
 
-  /* border 색상 */
-  const borderColor =
-    status === "error"
-      ? "var(--color-point-red)"
-      : isFocused || isHovered
-        ? "var(--color-state-progress-02)"
-        : "var(--color-gray-30)";
+  if (errorTypePw === "invalid") {
+    status = "error";
+  } else if (isFocused) {
+    status = "typing";
+  } else if (hasText) {
+    status = "done";
+  } else {
+    status = "default";
+  }
 
-  /* 그림자 효과 */
-  const boxShadow = isFocused
-    ? "0px 0px 0px 2px rgba(116, 127, 210, 0.25)"
-    : "none";
+  let actualStatus: InputStatus = status;
+  if (status === "done" && isHovered) {
+    actualStatus = "typing";
+  }
+
+  let borderColorClass = BORDER_COLOR_MAP[actualStatus];
+  // 호버 시 파란색 border 적용
+  if ((status === "done" || status === "default") && isHovered) {
+    borderColorClass = BORDER_COLOR_MAP["typing"];
+  }
+
+  const labelColorClass = LABEL_COLOR_MAP[actualStatus];
+  const labelText = PW_LABEL_TEXT[status] ?? "Password";
+
+  /* 그림자 효과 - 포커스 상태일 때만 적용 */
+  const showShadow = actualStatus === "typing" && !isHovered;
 
   const handleChange = (text: string) => setValue(text);
 
@@ -80,16 +95,15 @@ const PasswordInputField = ({
 
   return (
     <div
-      className="w-full bg-white rounded-[8px] outline-[1px] outline-offset-[-1px] transition-all"
-      style={{
-        outlineColor: borderColor,
-        boxShadow: boxShadow,
-        padding: showLabel ? "8px 16px" : "16px",
-        height: "58px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
+      className={clsx(
+        "w-full bg-white rounded-[8px] outline-1 outline-offset-[-1px] transition-all flex flex-col justify-center h-[58px]",
+        {
+          "px-[16px] py-[8px]": showLabel,
+          "p-[16px]": !showLabel,
+          [borderColorClass]: true,
+          "shadow-[0px_0px_0px_2px_rgba(116,127,210,0.25)]": showShadow,
+        }
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => inputRef.current?.focus()}
@@ -97,18 +111,8 @@ const PasswordInputField = ({
       <div className="w-full flex justify-between items-center">
         <div className={`flex flex-col ${showLabel ? "gap-[4px]" : ""} w-full`}>
           {showLabel && (
-            <label
-              className="text-detail3"
-              style={{
-                color:
-                  status === "error"
-                    ? "var(--color-point-red)"
-                    : "var(--color-gray-40)",
-              }}
-            >
-              {status === "error"
-                ? "비밀번호가 올바르지 않습니다."
-                : "Password"}
+            <label className={clsx("text-detail3", labelColorClass)}>
+              {labelText}
             </label>
           )}
           <input
@@ -119,6 +123,7 @@ const PasswordInputField = ({
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder={!showLabel ? "Password" : ""}
+            autoComplete="current-password"
             className={`
               w-full bg-transparent focus:outline-none
               text-body2

@@ -53,13 +53,12 @@ const LoginPage = () => {
 
   return (
     <div className="w-full h-screen bg-gray-10 flex items-center justify-center">
-      {/* 전체 wrapper: 360x475 */}
       <div className="w-[360px] h-[475px] flex flex-col items-center">
         {/* 로고 */}
         <Logo className="w-[171px] h-[151px]" />
 
         {/* 입력폼 영역 */}
-        <div className="mt-[120px] w-full flex flex-col gap-[16px]">
+        <form className="mt-[120px] w-full flex flex-col gap-[16px]">
           <IDInputField
             value={employeeId}
             setValue={setEmployeeId}
@@ -70,12 +69,12 @@ const LoginPage = () => {
             setValue={setPassword}
             errorTypePw={errorTypePw}
           />
-        </div>
+        </form>
 
         {/* 로그인 버튼 */}
         <button
           className={`mt-[24px] w-full px-[16px] py-[12px] ${
-            isLoginEnabled ? "bg-main" : "bg-gray-40"
+            isLoginEnabled ? "bg-main cursor-pointer" : "bg-gray-40"
           } text-gray-10 text-body2 rounded-[8px] outline-[1px] outline-gray-30 flex items-center justify-center`}
           disabled={!isLoginEnabled}
           onClick={handleLogin}
