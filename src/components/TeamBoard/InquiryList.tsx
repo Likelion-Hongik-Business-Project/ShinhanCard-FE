@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import InquiryItem from "@/components/TeamBoard/InquiryItem";
 import { Inquiry } from "@/types/teamBoard";
@@ -16,6 +16,15 @@ const InquiryList = ({
   team_name,
   inquiries,
 }: Props) => {
+  // 하나의 문의글만 토글
+  const [openId, setOpenId] = useState<number | null>(null);
+
+  // 문의 글 토글
+  const handleToggleOpen = (id: number) => {
+    setOpenId(prev => (prev === id ? null : id));
+  };
+
+  // 스크랩
   const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
     inquiries.reduce(
       (acc, item) => {
@@ -26,6 +35,7 @@ const InquiryList = ({
     )
   );
 
+  // 스크랩 토글
   const handleToggleScrap = (id: number) => {
     setScrapStates(prev => ({
       ...prev,
@@ -33,33 +43,8 @@ const InquiryList = ({
     }));
   };
 
-  const listRef = useRef<HTMLUListElement>(null);
-
-  useEffect(() => {
-    const detailsList =
-      listRef.current?.querySelectorAll<HTMLDetailsElement>("details");
-
-    const handleToggle = (e: Event) => {
-      const current = e.target as HTMLDetailsElement;
-      if (current.open) {
-        detailsList?.forEach(detail => {
-          if (detail !== current) detail.open = false;
-        });
-      }
-    };
-
-    detailsList?.forEach(detail =>
-      detail.addEventListener("toggle", handleToggle)
-    );
-    return () => {
-      detailsList?.forEach(detail =>
-        detail.removeEventListener("toggle", handleToggle)
-      );
-    };
-  }, []);
-
   return (
-    <ul ref={listRef} className="flex-1 divide-y divide-gray-10 overflow-auto">
+    <ul className="flex-1 divide-y divide-gray-10 overflow-auto">
       {inquiries.map(inq => (
         <InquiryItem
           key={inq.inquiry_id}
@@ -67,6 +52,8 @@ const InquiryList = ({
           division_name={division_name}
           team_name={team_name}
           inquiry={inq}
+          isOpen={openId === inq.inquiry_id}
+          onToggleOpen={handleToggleOpen}
           isScraped={!!scrapStates[inq.inquiry_id]}
           onToggleScrap={handleToggleScrap}
         />
