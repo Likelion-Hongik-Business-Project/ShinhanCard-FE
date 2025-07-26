@@ -1,6 +1,7 @@
+import { useEffect, useRef, useState } from "react";
+
 import InquiryItem from "@/components/TeamBoard/InquiryItem";
 import { Inquiry } from "@/types/teamBoard";
-import { useEffect, useRef, useState } from "react";
 
 interface Props {
   group_name: string;
@@ -9,7 +10,12 @@ interface Props {
   inquiries: Inquiry[];
 }
 
-const InquiryList = ({ group_name, division_name, team_name, inquiries }: Props) => {
+const InquiryList = ({
+  group_name,
+  division_name,
+  team_name,
+  inquiries,
+}: Props) => {
   const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
     inquiries.reduce(
       (acc, item) => {
@@ -30,26 +36,31 @@ const InquiryList = ({ group_name, division_name, team_name, inquiries }: Props)
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    const detailsList = listRef.current?.querySelectorAll<HTMLDetailsElement>("details");
+    const detailsList =
+      listRef.current?.querySelectorAll<HTMLDetailsElement>("details");
 
     const handleToggle = (e: Event) => {
       const current = e.target as HTMLDetailsElement;
       if (current.open) {
-        detailsList?.forEach((detail) => {
+        detailsList?.forEach(detail => {
           if (detail !== current) detail.open = false;
         });
       }
     };
 
-    detailsList?.forEach((detail) => detail.addEventListener("toggle", handleToggle));
+    detailsList?.forEach(detail =>
+      detail.addEventListener("toggle", handleToggle)
+    );
     return () => {
-      detailsList?.forEach((detail) => detail.removeEventListener("toggle", handleToggle));
+      detailsList?.forEach(detail =>
+        detail.removeEventListener("toggle", handleToggle)
+      );
     };
   }, []);
 
   return (
     <ul ref={listRef} className="flex-1 divide-y divide-gray-10 overflow-auto">
-      {inquiries.map((inq) => (
+      {inquiries.map(inq => (
         <InquiryItem
           key={inq.inquiry_id}
           group_name={group_name}

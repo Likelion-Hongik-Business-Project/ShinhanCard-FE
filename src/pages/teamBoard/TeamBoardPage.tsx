@@ -1,9 +1,11 @@
+import { useState } from "react";
+
 import FilterBar from "@/components/TeamBoard/FilterBar";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import Pagination from "@/components/TeamBoard/Pagination";
+
 import { mockTeamBoardResponse } from "@/mocks/mockTeamBoardResponse";
-import { useState } from "react";
 
 const TeamBoardPage = () => {
   const [isTeamEnd] = useState<boolean>(false);
@@ -20,7 +22,7 @@ const TeamBoardPage = () => {
 
         <div className="bg-white rounded-[15px] flex flex-col max-h-[630px] overflow-auto">
           <FilterBar />
-          <InquiryList 
+          <InquiryList
             group_name={mockTeamBoardResponse.group_name}
             division_name={mockTeamBoardResponse.division_name}
             team_name={mockTeamBoardResponse.team_name}

@@ -7,4 +7,3 @@ export { default as Pen } from "./pen.svg";
 export { default as Star } from "./star.svg";
 export { default as Upload } from "./upload.svg";
 export { default as Users } from "./users.svg";
-

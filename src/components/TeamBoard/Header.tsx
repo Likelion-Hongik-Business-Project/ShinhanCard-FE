@@ -7,7 +7,12 @@ interface HeaderProps {
   isTeamEnd: boolean;
 }
 
-const Header = ({ group_name, division_name, team_name, isTeamEnd }: HeaderProps) => {
+const Header = ({
+  group_name,
+  division_name,
+  team_name,
+  isTeamEnd,
+}: HeaderProps) => {
   return (
     <div className="flex justify-between items-end">
       <div className="flex flex-col gap-4">
@@ -19,9 +24,13 @@ const Header = ({ group_name, division_name, team_name, isTeamEnd }: HeaderProps
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h1 className={`text-heading1 ${
+          <h1
+            className={`text-heading1 ${
               isTeamEnd ? "text-gray-50" : "text-gray-80"
-            }`}>{team_name}</h1>
+            }`}
+          >
+            {team_name}
+          </h1>
           <Users className="w-8 h-8 text-gray-40" />
         </div>
       </div>
