@@ -1,39 +1,30 @@
-import { useState } from "react";
-
 import FilterBar from "@/components/TeamBoard/FilterBar";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import Pagination from "@/components/TeamBoard/Pagination";
-
 import { mockTeamBoardResponse } from "@/mocks/mockTeamBoardResponse";
+import { useState } from "react";
 
 const TeamBoardPage = () => {
-  const [isItemExpandedMap, setIsItemExpandedMap] = useState<
-    Record<number, boolean>
-  >({});
-
-  const handleToggleItem = (idx: number): void => {
-    setIsItemExpandedMap(prev => ({
-      ...prev,
-      [idx]: !prev[idx],
-    }));
-  };
+  const [isTeamEnd] = useState<boolean>(false);
 
   return (
-    <section className="w-full h-[835px]">
-      <div className="max-w-[1420px] mx-auto font-sans flex flex-col gap-10">
+    <section className="w-full max-w-[1420px] h-[835px] flex flex-col">
+      <div className="w-full mx-auto flex flex-col gap-10">
         <Header
           group_name={mockTeamBoardResponse.group_name}
           division_name={mockTeamBoardResponse.division_name}
           team_name={mockTeamBoardResponse.team_name}
+          isTeamEnd={isTeamEnd}
         />
 
-        <div className="bg-white rounded-2xl">
+        <div className="bg-white rounded-[15px] flex flex-col max-h-[630px] overflow-auto">
           <FilterBar />
-          <InquiryList
+          <InquiryList 
+            group_name={mockTeamBoardResponse.group_name}
+            division_name={mockTeamBoardResponse.division_name}
+            team_name={mockTeamBoardResponse.team_name}
             inquiries={mockTeamBoardResponse.inquiries}
-            isItemExpandedMap={isItemExpandedMap}
-            onToggleItem={handleToggleItem}
           />
         </div>
 
