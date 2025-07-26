@@ -2,57 +2,38 @@ import React from "react";
 
 export type ButtonType =
   | "default"
-  | "active"
+  | "white"
+  | "green"
+  | "blue"
   | "done"
-  | "ghost"
-  | "heart"
-  | "export"
-  | "none"; // 커스텀용 타입
-
-export type ButtonColor = "blue" | "green" | "gray" | "white";
+  | "none";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  type?: ButtonType;
-  color?: ButtonColor;
+  buttonType?: ButtonType;
   className?: string;
 }
 
 const baseStyle =
-  "flex justify-center items-center gap-4 font-medium px-6 h-16 cursor-pointer rounded-[15px]";
+  "flex justify-center items-center gap-4 text-heading3 px-6 h-16 cursor-pointer rounded-[15px]";
 
 const typeStyles: Record<ButtonType, string> = {
-  default: "border border-border-gray-20 bg-white",
-  active: "bg-main text-white",
-  done: "bg-done text-white",
-  ghost: "border border-gray-30 bg-transparent text-gray-50",
-  heart: "border border-gray-30 bg-white hover:bg-gray-20",
-  export: "border border-gray-20 bg-white",
+  default: "border border-gray-20 bg-white hover:bg-gray-20",
+  white: "border border-gray-30 bg-white hover:bg-gray-20",
+  done: "border-gray-40 border bg-gray-20 text-gray-80",
+  green: "bg-state-done-03 text-white hover:text-gray-30",
+  blue: "bg-main text-white hover:bg-main-dark hover:text-gray-30",
   none: "",
-};
-
-const colorStyles: Partial<Record<ButtonColor, string>> = {
-  blue: "text-main",
-  green: "text-done",
-  gray: "text-gray-50",
-  white: "text-white",
 };
 
 const Button = ({
   children,
-  type = "default",
-  color,
+  buttonType = "default",
   className = "",
   ...props
 }: ButtonProps) => {
-  const styleArray = [
-    baseStyle,
-    typeStyles[type],
-    color && colorStyles[color],
-    className,
-  ];
-
+  const styleArray = [baseStyle, typeStyles[buttonType], className];
   const combinedClassName = styleArray.filter(Boolean).join(" ");
 
   return (

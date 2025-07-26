@@ -16,39 +16,24 @@ const UserSpacePage = () => {
   const getTabClass = (tabKey: string) =>
     [
       activeTab === tabKey
-        ? "bg-state-progress-01 border-2 border-main"
+        ? "bg-state-progress-01 border-[2px] border-main"
         : "bg-white border border-gray-20",
-      "flex flex-col justify-center items-center gap-4 rounded-[13px] px-8 py-6",
-      "w-full sm:w-[calc((100%-2rem)/3)] max-w-[463px] h-[160px]",
+      "flex flex-col justify-center items-center gap-4 rounded-[13px] px-10 w-full max-w-[463px] h-[160px]",
     ].join(" ");
 
   return (
-    <section
-      className="w-full overflow-x-auto"
-      style={{
-        maxWidth: "1420px",
-        paddingLeft: "80px",
-        paddingRight: "80px",
-        margin: "0 auto",
-      }}
-    >
-      <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 w-full">
-        <div
-          className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full overflow-hidden relative shrink-0"
-          style={{
-            background:
-              "linear-gradient(0deg, rgba(38, 40, 76, 0.2), rgba(38, 40, 76, 0.2)), lightgray",
-          }}
-        >
+    <section>
+      <div className="flex flex-wrap  items-center w-full">
+        <div className="w-40 h-40 rounded-full overflow-hidden relative shrink-0">
           <Profile className="w-full h-full object-cover" />
         </div>
 
-        <div className="pl-4 flex-1 min-w-[180px]">
+        <div className="pl-10 flex-1 min-w-[180px]">
           <h1 className="text-heading1 text-black whitespace-nowrap">
             @@@님의 스페이스
           </h1>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-3">
+          <div className="flex items-center gap-2 mt-4">
             <span className="text-heading3-sb text-main">Core 개발 2부</span>
             <span className="text-body2 text-gray-60 whitespace-nowrap">
               경영 기획 그룹 &gt; ICT 본부
@@ -56,9 +41,9 @@ const UserSpacePage = () => {
           </div>
         </div>
 
-        <div className="flex gap-4 ml-auto mt-4 sm:mt-0">
+        <div className="flex gap-4 ml-auto">
           <Button
-            type="active"
+            buttonType="blue"
             className="flex items-center gap-2 whitespace-nowrap px-4 py-3"
           >
             <Pencil className="w-4 h-4 text-white" />
@@ -67,7 +52,10 @@ const UserSpacePage = () => {
             </span>
           </Button>
 
-          <Button type="heart" onClick={() => setIsHearted(prev => !prev)}>
+          <Button
+            buttonType="white"
+            onClick={() => setIsHearted(prev => !prev)}
+          >
             {isHearted ? (
               <HeartActive className="w-[24px] h-[24px] aspect-square" />
             ) : (
@@ -77,7 +65,7 @@ const UserSpacePage = () => {
         </div>
       </div>
 
-      <div className="flex gap-4 pt-12 w-full overflow-x-auto scrollbar-hide">
+      <div className="flex gap-4 pt-20 w-full overflow-x-auto scrollbar-hide">
         {USER_SPACE_TABS.map(
           ({
             key,
@@ -87,7 +75,7 @@ const UserSpacePage = () => {
           }) => (
             <Button
               key={key}
-              type="none"
+              buttonType="none"
               className={getTabClass(key)}
               onClick={() => setActiveTab(key)}
             >
@@ -97,7 +85,7 @@ const UserSpacePage = () => {
                 <InactiveIcon className="w-10 h-10" />
               )}
               <span
-                className={`text-lg font-bold font-pretendard ${
+                className={`text-heading2-b ${
                   activeTab === key ? "text-main-dark" : "text-gray-50"
                 }`}
               >
@@ -108,17 +96,17 @@ const UserSpacePage = () => {
         )}
       </div>
 
-      <div className="flex flex-wrap sm:flex-nowrap items-center w-full pt-10 gap-4">
-        <p className="text-2xl font-bold text-black font-pretendard whitespace-nowrap">
+      <div className="flex flex-wrap  items-center w-full pt-10">
+        <p className="text-heading1 text-black  whitespace-nowrap">
           @@@님이 쓴 문의 (6)
         </p>
 
         <Button
-          type="export"
+          buttonType="default"
           className="ml-auto whitespace-nowrap flex items-center gap-2 px-4 py-3"
         >
           <Upload />
-          <p className="text-heading3 text-gray-80 m-0">Export</p>
+          <p className="text-heading3 text-gray-80">Export</p>
         </Button>
       </div>
 
