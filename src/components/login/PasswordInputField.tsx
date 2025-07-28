@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
-import EyeIcon from "@/assets/svgs/login/EyeIcon.svg";
-import EyeOffIcon from "@/assets/svgs/login/EyeOffIcon.svg";
-import XMarkGrayIcon from "@/assets/svgs/login/XMarkIcon_Gray.svg";
+import EyeOffIcon from "@/assets/svgs/login/eye-off.svg";
+import EyeIcon from "@/assets/svgs/login/eye-on.svg";
+import XMarkGrayIcon from "@/assets/svgs/login/x-mark-gray.svg";
 import {
   BORDER_COLOR_MAP,
   InputStatus,
@@ -69,19 +69,19 @@ const PasswordInputField = ({
   /* 비밀번호 보기 토글 + 커서 위치 유지 */
   const handleEyeToggle = () => {
     const input = inputRef.current;
-    if (input) {
-      const pos = input.selectionStart ?? value.length;
-      setCursorPos(pos);
-      setVisible(prev => !prev);
+    if (!input) return;
 
-      setTimeout(() => {
-        const updatedInput = inputRef.current;
-        if (updatedInput) {
-          updatedInput.focus({ preventScroll: true });
-          updatedInput.setSelectionRange(pos, pos);
-        }
-      }, 0);
-    }
+    const pos = input.selectionStart ?? value.length;
+    setCursorPos(pos);
+    setVisible(prev => !prev);
+
+    setTimeout(() => {
+      const updatedInput = inputRef.current;
+      if (updatedInput) {
+        updatedInput.focus({ preventScroll: true });
+        updatedInput.setSelectionRange(pos, pos);
+      }
+    }, 0);
   };
 
   /* 비밀번호 보기 상태 변경 시 커서 위치 복원 */

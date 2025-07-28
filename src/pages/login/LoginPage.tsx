@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import Logo from "@/assets/svgs/login/shinhanLogo_cut.svg";
+import Logo from "@/assets/svgs/login/logo.svg";
 import IDInputField from "@/components/login/IDInputField";
 import PasswordInputField from "@/components/login/PasswordInputField";
 

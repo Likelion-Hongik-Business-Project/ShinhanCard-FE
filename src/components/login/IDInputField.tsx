@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import clsx from "clsx";
 
-import XMarkGrayIcon from "@/assets/svgs/login/XMarkIcon_Gray.svg";
-import XMarkRedIcon from "@/assets/svgs/login/XMarkIcon_Red.svg";
-import XMarkYellowIcon from "@/assets/svgs/login/XMarkIcon_Yellow.svg";
+import XMarkGrayIcon from "@/assets/svgs/login/x-mark-gray.svg";
+import XMarkRedIcon from "@/assets/svgs/login/x-mark-red.svg";
+import XMarkYellowIcon from "@/assets/svgs/login/x-mark-yellow.svg";
 import {
   BORDER_COLOR_MAP,
   ID_LABEL_TEXT,
