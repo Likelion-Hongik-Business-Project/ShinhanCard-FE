@@ -12,7 +12,7 @@ const FilterBar = () => {
       </div>
       <div className="flex items-center px-4 gap-2 cursor-pointer ">
         <Clock className="w-5 h-5 text-gray-40" />
-        <span className="text-body1 text-gray-60">문의 일시(전체)</span>
+        <span className="text-body1 text-gray-60">문의 일시 (전체)</span>
         <span className="w-6 h-6 flex justify-center items-center">
           <Arrow className="w-[14px] h-[8px] text-gray-50" />
         </span>

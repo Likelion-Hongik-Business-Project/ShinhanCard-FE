@@ -44,7 +44,7 @@ const InquiryList = ({
   };
 
   return (
-    <ul className="flex-1 divide-y divide-gray-10 overflow-auto">
+    <ul className="flex-1 divide-y divide-gray-10 overflow-auto scrollbar-hide">
       {inquiries.map(inq => (
         <InquiryItem
           key={inq.inquiry_id}

@@ -20,7 +20,7 @@ const TeamBoardPage = () => {
           isTeamEnd={isTeamEnd}
         />
 
-        <div className="bg-white rounded-[15px] flex flex-col max-h-[630px] overflow-auto">
+        <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
           <FilterBar />
           <InquiryList
             group_name={mockTeamBoardResponse.group_name}

@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
+import clsx from "clsx";
+
 import { Arrow, DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
 import { Inquiry } from "@/types/teamBoard";
 
@@ -46,7 +48,7 @@ const InquiryItem = ({
   return (
     <li className="flex flex-col">
       <div
-        className="flex items-center h-20 w-full px-10 cursor-pointer"
+        className="flex items-center h-[98px] w-full px-10 cursor-pointer hover:bg-gray-10"
         onClick={() => onToggleOpen(inquiry.inquiry_id)}
       >
         <button
@@ -65,9 +67,7 @@ const InquiryItem = ({
         </button>
         <div className="flex flex-col gap-2">
           <span
-            className={
-              (isOpen ? `text-body2-b ` : `text-body2 `) + `text-gray-80`
-            }
+            className={`${isOpen ? "text-body2-b" : "text-body2"} text-gray-80`}
           >
             {inquiry.title}
           </span>
@@ -76,10 +76,10 @@ const InquiryItem = ({
           </span>
         </div>
         <Arrow
-          className={
-            "w-[14px] h-[8px] ml-auto " +
-            (isOpen ? "rotate-180 text-main" : "rotate-0 text-gray-30")
-          }
+          className={clsx("w-[14px] h-[8px] ml-auto", {
+            "rotate-180 text-main": isOpen,
+            "rotate-0 text-gray-30": !isOpen,
+          })}
         />
       </div>
       <div
@@ -88,7 +88,7 @@ const InquiryItem = ({
         className="overflow-hidden transition-[max-height] duration-400 ease-in-out"
       >
         <div className="px-10 py-6 w-full border-t border-gray-10">
-          <div className="px-9 py-8 bg-gray-10 rounded-[15px] text-gray-80 text-body2 flex flex-col gap-6">
+          <div className="pl-9 pr-10 py-8 bg-gray-10 rounded-[15px] text-gray-80 text-body2 flex flex-col gap-6">
             <p>{preview}</p>
             <button className="mx-auto text-body2-b px-6 py-2 cursor-pointer text-gray-60 flex gap-4 items-center">
               자세히
