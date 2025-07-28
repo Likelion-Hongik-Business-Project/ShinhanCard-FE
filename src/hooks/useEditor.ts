@@ -101,22 +101,34 @@ export const useEditor = () => {
         node = node.parentElement!;
       }
 
-      let isQuote = false;
-      while (node && node !== root) {
-        if (node.tagName === "BLOCKQUOTE") {
-          isQuote = true;
+      const newSet = new Set<string>();
+
+      let blockNode: HTMLElement | null = node;
+      while (blockNode && blockNode !== root) {
+        if (blockNode.tagName === "BLOCKQUOTE") {
+          newSet.add("quote");
           break;
         }
-        node = node.parentElement!;
+        blockNode = blockNode.parentElement!;
       }
 
-      setActiveSet(prev => {
-        const newSet = new Set(prev);
-        if (!isQuote) {
-          newSet.delete("quote");
-        }
-        return newSet;
-      });
+      let inlineNode: HTMLElement | null = node;
+      while (inlineNode && inlineNode !== root) {
+        const tag = inlineNode.tagName;
+
+        if (tag === "B" || tag === "STRONG") newSet.add("bold");
+        if (tag === "I" || tag === "EM") newSet.add("italic");
+        if (tag === "S" || tag === "DEL") newSet.add("strike");
+
+        inlineNode = inlineNode.parentElement;
+      }
+
+      const headingTag = node.closest("H1, H2, H3, H4")?.tagName;
+      if (headingTag) {
+        newSet.add(headingTag.toLowerCase());
+      }
+
+      setActiveSet(newSet);
     };
 
     editorInstance.on("caretChange", handleCaretChange);
