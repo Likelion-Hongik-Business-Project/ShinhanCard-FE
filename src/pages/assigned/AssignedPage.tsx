@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import Upload from "@/assets/svgs/common/upload.svg";
+import Button from "@/components/common/Button";
 import InquiryList from "@/components/common/inquiry/InquiryList";
 import TeamTabs from "@/components/common/inquiry/TeamTabs";
 import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
@@ -110,13 +111,10 @@ const AssignedPage = () => {
                 있습니다.
               </p>
             </div>
-            <button
-              onClick={handleExport}
-              className="self-end px-6 flex gap-4 items-center bg-white hover:bg-gray-20 active:bg-gray-20 transition-colors cursor-pointer border border-gray-20 rounded-[15px] h-16"
-            >
+            <Button className="self-end" onClick={handleExport}>
               <Upload />
               <span className="text-gray-80 text-heading3">Export</span>
-            </button>
+            </Button>
           </div>
 
           <TeamTabs

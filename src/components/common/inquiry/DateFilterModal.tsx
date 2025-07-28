@@ -93,7 +93,7 @@ const DateFilterModal = ({
         {/* 초기화 버튼 */}
         <button
           onClick={handleReset}
-          className="px-4 py-2 text-detail2 bg-gray-10 text-gray-60 border border-gray-40 rounded-[5px] cursor-pointer"
+          className="px-4 py-2 text-detail2 bg-gray-10 text-gray-60 hover:bg-gray-30 transition-colors border border-gray-40 rounded-[5px] cursor-pointer"
         >
           필터링 초기화
         </button>
