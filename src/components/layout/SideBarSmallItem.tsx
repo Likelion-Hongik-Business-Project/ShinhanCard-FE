@@ -33,7 +33,7 @@ const SideBarSmallItem = ({
       {isActive ? (
         <ActiveIcon className="w-5 h-5" />
       ) : (
-        <Icon className="w-5 h-5" />
+        <Icon className="w-5 h-5 text-gray-60" />
       )}
     </li>
   );
