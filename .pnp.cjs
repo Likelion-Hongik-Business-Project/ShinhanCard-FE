@@ -50,7 +50,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-refresh", "virtual:943749ca2f2af7a7ef532c2fcd938d3f76c73f447c719392ed179a4ec29934ebeebed38cb37714b4dadb58e02bd29cb182c187af30c2cda4a43bc5d3d2b59ba3#npm:0.4.20"],\
           ["eslint-plugin-simple-import-sort", "virtual:943749ca2f2af7a7ef532c2fcd938d3f76c73f447c719392ed179a4ec29934ebeebed38cb37714b4dadb58e02bd29cb182c187af30c2cda4a43bc5d3d2b59ba3#npm:12.1.1"],\
           ["globals", "npm:16.3.0"],\
-          ["husky", "npm:8.0.3"],\
+          ["husky", "npm:9.1.7"],\
           ["lint-staged", "npm:16.1.2"],\
           ["postcss", "npm:8.5.6"],\
           ["prettier", "npm:3.6.2"],\
@@ -3476,10 +3476,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["husky", [\
-      ["npm:8.0.3", {\
-        "packageLocation": "./.yarn/cache/husky-npm-8.0.3-b0b59c5127-6722591771.zip/node_modules/husky/",\
+      ["npm:9.1.7", {\
+        "packageLocation": "./.yarn/cache/husky-npm-9.1.7-5b02eaabc4-35bb110a71.zip/node_modules/husky/",\
         "packageDependencies": [\
-          ["husky", "npm:8.0.3"]\
+          ["husky", "npm:9.1.7"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -4874,7 +4874,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-refresh", "virtual:943749ca2f2af7a7ef532c2fcd938d3f76c73f447c719392ed179a4ec29934ebeebed38cb37714b4dadb58e02bd29cb182c187af30c2cda4a43bc5d3d2b59ba3#npm:0.4.20"],\
           ["eslint-plugin-simple-import-sort", "virtual:943749ca2f2af7a7ef532c2fcd938d3f76c73f447c719392ed179a4ec29934ebeebed38cb37714b4dadb58e02bd29cb182c187af30c2cda4a43bc5d3d2b59ba3#npm:12.1.1"],\
           ["globals", "npm:16.3.0"],\
-          ["husky", "npm:8.0.3"],\
+          ["husky", "npm:9.1.7"],\
           ["lint-staged", "npm:16.1.2"],\
           ["postcss", "npm:8.5.6"],\
           ["prettier", "npm:3.6.2"],\
