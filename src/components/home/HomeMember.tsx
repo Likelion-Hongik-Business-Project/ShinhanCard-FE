@@ -2,23 +2,14 @@ import { useOutletContext } from "react-router-dom";
 
 import AddMember from "@/components/home/AddMember";
 import MemberCard from "@/components/home/MemberCard";
+import { InterestMember } from "@/types/home";
 
-type InterestMember = {
-  name: string;
-  member_id: string;
-  group_name: string;
-  division_name: string;
-  team_name: string;
-  profile_image_url: string;
-};
-
-export default function HomeMember({
-  interestCount,
-  interestMember,
-}: {
+type Props = {
   interestCount: number;
   interestMember: InterestMember[];
-}) {
+};
+
+export default function HomeMember({ interestCount, interestMember }: Props) {
   const { openAddMemberSidebar } = useOutletContext<{
     openAddMemberSidebar: () => void;
   }>();

@@ -2,17 +2,9 @@ import { useEffect, useState } from "react";
 
 import HomeMain from "@/components/home/HomeMain";
 import HomeProfile from "@/components/home/HomeProfile";
+import { HomeData } from "@/types/home";
 
-import homepageData from "@/mocks/home/homepageData.json";
-
-interface HomeData {
-  id: number;
-  name: string;
-  profile_image_url: string;
-  answer_count: number;
-  inquiry_count: number;
-  interest_count: number;
-}
+import { homepageData } from "@/mocks/home";
 
 const HomePage = () => {
   const [data, setData] = useState<HomeData | null>(null);

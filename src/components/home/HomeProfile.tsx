@@ -12,8 +12,8 @@ export default function HomeProfile({
         alt="프로필 이미지"
         className="w-[120px] h-[120px] rounded-full object-cover mb-[24px]"
       />
-      <p className="text-heading1" style={{ width: "auto" }}>
-        {name}님 안녕하세요
+      <p className="text-heading1 w-full text-gary-80 text-center">
+        {name} 님 안녕하세요
       </p>
     </div>
   );

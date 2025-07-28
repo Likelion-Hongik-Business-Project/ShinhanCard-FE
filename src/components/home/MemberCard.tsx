@@ -1,19 +1,15 @@
 import { FilledHeart } from "@/assets/svgs/commons";
 import { User } from "@/assets/svgs/home";
+import { InterestMember } from "@/types/home";
 
-type InterestMember = {
-  name: string;
-  member_id: string;
-  group_name: string;
-  division_name: string;
-  team_name: string;
-  profile_image_url: string;
+type Props = {
+  member: InterestMember;
 };
 
-export default function MemberCard({ member }: { member: InterestMember }) {
+export default function MemberCard({ member }: Props) {
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-[15px] shadow-[0_4px_4px_0_rgba(0,0,0,0.10)] p-6">
-      <div className="flex justify-end w-full mb-2">
+      <div className="flex justify-end w-full">
         <FilledHeart className="w-6 h-6" />
       </div>
       <div className="flex justify-center w-full mb-6">
@@ -30,8 +26,8 @@ export default function MemberCard({ member }: { member: InterestMember }) {
           {member.group_name} 그룹 &gt; {member.division_name}
         </div>
       </div>
-      <button className="w-60 h-10 px-3 flex items-center justify-center gap-4 border border-gray-30 rounded-[8px] bg-white text-detail1 text-gray-80 mx-auto">
-        <User className="w-5 h-5" />
+      <button className="w-60 h-10 px-3 flex items-center justify-center gap-4 border border-gray-20 rounded-[12px] bg-white text-detail1 text-gray-80 mx-auto cursor-pointer">
+        <User className="w-4 h-4" />
         {member.name}님 스페이스 방문하기
       </button>
     </div>
