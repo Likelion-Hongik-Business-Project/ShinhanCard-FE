@@ -4,9 +4,6 @@ import { Heart } from "@/assets/svgs/commons";
 import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeMember from "@/components/home/HomeMember";
 
-const buttonStyle =
-  "w-full min-w-64 max-w-80 px-10 py-7.75 border-2 rounded-[13px] flex flex-col justify-center items-start";
-
 type InterestMember = {
   name: string;
   member_id: string;
@@ -55,12 +52,12 @@ export default function HomeMain({
     return (
       <button
         onClick={() => setActiveTab(type)}
-        className={`${buttonStyle} ${isActive ? "bg-state-progress-01 border-main" : "bg-white border-2 border-gray-20"}`}
+        className={`w-full min-w-44 max-w-80 px-10 py-7.75 border-2 rounded-[13px] flex flex-col justify-center items-start cursor-pointer ${isActive ? "bg-state-progress-01 border-main" : "bg-white border-2 border-gray-20"}`}
       >
         <p className="text-gray-80 text-[48px] font-bold leading-[120%] font-pretendard">
           {count}
         </p>
-        <div className="flex w-full justify-between items-center gap-2">
+        <div className="flex w-full justify-between items-center">
           <div className="flex h-full flex-col justify-end">
             <p
               className={`${isActive ? "text-gray-80" : "text-gray-60"} text-heading3-sb`}
@@ -80,7 +77,7 @@ export default function HomeMain({
 
   return (
     <>
-      <div className="flex h-40 justify-between items-center gap-4 mb-20">
+      <div className="flex h-40 justify-between items-center mb-20">
         <div className="flex gap-4 w-full">
           <Button
             type="answer"
@@ -101,7 +98,7 @@ export default function HomeMain({
             icon={Heart}
           />
         </div>
-
+        <div className="min-w-[123px]"></div>
         <button
           className={`flex flex-col min-w-49.25 h-40 items-center gap-4 px-10 py-10 rounded-[13px] transition-colors
             ${isHovered ? "bg-main-dark" : "bg-main"}

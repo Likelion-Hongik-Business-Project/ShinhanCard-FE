@@ -1,4 +1,3 @@
-// src/components/Home/AddMemberSidebar.tsx
 import clsx from "clsx";
 
 type Props = {
@@ -11,7 +10,6 @@ const AddMemberSidebar = ({ isOpen, onClose }: Props) => {
 
   return (
     <>
-      {/* 오버레이: 사이드바가 열릴 때만 보임 */}
       <div
         className={clsx(
           "fixed inset-0 z-40 transition-opacity duration-300",
@@ -22,16 +20,12 @@ const AddMemberSidebar = ({ isOpen, onClose }: Props) => {
         onClick={onClose}
         aria-hidden="true"
       >
-        <div
-          className="absolute inset-0"
-          style={{ background: "rgba(0,0,0,0.2)" }}
-        />
+        <div className="absolute inset-0" />
       </div>
 
-      {/* 사이드바: 항상 렌더링, 트랜지션 적용 */}
       <aside
         className={clsx(
-          "fixed top-16 right-0 h-[calc(100vh-64px)] bg-white z-50 transition-transform duration-300 w-88 shadow-lg",
+          "fixed top-16 right-0 h-[calc(100vh-64px)] bg-white z-50 transition-transform duration-300 w-88 px-8 py-10",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
         style={{ overflow: "hidden" }}
