@@ -19,7 +19,7 @@ const InquiryListItem = ({ item, isScraped, onToggleScrap }: Props) => {
   return (
     <li className="cursor-pointer h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
       <button
-        className="px-4 w-20 flex items-center justify-center"
+        className="px-4 w-20 flex items-center"
         onClick={() => onToggleScrap(item.id)}
       >
         {isScraped ? (
