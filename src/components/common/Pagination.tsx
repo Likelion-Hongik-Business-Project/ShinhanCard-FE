@@ -21,7 +21,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => {
       <button
         onClick={() => onPageChange(startPage - PAGE_GROUP_SIZE)}
         disabled={isFirstGroup}
-        className="cursor-pointer disabled:text-gray-30"
+        className="cursor-pointer disabled:text-gray-50"
       >
         <Left className="w-6 h-6" />
       </button>
@@ -32,7 +32,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => {
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`w-[38px] h-[38px] flex justify-center items-center border rounded-[5px] text-body1 cursor-pointer ${
+            className={`w-[38px] h-[38px] flex bg-white justify-center items-center border rounded-[5px] text-body1 cursor-pointer ${
               currentPage === page
                 ? "border-main text-main"
                 : "border-gray-50 text-gray-50"
@@ -46,7 +46,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: Props) => {
       <button
         onClick={() => onPageChange(startPage + PAGE_GROUP_SIZE)}
         disabled={isLastGroup}
-        className="cursor-pointer disabled:text-gray-30"
+        className="cursor-pointer disabled:text-gray-50"
       >
         <Right className="w-6 h-6" />
       </button>
