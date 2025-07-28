@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
@@ -58,6 +58,12 @@ const UserMultiSelectInput = ({
       u.user_name.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
     .filter(u => !selectedUsers.some(selected => selected.id === u.id));
+
+  useEffect(() => {
+    if (selectedUsers.length >= maxCount && inputValue !== "") {
+      setInputValue("");
+    }
+  }, [selectedUsers, inputValue, maxCount]);
 
   return (
     <div
