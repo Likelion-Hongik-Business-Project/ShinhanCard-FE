@@ -6,7 +6,7 @@ type Props = {
   member: InterestMember;
 };
 
-export default function MemberCard({ member }: Props) {
+const MemberCard = ({ member }: Props) => {
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-[15px] shadow-[0_4px_4px_0_rgba(0,0,0,0.10)] p-6">
       <div className="flex justify-end w-full">
@@ -32,4 +32,6 @@ export default function MemberCard({ member }: Props) {
       </button>
     </div>
   );
-}
+};
+
+export default MemberCard;

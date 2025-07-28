@@ -2,7 +2,7 @@ import { Plus } from "@/assets/svgs/home";
 
 type Props = { onClick: () => void };
 
-export default function AddMember({ onClick }: Props) {
+const AddMember = ({ onClick }: Props) => {
   return (
     <div
       className="w-full h-full flex flex-col items-center justify-center gap-2 cursor-pointer select-none border-2 border-dashed border-main-bright rounded-[15px] bg-gray-10"
@@ -14,4 +14,6 @@ export default function AddMember({ onClick }: Props) {
       </span>
     </div>
   );
-}
+};
+
+export default AddMember;

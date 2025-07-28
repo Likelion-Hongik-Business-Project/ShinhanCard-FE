@@ -8,15 +8,13 @@ import { InterestMember } from "@/types/home";
 
 import { homeMemberData } from "@/mocks/home";
 
-export default function HomeMain({
-  answerCount,
-  inquiryCount,
-  interestCount,
-}: {
+type Props = {
   answerCount: number;
   inquiryCount: number;
   interestCount: number;
-}) {
+};
+
+const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
   const [activeTab, setActiveTab] = useState("answer");
   const [isHovered, setIsHovered] = useState(false);
   const [homeMember, setHomeMember] = useState<{
@@ -100,4 +98,6 @@ export default function HomeMain({
       </div>
     </>
   );
-}
+};
+
+export default HomeMain;

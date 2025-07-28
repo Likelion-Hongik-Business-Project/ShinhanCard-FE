@@ -9,7 +9,7 @@ type Props = {
   interestMember: InterestMember[];
 };
 
-export default function HomeMember({ interestCount, interestMember }: Props) {
+const HomeMember = ({ interestCount, interestMember }: Props) => {
   const { openAddMemberSidebar } = useOutletContext<{
     openAddMemberSidebar: () => void;
   }>();
@@ -129,4 +129,6 @@ export default function HomeMember({ interestCount, interestMember }: Props) {
         })()}
     </div>
   );
-}
+};
+
+export default HomeMember;

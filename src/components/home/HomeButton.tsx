@@ -1,13 +1,13 @@
 import { HomeButtonProps } from "@/types/home";
 
-export default function HomeButton({
+const HomeButton = ({
   type,
   count,
   label,
   icon: Icon,
   isActive,
   onClick,
-}: HomeButtonProps) {
+}: HomeButtonProps) => {
   return (
     <button
       onClick={() => onClick(type)}
@@ -32,4 +32,6 @@ export default function HomeButton({
       </div>
     </button>
   );
-}
+};
+
+export default HomeButton;

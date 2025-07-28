@@ -1,10 +1,9 @@
-export default function HomeProfile({
-  name,
-  profileImage,
-}: {
+type Props = {
   name: string;
   profileImage: string;
-}) {
+};
+
+const HomeProfile = ({ name, profileImage }: Props) => {
   return (
     <div className="flex flex-col items-center pb-20">
       <img
@@ -17,4 +16,6 @@ export default function HomeProfile({
       </p>
     </div>
   );
-}
+};
+
+export default HomeProfile;
