@@ -41,7 +41,7 @@ const SelectDropdown = ({
     // default - 소속 선택
     "border border-gray-40 bg-white rounded-t-[5px]":
       type === "default" && isYet,
-    "border-t bg-white border-main rounded-t-[5px]":
+    "border-t-main border-t border-b border-b-white bg-white rounded-t-[5px]":
       type === "default" && isDefault,
     "border border-main rounded-t-[5px] bg-white":
       type === "default" && isSelect,
