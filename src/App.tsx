@@ -4,6 +4,7 @@ import AssignedPage from "@/pages/assigned/AssignedPage";
 import HomePage from "@/pages/home/HomePage";
 import InboxPage from "@/pages/inbox/InboxPage";
 import InquiryFormPage from "@/pages/inquiry/InquiryFormPage";
+import InquiryDetailPage from "@/pages/inquiryDetail/InquiryDetailPage";
 import LoginPage from "@/pages/login/LoginPage";
 import MyQuestionsPage from "@/pages/myQuestions/MyQuestionsPage";
 import NotFoundPage from "@/pages/notFound/NotFoundPage";
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/scrap" element={<ScrapPage />} />
           <Route path="/space/:username" element={<UserSpacePage />} />
           {/* 👆 :username은 api에 따라 변경 가능 */}
+          <Route path="/inquiries/:id" element={<InquiryDetailPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

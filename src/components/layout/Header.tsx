@@ -1,5 +1,6 @@
 import Down from "@/assets/svgs/common/down.svg";
-import { Logo, Menu, Profile, Search } from "@/assets/svgs/layout";
+import Profile from "@/assets/svgs/common/profile.svg";
+import { Logo, Menu, Search } from "@/assets/svgs/layout";
 
 type Props = {
   toggleSidebar: () => void;

@@ -16,7 +16,7 @@ export interface ButtonProps
 }
 
 const baseStyle =
-  "flex justify-center items-center gap-4 text-heading3 px-6 h-16 cursor-pointer rounded-[15px]";
+  "flex justify-center items-center gap-4 text-heading3 px-6 h-16 cursor-pointer rounded-[15px] transition-colors";
 
 const typeStyles: Record<ButtonType, string> = {
   default: "border border-gray-20 bg-white hover:bg-gray-20",
