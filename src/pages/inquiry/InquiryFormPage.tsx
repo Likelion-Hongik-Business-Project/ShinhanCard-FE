@@ -3,6 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 
 import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
+import Button from "@/components/common/Button";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
 import { useOrganizationSelector } from "@/hooks/useOrganizationSelector";
@@ -59,13 +60,11 @@ const InquiryFormPage = () => {
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">
-        <button className="cursor-pointer text-heading3 text-gray-80 px-6 h-16 bg-white border border-gray-20 rounded-[15px]">
-          임시저장
-        </button>
-        <button className="flex items-center cursor-pointer px-6 gap-4 h-16 rounded-[15px] bg-main">
+        <Button className="white">임시저장</Button>
+        <Button buttonType="blue">
           <PencilIcon />
           <span className="text-heading3 text-white">답변 보내기</span>
-        </button>
+        </Button>
       </div>
     </section>
   );
