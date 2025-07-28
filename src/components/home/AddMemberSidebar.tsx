@@ -25,10 +25,9 @@ const AddMemberSidebar = ({ isOpen, onClose }: Props) => {
 
       <aside
         className={clsx(
-          "fixed top-16 right-0 h-[calc(100vh-64px)] bg-white z-50 transition-transform duration-300 w-88 px-8 py-10",
+          "fixed top-16 right-0 h-[calc(100vh-64px)] bg-white z-50 transition-transform duration-300 w-88 px-8 py-10 overflow-hidden",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
-        style={{ overflow: "hidden" }}
         onClick={e => e.stopPropagation()}
       >
         <div className="w-full h-full flex items-center justify-center">
