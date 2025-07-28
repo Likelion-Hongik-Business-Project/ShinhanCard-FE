@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import Heart from "@/assets/svgs/common/heart.svg";
 import HeartActive from "@/assets/svgs/common/heart-active.svg";
+import Profile from "@/assets/svgs/common/profile.svg";
 import Upload from "@/assets/svgs/common/upload.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
-import Profile from "@/assets/svgs/layout/profile.svg";
 import Button from "@/components/common/Button";
 import { USER_SPACE_TABS } from "@/constants/userSpace";
 

@@ -4,7 +4,6 @@ import FilterBar from "@/components/TeamBoard/FilterBar";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import Pagination from "@/components/TeamBoard/Pagination";
-
 import { mockTeamBoardResponse } from "@/mocks/mockTeamBoardResponse";
 
 const TeamBoardPage = () => {
