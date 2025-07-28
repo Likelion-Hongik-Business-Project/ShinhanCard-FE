@@ -1,7 +1,7 @@
 import { AssignedInquiryListResponse } from "@/types/inquiry";
 
 export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
-  total_count: 20,
+  total_count: 120,
   selected_team: {
     team_id: 1,
     group_name: "그룹 A",
@@ -28,12 +28,12 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
       team_name: "C 팀",
     },
   ],
-  inquiries: Array.from({ length: 40 }, (_, index) => {
+  inquiries: Array.from({ length: 120 }, (_, index) => {
     const inquiry_id = 2000 - index;
-    const totalMonths = (2025 - 2023) * 12 + 7 - 1;
+    const totalMonths = (2025 - 2015) * 12 + 7 - 1;
     const currentTotalMonths = totalMonths - index;
 
-    const year = 2023 + Math.floor(currentTotalMonths / 12);
+    const year = 2015 + Math.floor(currentTotalMonths / 12);
     const month = (currentTotalMonths % 12) + 1;
     const day = (index % 28) + 1;
     const hour = (index % 24).toString().padStart(2, "0");
@@ -59,7 +59,7 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
   pagination: {
     page: 1,
     page_size: 10,
-    total: 20,
+    total: 120,
     has_next: true,
   },
 };

@@ -8,9 +8,9 @@ import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
 
 const AssignedPage = () => {
   // 페이지네이션
-  const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size;
-  const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count;
-  const totalPages = Math.ceil(totalInquiries / ITEMS_PER_PAGE);
+  const ITEMS_PER_PAGE = MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size; // 10개
+  const totalInquiries = MOCK_ASSIGNED_INQUIRY_RESPONSE.total_count; // 총 문의 개수 (ex. 120개)
+  const totalPages = Math.ceil(totalInquiries / ITEMS_PER_PAGE); // 총 페이지 (ex. 12개)
 
   // 팀/필터 관련 상태
   const [selectedTeamId, setSelectedTeamId] = useState(
