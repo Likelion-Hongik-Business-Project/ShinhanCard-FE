@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import clsx from "clsx";
 
+import Star from "@/assets/svgs/common/star.svg";
+import StarActive from "@/assets/svgs/common/star-active.svg";
 import {
   Bell,
   BellActive,
@@ -13,8 +15,6 @@ import {
   MessageActive,
   Pencil,
   PencilActive,
-  Star,
-  StarActive,
 } from "@/assets/svgs/layout";
 import GroupSelector from "@/components/layout/sidebar/GroupSelector";
 import SideBarDivider from "@/components/layout/sidebar/SideBarDivider";
