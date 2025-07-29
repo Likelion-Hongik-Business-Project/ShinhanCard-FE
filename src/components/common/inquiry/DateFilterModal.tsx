@@ -10,7 +10,7 @@ type Props = {
   selectedItems: YearMonth[];
   onChange: (items: YearMonth[]) => void;
   onClose: () => void;
-  triggerRef: React.RefObject<HTMLElement | null>;
+  triggerRef: React.RefObject<HTMLLIElement | null>;
 };
 
 const DateFilterModal = ({

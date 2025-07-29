@@ -8,11 +8,12 @@ type Props = {
   isSidebarOpen: boolean;
   isOpen: boolean;
   onClose: () => void;
+  triggerRef: React.RefObject<HTMLLIElement | null>;
 };
 
-const Inbox = ({ isSidebarOpen, isOpen, onClose }: Props) => {
+const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRef }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  useOutsideClick(ref, onClose);
+  useOutsideClick([ref, triggerRef], onClose);
 
   return (
     <div

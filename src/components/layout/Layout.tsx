@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import clsx from "clsx";
 import { Outlet } from "react-router-dom";
@@ -12,6 +12,7 @@ const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
+  const inboxTriggerRef = useRef<HTMLLIElement | null>(null);
 
   return (
     <div className="h-screen flex flex-col">
@@ -25,12 +26,14 @@ const Layout = () => {
           isOpen={isSidebarOpen}
           toggleInbox={() => setIsInboxOpen(prev => !prev)}
           isInboxOpen={isInboxOpen}
+          inboxTriggerRef={inboxTriggerRef}
         />
         {isInboxOpen && (
           <Inbox
             isOpen={isInboxOpen}
             isSidebarOpen={isSidebarOpen}
             onClose={() => setIsInboxOpen(false)}
+            triggerRef={inboxTriggerRef}
           />
         )}
         <main

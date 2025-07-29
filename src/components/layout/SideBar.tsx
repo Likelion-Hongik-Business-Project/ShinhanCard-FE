@@ -22,9 +22,15 @@ type Props = {
   isOpen: boolean;
   toggleInbox: () => void;
   isInboxOpen: boolean;
+  inboxTriggerRef: React.RefObject<HTMLLIElement | null>;
 };
 
-const SideBar = ({ isOpen, toggleInbox, isInboxOpen }: Props) => {
+const SideBar = ({
+  isOpen,
+  toggleInbox,
+  isInboxOpen,
+  inboxTriggerRef,
+}: Props) => {
   const id = "2"; // TODO: 팀 아이디 동적으로 가져오는 로직으로 변경 필요
 
   return (
@@ -49,6 +55,7 @@ const SideBar = ({ isOpen, toggleInbox, isInboxOpen }: Props) => {
           label="수신함"
           onClick={toggleInbox}
           isActive={isInboxOpen}
+          ref={inboxTriggerRef}
         />
         <SideBarDivider />
         <p className="text-heading3-b text-gray-80 m-2">게시판</p>
@@ -88,6 +95,7 @@ const SideBar = ({ isOpen, toggleInbox, isInboxOpen }: Props) => {
           activeIcon={BellActive}
           onClick={toggleInbox}
           isActive={isInboxOpen}
+          ref={inboxTriggerRef}
         />
         <SideBarDivider small />
         <SideBarSmallItem
