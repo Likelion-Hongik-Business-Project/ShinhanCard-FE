@@ -12,7 +12,8 @@ const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
-  const inboxTriggerRef = useRef<HTMLLIElement | null>(null);
+  const inboxLargeRef = useRef<HTMLLIElement>(null);
+  const inboxSmallRef = useRef<HTMLLIElement>(null);
 
   return (
     <div className="h-screen flex flex-col">
@@ -26,14 +27,15 @@ const Layout = () => {
           isOpen={isSidebarOpen}
           toggleInbox={() => setIsInboxOpen(prev => !prev)}
           isInboxOpen={isInboxOpen}
-          inboxTriggerRef={inboxTriggerRef}
+          inboxLargeRef={inboxLargeRef}
+          inboxSmallRef={inboxSmallRef}
         />
         {isInboxOpen && (
           <Inbox
             isOpen={isInboxOpen}
             isSidebarOpen={isSidebarOpen}
             onClose={() => setIsInboxOpen(false)}
-            triggerRef={inboxTriggerRef}
+            triggerRefs={[inboxLargeRef, inboxSmallRef]}
           />
         )}
         <main
