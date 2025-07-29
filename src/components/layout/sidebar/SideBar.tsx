@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
@@ -24,34 +25,57 @@ import TeamSelector from "@/components/layout/sidebar/TeamSelector";
 
 type Props = {
   isOpen: boolean;
+  isGroupSelectorOpen: boolean;
+  setIsGroupSelectorOpen: (open: boolean) => void;
+  selectedGroupId: string | null;
+  setSelectedGroupId: (id: string | null) => void;
 };
 
-const SideBar = ({ isOpen }: Props) => {
+const SideBar = ({
+  isOpen,
+  isGroupSelectorOpen,
+  setIsGroupSelectorOpen,
+  selectedGroupId,
+  setSelectedGroupId,
+}: Props) => {
   const id = "2";
-  const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
   const [isGroupButtonHovered, setIsGroupButtonHovered] = useState(false);
   const [isGroupSelectorHovered, setIsGroupSelectorHovered] = useState(false);
   const [isTeamSelectorHovered, setIsTeamSelectorHovered] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  const [hoverOutTimer, setHoverOutTimer] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [isGroupSelectorFixed, setIsGroupSelectorFixed] = useState(false);
+
+  const navigate = useNavigate();
+  const hoverOutTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const clearHoverOutTimer = () => {
+    if (hoverOutTimer.current) {
+      clearTimeout(hoverOutTimer.current);
+      hoverOutTimer.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    clearHoverOutTimer();
+    hoverOutTimer.current = setTimeout(() => {
+      setIsGroupButtonHovered(false);
+      setIsGroupSelectorHovered(false);
+      setIsTeamSelectorHovered(false);
+      if (!isGroupSelectorFixed) {
+        setIsGroupSelectorOpen(false);
+        setSelectedGroupId(null);
+      }
+    }, 100);
+  };
 
   const showGroupSelector =
-    isGroupSelectorOpen || isGroupButtonHovered || isGroupSelectorHovered;
+    isGroupSelectorFixed ||
+    isGroupSelectorOpen ||
+    isGroupButtonHovered ||
+    (isGroupSelectorHovered && !isTeamSelectorHovered);
 
   const showTeamSelector =
     selectedGroupId !== null &&
-    (isGroupSelectorHovered || isTeamSelectorHovered);
-
-  useEffect(() => {
-    if (!isGroupSelectorHovered && !isTeamSelectorHovered) {
-      const timer = setTimeout(() => {
-        setSelectedGroupId(null);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isGroupSelectorHovered, isTeamSelectorHovered]);
+    (isGroupSelectorFixed || isGroupSelectorHovered || isTeamSelectorHovered);
 
   useEffect(() => {
     if (!isOpen) {
@@ -60,32 +84,9 @@ const SideBar = ({ isOpen }: Props) => {
       setIsGroupSelectorHovered(false);
       setIsTeamSelectorHovered(false);
       setSelectedGroupId(null);
+      setIsGroupSelectorFixed(false);
     }
   }, [isOpen]);
-
-  const handleGroupButtonMouseEnter = () => {
-    if (hoverOutTimer) clearTimeout(hoverOutTimer);
-    setIsGroupButtonHovered(true);
-  };
-
-  const handleGroupButtonMouseLeave = () => {
-    const timer = setTimeout(() => {
-      setIsGroupButtonHovered(false);
-    }, 100);
-    setHoverOutTimer(timer);
-  };
-
-  const handleGroupSelectorMouseEnter = () => {
-    if (hoverOutTimer) clearTimeout(hoverOutTimer);
-    setIsGroupSelectorHovered(true);
-  };
-
-  const handleGroupSelectorMouseLeave = () => {
-    const timer = setTimeout(() => {
-      setIsGroupSelectorHovered(false);
-    }, 100);
-    setHoverOutTimer(timer);
-  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -96,13 +97,48 @@ const SideBar = ({ isOpen }: Props) => {
         !target.closest(".team-selector")
       ) {
         setIsGroupSelectorOpen(false);
+        setIsGroupSelectorHovered(false);
         setSelectedGroupId(null);
+        setIsGroupSelectorFixed(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleGroupButtonMouseEnter = () => {
+    clearHoverOutTimer();
+    setIsGroupButtonHovered(true);
+  };
+
+  const handleGroupButtonMouseLeave = () => {
+    scheduleClose();
+  };
+
+  const handleGroupSelectorMouseEnter = () => {
+    clearHoverOutTimer();
+    setIsGroupSelectorHovered(true);
+  };
+
+  const handleGroupSelectorMouseLeave = (e: React.MouseEvent) => {
+    const related = e.relatedTarget as HTMLElement;
+    if (
+      related?.closest(".group-selector") ||
+      related?.closest(".team-selector")
+    ) {
+      return;
+    }
+    scheduleClose();
+  };
+
+  const handleTeamSelectorMouseEnter = () => {
+    clearHoverOutTimer();
+    setIsTeamSelectorHovered(true);
+  };
+
+  const handleTeamSelectorMouseLeave = () => {
+    scheduleClose();
+  };
 
   return (
     <div className="relative">
@@ -133,10 +169,13 @@ const SideBar = ({ isOpen }: Props) => {
           <SideBarLargeItem
             icon={Grid}
             label="전체"
-            onClick={() => setIsGroupSelectorOpen(prev => !prev)}
+            onClick={() => {
+              const next = !isGroupSelectorOpen;
+              setIsGroupSelectorOpen(next);
+              setIsGroupSelectorFixed(next);
+            }}
             onMouseEnter={handleGroupButtonMouseEnter}
             onMouseLeave={handleGroupButtonMouseLeave}
-            active={isGroupSelectorOpen}
           />
           <SideBarDivider />
           <p className="text-heading3-b text-gray-80 m-2">내 스페이스</p>
@@ -173,10 +212,19 @@ const SideBar = ({ isOpen }: Props) => {
           <SideBarSmallItem
             icon={Grid}
             activeIcon={GridActive}
-            onClick={() => setIsGroupSelectorOpen(prev => !prev)}
+            onClick={() => {
+              const next = !isGroupSelectorOpen;
+              setIsGroupSelectorOpen(next);
+              setIsGroupSelectorFixed(next);
+
+              if (!next) {
+                setIsGroupButtonHovered(false);
+                setIsGroupSelectorHovered(false);
+                setIsTeamSelectorHovered(false);
+              }
+            }}
             onMouseEnter={handleGroupButtonMouseEnter}
             onMouseLeave={handleGroupButtonMouseLeave}
-            active={isGroupSelectorOpen}
           />
           <SideBarDivider small />
           <SideBarSmallItem
@@ -206,11 +254,13 @@ const SideBar = ({ isOpen }: Props) => {
         onMouseLeave={handleGroupSelectorMouseLeave}
       >
         <GroupSelector
-          onClose={() => {
-            setIsGroupSelectorOpen(false);
-            setSelectedGroupId(null);
+          onGroupSelect={group => {
+            if (group) {
+              setSelectedGroupId(String(group.group_id));
+              setIsGroupSelectorFixed(true);
+            }
           }}
-          onGroupSelect={group => setSelectedGroupId(group)}
+          selectedGroupId={Number(selectedGroupId)}
         />
       </div>
 
@@ -223,13 +273,20 @@ const SideBar = ({ isOpen }: Props) => {
             ? "opacity-100 translate-x-0 pointer-events-auto"
             : "opacity-0 -translate-x-4 pointer-events-none"
         )}
-        onMouseEnter={() => setIsTeamSelectorHovered(true)}
-        onMouseLeave={() => setIsTeamSelectorHovered(false)}
+        onMouseEnter={handleTeamSelectorMouseEnter}
+        onMouseLeave={handleTeamSelectorMouseLeave}
       >
         {selectedGroupId && (
           <TeamSelector
-            groupId={selectedGroupId}
-            onClose={() => setSelectedGroupId(null)}
+            groupId={Number(selectedGroupId)}
+            onTeamSelect={team => {
+              clearHoverOutTimer();
+              navigate(`/team/${team.teamId}`);
+              setIsGroupSelectorOpen(false);
+              setIsGroupButtonHovered(false);
+              setSelectedGroupId(null);
+              setIsGroupSelectorFixed(false);
+            }}
           />
         )}
       </div>

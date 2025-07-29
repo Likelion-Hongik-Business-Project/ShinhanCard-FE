@@ -1,50 +1,49 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { groupTeamData } from "@/mocks/groupTeamData";
+import { mockGroups } from "@/mocks/groupTeamData";
 
-type Props = {
-  onClose: () => void;
-  onGroupSelect: (group: string) => void;
+type Group = {
+  group_id: number;
+  name: string;
+  is_active: boolean;
 };
 
-const GroupSelector = ({ onGroupSelect }: Props) => {
+type Props = {
+  onGroupSelect: (group: Group) => void;
+  selectedGroupId: number | null;
+};
+
+const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [groups, setGroups] = useState<Group[]>([]);
 
-  const groupList = Object.keys(groupTeamData);
+  useEffect(() => {
+    setGroups(mockGroups);
+  }, []);
 
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-
-  const handleClick = (group: string) => {
-    setSelectedGroup(group);
+  const handleClick = (group: Group) => {
     onGroupSelect(group);
   };
 
   return (
     <div
       ref={ref}
-      className="w-[240px] h-full bg-white px-8 py-[52px] border border-gray-20"
+      className="w-[240px] h-[calc(100vh-64px)] bg-white px-8 py-[52px] border border-gray-20"
     >
       <ul className="flex flex-col gap-10">
-        {groupList.map(group => {
-          const isSelected = selectedGroup === group;
-          const hasSelection = selectedGroup !== null;
+        {groups.map(group => {
+          const isSelected = selectedGroupId === group.group_id;
 
           return (
             <li
-              key={group}
+              key={group.group_id}
               onClick={() => handleClick(group)}
               className={`
                 cursor-pointer text-heading2-b p-2 hover:bg-gray-10 rounded-lg
-                ${
-                  hasSelection
-                    ? isSelected
-                      ? "text-main"
-                      : "text-gray-30"
-                    : "text-gray-80"
-                }
+                ${isSelected ? "text-main" : "text-gray-80"}
               `}
             >
-              {group}
+              {group.name}
             </li>
           );
         })}
