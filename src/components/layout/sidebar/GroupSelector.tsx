@@ -32,15 +32,13 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
     >
       <ul className="flex flex-col gap-10">
         {groups.map(group => {
-          const isSelected = selectedGroupId === group.group_id;
-
           return (
             <li
               key={group.group_id}
               onClick={() => handleClick(group)}
               className={`
                 cursor-pointer text-heading2-b p-2 hover:bg-gray-10 rounded-lg
-                ${isSelected ? "text-main" : "text-gray-80"}
+                ${selectedGroupId === group.group_id && "bg-blue" ? "text-main" : "text-gray-80"}
               `}
             >
               {group.name}

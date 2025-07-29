@@ -10,7 +10,7 @@ const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
   const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   return (
     <div className="h-screen flex flex-col">
