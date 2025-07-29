@@ -29,7 +29,11 @@ const InboxList = ({ inquiries, tab }: Props) => {
         <div key={label} className="flex flex-col gap-[14px] mt-10">
           <div className="text-body2 text-gray-40">{label}</div>
           {items.map(inquiry => (
-            <InboxItem key={inquiry.id} inquiry={inquiry} />
+            <InboxItem
+              key={inquiry.id}
+              inquiry={inquiry}
+              isArchived={tab === "보관함"}
+            />
           ))}
         </div>
       ))}
