@@ -26,7 +26,13 @@ const Layout = () => {
           toggleInbox={() => setIsInboxOpen(prev => !prev)}
           isInboxOpen={isInboxOpen}
         />
-        {isInboxOpen && <Inbox isSidebarOpen={isSidebarOpen} />}
+        {isInboxOpen && (
+          <Inbox
+            isOpen={isInboxOpen}
+            isSidebarOpen={isSidebarOpen}
+            onClose={() => setIsInboxOpen(false)}
+          />
+        )}
         <main
           className={clsx(
             "bg-gray-10 flex flex-1 justify-start overflow-auto pt-16 transition-all duration-300",

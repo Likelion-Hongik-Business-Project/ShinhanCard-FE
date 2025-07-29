@@ -16,11 +16,11 @@ const SideBarSmallItem = ({
   activeIcon: ActiveIcon,
   path,
   onClick,
-  isActive: activeFromProps,
+  isActive: isActiveProp,
 }: Props) => {
   const navigate = useNavigate();
   const isRouteMatch = path === location.pathname;
-  const isActive = activeFromProps ?? isRouteMatch;
+  const isActive = isActiveProp ?? isRouteMatch;
 
   const handleClick = () => {
     if (onClick) onClick();
