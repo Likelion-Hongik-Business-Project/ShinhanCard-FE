@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import Profile from "@/assets/svgs/common/profile.svg";
 import Bell from "@/assets/svgs/inbox/bell.svg";
 import Check from "@/assets/svgs/inbox/check.svg";
@@ -22,8 +24,10 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
     inquiry;
   const type = getInquiryTypeFromText(inquiry.notification_text);
   const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
 
-  const handleCheckToggle = () => {
+  const handleCheckToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     setIsChecked(prev => !prev);
   };
 
@@ -53,7 +57,13 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
   };
 
   return (
-    <li className="group flex mt-2 w-full cursor-pointer bg-white transition duration-100 hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center">
+    <li
+      onClick={() => {
+        setIsChecked(true);
+        navigate("/inquiries/:id");
+      }}
+      className="group flex mt-2 w-full cursor-pointer bg-white transition duration-100 hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center"
+    >
       {renderIcon()}
       <div className="flex ml-4 w-full justify-between items-center">
         <div className="flex flex-col gap-2 w-[319px]">
@@ -95,7 +105,10 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
                   <UnCheckBox className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
                 )}
               </div>
-              <div className="w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]">
+              <div
+                onClick={e => e.stopPropagation()}
+                className="w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]"
+              >
                 <Box className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
               </div>
             </div>

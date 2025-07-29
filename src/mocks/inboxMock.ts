@@ -80,7 +80,7 @@ export const MOCK_INBOX_RESPONSE: InboxResponse = {
           notification_text:
             "담당 문의에 대한 확인 요청 알림이 도착하였습니다.",
           notification_description: "Q. XX파일 위치 문의 드립니다.",
-          created_at: "2025-07-28T14:20:00",
+          created_at: "2025-07-28T12:20:00",
         },
         {
           id: 102,
