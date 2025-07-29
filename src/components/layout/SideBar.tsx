@@ -58,6 +58,7 @@ const SideBar = ({
           onClick={toggleInbox}
           isActive={isInboxOpen}
           ref={inboxLargeRef}
+          disableActiveStyle
         />
         <SideBarDivider />
         <p className="text-heading3-b text-gray-80 m-2">게시판</p>
@@ -98,6 +99,7 @@ const SideBar = ({
           onClick={toggleInbox}
           isActive={isInboxOpen}
           ref={inboxSmallRef}
+          disableActiveStyle
         />
         <SideBarDivider small />
         <SideBarSmallItem

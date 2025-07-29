@@ -8,6 +8,7 @@ type Props = {
   path?: string;
   onClick?: () => void;
   isActive?: boolean;
+  disableActiveStyle?: boolean;
 };
 
 // 작은 사이드바 아이템
@@ -19,12 +20,14 @@ const SideBarSmallItem = forwardRef<HTMLLIElement, Props>(
       path,
       onClick,
       isActive: isActiveProp,
+      disableActiveStyle,
     },
     ref
   ) => {
     const navigate = useNavigate();
     const isRouteMatch = path === location.pathname;
     const isActive = isActiveProp ?? isRouteMatch;
+    const activeStyle = isActive && !disableActiveStyle;
 
     const handleClick = () => {
       if (onClick) onClick();
@@ -36,10 +39,10 @@ const SideBarSmallItem = forwardRef<HTMLLIElement, Props>(
         ref={ref}
         onClick={handleClick}
         className={`p-[10px] rounded-[8px] transition cursor-pointer ${
-          isActive ? "bg-main-bright" : "hover:bg-gray-10"
+          activeStyle ? "bg-main-bright" : "hover:bg-gray-10"
         }`}
       >
-        {isActive ? (
+        {activeStyle ? (
           <ActiveIcon className="w-5 h-5" />
         ) : (
           <Icon className="w-5 h-5 text-gray-60" />
