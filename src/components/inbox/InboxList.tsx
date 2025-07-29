@@ -15,6 +15,7 @@ const InboxList = ({ inquiries, tab }: Props) => {
     return <InboxEmpty tab={tab} />;
   }
 
+  // 날짜별로 묶기
   const grouped = inquiries.reduce<Record<string, Inquiry[]>>((acc, cur) => {
     const label = formatDateGroupLabel(cur.created_at);
     if (!acc[label]) acc[label] = [];
@@ -23,14 +24,14 @@ const InboxList = ({ inquiries, tab }: Props) => {
   }, {});
 
   return (
-    <ul className="flex flex-col gap-4 custom-scrollbar overflow-y-auto pr-[14px] -mr-[22px] h-[calc(100%-150px)]">
+    <ul className="flex flex-col gap-4 custom-scrollbar overflow-y-auto pr-[14px] pb-10 -mr-[22px] h-[calc(100%-116px)]">
       {Object.entries(grouped).map(([label, items]) => (
-        <li key={label} className="flex flex-col gap-2">
-          <div className="text-subhead2 text-gray-60">{label}</div>
+        <div key={label} className="flex flex-col gap-[14px] mt-10">
+          <div className="text-body2 text-gray-40">{label}</div>
           {items.map(inquiry => (
             <InboxItem key={inquiry.id} inquiry={inquiry} />
           ))}
-        </li>
+        </div>
       ))}
     </ul>
   );

@@ -2,6 +2,7 @@ import Profile from "@/assets/svgs/common/profile.svg";
 import Bell from "@/assets/svgs/inbox/bell.svg";
 import Check from "@/assets/svgs/inbox/check.svg";
 import Warning from "@/assets/svgs/inbox/warning.svg";
+import { formatTime } from "@/utils/dateUtils";
 import { getInquiryTypeFromText } from "@/utils/inboxMapping";
 import { Inquiry } from "@/types/inbox";
 
@@ -40,14 +41,21 @@ const InboxItem = ({ inquiry }: Props) => {
   };
 
   return (
-    <li className="flex gap-3 items-center py-3 border-b border-gray-20">
+    <li className="flex mt-2 w-full cursor-pointer bg-white hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center">
       {renderIcon()}
-      <div className="flex flex-col">
-        <p className="text-body1 text-gray-90">{notification_text}</p>
-        <p>{notification_description}</p>
-        <p className="text-caption2 text-gray-50">
-          {new Date(created_at).toLocaleString()}
-        </p>
+      <div className="flex ml-4 w-full justify-between items-center">
+        <div className="flex flex-col gap-2 w-[312px]">
+          <p className="text-body2 text-gray-80 truncate">
+            {notification_text}
+          </p>
+          <p className="text-detail1 text-gray-60 truncate">
+            {notification_description}
+          </p>
+        </div>
+        <div className="flex gap-4 items-center">
+          <p className="text-detail1 text-gray-30">{formatTime(created_at)}</p>
+          <div className="w-2 h-2 bg-main rounded-full" />
+        </div>
       </div>
     </li>
   );
