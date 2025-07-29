@@ -19,7 +19,7 @@ export const MOCK_INBOX_RESPONSE: InboxResponse = {
           },
           notification_text: "답변이 완료되었습니다. 답변을 확인해주세요.",
           notification_description: "Q. XX파일 위치 문의 드립니다.",
-          created_at: "2025-07-29T09:00:00",
+          created_at: "2025-07-30T09:00:00",
         },
         {
           id: 105,
