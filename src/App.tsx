@@ -8,6 +8,7 @@ import LoginPage from "@/pages/login/LoginPage";
 import MyQuestionsPage from "@/pages/myQuestions/MyQuestionsPage";
 import NotFoundPage from "@/pages/notFound/NotFoundPage";
 import ScrapPage from "@/pages/scrap/ScrapPage";
+import SearchResultPage from "@/pages/searchResult/SearchResultPage";
 import TeamBoardPage from "@/pages/teamBoard/TeamBoardPage";
 import UserSpacePage from "@/pages/userSpace/UserSpacePage";
 import Layout from "@/components/layout/Layout";
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/space/:username" element={<UserSpacePage />} />
           {/* 👆 :username은 api에 따라 변경 가능 */}
           <Route path="/inquiries/:id" element={<InquiryDetailPage />} />
+          <Route path="/result" element={<SearchResultPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
