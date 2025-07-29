@@ -7,6 +7,7 @@ import Down from "@/assets/svgs/common/down.svg";
 import Profile from "@/assets/svgs/common/profile.svg";
 import { Logo, Menu, Search } from "@/assets/svgs/layout";
 import RecentSearch from "@/components/searchBar/RecentSearch";
+import RecommendSearch from "@/components/searchBar/RecommendSearch";
 
 type Props = {
   toggleSidebar: () => void;
@@ -58,6 +59,19 @@ const Header = ({ toggleSidebar }: Props) => {
 
     // 검색 결과 페이지로 이동
     navigate(`/result?query=${encodeURIComponent(keyword)}`);
+
+    // 검색 모달 닫기
+    setIsSearchActive(false);
+  };
+
+  const handleRecommendCardClick = (inquiry_id: number, title: string) => {
+    console.log("추천 카드 클릭:", inquiry_id, title);
+
+    // 검색창에 제목 입력
+    setSearchInput(title);
+
+    // 문의글 상세 페이지로 이동
+    navigate(`/inquiries/${inquiry_id}`);
 
     // 검색 모달 닫기
     setIsSearchActive(false);
@@ -126,10 +140,19 @@ const Header = ({ toggleSidebar }: Props) => {
         </div>
       </header>
 
+      {/* 검색어가 없을 때만 최근 검색어 표시 */}
       <RecentSearch
-        isOpen={isSearchActive}
+        isOpen={isSearchActive && !searchInput.trim()}
         onClose={handleSearchClose}
         onKeywordClick={handleKeywordClick}
+      />
+
+      {/* 검색어가 있을 때만 추천 검색어 표시 */}
+      <RecommendSearch
+        isOpen={isSearchActive && searchInput.trim().length > 0}
+        onClose={handleSearchClose}
+        query={searchInput}
+        onCardClick={handleRecommendCardClick}
       />
     </>
   );

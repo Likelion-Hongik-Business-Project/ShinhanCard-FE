@@ -32,15 +32,15 @@ export const deleteRecentSearchKeyword = async (keyword: string) => {
   }
 };
 
-// 검색어 추가 (새로운 검색어를 최근 검색어에 추가)
-export const addRecentSearchKeyword = async (keyword: string) => {
+// 추천 검색어 조회
+export const getRecommendSearchKeywords = async (query: string) => {
   try {
-    const response = await api.post("/search/inquiries/recent", {
-      keyword,
-    });
+    const response = await api.get(
+      `/search/inquiries/suggestions?query=${encodeURIComponent(query)}`
+    );
     return response.data;
   } catch (error) {
-    console.error("최근 검색어 추가 실패:", error);
+    console.error("추천 검색어 조회 실패:", error);
     throw error;
   }
 };
