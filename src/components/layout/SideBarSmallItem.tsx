@@ -6,6 +6,8 @@ type Props = {
   icon: FC<SVGProps<SVGSVGElement>>;
   activeIcon: FC<SVGProps<SVGSVGElement>>;
   path?: string;
+  onClick?: () => void;
+  isActive?: boolean;
 };
 
 // 작은 사이드바 아이템
@@ -13,19 +15,21 @@ const SideBarSmallItem = ({
   icon: Icon,
   activeIcon: ActiveIcon,
   path,
+  onClick,
+  isActive: activeFromProps,
 }: Props) => {
   const navigate = useNavigate();
-  const isActive = path === location.pathname;
-  const openGroupSelector = () => {
-    alert("그룹 셀렉터 열기");
-    // 전체 버튼에서 필요한 그룹 셀렉터. -> 팀 셀렉터도 추가적으로 열려야 함.
+  const isRouteMatch = path === location.pathname;
+  const isActive = activeFromProps ?? isRouteMatch;
+
+  const handleClick = () => {
+    if (onClick) onClick();
+    else if (path) navigate(path);
   };
+
   return (
     <li
-      onClick={() => {
-        if (path) navigate(path);
-        else openGroupSelector();
-      }}
+      onClick={handleClick}
       className={`p-[10px] rounded-[8px] transition cursor-pointer ${
         isActive ? "bg-main-bright" : "hover:bg-gray-10"
       }`}

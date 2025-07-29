@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { Heart } from "@/assets/svgs/commons";
 import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeButton from "@/components/home/HomeButton";
@@ -20,6 +22,7 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
     interest_count: number;
     interest_member: InterestMember[];
   } | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeTab === "interest") {
@@ -63,6 +66,7 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
               `}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={() => navigate("/inquiry/form")}
         >
           <Pencil
             className={
