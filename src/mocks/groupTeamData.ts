@@ -51,6 +51,10 @@ export const mockTeams: Record<string, Team[]> = {
   "31": [
     { team_id: 301, name: "C-운영지원팀", is_active: true },
     { team_id: 302, name: "C-고객응대팀", is_active: true },
+    { team_id: 303, name: "C-고객응대팀", is_active: true },
+    { team_id: 304, name: "C-고객응대팀", is_active: true },
+    { team_id: 305, name: "C-고객응대팀", is_active: true },
+    { team_id: 306, name: "C-고객응대팀", is_active: true },
   ],
   "41": [
     { team_id: 401, name: "D-채용팀", is_active: true },

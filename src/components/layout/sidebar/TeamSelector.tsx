@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import clsx from "clsx";
 
 import Arrow from "@/assets/svgs/common/down.svg";
 import { mockDivisions, mockTeams } from "@/mocks/groupTeamData";
@@ -11,6 +13,10 @@ type Props = {
 const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [showHiddenTeams, setShowHiddenTeams] = useState(false);
+
+  useEffect(() => {
+    setShowHiddenTeams(false);
+  }, [groupId]);
 
   const divisions = mockDivisions[String(groupId)] || [];
 
@@ -54,15 +60,22 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
                   <button
                     key={team.team_id}
                     onClick={() => handleTeamClick(team)}
-                    className={`cursor-pointer p-2 rounded-lg text-body2 transition-colors whitespace-nowrap
-                      ${
-                        selectedTeam === team.name
-                          ? "bg-main text-white"
-                          : "bg-white hover:bg-gray-10"
-                      }
-                    `}
+                    className={clsx(
+                      "cursor-pointer p-2 rounded-lg text-body2 transition-colors whitespace-nowrap",
+                      selectedTeam === team.name
+                        ? "bg-main text-white"
+                        : "bg-white hover:bg-gray-10"
+                    )}
                   >
-                    {team.name}
+                    <span
+                      className={clsx(
+                        "text-body2",
+                        team.is_active ? "text-gray-80" : "text-gray-60"
+                      )}
+                    >
+                      {team.name}
+                      {!team.is_active && " (종료)"}
+                    </span>
                   </button>
                 ))}
               </div>
