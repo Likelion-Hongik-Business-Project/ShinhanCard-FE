@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
@@ -48,14 +48,39 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
     onTeamSelect({ teamId: team.team_id, teamName: team.name });
   };
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isNarrow, setIsNarrow] = useState(false);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      const width = entries[0].contentRect.width;
+      setIsNarrow(width <= 440);
+    });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) observer.unobserve(containerRef.current);
+    };
+  }, []);
+
   return (
-    <div className="w-200 h-[calc(100vh-64px)] bg-white border border-gray-20 px-8 py-[52px] flex flex-col justify-between overflow-y-auto">
+    <div
+      ref={containerRef}
+      className="w-[calc(100vw-560px)] max-w-[800px] min-w-[440px] h-[calc(100vh-64px)] bg-white border border-gray-20 px-8 py-[52px] flex flex-col justify-between overflow-y-auto"
+    >
       <div className="flex flex-col gap-6">
         {sections.map(section => (
           <div className="flex gap-6 flex-col" key={section.head}>
             <div className="flex flex-col gap-4">
               <p className="text-body1-b text-gray-80 p-2">{section.head}</p>
-              <div className="flex flex-wrap gap-x-6 gap-y-4">
+              <div
+                className={clsx(
+                  isNarrow
+                    ? "grid grid-cols-2 gap-x-6 gap-y-4 self-start"
+                    : "flex flex-wrap gap-x-6 gap-y-4"
+                )}
+              >
                 {section.teams.map(team => (
                   <button
                     key={team.team_id}
@@ -70,7 +95,9 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
                     <span
                       className={clsx(
                         "text-body2",
-                        team.is_active ? "text-gray-80" : "text-gray-60"
+                        team.is_active
+                          ? "text-gray-80"
+                          : "text-gray-40 hover:text-gray-60"
                       )}
                     >
                       {team.name}
