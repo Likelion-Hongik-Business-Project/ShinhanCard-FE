@@ -1,5 +1,7 @@
+import { Division, Group, Team } from "@/types/user";
+
 // 실제 데이터 구조
-export const mockGroups = [
+export const mockGroups: Group[] = [
   { group_id: 1, name: "그룹 A", is_active: true },
   { group_id: 2, name: "그룹 B", is_active: true },
   { group_id: 3, name: "그룹 C", is_active: true },
@@ -8,10 +10,7 @@ export const mockGroups = [
   { group_id: 6, name: "그룹 F", is_active: true },
 ];
 
-export const mockDivisions: Record<
-  string,
-  { division_id: number; name: string; is_active: boolean }[]
-> = {
+export const mockDivisions: Record<string, Division[]> = {
   "1": [
     { division_id: 11, name: "기획 본부", is_active: true },
     { division_id: 12, name: "개발 본부", is_active: true },
@@ -32,10 +31,7 @@ export const mockDivisions: Record<
   ],
 };
 
-export const mockTeams: Record<
-  string,
-  { team_id: number; name: string; is_active: boolean }[]
-> = {
+export const mockTeams: Record<string, Team[]> = {
   "11": [
     { team_id: 101, name: "A-기획 1팀", is_active: true },
     { team_id: 102, name: "A-기획 2팀", is_active: false },

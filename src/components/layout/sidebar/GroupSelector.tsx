@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { Group } from "@/types/user";
 import { mockGroups } from "@/mocks/groupTeamData";
-
-type Group = {
-  group_id: number;
-  name: string;
-  is_active: boolean;
-};
 
 type Props = {
   onGroupSelect: (group: Group) => void;
