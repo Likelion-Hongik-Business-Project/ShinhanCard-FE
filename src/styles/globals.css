@@ -52,7 +52,6 @@ body {
   --breakpoint-1400: 1400px;
   --breakpoint-1600: 1600px;
   --breakpoint-1680: 1680px;
-  --breakpoint-1920: 1920px;
 }
 
 @layer utilities {
