@@ -1,13 +1,14 @@
-import { useState } from "react";
-
 import clsx from "clsx";
 
 import { INBOX_TABS } from "@/constants/inbox";
 import { Tab } from "@/types/inbox";
 
-const InboxTabs = () => {
-  const [selectedTab, setSelectedTab] = useState<Tab>("전체");
+type Props = {
+  selectedTab: Tab;
+  onTabChange: (tab: Tab) => void;
+};
 
+const InboxTabs = ({ selectedTab, onTabChange }: Props) => {
   return (
     <div className="mt-6 w-full relative">
       {/* 회색 전체 밑줄 */}
@@ -18,7 +19,7 @@ const InboxTabs = () => {
         {INBOX_TABS.map(tab => (
           <button
             key={tab}
-            onClick={() => setSelectedTab(tab)}
+            onClick={() => onTabChange(tab)}
             className={clsx(
               "relative px-6 py-4 text-body1 transition-colors duration-200 cursor-pointer",
               selectedTab === tab

@@ -136,3 +136,90 @@ export const MOCK_INBOX_RESPONSE: InboxResponse = {
     },
   ],
 };
+
+export const MOCK_ARCHIVED_INBOX_RESPONSE: InboxResponse = {
+  total_pending_count: 0,
+  teams: [
+    {
+      team_id: 4,
+      group_name: "운영그룹",
+      division_name: "지원본부",
+      team_name: "고객지원팀",
+      inquiry_count: 3,
+      inquiries: [
+        {
+          id: 201,
+          writer: {
+            id: 40,
+            name: "이하늘",
+            profile_image_url: "https://example.com/profiles/40.png",
+          },
+          notification_text: "‘이하늘’님의 문의가 보관되었습니다.",
+          created_at: "2025-07-05T13:10:00",
+        },
+        {
+          id: 202,
+          writer: {
+            id: 41,
+            name: "정예린",
+            profile_image_url: "https://example.com/profiles/41.png",
+          },
+          notification_text:
+            "‘정예린’님의 문의가 처리 완료되어 보관함으로 이동했습니다.",
+          created_at: "2025-07-04T10:30:00",
+        },
+        {
+          id: 203,
+          writer: {
+            id: 42,
+            name: "김태윤",
+            profile_image_url: "https://example.com/profiles/42.png",
+          },
+          notification_text: "‘김태윤’님이 완료된 문의를 보관했습니다.",
+          created_at: "2025-07-03T17:20:00",
+        },
+      ],
+      pagination: {
+        page: 1,
+        page_size: 8,
+        total: 3,
+        has_next: false,
+      },
+    },
+    {
+      team_id: 5,
+      group_name: "기획그룹",
+      division_name: "전략본부",
+      team_name: "서비스기획팀",
+      inquiry_count: 2,
+      inquiries: [
+        {
+          id: 204,
+          writer: {
+            id: 43,
+            name: "오지현",
+            profile_image_url: "https://example.com/profiles/43.png",
+          },
+          notification_text: "‘오지현’님이 완료된 문의를 보관처리했습니다.",
+          created_at: "2025-07-02T09:50:00",
+        },
+        {
+          id: 205,
+          writer: {
+            id: 44,
+            name: "박선우",
+            profile_image_url: "https://example.com/profiles/44.png",
+          },
+          notification_text: "‘박선우’님의 문의가 자동 보관 처리되었습니다.",
+          created_at: "2025-07-01T08:00:00",
+        },
+      ],
+      pagination: {
+        page: 1,
+        page_size: 8,
+        total: 2,
+        has_next: false,
+      },
+    },
+  ],
+};

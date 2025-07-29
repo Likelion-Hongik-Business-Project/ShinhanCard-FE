@@ -1,9 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import clsx from "clsx";
 
+import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { Tab } from "@/types/inbox";
+import {
+  MOCK_ARCHIVED_INBOX_RESPONSE,
+  MOCK_INBOX_RESPONSE,
+} from "@/mocks/inboxMock";
 
 type Props = {
   isSidebarOpen: boolean;
@@ -15,6 +21,15 @@ type Props = {
 const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   useOutsideClick([ref, ...triggerRefs], onClose);
+
+  const [selectedTab, setSelectedTab] = useState<Tab>("전체");
+
+  const allInquiries = MOCK_INBOX_RESPONSE.teams.flatMap(
+    team => team.inquiries
+  );
+  const archivedInquiries = MOCK_ARCHIVED_INBOX_RESPONSE.teams.flatMap(
+    team => team.inquiries
+  );
 
   return (
     <aside
@@ -33,7 +48,12 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
           <span className=" text-white text-body1">4</span>
         </div>
       </div>
-      <InboxTabs />
+      <InboxTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
+      {selectedTab === "보관함" ? (
+        <InboxList inquiries={archivedInquiries} tab="보관함" /> // TODO: API 명세 나오면 거기에 맞게 바꿔야 함
+      ) : (
+        <InboxList inquiries={allInquiries} tab="전체" />
+      )}
     </aside>
   );
 };
