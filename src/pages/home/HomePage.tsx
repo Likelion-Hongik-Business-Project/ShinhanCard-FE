@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import HomeMain from "@/components/home/HomeMain";
 import HomeProfile from "@/components/home/HomeProfile";
 import { HomeData } from "@/types/home";
-
 import { homepageData } from "@/mocks/home";
 
 const HomePage = () => {

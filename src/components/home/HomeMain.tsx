@@ -5,7 +5,6 @@ import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeButton from "@/components/home/HomeButton";
 import HomeMember from "@/components/home/HomeMember";
 import { InterestMember } from "@/types/home";
-
 import { homeMemberData } from "@/mocks/home";
 
 type Props = {
