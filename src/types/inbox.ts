@@ -2,6 +2,17 @@ import { INBOX_TABS } from "@/constants/inbox";
 
 export type Tab = (typeof INBOX_TABS)[number];
 
+export type InquiryType =
+  | "ANSWER_COMPLETED"
+  | "ANSWER_CREATED"
+  | "ASSIGNED"
+  | "REFERENCED"
+  | "RE_NOTIFY"
+  | "MENTIONED"
+  | "REPLIED"
+  | "PENDING"
+  | "DELETED";
+
 export type InboxResponse = {
   total_pending_count: number;
   teams: TeamInbox[];
