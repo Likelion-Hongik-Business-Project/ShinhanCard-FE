@@ -31,6 +31,9 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
     team => team.inquiries
   );
 
+  const unreadCount = 3; // TODO: API 연결 이후 동적으로 변경
+  const badgeText = unreadCount > 99 ? "99+" : `${unreadCount}`;
+
   return (
     <aside
       ref={ref}
@@ -45,7 +48,7 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
       <div className="flex items-center gap-6">
         <p className="text-heading1 text-gray-80">수신함</p>
         <div className="px-4 py-1 bg-main rounded-[30px] h-[30px] flex justify-center items-center">
-          <span className=" text-white text-body1">4</span>
+          <span className=" text-white text-body1">{badgeText}</span>
         </div>
       </div>
       <InboxTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />

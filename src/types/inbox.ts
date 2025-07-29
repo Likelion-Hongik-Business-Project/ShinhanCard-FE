@@ -41,5 +41,6 @@ export type Inquiry = {
     profile_image_url: string;
   };
   notification_text: string;
+  notification_description: string; // TODO: API 명세가 안 나왔음. 추후 맞춰서 수정 예정
   created_at: string;
 };
