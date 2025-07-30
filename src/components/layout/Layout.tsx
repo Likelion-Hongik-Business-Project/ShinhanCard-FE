@@ -10,9 +10,18 @@ const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
 
+  const handleSearchActiveChange = (isActive: boolean) => {
+    if (isActive && isSidebarOpen) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
-      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Header
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onSearchActiveChange={handleSearchActiveChange}
+      />
       <AddMemberSidebar
         isOpen={isAddMemberSidebarOpen}
         onClose={() => setIsAddMemberSidebarOpen(false)}

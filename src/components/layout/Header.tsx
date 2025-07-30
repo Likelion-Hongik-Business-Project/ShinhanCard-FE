@@ -11,9 +11,10 @@ import RecommendSearch from "@/components/searchBar/RecommendSearch";
 
 type Props = {
   toggleSidebar: () => void;
+  onSearchActiveChange?: (isActive: boolean) => void;
 };
 
-const Header = ({ toggleSidebar }: Props) => {
+const Header = ({ toggleSidebar, onSearchActiveChange }: Props) => {
   const user = { name: "장윤영" }; // TODO: 사용자 정보 동적으로 가져오는 로직으로 변경 필요
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -24,10 +25,12 @@ const Header = ({ toggleSidebar }: Props) => {
 
   const handleSearchFocus = () => {
     setIsSearchActive(true);
+    onSearchActiveChange?.(true);
   };
 
   const handleSearchClose = () => {
     setIsSearchActive(false);
+    onSearchActiveChange?.(false);
   };
 
   const handleSearchInputClick = (e: React.MouseEvent) => {
