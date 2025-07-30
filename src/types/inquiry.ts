@@ -26,6 +26,7 @@ export interface InquiryPagination {
   has_next: boolean;
 }
 
+// assigned
 export interface AssignedInquiryItem {
   inquiry_id: number;
   writer: Profile;
@@ -54,3 +55,32 @@ export interface InquiryListItem {
 }
 
 export type YearMonth = { year: number; month: number };
+
+// my questions
+export interface InquiryAssignee {
+  id: number;
+  name: string;
+  profile_image_url: string;
+}
+
+export interface MyInquiryItem {
+  inquiry_id: number;
+  title: string;
+  inquiry_assignees: InquiryAssignee[];
+  status: InquiryServerStatus;
+  created_at: string;
+  is_scraped: boolean;
+}
+
+export interface MyInquiryListResponse {
+  total_count: number;
+  writer: {
+    id: number;
+    name: string;
+    profile_image_url: string;
+  };
+  selected_team: TeamItem;
+  teams: TeamItem[];
+  inquiries: MyInquiryItem[];
+  pagination: InquiryPagination;
+}

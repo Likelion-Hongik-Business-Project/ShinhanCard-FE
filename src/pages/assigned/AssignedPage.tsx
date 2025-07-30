@@ -34,13 +34,12 @@ const AssignedPage = () => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
 
-  // 현재 페이지 문의들: 추후 API 호출 이후 제거
+  // 현재 페이지 문의들
   const currentItems = MOCK_ASSIGNED_INQUIRY_RESPONSE.inquiries
     .slice(startIndex, endIndex)
     .map(item => {
       const statusLabel = getInquiryStatusLabel(item.status);
-
-      if (!statusLabel) return null; // DRAFT이면 건너뜀
+      if (!statusLabel) return null; // DRAFT면 건너뜀
 
       return {
         id: item.inquiry_id,
