@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Outlet } from "react-router-dom";
 
-import AddMemberSidebar from "@/components/Home/AddMemberSidebar";
+import AddMemberSidebar from "@/components/home/AddMemberSidebar";
 import Header from "@/components/layout/Header";
 import SideBar from "@/components/layout/SideBar";
 
