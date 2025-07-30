@@ -2,24 +2,44 @@ import { useState } from "react";
 
 import { Enter } from "@/assets/svgs/AdditionalInquiry";
 import AdditionalInquiryBody from "@/components/AdditionalInquiry/AdditionalInquiryBody";
-import { FollowUp, User } from "@/types/InquiryResponse";
+import { Assignee, FollowUp, User } from "@/types/InquiryResponse";
 
+import AdditionalInquiryForm from "./AdditionalInquiryForm";
 import AdditionalInquiryReplyForm from "./AdditionalInquiryReplyForm";
 
 type Props = {
+  assignees: Assignee[];
   writer: User;
   follow_ups: FollowUp[];
 };
 
-const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
+const AdditionalInquiryThread = ({ assignees, writer, follow_ups }: Props) => {
   const [replyToId, setReplyToId] = useState<number | null>(null);
+  const [editFollowUpId, setEditFollowUpId] = useState<number | null>(null);
+  const [editCommentId, setEditCommentId] = useState<number | null>(null);
 
   const handleAnswerOpen = (commentId: number) => {
     setReplyToId(prev => (prev === commentId ? null : commentId));
+    setEditFollowUpId(null);
+    setEditCommentId(null);
   };
 
   const handleFormClose = () => {
     setReplyToId(null);
+    setEditFollowUpId(null);
+    setEditCommentId(null);
+  };
+
+  const handleEditFollowUp = (followUpId: number) => {
+    setEditFollowUpId(prev => (prev === followUpId ? null : followUpId));
+    setReplyToId(null);
+    setEditCommentId(null);
+  };
+
+  const handleEditComment = (commentId: number) => {
+    setEditCommentId(prev => (prev === commentId ? null : commentId));
+    setReplyToId(null);
+    setEditFollowUpId(null);
   };
 
   return (
@@ -30,16 +50,22 @@ const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
           className="flex flex-col border-t border-gray-20 gap-8 pt-8 "
         >
           {/* 1. 추가문의(부모) */}
-          <AdditionalInquiryBody
-            recipient={writer.name}
-            writer={fu.writer}
-            created_at={fu.created_at}
-            content={fu.content}
-            //c.writer === user.id
-            canEdit={true}
-            onAnswer={() => handleAnswerOpen(fu.follow_up_id)}
-            onEdit={() => console.log("수정 follow-up", fu.follow_up_id)}
-          />
+          {editFollowUpId === fu.follow_up_id ? (
+            <AdditionalInquiryForm
+              onClose={handleFormClose}
+              assignees={assignees}
+            />
+          ) : (
+            <AdditionalInquiryBody
+              recipient={writer.name}
+              writer={fu.writer}
+              created_at={fu.created_at}
+              content={fu.content}
+              canEdit={true}
+              onAnswer={() => handleAnswerOpen(fu.follow_up_id)}
+              onEdit={() => handleEditFollowUp(fu.follow_up_id)}
+            />
+          )}
 
           {/* 1-1) 추가문의 답변 폼 */}
           {replyToId === fu.follow_up_id && (
@@ -57,17 +83,22 @@ const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
               <div className="flex gap-4" key={c.comment_id}>
                 <Enter />
                 <div className="flex-1 flex flex-col gap-8">
-                  <AdditionalInquiryBody
-                    key={c.comment_id}
-                    recipient={fu.writer.name}
-                    writer={c.writer}
-                    created_at={c.created_at}
-                    content={c.content}
-                    //c.writer === user.id
-                    canEdit={true}
-                    onAnswer={() => handleAnswerOpen(c.comment_id)}
-                    onEdit={() => console.log("수정 comment", c.comment_id)}
-                  />
+                  {editCommentId === c.comment_id ? (
+                    <AdditionalInquiryReplyForm
+                      parenWriter={fu.writer.name}
+                      onClose={handleFormClose}
+                    />
+                  ) : (
+                    <AdditionalInquiryBody
+                      recipient={fu.writer.name}
+                      writer={c.writer}
+                      created_at={c.created_at}
+                      content={c.content}
+                      canEdit={true}
+                      onAnswer={() => handleAnswerOpen(c.comment_id)}
+                      onEdit={() => handleEditComment(c.comment_id)}
+                    />
+                  )}
                   {/* 대댓글 답변 폼 */}
                   {replyToId === c.comment_id && (
                     <AdditionalInquiryReplyForm

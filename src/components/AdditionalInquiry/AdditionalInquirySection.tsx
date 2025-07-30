@@ -36,6 +36,7 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
       )}
 
       <AdditionalInquiryThread
+        assignees={inquiry.assignees}
         writer={inquiry.writer}
         follow_ups={inquiry.follow_ups}
       />
