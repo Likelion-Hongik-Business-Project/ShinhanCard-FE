@@ -4,7 +4,7 @@ import {
 } from "@/types/inquiry";
 
 export const MOCK_SCRAP_RESPONSE: ScrapedInquiryListResponse = {
-  total_count: 0,
+  total_count: 120,
   selected_team: {
     team_id: 2,
     group_name: "그룹 B",

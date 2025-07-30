@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
-import InquiryList from "@/components/common/inquiry/InquiryList";
-import TeamTabs from "@/components/common/inquiry/TeamTabs";
+import InquiryList from "@/components/inquiry/list/InquiryList";
+import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
 import { InquiryListItem } from "@/types/inquiry";
 import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
