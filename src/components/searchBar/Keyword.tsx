@@ -1,11 +1,5 @@
 import { Xmark } from "@/assets/svgs/layout";
-
-interface KeywordProps {
-  keyword: string;
-  onRemove?: (keyword: string) => void;
-  onClick?: () => void;
-  isRemoving?: boolean;
-}
+import { KeywordProps } from "@/types/search";
 
 const Keyword = ({
   keyword,

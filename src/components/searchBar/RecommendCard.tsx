@@ -1,14 +1,5 @@
 import RightArrow from "@/assets/svgs/common/right.svg";
-
-interface RecommendCardProps {
-  title: string;
-  group_name: string;
-  division_name: string;
-  team_name: string;
-  query: string;
-  isSelected: boolean;
-  onClick: () => void;
-}
+import { RecommendCardProps } from "@/types/search";
 
 const RecommendCard = ({
   title,
@@ -16,7 +7,7 @@ const RecommendCard = ({
   division_name,
   team_name,
   query,
-  isSelected, // props로 받은 isSelected 사용
+  isSelected,
   onClick,
 }: RecommendCardProps) => {
   // 제목에서 검색어와 일치하는 부분을 하이라이트
@@ -41,7 +32,7 @@ const RecommendCard = ({
   return (
     <div
       className="h-[94px] w-full bg-white hover:bg-gray-10 cursor-pointer p-6 flex items-center justify-between transition-colors"
-      onClick={onClick} // 부모가 전달한 onClick을 그대로 사용
+      onClick={onClick}
     >
       <div className="flex flex-col justify-between h-full">
         <span

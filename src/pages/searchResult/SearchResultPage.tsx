@@ -23,10 +23,17 @@ const SearchResultPage = () => {
 
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = searchData.result.pagination.page_size; // 8개
+  const ITEMS_PER_PAGE = 6; // 페이지당 6개 아이템
   const totalPages = Math.ceil(
     searchData.result.pagination.total / ITEMS_PER_PAGE
   );
+
+  // 현재 페이지 문의 index
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+
+  // 현재 페이지 문의들: 추후 API 호출 이후 제거
+  const currentItems = searchData.result.inquiries.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -45,7 +52,7 @@ const SearchResultPage = () => {
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
           <FilterBar />
-          <InquiryList inquiries={searchData.result.inquiries} />
+          <InquiryList inquiries={currentItems} />
         </div>
       )}
 

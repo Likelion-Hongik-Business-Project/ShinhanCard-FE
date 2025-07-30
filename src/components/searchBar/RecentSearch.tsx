@@ -2,15 +2,10 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import { RecentSearchProps } from "@/types/search";
 import { recentSearchMockData } from "@/mocks/searchMocks";
 
 import Keyword from "./Keyword";
-
-interface RecentSearchProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onKeywordClick?: (keyword: string) => void;
-}
 
 const RecentSearch = ({
   isOpen,

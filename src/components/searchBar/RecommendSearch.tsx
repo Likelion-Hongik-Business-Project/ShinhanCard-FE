@@ -2,16 +2,10 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import { RecommendSearchProps } from "@/types/search";
 import { recommendSearchMockData } from "@/mocks/searchMocks";
 
 import RecommendCard from "./RecommendCard";
-
-interface RecommendSearchProps {
-  isOpen: boolean;
-  onClose: () => void;
-  query: string;
-  onCardClick?: (inquiry_id: number, title: string) => void;
-}
 
 const RecommendSearch = ({
   isOpen,
@@ -28,6 +22,7 @@ const RecommendSearch = ({
   >(null);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
 
   useEffect(() => {
