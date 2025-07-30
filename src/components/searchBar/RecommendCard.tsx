@@ -6,8 +6,8 @@ interface RecommendCardProps {
   division_name: string;
   team_name: string;
   query: string;
-  isSelected: boolean; // 부모로부터 선택 여부를 받음
-  onClick: () => void; // 부모로부터 클릭 핸들러를 받음
+  isSelected: boolean;
+  onClick: () => void;
 }
 
 const RecommendCard = ({

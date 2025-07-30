@@ -4,10 +4,11 @@ import InquiryItem from "@/components/TeamBoard/InquiryItem";
 import { Inquiry } from "@/types/teamBoard";
 
 interface Props {
-  group_name: string;
-  division_name: string;
-  team_name: string;
-  inquiries: Inquiry[];
+  //부모로부터 받는 팀 정보 props를 옵셔널로 변경
+  group_name?: string;
+  division_name?: string;
+  team_name?: string;
+  inquiries: Inquiry[]; // teamBoard의 Inquiry 타입 사용
 }
 
 const InquiryList = ({
@@ -48,9 +49,10 @@ const InquiryList = ({
       {inquiries.map(inq => (
         <InquiryItem
           key={inq.inquiry_id}
-          group_name={group_name}
-          division_name={division_name}
-          team_name={team_name}
+          // 2. 각 inquiry 객체의 팀 정보를 우선 사용하고, 없으면 부모 prop 사용
+          group_name={inq.group_name || group_name || ""}
+          division_name={inq.division_name || division_name || ""}
+          team_name={inq.team_name || team_name || ""}
           inquiry={inq}
           isOpen={openId === inq.inquiry_id}
           onToggleOpen={handleToggleOpen}

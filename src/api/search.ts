@@ -44,3 +44,16 @@ export const getRecommendSearchKeywords = async (query: string) => {
     throw error;
   }
 };
+
+// 검색 결과 조회
+export const getSearchResults = async (query: string, page: number = 1) => {
+  try {
+    const response = await api.get(
+      `/search/inquiries/results?query=${query}&page=${page}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("검색 결과 조회 실패:", error);
+    throw error;
+  }
+};
