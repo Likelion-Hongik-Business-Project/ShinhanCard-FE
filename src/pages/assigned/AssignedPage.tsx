@@ -98,57 +98,55 @@ const AssignedPage = () => {
 
   return (
     <section className="w-full">
-      {totalInquiries === 0 ? (
-        <div className="h-[calc(100vh-224px)]">
-          <h1 className="text-gray-80 text-heading1">내 담당 문의</h1>
-
-          <div className="flex w-full h-[calc(100vh-224px)] pb-[118px] justify-center items-center">
-            <p className="text-gray-40 text-heading2-b">
-              나의 담당 문의가 없습니다.
+      <>
+        <div className="flex justify-between mb-10">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-gray-80 text-heading1">내 담당 문의</h1>
+            <p className="text-gray-100 text-body1">
+              나의 담당 문의가 총{" "}
+              <span className="text-body1-b">{totalInquiries}</span>건 있습니다.
             </p>
           </div>
-        </div>
-      ) : (
-        <>
-          <div className="flex justify-between mb-10">
-            <div className="flex flex-col gap-4">
-              <h1 className="text-gray-80 text-heading1">내 담당 문의</h1>
-              <p className="text-gray-100 text-body1">
-                나의 담당 문의가 총{" "}
-                <span className="text-body1-b">{totalInquiries}</span>건
-                있습니다.
-              </p>
-            </div>
+          {totalInquiries !== 0 && (
             <Button className="self-end" onClick={handleExport}>
               <Upload />
               <span className="text-gray-80 text-heading3">Export</span>
             </Button>
+          )}
+        </div>
+        {totalInquiries === 0 ? (
+          <div className="flex w-full h-[calc(100vh-340px)] pb-[118px] justify-center items-center">
+            <p className="text-gray-40 text-heading2-b">
+              나의 담당 문의가 없습니다
+            </p>
           </div>
+        ) : (
+          <>
+            <TeamTabs
+              teams={MOCK_ASSIGNED_INQUIRY_RESPONSE.teams}
+              selectedTeamId={selectedTeamId}
+              onSelectTeam={handleSelectTeam}
+            />
 
-          <TeamTabs
-            teams={MOCK_ASSIGNED_INQUIRY_RESPONSE.teams}
-            selectedTeamId={selectedTeamId}
-            onSelectTeam={handleSelectTeam}
-          />
-
-          <InquiryList
-            inquiries={filteredInquiries}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            selectedStatus={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            isStatusModalOpen={isStatusModalOpen}
-            setIsStatusModalOpen={setIsStatusModalOpen}
-            isDateModalOpen={isDateModalOpen}
-            setIsDateModalOpen={setIsDateModalOpen}
-            toggleStatusModal={toggleStatusModal}
-            toggleDateModal={toggleDateModal}
-          />
-        </>
-      )}
+            <InquiryList
+              inquiries={filteredInquiries}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              isStatusModalOpen={isStatusModalOpen}
+              setIsStatusModalOpen={setIsStatusModalOpen}
+              isDateModalOpen={isDateModalOpen}
+              setIsDateModalOpen={setIsDateModalOpen}
+              toggleStatusModal={toggleStatusModal}
+              toggleDateModal={toggleDateModal}
+            />
+          </>
+        )}
+      </>
     </section>
   );
 };

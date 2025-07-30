@@ -84,3 +84,21 @@ export interface MyInquiryListResponse {
   inquiries: MyInquiryItem[];
   pagination: InquiryPagination;
 }
+
+// scrap
+export interface ScrapedInquiryItem {
+  inquiry_id: number;
+  writer: Profile;
+  title: string;
+  status: InquiryServerStatus;
+  created_at: string;
+  is_scraped: boolean;
+}
+
+export interface ScrapedInquiryListResponse {
+  total_count: number;
+  selected_team: TeamItem;
+  teams: TeamItem[];
+  inquiries: ScrapedInquiryItem[];
+  pagination: InquiryPagination;
+}
