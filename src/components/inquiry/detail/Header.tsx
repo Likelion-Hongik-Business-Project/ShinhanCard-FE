@@ -1,12 +1,13 @@
 import { Users } from "@/assets/svgs/board";
-import { mockTeamBoardResponse } from "@/mocks/mockTeamBoardResponse";
+import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
 
 interface HeaderProps {
   isTeamEnd?: boolean;
 }
 
 const Header = ({ isTeamEnd = false }: HeaderProps) => {
-  const { group_name, division_name, team_name } = mockTeamBoardResponse;
+  const { group_name, division_name, team_name } = mockInquiryDetailResponse;
+
   return (
     <div className="flex justify-between items-end">
       <div className="flex flex-col gap-4">

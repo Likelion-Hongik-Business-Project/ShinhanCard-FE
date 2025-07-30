@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
+import { InquiryData } from "@/types/inquiryTypes";
 import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
 
 const InquiryDetailPage = () => {
@@ -10,13 +11,13 @@ const InquiryDetailPage = () => {
   // mockInquiryDetailResponse에서 해당 inquiry 찾기
   const inquiry = mockInquiryDetailResponse.inquiries.find(
     item => item.inquiry_id === Number(id)
-  );
+  ) as InquiryData | undefined;
 
   if (!inquiry) {
     return (
       <div className="min-h-screen bg-gray-05 p-8">
         <div className="max-w-screen-xl mx-auto">
-          <Header teamData={mockInquiryDetailResponse} />
+          <Header />
           <div className="mt-8 p-16 bg-white rounded-2xl text-center">
             <h2 className="text-xl text-gray-80">문의를 찾을 수 없습니다.</h2>
           </div>
@@ -25,14 +26,22 @@ const InquiryDetailPage = () => {
     );
   }
 
+  // 각 문의별 테스트 시나리오의 권한과 사용자 ID 사용
+  const userRole = inquiry.test_user_role;
+  const currentUserId = inquiry.test_current_user_id;
+
   return (
     <div className="min-h-screen bg-gray-05 p-8">
       <div className="max-w-screen-xl mx-auto flex flex-col gap-8">
         {/* 헤더 */}
-        <Header teamData={mockInquiryDetailResponse} />
+        <Header />
 
-        {/* 문의글 카드 */}
-        <InquiryCard inquiry={inquiry} />
+        {/* 문의글 카드 - 자동 권한 설정 */}
+        <InquiryCard
+          inquiry={inquiry}
+          userRole={userRole}
+          currentUserId={currentUserId}
+        />
 
         {/* 답변 컴포넌트는 나중에 추가 */}
         {/* <AnswerCard /> */}
