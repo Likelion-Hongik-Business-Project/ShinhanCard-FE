@@ -1,6 +1,8 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 
-import { Pen } from "@/assets/svgs/AdditionalInquiry";
+import { Pencil } from "@/assets/svgs/commons";
+
+import Button from "../common/Button";
 
 export type Props = {
   parenWriter: string; // 부모 글쓴이 이름
@@ -10,6 +12,7 @@ export type Props = {
 const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
   const [content, setContent] = useState("");
   const [hidePrefix, setHidePrefix] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isCompleteEnabled = content.trim().length > 0;
 
@@ -24,11 +27,13 @@ const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    if (!val.startsWith(prefix)) {
-      // prefix 뒤 본문만 잘라서 state에 저장
-      setContent(val.slice(prefix.length));
-    } else {
-      setContent(val.slice(prefix.length));
+
+    setContent(val.slice(prefix.length));
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
     }
   };
 
@@ -46,6 +51,7 @@ const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
             </span>
           )}
           <textarea
+            ref={textareaRef}
             className="
               flex-1
               w-full 
@@ -61,20 +67,17 @@ const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
         </div>
       </div>
 
-      {/* 완료 버튼 */}
-      <button
+      <Button
         type="button"
+        buttonType={isCompleteEnabled ? "blue" : "done"}
         disabled={!isCompleteEnabled}
         onClick={handleComplete}
-        className={`h-16 px-6 rounded-[15px] flex items-center gap-4 border ${
-          isCompleteEnabled
-            ? "bg-main text-white border-main"
-            : "bg-gray-20 text-gray-80 cursor-not-allowed"
-        }`}
+        // 활성 상태일 때만 테두리 색 덮어쓰기
+        className={isCompleteEnabled ? "border-main border" : ""}
       >
-        <Pen className="w-4 h-4" />
-        <span className="text-heading3">완료</span>
-      </button>
+        <Pencil className="w-4 h-4" />
+        <span>완료</span>
+      </Button>
     </div>
   );
 };

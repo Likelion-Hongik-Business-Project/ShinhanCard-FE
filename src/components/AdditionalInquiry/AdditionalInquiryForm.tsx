@@ -1,7 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 
-import { FilledUnion, Pen, Union } from "@/assets/svgs/AdditionalInquiry";
+import { FilledUnion, Union } from "@/assets/svgs/AdditionalInquiry";
+import { Pencil } from "@/assets/svgs/commons";
 import { Assignee } from "@/types/InquiryResponse";
+
+import Button from "../common/Button";
 
 type Props = {
   assignees: Assignee[];
@@ -12,6 +15,7 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [content, setContent] = useState("");
   const [hidePrefix, setHidePrefix] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedName = assignees.find(a => a.user_id === selectedId)?.name;
 
@@ -33,11 +37,13 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-    if (!val.startsWith(prefix)) {
-      // prefix 뒤 본문만 잘라서 state에 저장
-      setContent(val.slice(prefix.length));
-    } else {
-      setContent(val.slice(prefix.length));
+
+    setContent(val.slice(prefix.length));
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
     }
   };
 
@@ -50,17 +56,19 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
       <div className="flex-1 min-h-[150px] flex flex-col gap-8">
         <div className="flex gap-5 items-center">
           <span className="text-body2 text-gray-50">문의대상</span>
-          {assignees.map(a => (
-            <button
-              key={a.user_id}
-              type="button"
-              onClick={() => handleToggleAssignee(a.user_id)}
-              className="flex gap-2 items-center"
-            >
-              {a.user_id === selectedId ? <FilledUnion /> : <Union />}
-              {a.name}
-            </button>
-          ))}
+          <div className="flex gap-4">
+            {assignees.map(a => (
+              <button
+                key={a.user_id}
+                type="button"
+                onClick={() => handleToggleAssignee(a.user_id)}
+                className="flex gap-2 items-center"
+              >
+                {a.user_id === selectedId ? <FilledUnion /> : <Union />}
+                {a.name}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="relative flex bg-white">
           {!hidePrefix && (
@@ -69,6 +77,7 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
             </span>
           )}
           <textarea
+            ref={textareaRef}
             className="
               flex-1
               w-full 
@@ -84,19 +93,17 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
         </div>
       </div>
 
-      <button
+      <Button
         type="button"
+        buttonType={isCompleteEnabled ? "blue" : "done"}
         disabled={!isCompleteEnabled}
         onClick={handleComplete}
-        className={`h-16 px-6 rounded-[15px] flex items-center gap-4 border ${
-          isCompleteEnabled
-            ? "bg-main text-white border-main"
-            : "bg-gray-20 text-gray-80 cursor-not-allowed"
-        }`}
+        // 활성 상태일 때만 테두리 색 덮어쓰기
+        className={isCompleteEnabled ? "border-main border" : ""}
       >
-        <Pen className="w-4 h-4" />
-        <span className="text-heading3">완료</span>
-      </button>
+        <Pencil className="w-4 h-4" />
+        <span>완료</span>
+      </Button>
     </div>
   );
 };

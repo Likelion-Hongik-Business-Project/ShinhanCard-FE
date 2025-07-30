@@ -1,4 +1,5 @@
 import { Bubble, UserProfile } from "@/assets/svgs/AdditionalInquiry";
+import { formatDateTimeToKorean } from "@/utils/formatDateToKorean";
 
 export interface UserInfo {
   name: string;
@@ -6,7 +7,7 @@ export interface UserInfo {
 }
 
 export type Props = {
-  parentWriter: string;
+  recipient: string;
   writer: UserInfo;
   created_at: string; // ISO 포맷 문자열
   content: string; // Markdown / 개행 포함 텍스트
@@ -16,7 +17,7 @@ export type Props = {
 };
 
 export const AdditionalInquiryBody = ({
-  parentWriter,
+  recipient,
   writer,
   created_at,
   content,
@@ -24,19 +25,8 @@ export const AdditionalInquiryBody = ({
   onAnswer,
   onEdit,
 }: Props) => {
-  // “2025-07-06T01:00:00Z” → “2025년 07월 06일 01:00”
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    const YYYY = d.getFullYear();
-    const MM = String(d.getMonth() + 1).padStart(2, "0");
-    const DD = String(d.getDate()).padStart(2, "0");
-    const hh = String(d.getHours()).padStart(2, "0");
-    const mm = String(d.getMinutes()).padStart(2, "0");
-    return `${YYYY}년 ${MM}월 ${DD}일 ${hh}:${mm}`;
-  };
-
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-4">
       {/* 헤더: 프로필 · 이름 · 날짜 */}
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2">
@@ -49,14 +39,14 @@ export const AdditionalInquiryBody = ({
           <span className="text-body1-b text-gray-100">{writer.name}</span>
         </div>
         <span className="text-detail2 text-gray-50">
-          {formatDate(created_at)}
+          {formatDateTimeToKorean(created_at)}
         </span>
       </div>
 
       {/* 본문 */}
-      <div className="text-body2 text-gray-800 whitespace-pre-wrap mb-4">
+      <div className="text-body2 text-gray-800 whitespace-pre-wrap">
         <span className="text-body2-b text-state-progress-02 ">
-          {parentWriter + " "}
+          {recipient + " "}
         </span>
         {content}
       </div>

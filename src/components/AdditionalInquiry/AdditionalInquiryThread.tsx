@@ -31,7 +31,7 @@ const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
         >
           {/* 1. 추가문의(부모) */}
           <AdditionalInquiryBody
-            parentWriter={writer.name}
+            recipient={writer.name}
             writer={fu.writer}
             created_at={fu.created_at}
             content={fu.content}
@@ -54,12 +54,12 @@ const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
           {/* 2. 대댓글(하위) */}
           <div className="py-8 px-6 rounded-[15px] bg-gray-10 flex flex-col gap-8 ">
             {fu.comments.map(c => (
-              <div className="flex gap-4 ">
+              <div className="flex gap-4" key={c.comment_id}>
                 <Enter />
                 <div className="flex-1 flex flex-col gap-8">
                   <AdditionalInquiryBody
                     key={c.comment_id}
-                    parentWriter={fu.writer.name}
+                    recipient={fu.writer.name}
                     writer={c.writer}
                     created_at={c.created_at}
                     content={c.content}
@@ -71,7 +71,7 @@ const AdditionalInquiryThread = ({ writer, follow_ups }: Props) => {
                   {/* 대댓글 답변 폼 */}
                   {replyToId === c.comment_id && (
                     <AdditionalInquiryReplyForm
-                      parenWriter={fu.writer.name}
+                      parenWriter={c.writer.name}
                       onClose={handleFormClose}
                     />
                   )}
