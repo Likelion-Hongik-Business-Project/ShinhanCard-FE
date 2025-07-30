@@ -102,3 +102,12 @@ export interface ScrapedInquiryListResponse {
   inquiries: ScrapedInquiryItem[];
   pagination: InquiryPagination;
 }
+
+export type TInquiryBase = {
+  inquiry_id: number;
+  title: string;
+  status: InquiryServerStatus;
+  created_at: string;
+  is_scraped: boolean;
+  writer?: Profile;
+};
