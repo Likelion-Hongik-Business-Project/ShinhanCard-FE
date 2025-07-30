@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Heart } from "@/assets/svgs/commons";
+import Heart from "@/assets/svgs/common/heart.svg";
 import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeButton from "@/components/home/HomeButton";
 import HomeMember from "@/components/home/HomeMember";
