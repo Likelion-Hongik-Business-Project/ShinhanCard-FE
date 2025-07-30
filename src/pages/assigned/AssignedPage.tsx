@@ -4,6 +4,8 @@ import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
 import InquiryList from "@/components/common/inquiry/InquiryList";
 import TeamTabs from "@/components/common/inquiry/TeamTabs";
+import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
+import { InquiryListItem } from "@/types/inquiry";
 import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
 
 const AssignedPage = () => {
@@ -35,21 +37,28 @@ const AssignedPage = () => {
   // 현재 페이지 문의들: 추후 API 호출 이후 제거
   const currentItems = MOCK_ASSIGNED_INQUIRY_RESPONSE.inquiries
     .slice(startIndex, endIndex)
-    .map(item => ({
-      id: item.inquiry_id,
-      team_id: selectedTeamId,
-      leftProfiles: [
-        {
-          user_id: item.writer.user_id,
-          name: item.writer.name,
-          profile_image_url: item.writer.profile_image_url,
-        },
-      ],
-      title: item.title,
-      status: item.status,
-      created_at: item.created_at,
-      is_scraped: item.is_scraped,
-    }));
+    .map(item => {
+      const statusLabel = getInquiryStatusLabel(item.status);
+
+      if (!statusLabel) return null; // DRAFT이면 건너뜀
+
+      return {
+        id: item.inquiry_id,
+        team_id: selectedTeamId,
+        leftProfiles: [
+          {
+            user_id: item.writer.user_id,
+            name: item.writer.name,
+            profile_image_url: item.writer.profile_image_url,
+          },
+        ],
+        title: item.title,
+        status: statusLabel,
+        created_at: item.created_at,
+        is_scraped: item.is_scraped,
+      };
+    })
+    .filter((item): item is InquiryListItem => item !== null);
 
   // 필터링 로직: 추후 쿼리 파라미터로 API 호출할 예정
   const filteredInquiries =

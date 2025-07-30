@@ -1,3 +1,9 @@
+export type InquiryServerStatus =
+  | "DRAFT"
+  | "UNCHECKED"
+  | "IN_PROGRESS"
+  | "COMPLETED";
+
 export type InquiryStatus = "확인 전" | "확인 중" | "답변 완료";
 
 export interface Profile {
@@ -24,7 +30,7 @@ export interface AssignedInquiryItem {
   inquiry_id: number;
   writer: Profile;
   title: string;
-  status: InquiryStatus;
+  status: InquiryServerStatus;
   created_at: string;
   is_scraped: boolean;
 }
