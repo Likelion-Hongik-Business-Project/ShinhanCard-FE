@@ -29,15 +29,13 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
 
   const handleComplete = () => {
     if (isCompleteEnabled) {
-      // const assignee = assignees.find(a => a.user_id === selectedId)!;
-      // onSubmit(assignee, content.trim());
+      // todo: 추가 문의 제출 or 수정 : onSubmit(content.trim(), selectedId);
       onClose();
     }
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-
     setContent(val.slice(prefix.length));
 
     if (textareaRef.current) {
@@ -98,7 +96,6 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
         buttonType={isCompleteEnabled ? "blue" : "done"}
         disabled={!isCompleteEnabled}
         onClick={handleComplete}
-        // 활성 상태일 때만 테두리 색 덮어쓰기
         className={isCompleteEnabled ? "border-main border" : ""}
       >
         <Pencil className="w-4 h-4" />

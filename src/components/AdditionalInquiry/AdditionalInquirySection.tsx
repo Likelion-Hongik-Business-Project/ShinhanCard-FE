@@ -10,11 +10,9 @@ type Props = {
 };
 
 const AdditionalInquirySection = ({ inquiry }: Props) => {
-  // 채팅창 열림 여부
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  // 토글 함수
-  const toggleChat = () => {
+  const handleToggleChat = () => {
     setIsChatOpen(prev => !prev);
   };
 
@@ -24,14 +22,14 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
       <AdditionalInquiryHeader
         follow_ups_cnt={inquiry.follow_ups.length}
         isChatOpen={isChatOpen}
-        onClick={toggleChat}
+        onClick={handleToggleChat}
       />
 
       {/* isChatOpen이 true일 때만 InquiryForm 렌더 */}
       {isChatOpen && (
         <AdditionalInquiryForm
           assignees={inquiry.assignees}
-          onClose={toggleChat}
+          onClose={handleToggleChat}
         />
       )}
 

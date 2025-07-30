@@ -5,29 +5,28 @@ import { Pencil } from "@/assets/svgs/commons";
 import Button from "../common/Button";
 
 export type Props = {
-  parenWriter: string; // 부모 글쓴이 이름
+  recipient: string; // 수신자
   onClose: () => void;
 };
 
-const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
+const AdditionalInquiryReplyForm = ({ recipient, onClose }: Props) => {
   const [content, setContent] = useState("");
   const [hidePrefix, setHidePrefix] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isCompleteEnabled = content.trim().length > 0;
 
-  const prefix = parenWriter + " ";
+  const prefix = recipient + " ";
 
   const handleComplete = () => {
     if (isCompleteEnabled) {
-      // onSubmit(content.trim());
+      // todo: 댓글 추가 or 수정: onSubmit(content.trim(), recipient);
       onClose();
     }
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
-
     setContent(val.slice(prefix.length));
 
     if (textareaRef.current) {
@@ -72,7 +71,6 @@ const AdditionalInquiryReplyForm = ({ parenWriter, onClose }: Props) => {
         buttonType={isCompleteEnabled ? "blue" : "done"}
         disabled={!isCompleteEnabled}
         onClick={handleComplete}
-        // 활성 상태일 때만 테두리 색 덮어쓰기
         className={isCompleteEnabled ? "border-main border" : ""}
       >
         <Pencil className="w-4 h-4" />
