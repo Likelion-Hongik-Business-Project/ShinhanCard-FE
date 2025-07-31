@@ -7,6 +7,7 @@ export interface Comment {
     user_id: number;
     name: string;
     profile_image_url?: string;
+    team_name?: string;
   };
   content: string;
   created_at: string;
@@ -102,20 +103,20 @@ export interface AssigneeSectionProps {
 export interface InquiryData {
   inquiry_id: number;
   title: string;
-  content: string; // 전체 내용
+  content: string;
   created_at: string;
   inquiry_state: string;
   writer: {
     user_id: number;
     name: string;
     profile_image_url?: string;
-    team_name: string; // API에서 제공하는 팀 정보
+    team_name: string;
   };
   assignees: Array<{
     user_id: number;
     name: string;
     profile_image_url?: string;
-    is_confirmed: boolean; 
+    is_confirmed: boolean;
   }>;
   references: Array<{
     user_id: number;
@@ -126,19 +127,19 @@ export interface InquiryData {
     file_name: string;
     file_url: string;
   }>;
-  can_edit: boolean; 
-  can_answer: boolean; 
-  can_notify: boolean; 
+  can_edit: boolean;
+  can_answer: boolean;
+  can_notify: boolean;
   is_scrapped: boolean;
-  confirmed_assignees_count: number; 
+  confirmed_assignees_count: number;
   confirmed_assignees: Array<{
     user_id: number;
     name: string;
     profile_image_url?: string;
-  }>; 
+  }>;
   comment_count: number;
-  comments: Comment[]; 
-  follow_ups: FollowUp[]; 
+  comments: Comment[];
+  follow_ups: FollowUp[];
 
   // 테스트용 필드들 (mock 데이터에서만 사용, 컴포넌트에서는 옵셔널)
   test_scenario?: string;

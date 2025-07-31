@@ -1,6 +1,6 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
-import type { Comment } from "@/types/inquiryTypes";
 import { formatDateToKorean } from "@/utils/formatDateToKorean";
+import type { Comment } from "@/types/inquiryTypes";
 
 interface AnswerItemProps {
   comment: Comment;
@@ -8,7 +8,11 @@ interface AnswerItemProps {
   currentUserId?: number;
 }
 
-const AnswerItem = ({ comment, isOnlyComment, currentUserId }: AnswerItemProps) => {
+const AnswerItem = ({
+  comment,
+  isOnlyComment,
+  currentUserId,
+}: AnswerItemProps) => {
   const isWriter = comment.writer.user_id === currentUserId;
 
   return (
@@ -26,21 +30,19 @@ const AnswerItem = ({ comment, isOnlyComment, currentUserId }: AnswerItemProps) 
                 {comment.writer.name}
               </span>
             </div>
-            {"team_name" in comment.writer && (
+            {comment.writer.team_name && (
               <span className="text-detail1-b text-main">
-                {(comment.writer as any).team_name}
+                {comment.writer.team_name}
               </span>
             )}
           </div>
 
           {isWriter && (
             <div className="flex items-center gap-8">
-              <button className="text-body2 text-gray-50">
-                수정
-              </button>
+              <button className="text-body2 text-gray-50">수정</button>
               <button
                 disabled={isOnlyComment}
-                className="text-body2 text-gray-50 disabled:cursor-not-allowed"
+                className="text-body2 text-gray-50 disabled:cursor-not-allowed disabled:text-gray-30"
               >
                 삭제
               </button>

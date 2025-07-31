@@ -9,30 +9,18 @@ export const STATUS_MAPPING: Record<string, string> = {
 };
 
 // 답변 타입 정의
-interface Comment {
-  comment_id: number;
-  writer: {
-    user_id: number;
-    name: string;
-    profile_image_url?: string;
-  };
-  content: string;
-  created_at: string;
-  can_delete: boolean;
-}
-
-// 추가문의 타입
-interface FollowUp {
-  follow_up_id: number;
-  content: string;
-  created_at: string;
-  writer: {
-    user_id: number;
-    name: string;
-    profile_image_url?: string;
-  };
-  comments: Comment[];
-}
+// interface Comment {
+//   comment_id: number;
+//   writer: {
+//     user_id: number;
+//     name: string;
+//     profile_image_url?: string;
+//     team_name?: string;
+//   };
+//   content: string;
+//   created_at: string;
+//   can_delete: boolean;
+// }
 
 // 테스트용 확장 필드가 포함된 문의 타입
 interface ExtendedInquiryData extends InquiryData {
@@ -163,6 +151,7 @@ export const mockInquiryDetailResponse: {
             user_id: 6,
             name: "이규영",
             profile_image_url: "/assets/images/profile.png",
+            team_name: "프론트엔드팀",
           },
           content:
             "현재 디자인 토큰은 전사 공통으로 관리하고 있습니다. 다만 브랜드 컬러나 특정 컴포넌트의 경우 팀별 커스터마이징이 제한적으로 허용됩니다. 자세한 가이드라인은 디자인 시스템 문서를 참고해주세요.",
@@ -222,7 +211,7 @@ export const mockInquiryDetailResponse: {
           profile_image_url: "/assets/images/profile.png",
         },
       ],
-      comment_count: 1, // 2 -> 1로 수정
+      comment_count: 1,
       comments: [
         {
           comment_id: 3001,
@@ -230,11 +219,12 @@ export const mockInquiryDetailResponse: {
             user_id: 4,
             name: "이수연",
             profile_image_url: "/assets/images/profile.png",
+            team_name: "Core 개발 1부",
           },
           content:
-            "Docker 레이어 캐시를 위해서는 다음과 같은 설정이 필요합니다:\n\n1. `docker/build-push-action`에서 `cache-from`과 `cache-to` 설정\n2. 멀티스테이지 빌드 시 각 스테이지별 캐시 전략\n3. 의존성 변경이 적은 레이어를 앞쪽에 배치\n\n현재 캐시 동작 확인은 Actions 로그에서 'CACHED' 표시를 통해 확인할 수 있습니다.\n\n추가로, 캐시 효율성을 높이려면 .dockerignore 파일도 잘 관리해야 합니다. 불필요한 파일들이 캐시 키에 영향을 주지 않도록 주의해주세요.", // 답변 내용 병합
+            "Docker 레이어 캐시를 위해서는 다음과 같은 설정이 필요합니다:\n\n1. `docker/build-push-action`에서 `cache-from`과 `cache-to` 설정\n2. 멀티스테이지 빌드 시 각 스테이지별 캐시 전략\n3. 의존성 변경이 적은 레이어를 앞쪽에 배치\n\n현재 캐시 동작 확인은 Actions 로그에서 'CACHED' 표시를 통해 확인할 수 있습니다.\n\n추가로, 캐시 효율성을 높이려면 .dockerignore 파일도 잘 관리해야 합니다. 불필요한 파일들이 캐시 키에 영향을 주지 않도록 주의해주세요.",
           created_at: "2025-07-18T11:20:00+09:00",
-          can_delete: false, // 유일한 답변이므로 삭제 불가
+          can_delete: false,
         },
       ],
       follow_ups: [],
@@ -365,7 +355,7 @@ export const mockInquiryDetailResponse: {
           profile_image_url: "/assets/images/profile.png",
         },
       ],
-      comment_count: 2, // 3 -> 2로 수정
+      comment_count: 2,
       comments: [
         {
           comment_id: 5001,
@@ -373,9 +363,10 @@ export const mockInquiryDetailResponse: {
             user_id: 5,
             name: "이승찬",
             profile_image_url: "/assets/images/profile.png",
+            team_name: "프론트엔드팀",
           },
           content:
-            "SSO 연동은 다음 절차를 따라주세요:\n\n1. 사내 포털에서 OAuth2 클라이언트 등록 신청\n2. 서비스명, Redirect URI, 스코프 정보 제출\n3. 보안팀 검토 후 클라이언트 ID/Secret 발급\n\nRedirect URI는 HTTPS만 허용되며, localhost는 개발환경에서만 사용 가능합니다.\n\n추가로 개발 완료 후에는 보안 점검을 받아야 합니다. 운영 배포 최소 1주일 전에 신청해주세요.", // 답변 내용 병합
+            "SSO 연동은 다음 절차를 따라주세요:\n\n1. 사내 포털에서 OAuth2 클라이언트 등록 신청\n2. 서비스명, Redirect URI, 스코프 정보 제출\n3. 보안팀 검토 후 클라이언트 ID/Secret 발급\n\nRedirect URI는 HTTPS만 허용되며, localhost는 개발환경에서만 사용 가능합니다.\n\n추가로 개발 완료 후에는 보안 점검을 받아야 합니다. 운영 배포 최소 1주일 전에 신청해주세요.",
           created_at: "2025-07-16T10:30:00+09:00",
           can_delete: true,
         },
@@ -385,6 +376,7 @@ export const mockInquiryDetailResponse: {
             user_id: 8,
             name: "이주완",
             profile_image_url: "/assets/images/profile.png",
+            team_name: "인프라팀",
           },
           content:
             "Next.js에서는 NextAuth.js를 사용하시는 것을 추천합니다. 사내 OAuth2 프로바이더 설정 예시 코드를 공유드릴게요.",
@@ -410,6 +402,7 @@ export const mockInquiryDetailResponse: {
                 user_id: 5,
                 name: "이승찬",
                 profile_image_url: "/assets/images/profile.png",
+                team_name: "프론트엔드팀",
               },
               content:
                 "테스트 환경에서는 자체 서명 인증서도 허용됩니다. 다만 브라우저에서 경고가 나올 수 있으니 참고해주세요.",
@@ -516,6 +509,7 @@ export const mockInquiryDetailResponse: {
             user_id: 2,
             name: "이윤영",
             profile_image_url: "/assets/images/profile.png",
+            team_name: "Core 개발 2부",
           },
           content:
             "프로필 이미지 업로드 제한사항:\n\n• 최대 용량: 5MB\n• 허용 확장자: JPG, PNG, GIF\n• 권장 해상도: 200x200px 이상\n• 정사각형 비율 권장\n\n업로드 후 자동으로 리사이징되며, 원본은 30일 후 삭제됩니다.",
