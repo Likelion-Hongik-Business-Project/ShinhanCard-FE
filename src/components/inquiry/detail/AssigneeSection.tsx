@@ -2,23 +2,7 @@ import CheckGray from "@/assets/svgs/inquiry/detail/check-gray.svg";
 import CheckGreen from "@/assets/svgs/inquiry/detail/check-green.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import UserCheck from "@/assets/svgs/inquiry/detail/user-check.svg";
-
-interface AssigneeSectionProps {
-  assignees?: Array<{
-    user_id: number;
-    name: string;
-    profile_image_url?: string;
-  }>;
-  references?: Array<{
-    user_id: number;
-    name: string;
-    profile_image_url?: string;
-  }>;
-  confirmedAssignees?: number[];
-  isPendingState: boolean;
-  isAssigneeEditMode: boolean;
-  showAssigneeFeatures: boolean;
-}
+import { AssigneeSectionProps } from "@/types/inquiryTypes";
 
 const AssigneeSection = ({
   assignees,
@@ -42,8 +26,7 @@ const AssigneeSection = ({
         </div>
         <div className="w-[728px] px-[8px] py-[4px] bg-white rounded-[5px] flex justify-start items-center gap-[16px]">
           {assignees?.map(assignee => {
-            const isConfirmed =
-              confirmedAssignees?.includes(assignee.user_id) || false;
+            const isConfirmed = assignee.is_confirmed;
 
             let textColor;
             if (isPendingState) {

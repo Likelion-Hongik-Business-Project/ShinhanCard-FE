@@ -11,14 +11,14 @@ const AssigneeActions = ({ showAssigneeFeatures }: AssigneeActionsProps) => {
   if (!showAssigneeFeatures) return null;
 
   return (
-    <div className="self-stretch px-[16px] justify-between items-start flex">
+    <div className="flex justify-between items-center w-full">
       {/* 담당자 수정 버튼 */}
       <Button buttonType="default" className="text-gray-80">
         <UserCheck className="text-gray-80" />
         담당자 수정
       </Button>
 
-      <div className="justify-start items-center gap-[16px] flex">
+      <div className="flex items-center gap-[16px]">
         {/* 답변 작성 버튼 */}
         <Button buttonType="blue">
           <Pencil />

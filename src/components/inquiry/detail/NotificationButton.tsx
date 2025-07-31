@@ -1,21 +1,20 @@
 import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import Button from "@/components/common/Button";
-
-interface NotificationButtonProps {
-  isWriter: boolean;
-  notificationSent: boolean;
-  remainingTime: string;
-}
+import { NotificationButtonProps } from "@/types/inquiryTypes";
 
 const NotificationButton = ({
   isWriter,
   notificationSent,
   remainingTime,
+  finalStateLabel,
 }: NotificationButtonProps) => {
-  if (!isWriter) return null;
+  // 문의자가 아니거나, 답변완료/등록보류 상태면 표시하지 않음
+  if (!isWriter || ["답변 완료", "등록 보류"].includes(finalStateLabel)) {
+    return null;
+  }
 
   return (
-    <div className="self-stretch px-[16px] justify-start items-start flex">
+    <div className="flex justify-start items-start">
       {notificationSent ? (
         // 알림 보낸 후
         <Button buttonType="done" className="border-gray-20 text-gray-60">

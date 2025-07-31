@@ -1,19 +1,6 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
+import { InquiryContentProps } from "@/types/inquiryTypes";
 import { formatDateToKorean } from "@/utils/formatDateToKorean";
-
-interface InquiryContentProps {
-  title: string;
-  content: string;
-  writer: {
-    user_id: number;
-    name: string;
-    profile_image_url?: string;
-  };
-  createdAt: string;
-  isWriter: boolean;
-  isAdmin: boolean;
-  answersCount: number;
-}
 
 const InquiryContent = ({
   title,
@@ -28,7 +15,7 @@ const InquiryContent = ({
     <div className="self-stretch px-[16px] flex flex-col justify-start items-start gap-[32px]">
       {/* 제목 */}
       <div className="flex justify-start items-start gap-[24px]">
-        <div className="justify-start text-gray-100 text-heading2">{title}</div>
+        <div className="justify-start text-gray-100 text-heading2-b">{title}</div>
       </div>
 
       {/* 내용 */}
@@ -37,23 +24,20 @@ const InquiryContent = ({
       </div>
 
       {/* 작성자 정보 */}
-      <div className="self-stretch rounded-[30px] flex flex-col justify-center items-start gap-[16px]">
-        <div className="flex justify-start items-center gap-[8px] w-full">
-          <div className="flex justify-start items-center gap-[8px]">
-            <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
-            <div className="flex justify-start items-start gap-[24px]">
-              <div className="justify-start text-gray-80 text-body1">
-                {writer.name}
-              </div>
+      <div className="self-stretch rounded-[30px] flex flex-col justify-center items-start gap-4">
+        <div className="flex justify-between items-center w-full">
+          <div className="flex items-center gap-2">
+            <ProfileIcon className="w-5 h-5 rounded-full text-gray-30" />
+            <div className="text-gray-80 text-body1-b">
+              {writer.name}
+            </div>
+            <div className="text-main text-detail1-b">
+              {writer.team_name}
             </div>
           </div>
-          <div className="justify-start text-main text-detail1">
-            Core 개발 2부
-          </div>
-
           {/* 문의자 수정/삭제 버튼 */}
           {isWriter && (
-            <div className="flex items-center gap-[16px] ml-auto">
+            <div className="flex items-center gap-4">
               <button className="text-gray-50 text-body2">수정</button>
               {/* 답변이 없거나 관리자가 아닌 경우에만 삭제 버튼 표시 */}
               {(answersCount === 0 || isAdmin) && (

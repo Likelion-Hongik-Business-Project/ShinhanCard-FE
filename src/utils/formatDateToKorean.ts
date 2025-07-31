@@ -5,5 +5,8 @@ export const formatDateToKorean = (dateString: string | Date) => {
     year: "numeric",
     month: "long",
     day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
   });
 };

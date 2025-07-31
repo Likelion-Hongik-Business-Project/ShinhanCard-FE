@@ -26,8 +26,13 @@ const InquiryCard = ({
     answersCount,
   } = useInquiryState(inquiry, userRole, currentUserId);
 
+  // 버튼 표시 여부 확인
+  const showButtons = permissions.showAssigneeFeatures || 
+                     (isWriter && !["답변 완료", "등록 보류"].includes(finalStateLabel)) ||
+                     (isWriter && isPendingState);
+
   return (
-    <div className="self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
+    <div className={`self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start ${showButtons ? 'gap-[32px]' : 'gap-[32px]'}`}>
       {/* 헤더 - 상태 및 액션 버튼 */}
       <InquiryHeader
         finalStateLabel={finalStateLabel}
@@ -40,7 +45,7 @@ const InquiryCard = ({
       {/* 본문 */}
       <InquiryContent
         title={inquiry.title}
-        content={inquiry.content_preview}
+        content={inquiry.content}
         writer={inquiry.writer}
         createdAt={inquiry.created_at}
         isWriter={isWriter}
@@ -61,22 +66,31 @@ const InquiryCard = ({
         showAssigneeFeatures={permissions.showAssigneeFeatures}
       />
 
-      <div className="self-stretch flex justify-between items-center">
-        {/* 문의자용 담당자 알림 발송 버튼 */}
-        <NotificationButton
-          isWriter={isWriter}
-          notificationSent={notificationSent}
-          remainingTime={remainingTime}
-        />
+      {/* 버튼들 - 조건부 렌더링 */}
+      {showButtons && (
+        permissions.showAssigneeFeatures ? (
+          <AssigneeActions
+            showAssigneeFeatures={permissions.showAssigneeFeatures}
+          />
+        ) : (
+          <div className="w-full flex justify-between items-center">
+            {/* 문의자용 담당자 알림 발송 버튼 */}
+            <div className="flex justify-start">
+              <NotificationButton
+                isWriter={isWriter}
+                notificationSent={notificationSent}
+                remainingTime={remainingTime}
+                finalStateLabel={finalStateLabel}
+              />
+            </div>
 
-        {/* 문의자 등록 보류 상태 버튼들 */}
-        <PendingActions isWriter={isWriter} isPendingState={isPendingState} />
-      </div>
-
-      {/* 담당자용 액션 버튼들 */}
-      <AssigneeActions
-        showAssigneeFeatures={permissions.showAssigneeFeatures}
-      />
+            {/* 문의자 등록 보류 상태 버튼들 */}
+            <div className="flex justify-end">
+              <PendingActions isWriter={isWriter} isPendingState={isPendingState} />
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 };

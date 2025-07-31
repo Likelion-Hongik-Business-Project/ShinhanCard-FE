@@ -1,19 +1,8 @@
-import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import BellOff from "@/assets/svgs/inquiry/detail/bell-off.svg";
 import BellOn from "@/assets/svgs/inquiry/detail/bell-on.svg";
+import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import Star from "@/assets/svgs/inquiry/detail/star.svg";
-
-interface InquiryHeaderProps {
-  finalStateLabel: string;
-  finalStatusConfig: {
-    bg: string;
-    text: string;
-    dot: string;
-  };
-  isWriter: boolean;
-  isAdmin: boolean;
-  canSendNotification: boolean;
-}
+import { InquiryHeaderProps } from "@/types/inquiryTypes";
 
 const InquiryHeader = ({
   finalStateLabel,
@@ -61,13 +50,6 @@ const InquiryHeader = ({
         {!isAdmin && (
           <button className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer">
             <Star className="text-gray-50" />
-          </button>
-        )}
-
-        {/* 팀관리자 삭제 버튼 */}
-        {isAdmin && (
-          <button className="text-point-red text-body1 cursor-pointer">
-            게시물 삭제
           </button>
         )}
       </div>

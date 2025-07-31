@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
-import { InquiryData } from "@/types/inquiryTypes";
 import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
+import { InquiryData } from "@/types/inquiryTypes";
 
 const InquiryDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,11 +30,18 @@ const InquiryDetailPage = () => {
   const userRole = inquiry.test_user_role;
   const currentUserId = inquiry.test_current_user_id;
 
+  // 🆕 팀 정보는 고정값 또는 별도 API에서 가져오기
+  const teamInfo = {
+    group_name: "경영기획 그룹",
+    division_name: "ICT 기획본부",
+    team_name: "Core 개발 2부팀"
+  };
+
   return (
     <div className="min-h-screen bg-gray-05 p-8">
       <div className="max-w-screen-xl mx-auto flex flex-col gap-8">
         {/* 헤더 */}
-        <Header />
+        <Header isAdmin={userRole === "admin"} />
 
         {/* 문의글 카드 - 자동 권한 설정 */}
         <InquiryCard

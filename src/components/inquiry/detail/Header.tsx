@@ -1,34 +1,47 @@
 import { Users } from "@/assets/svgs/board";
-import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
+import { HeaderProps } from "@/types/inquiryTypes";
 
-interface HeaderProps {
-  isTeamEnd?: boolean;
-}
+const Header = ({ isTeamEnd = false, isAdmin = false }: HeaderProps) => {
+  const teamInfo = {
+    group_name: "경영기획 그룹",
+    division_name: "ICT 기획본부",
+    team_name: "Core 개발 2부팀"
+  };
 
-const Header = ({ isTeamEnd = false }: HeaderProps) => {
-  const { group_name, division_name, team_name } = mockInquiryDetailResponse;
+  const { group_name, division_name, team_name } = teamInfo;
 
   return (
-    <div className="flex justify-between items-end">
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <div className="py-1 px-2 bg-main rounded-[30px] flex items-center">
-            <span className="text-detail1 text-white">
-              {group_name} / {division_name}
-            </span>
+    <div className="self-stretch flex justify-between items-end">
+      <div className="flex flex-col justify-start items-start gap-[16px]">
+        <div className="px-[8px] py-[4px] bg-main rounded-[30px] flex justify-center items-center gap-[10px]">
+          <div className="justify-start text-white text-detail1 font-normal font-['Pretendard'] leading-none">
+            {group_name} / {division_name}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <h1
-            className={`text-heading1 ${
-              isTeamEnd ? "text-gray-50" : "text-gray-80"
-            }`}
-          >
-            {team_name}
-          </h1>
-          <Users className="w-8 h-8 text-gray-40" />
+        <div className="flex justify-start items-center gap-[16px]">
+          <div className="px-[4px] flex justify-start items-center gap-[10px]">
+            <div
+              className={`justify-start text-3xl font-bold font-['Pretendard'] leading-[40px] ${
+                isTeamEnd ? "text-gray-50" : "text-gray-80"
+              }`}
+            >
+              {team_name}
+            </div>
+          </div>
+          <div className="w-[32px] h-[32px] relative overflow-hidden">
+            <Users className="w-[32px] h-[28px] text-gray-40" />
+          </div>
         </div>
       </div>
+      
+      {/* 팀관리자 삭제 버튼 */}
+      {isAdmin && (
+        <div className="px-[16px] flex justify-center items-center gap-[10px]">
+          <button className="justify-start text-point-red text-lg font-normal font-['Pretendard'] leading-snug cursor-pointer">
+            게시물 삭제
+          </button>
+        </div>
+      )}
     </div>
   );
 };
