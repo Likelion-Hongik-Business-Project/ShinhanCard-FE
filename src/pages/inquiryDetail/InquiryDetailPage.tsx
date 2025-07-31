@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
+import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
 import { InquiryData } from "@/types/inquiryTypes";
 
@@ -10,15 +11,15 @@ const InquiryDetailPage = () => {
 
   // mockInquiryDetailResponse에서 해당 inquiry 찾기
   const inquiry = mockInquiryDetailResponse.inquiries.find(
-    item => item.inquiry_id === Number(id)
+    (item) => item.inquiry_id === Number(id)
   ) as InquiryData | undefined;
 
   if (!inquiry) {
     return (
-      <div className="min-h-screen bg-gray-05 p-8">
-        <div className="max-w-screen-xl mx-auto">
+      <div className="min-h-screen bg-gray-10 p-8">
+        <div className="mx-auto max-w-screen-xl">
           <Header />
-          <div className="mt-8 p-16 bg-white rounded-2xl text-center">
+          <div className="mt-8 rounded-2xl bg-white p-16 text-center">
             <h2 className="text-xl text-gray-80">문의를 찾을 수 없습니다.</h2>
           </div>
         </div>
@@ -30,16 +31,9 @@ const InquiryDetailPage = () => {
   const userRole = inquiry.test_user_role;
   const currentUserId = inquiry.test_current_user_id;
 
-  // 🆕 팀 정보는 고정값 또는 별도 API에서 가져오기
-  const teamInfo = {
-    group_name: "경영기획 그룹",
-    division_name: "ICT 기획본부",
-    team_name: "Core 개발 2부팀"
-  };
-
   return (
-    <div className="min-h-screen bg-gray-05 p-8">
-      <div className="max-w-screen-xl mx-auto flex flex-col gap-8">
+    <div className="min-h-screen bg-gray-10 p-8">
+      <div className="mx-auto flex max-w-screen-xl flex-col gap-[56px]">
         {/* 헤더 */}
         <Header isAdmin={userRole === "admin"} />
 
@@ -50,8 +44,13 @@ const InquiryDetailPage = () => {
           currentUserId={currentUserId}
         />
 
-        {/* 답변 컴포넌트는 나중에 추가 */}
-        {/* <AnswerCard /> */}
+        {/* 답변이 있는 경우, 답변 섹션 카드를 별도로 렌더링 */}
+        {inquiry.comments && inquiry.comments.length > 0 && (
+          <AnswerSection
+            comments={inquiry.comments}
+            currentUserId={currentUserId}
+          />
+        )}
       </div>
     </div>
   );

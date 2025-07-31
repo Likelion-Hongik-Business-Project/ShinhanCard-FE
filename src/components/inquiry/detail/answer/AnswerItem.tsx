@@ -1,0 +1,58 @@
+import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
+import type { Comment } from "@/types/inquiryTypes";
+import { formatDateToKorean } from "@/utils/formatDateToKorean";
+
+interface AnswerItemProps {
+  comment: Comment;
+  isOnlyComment: boolean;
+  currentUserId?: number;
+}
+
+const AnswerItem = ({ comment, isOnlyComment, currentUserId }: AnswerItemProps) => {
+  const isWriter = comment.writer.user_id === currentUserId;
+
+  return (
+    <div className="flex flex-col gap-8 pt-8">
+      <div className="whitespace-pre-line px-4 text-body2 text-gray-100">
+        {comment.content}
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-[30px] px-4">
+        <div className="flex w-full items-start justify-between">
+          <div className="flex items-center gap-[10px]">
+            <div className="flex items-center gap-2">
+              <ProfileIcon className="h-5 w-5 rounded-full text-gray-30" />
+              <span className="text-body1-b text-gray-80">
+                {comment.writer.name}
+              </span>
+            </div>
+            {"team_name" in comment.writer && (
+              <span className="text-detail1-b text-main">
+                {(comment.writer as any).team_name}
+              </span>
+            )}
+          </div>
+
+          {isWriter && (
+            <div className="flex items-center gap-8">
+              <button className="text-body2 text-gray-50">
+                수정
+              </button>
+              <button
+                disabled={isOnlyComment}
+                className="text-body2 text-gray-50 disabled:cursor-not-allowed"
+              >
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="text-detail1 text-gray-50">
+          {formatDateToKorean(comment.created_at)}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AnswerItem;
