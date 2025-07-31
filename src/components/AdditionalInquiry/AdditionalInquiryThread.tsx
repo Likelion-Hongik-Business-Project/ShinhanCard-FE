@@ -84,37 +84,40 @@ const AdditionalInquiryThread = ({ assignees, writer, follow_ups }: Props) => {
           {/* 2. 댓글(하위) */}
           <div className="py-8 px-6 rounded-[15px] bg-gray-10 flex flex-col gap-8 ">
             {fu.comments.map(c => (
-              <div className="flex gap-4" key={c.comment_id}>
-                <Enter />
-                <div className="flex-1 flex flex-col gap-8">
-                  {editCommentId === c.comment_id ? (
-                    <AdditionalInquiryReplyForm
-                      recipient={fu.writer.name} //여기를 댓글 대댓글의 수신자로 변경 c.recipient or c.recipient.name
-                      onClose={handleFormClose}
-                      // todo: onSubmit={댓글 수정}
-                      // initialContent={c.content} // 초기 내용 전달
-                      // initialRecipient={c.recipient.name} // 초기 수신자 전달
-                    />
-                  ) : (
-                    <AdditionalInquiryBody
-                      recipient={fu.writer.name} //여기를 댓글 대댓글의 수신자로 변경 c.recipient or c.recipient.name
-                      writer={c.writer}
-                      created_at={c.created_at}
-                      content={c.content}
-                      canEdit={true} // 수정 여부 c.writer.user_id === 로그인한 사용자 ID
-                      onAnswer={() => handleAnswerOpen(c.comment_id)}
-                      onEdit={() => handleEditComment(c.comment_id)}
-                    />
-                  )}
-                  {/* 대댓글 답변 폼 */}
-                  {replyToId === c.comment_id && (
-                    <AdditionalInquiryReplyForm
-                      recipient={c.writer.name}
-                      onClose={handleFormClose}
-                      // todo: onSubmit={대댓글 추가}
-                    />
-                  )}
-                </div>
+              <div className="flex flex-col gap-8" key={c.comment_id}>
+                {editCommentId === c.comment_id ? (
+                  <AdditionalInquiryReplyForm
+                    recipient={fu.writer.name} //여기를 댓글 대댓글의 수신자로 변경 c.recipient or c.recipient.name
+                    onClose={handleFormClose}
+                    // todo: onSubmit={댓글 수정}
+                    // initialContent={c.content} // 초기 내용 전달
+                    // initialRecipient={c.recipient.name} // 초기 수신자 전달
+                  />
+                ) : (
+                  <div className="flex gap-4">
+                    <Enter />
+                    <div className="flex-1">
+                      <AdditionalInquiryBody
+                        recipient={fu.writer.name} //여기를 댓글 대댓글의 수신자로 변경 c.recipient or c.recipient.name
+                        writer={c.writer}
+                        created_at={c.created_at}
+                        content={c.content}
+                        canEdit={true} // 수정 여부 c.writer.user_id === 로그인한 사용자 ID
+                        onAnswer={() => handleAnswerOpen(c.comment_id)}
+                        onEdit={() => handleEditComment(c.comment_id)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* 대댓글 답변 폼 */}
+                {replyToId === c.comment_id && (
+                  <AdditionalInquiryReplyForm
+                    recipient={c.writer.name}
+                    onClose={handleFormClose}
+                    // todo: onSubmit={대댓글 추가}
+                  />
+                )}
               </div>
             ))}
           </div>

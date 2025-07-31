@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 
-import { Pencil } from "@/assets/svgs/commons";
+import Pencil from "@/assets/svgs/common/pencil.svg";
 
 import Button from "../common/Button";
 

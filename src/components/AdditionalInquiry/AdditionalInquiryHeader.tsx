@@ -1,4 +1,4 @@
-import { Pencil } from "@/assets/svgs/commons";
+import Pencil from "@/assets/svgs/common/pencil.svg";
 
 import Button from "../common/Button";
 
@@ -25,7 +25,7 @@ const AdditionalInquiryHeader = ({
         <Button
           buttonType="blue"
           onClick={onClick}
-          className="w-16 h-16 rounded-[15px] p-0"
+          className="w-16 h-16 rounded-[15px]"
         >
           <Pencil />
         </Button>

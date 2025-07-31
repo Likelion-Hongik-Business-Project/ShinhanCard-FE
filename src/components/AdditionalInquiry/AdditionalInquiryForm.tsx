@@ -1,7 +1,7 @@
 import { ChangeEvent, useRef, useState } from "react";
 
 import { FilledUnion, Union } from "@/assets/svgs/AdditionalInquiry";
-import { Pencil } from "@/assets/svgs/commons";
+import Pencil from "@/assets/svgs/common/pencil.svg";
 import { Assignee } from "@/types/InquiryResponse";
 
 import Button from "../common/Button";

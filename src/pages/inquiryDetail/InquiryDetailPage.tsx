@@ -3,7 +3,7 @@ import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
   return (
-    <section className="w-full h-[835px] bg-gray-50">
+    <section className="w-full h-[835px] ">
       <AdditionalInquirySection inquiry={mockInquiryResponse} />
     </section>
   );
