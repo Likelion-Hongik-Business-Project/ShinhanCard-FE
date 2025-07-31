@@ -47,7 +47,7 @@ const SearchResultPage = () => {
 
       {searchData.result.total_count === 0 ? (
         <div className="flex justify-center items-center h-163">
-          <p className="text-gray-60 text-heading2">검색 결과가 없습니다</p>
+          <p className="text-gray-40 text-heading2-b">검색 결과가 없습니다</p>
         </div>
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
