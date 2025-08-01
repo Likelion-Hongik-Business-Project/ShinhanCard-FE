@@ -25,8 +25,8 @@ const Header = ({ toggleSidebar, onSearchActiveChange }: Props) => {
             <span className="text-gray-80 text-heading2 whitespace-nowrap">
               {user?.name || "이름"}
             </span>
+            <Down className="w-6 h-6" />
           </div>
-          <Down className="w-6 h-6" />
         </div>
       </header>
     </>
