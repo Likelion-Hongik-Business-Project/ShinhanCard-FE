@@ -25,13 +25,21 @@ const AnswerItem = ({
         <div className="flex w-full items-start justify-between">
           <div className="flex items-center gap-[10px]">
             <div className="flex items-center gap-2">
-              <ProfileIcon className="h-5 w-5 rounded-full text-gray-30" />
+              {comment.writer.profile_image_url ? (
+                <img
+                  src={comment.writer.profile_image_url}
+                  alt={`${comment.writer.name}의 프로필 이미지`}
+                  className="h-5 w-5 rounded-full"
+                />
+              ) : (
+                <ProfileIcon className="h-5 w-5 rounded-full text-gray-30" />
+              )}
               <span className="text-body1-b text-gray-80">
                 {comment.writer.name}
               </span>
             </div>
             {comment.writer.team_name && (
-              <span className="text-detail1-b text-main">
+              <span className="text-detail1-b text-main mt-[1px]">
                 {comment.writer.team_name}
               </span>
             )}

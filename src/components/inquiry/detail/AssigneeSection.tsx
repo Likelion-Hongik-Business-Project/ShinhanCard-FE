@@ -45,18 +45,28 @@ const AssigneeSection = ({
                 className="flex justify-start items-center gap-[4px]"
               >
                 <div className="flex justify-start items-center gap-[8px]">
-                  <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
+                  {assignee.profile_image_url ? (
+                    <img
+                      src={assignee.profile_image_url}
+                      alt={`${assignee.name}의 프로필 이미지`}
+                      className="w-[20px] h-[20px] rounded-full"
+                    />
+                  ) : (
+                    <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
+                  )}
                   <div className={`justify-start ${textColor} text-body2`}>
                     {assignee.name}
                   </div>
                 </div>
-                <div className="w-[20px] h-[20px] relative overflow-hidden">
-                  {isConfirmed && !isPendingState ? (
-                    <CheckGreen className="w-[20px] h-[20px]" />
-                  ) : (
-                    <CheckGray className="w-[20px] h-[20px]" />
-                  )}
-                </div>
+                {!isPendingState && (
+                  <div className="w-[20px] h-[20px] relative overflow-hidden">
+                    {isConfirmed ? (
+                      <CheckGreen className="w-[20px] h-[20px]" />
+                    ) : (
+                      <CheckGray className="w-[20px] h-[20px]" />
+                    )}
+                  </div>
+                )}
               </div>
             );
           }) || (
@@ -82,7 +92,15 @@ const AssigneeSection = ({
               className="flex justify-start items-center gap-[6px]"
             >
               <div className="flex justify-start items-center gap-[8px]">
-                <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
+                {reference.profile_image_url ? (
+                  <img
+                    src={reference.profile_image_url}
+                    alt={`${reference.name}의 프로필 이미지`}
+                    className="w-[20px] h-[20px] rounded-full"
+                  />
+                ) : (
+                  <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
+                )}
                 <div className="justify-start text-gray-100 text-body2">
                   {reference.name}
                 </div>

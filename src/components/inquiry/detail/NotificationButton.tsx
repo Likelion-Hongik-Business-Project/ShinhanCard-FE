@@ -1,4 +1,4 @@
-import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
+import Bell from "@/assets/svgs/layout/bell.svg";
 import Button from "@/components/common/Button";
 import { NotificationButtonProps } from "@/types/inquiryTypes";
 

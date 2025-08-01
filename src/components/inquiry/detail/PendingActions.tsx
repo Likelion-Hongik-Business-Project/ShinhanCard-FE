@@ -14,7 +14,7 @@ const PendingActions = ({ isWriter, isPendingState }: PendingActionsProps) => {
         <span>등록 취소</span>
       </Button>
       {/* 문의 등록하기 버튼 */}
-      <Button buttonType="default" className="bg-gray-20 text-gray-80">
+      <Button buttonType="done" className="pointer-events-none">
         <Pencil className="h-[16px] w-[16px] text-gray-80" />
         <span>문의 등록하기</span>
       </Button>

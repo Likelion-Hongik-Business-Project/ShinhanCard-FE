@@ -23,7 +23,7 @@ export const INQUIRY_STATE_LABELS: Record<InquiryState, string> = {
 // 상태별 스타일
 export const INQUIRY_STATE_STYLES: Record<
   string,
-  { bg: string; text: string; dot: string }
+  { bg: string; text: string; dot: string; border?: string }
 > = {
   "확인 전": {
     bg: "bg-state-before-01",
@@ -41,9 +41,10 @@ export const INQUIRY_STATE_STYLES: Record<
     dot: "bg-state-done-02",
   },
   "등록 보류": {
-    bg: "bg-yellow-50",
-    text: "text-yellow-600",
-    dot: "bg-yellow-400",
+    bg: "bg-white",
+    text: "text-point-yellow",
+    dot: "bg-point-yellow",
+    border: "border border-point-yellow", // 등록 보류 상태에만 추가 적용
   },
 };
 

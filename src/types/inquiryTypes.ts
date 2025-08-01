@@ -56,6 +56,7 @@ export interface InquiryHeaderProps {
     bg: string;
     text: string;
     dot: string;
+    border?: string; // 등록 보류 상태에만 적용
   };
   isWriter: boolean;
   isAdmin: boolean;

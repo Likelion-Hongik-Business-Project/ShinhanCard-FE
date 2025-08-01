@@ -26,7 +26,8 @@ const InquiryHeader = ({
   return (
     <div className="self-stretch flex justify-between items-center">
       <div
-        className={`h-[32px] pl-[8px] pr-[12px] ${finalStatusConfig.bg} rounded-[30px] flex justify-start items-center gap-[8px]`}
+        className={`h-[32px] pl-[8px] pr-[12px] rounded-[30px] flex justify-start items-center gap-[8px] 
+          ${finalStatusConfig.bg} ${finalStatusConfig.border || ""}`}
       >
         <div
           className={`w-[8px] h-[8px] ${finalStatusConfig.dot} rounded-full`}
