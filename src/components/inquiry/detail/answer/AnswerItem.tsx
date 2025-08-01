@@ -50,7 +50,7 @@ const AnswerItem = ({
           )}
         </div>
         <div className="text-detail1 text-gray-50">
-          {formatDateToKorean(comment.created_at)}
+          {formatDateToKorean(comment.created_at, { showTime: true })}
         </div>
       </div>
     </div>

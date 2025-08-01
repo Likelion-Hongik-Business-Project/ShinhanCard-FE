@@ -27,12 +27,13 @@ const InquiryCard = ({
   } = useInquiryState(inquiry, userRole, currentUserId);
 
   // 버튼 표시 여부 확인
-  const showButtons = permissions.showAssigneeFeatures || 
-                     (isWriter && !["답변 완료", "등록 보류"].includes(finalStateLabel)) ||
-                     (isWriter && isPendingState);
+  const showButtons =
+    permissions.showAssigneeFeatures ||
+    (isWriter && !["답변 완료", "등록 보류"].includes(finalStateLabel)) ||
+    (isWriter && isPendingState);
 
   return (
-    <div className={`self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start ${showButtons ? 'gap-[32px]' : 'gap-[32px]'}`}>
+    <div className="self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
       {/* 헤더 - 상태 및 액션 버튼 */}
       <InquiryHeader
         finalStateLabel={finalStateLabel}
@@ -40,6 +41,7 @@ const InquiryCard = ({
         isWriter={isWriter}
         isAdmin={isAdmin}
         canSendNotification={canSendNotification}
+        isScrapped={inquiry.is_scrapped}
       />
 
       {/* 본문 */}
@@ -54,7 +56,7 @@ const InquiryCard = ({
       />
 
       {/* 구분선 */}
-      <div className="self-stretch h-0 border-t border-gray-10"></div>
+      <div className="self-stretch h-0 border-t border-gray-10" />
 
       {/* 담당자 정보 */}
       <AssigneeSection
@@ -67,8 +69,8 @@ const InquiryCard = ({
       />
 
       {/* 버튼들 - 조건부 렌더링 */}
-      {showButtons && (
-        permissions.showAssigneeFeatures ? (
+      {showButtons &&
+        (permissions.showAssigneeFeatures ? (
           <AssigneeActions
             showAssigneeFeatures={permissions.showAssigneeFeatures}
           />
@@ -86,11 +88,13 @@ const InquiryCard = ({
 
             {/* 문의자 등록 보류 상태 버튼들 */}
             <div className="flex justify-end">
-              <PendingActions isWriter={isWriter} isPendingState={isPendingState} />
+              <PendingActions
+                isWriter={isWriter}
+                isPendingState={isPendingState}
+              />
             </div>
           </div>
-        )
-      )}
+        ))}
     </div>
   );
 };

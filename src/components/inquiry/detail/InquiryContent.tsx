@@ -1,6 +1,6 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
-import { InquiryContentProps } from "@/types/inquiryTypes";
 import { formatDateToKorean } from "@/utils/formatDateToKorean";
+import { InquiryContentProps } from "@/types/inquiryTypes";
 
 const InquiryContent = ({
   title,
@@ -15,7 +15,9 @@ const InquiryContent = ({
     <div className="self-stretch px-[16px] flex flex-col justify-start items-start gap-[32px]">
       {/* 제목 */}
       <div className="flex justify-start items-start gap-[24px]">
-        <div className="justify-start text-gray-100 text-heading2-b">{title}</div>
+        <div className="justify-start text-gray-100 text-heading2-b">
+          {title}
+        </div>
       </div>
 
       {/* 내용 */}
@@ -28,12 +30,8 @@ const InquiryContent = ({
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-2">
             <ProfileIcon className="w-5 h-5 rounded-full text-gray-30" />
-            <div className="text-gray-80 text-body1-b">
-              {writer.name}
-            </div>
-            <div className="text-main text-detail1-b">
-              {writer.team_name}
-            </div>
+            <div className="text-gray-80 text-body1-b">{writer.name}</div>
+            <div className="text-main text-detail1-b">{writer.team_name}</div>
           </div>
           {/* 문의자 수정/삭제 버튼 */}
           {isWriter && (
@@ -48,7 +46,7 @@ const InquiryContent = ({
         </div>
         <div className="flex justify-start items-center gap-[32px]">
           <div className="justify-start text-gray-50 text-detail1">
-            {formatDateToKorean(createdAt)}
+            {formatDateToKorean(createdAt, { showTime: true })}
           </div>
         </div>
       </div>

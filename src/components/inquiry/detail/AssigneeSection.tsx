@@ -4,10 +4,19 @@ import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import UserCheck from "@/assets/svgs/inquiry/detail/user-check.svg";
 import { AssigneeSectionProps } from "@/types/inquiryTypes";
 
+const getAssigneeTextColor = (
+  isPendingState: boolean,
+  isConfirmed: boolean
+) => {
+  if (isPendingState) return "text-point-yellow";
+  if (isConfirmed) return "text-state-done-03";
+  return "text-gray-50";
+};
+
 const AssigneeSection = ({
   assignees,
   references,
-  confirmedAssignees,
+  // confirmedAssignees, 커밋용 임시 주석 처리
   isPendingState,
   isAssigneeEditMode,
   showAssigneeFeatures,
@@ -28,14 +37,7 @@ const AssigneeSection = ({
           {assignees?.map(assignee => {
             const isConfirmed = assignee.is_confirmed;
 
-            let textColor;
-            if (isPendingState) {
-              textColor = "text-point-yellow";
-            } else if (isConfirmed) {
-              textColor = "text-state-done-03";
-            } else {
-              textColor = "text-gray-50";
-            }
+            const textColor = getAssigneeTextColor(isPendingState, isConfirmed);
 
             return (
               <div

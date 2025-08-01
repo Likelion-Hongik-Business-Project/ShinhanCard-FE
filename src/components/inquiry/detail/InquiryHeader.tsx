@@ -1,7 +1,10 @@
+import { useState } from "react";
+
+import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import BellOff from "@/assets/svgs/inquiry/detail/bell-off.svg";
 import BellOn from "@/assets/svgs/inquiry/detail/bell-on.svg";
-import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import Star from "@/assets/svgs/inquiry/detail/star.svg";
+import StarActive from "@/assets/svgs/inquiry/detail/star-active.svg";
 import { InquiryHeaderProps } from "@/types/inquiryTypes";
 
 const InquiryHeader = ({
@@ -10,7 +13,16 @@ const InquiryHeader = ({
   isWriter,
   isAdmin,
   canSendNotification,
+  isScrapped: isScrappedProp,
 }: InquiryHeaderProps) => {
+  // 스크랩 상태 관리
+  const [isScrapped, setIsScrapped] = useState(isScrappedProp);
+
+  // 스크랩 토글 함수
+  const handleScrapClick = () => {
+    setIsScrapped(!isScrapped);
+  };
+
   return (
     <div className="self-stretch flex justify-between items-center">
       <div
@@ -48,8 +60,12 @@ const InquiryHeader = ({
 
         {/* 스크랩 버튼 (팀관리자가 아닌 경우에만) */}
         {!isAdmin && (
-          <button className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer">
-            <Star className="text-gray-50" />
+          <button
+            onClick={handleScrapClick}
+            className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
+            aria-label={isScrapped ? "스크랩 취소" : "스크랩"}
+          >
+            {isScrapped ? <StarActive /> : <Star className="text-gray-50" />}
           </button>
         )}
       </div>

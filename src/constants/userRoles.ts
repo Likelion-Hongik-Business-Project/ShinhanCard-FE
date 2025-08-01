@@ -1,5 +1,3 @@
-export type UserRole = "default" | "assignee" | "writer" | "admin";
-
 // 각 사용자 역할에 따른 권한
 export const USER_ROLE_PERMISSIONS = {
   default: {

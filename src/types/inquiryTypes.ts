@@ -1,4 +1,4 @@
-import { UserRole } from "@/constants/userRoles";
+export type UserRole = "default" | "assignee" | "writer" | "admin";
 
 // 답변 타입
 export interface Comment {
@@ -60,6 +60,7 @@ export interface InquiryHeaderProps {
   isWriter: boolean;
   isAdmin: boolean;
   canSendNotification: boolean;
+  isScrapped: boolean;
 }
 
 // NotificationButton Props 타입
