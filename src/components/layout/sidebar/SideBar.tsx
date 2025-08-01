@@ -29,6 +29,10 @@ type Props = {
   setIsGroupSelectorOpen: (open: boolean) => void;
   selectedGroupId: number | null;
   setSelectedGroupId: (id: number | null) => void;
+  toggleInbox: () => void;
+  isInboxOpen: boolean;
+  inboxLargeRef: React.RefObject<HTMLLIElement | null>;
+  inboxSmallRef: React.RefObject<HTMLLIElement | null>;
 };
 
 const SideBar = ({
@@ -37,8 +41,13 @@ const SideBar = ({
   setIsGroupSelectorOpen,
   selectedGroupId,
   setSelectedGroupId,
+  toggleInbox,
+  isInboxOpen,
+  inboxLargeRef,
+  inboxSmallRef,
 }: Props) => {
   const id = "2";
+
   const [hovered, setHovered] = useState({
     group: false,
     groupSelector: false,
@@ -139,7 +148,14 @@ const SideBar = ({
           )}
         >
           <SideBarLargeItem icon={Home} label="홈" path="/" />
-          <SideBarLargeItem icon={Bell} label="수신함" path="/inbox" />
+          <SideBarLargeItem
+            icon={Bell}
+            label="수신함"
+            onClick={toggleInbox}
+            isActive={isInboxOpen}
+            ref={inboxLargeRef}
+            disableActiveStyle
+          />
           <SideBarDivider />
           <p className="text-heading3-b text-gray-80 m-2">게시판</p>
           <SideBarLargeItem
@@ -178,7 +194,14 @@ const SideBar = ({
           )}
         >
           <SideBarSmallItem icon={Home} activeIcon={HomeActive} path="/" />
-          <SideBarSmallItem icon={Bell} activeIcon={BellActive} path="/inbox" />
+          <SideBarSmallItem
+            icon={Bell}
+            activeIcon={BellActive}
+            onClick={toggleInbox}
+            isActive={isInboxOpen}
+            ref={inboxSmallRef}
+            disableActiveStyle
+          />
           <SideBarDivider small />
           <SideBarSmallItem
             icon={Grid}

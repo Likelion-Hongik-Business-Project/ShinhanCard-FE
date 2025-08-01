@@ -4,7 +4,7 @@ import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
-import { formatDateToKorean } from "@/utils/formatDateToKorean";
+import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryListItem as InquiryListItemType } from "@/types/inquiry";
 
 type Props = {

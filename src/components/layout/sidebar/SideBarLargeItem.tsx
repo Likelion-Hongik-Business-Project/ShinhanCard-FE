@@ -1,4 +1,4 @@
-import { FC, SVGProps } from "react";
+import { FC, forwardRef, SVGProps } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -9,47 +9,55 @@ type Props = {
   onClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
-  active?: boolean;
+  isActive?: boolean;
+  disableActiveStyle?: boolean;
 };
 
 // 큰 사이드바 아이템
-const SideBarLargeItem = ({
-  icon: Icon,
-  label,
-  path,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
-  active,
-}: Props) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isActive = active !== undefined ? active : path === location.pathname;
+const SideBarLargeItem = forwardRef<HTMLLIElement, Props>(
+  (
+    {
+      icon: Icon,
+      label,
+      path,
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+      isActive: isActiveProp,
+      disableActiveStyle,
+    },
+    ref
+  ) => {
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  const handleClick = () => {
-    if (path) {
-      navigate(path);
-    } else if (onClick) {
-      onClick();
-    }
-  };
+    const isRouteMatch = path === location.pathname;
+    const isActive = isActiveProp ?? isRouteMatch;
+    const activeStyle = isActive && !disableActiveStyle;
 
-  return (
-    <li
-      onClick={handleClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
-        ${isActive ? "bg-gray-10" : "hover:bg-gray-10"}`}
-    >
-      <Icon className="ml-2 w-5 h-5 text-gray-60" />
-      <span
-        className={`ml-4 text-gray-80 ${isActive ? "text-body1-b" : "text-body1"}`}
+    const handleClick = () => {
+      if (onClick) onClick();
+      else if (path) navigate(path);
+    };
+
+    return (
+      <li
+        onClick={handleClick}
+        ref={ref}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
+        ${activeStyle ? "bg-gray-10" : "hover:bg-gray-10"}`}
       >
-        {label}
-      </span>
-    </li>
-  );
-};
+        <Icon className="ml-2 w-5 h-5 text-gray-60" />
+        <span
+          className={`ml-4 text-gray-80 ${activeStyle ? "text-body1-b" : "text-body1"}`}
+        >
+          {label}
+        </span>
+      </li>
+    );
+  }
+);
 
 export default SideBarLargeItem;
