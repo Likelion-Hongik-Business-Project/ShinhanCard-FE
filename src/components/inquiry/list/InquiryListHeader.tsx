@@ -8,8 +8,8 @@ import Hash from "@/assets/svgs/common/inquiryList/hash.svg";
 import Loader from "@/assets/svgs/common/inquiryList/loader.svg";
 import User from "@/assets/svgs/common/inquiryList/user.svg";
 import Up from "@/assets/svgs/common/up.svg";
-import DateFilterModal from "@/components/common/inquiry/DateFilterModal";
-import StatusFilterModal from "@/components/common/inquiry/StatusFilterModal";
+import DateFilterModal from "@/components/inquiry/list/DateFilterModal";
+import StatusFilterModal from "@/components/inquiry/list/StatusFilterModal";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
 import { YearMonth } from "@/types/inquiry";
 

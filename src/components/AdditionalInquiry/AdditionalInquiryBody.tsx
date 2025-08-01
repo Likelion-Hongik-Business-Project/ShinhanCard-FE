@@ -1,5 +1,5 @@
 import { Bubble, UserProfile } from "@/assets/svgs/AdditionalInquiry";
-import { formatDateTimeToKorean } from "@/utils/formatDateToKorean";
+import { formatDateTimeToKorean } from "@/utils/dateUtils";
 
 export interface UserInfo {
   name: string;
