@@ -67,7 +67,7 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
   return (
     <div
       ref={containerRef}
-      className="w-[calc(100vw-560px)] max-w-[800px] min-w-[440px] h-[calc(100vh-64px)] bg-white border border-gray-20 px-8 py-[52px] flex flex-col justify-between overflow-y-auto"
+      className="w-[calc(100vw-560px)] max-w-[800px] min-w-[440px] h-[calc(100vh-64px)] bg-white border-r border-gray-20 px-8 py-[52px] flex flex-col justify-between overflow-y-auto"
     >
       <div className="flex flex-col gap-6">
         {sections.map(section => (
@@ -76,9 +76,8 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
               <p className="text-body1-b text-gray-80 p-2">{section.head}</p>
               <div
                 className={clsx(
-                  isNarrow
-                    ? "grid grid-cols-2 gap-x-6 gap-y-4 self-start"
-                    : "flex flex-wrap gap-x-6 gap-y-4"
+                  "grid gap-x-6 gap-y-4 self-start",
+                  isNarrow ? "grid-cols-2" : "grid-cols-4"
                 )}
               >
                 {section.teams.map(team => (
