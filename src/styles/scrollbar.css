@@ -1,5 +1,5 @@
 .custom-scrollbar::-webkit-scrollbar {
-  background-color: #f1f1f5;
+  background-color: transparent;
   border-radius: 10px;
 }
 
@@ -26,5 +26,8 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background-color: #f1f1f5;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  margin-top: 8px;
 }
