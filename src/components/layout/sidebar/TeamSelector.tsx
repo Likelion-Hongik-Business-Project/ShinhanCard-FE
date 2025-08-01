@@ -106,7 +106,7 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
                 ))}
               </div>
             </div>
-            <hr className="my-2 border-gray-20" />
+            <hr className="m-2 border-gray-20" />
           </div>
         ))}
 
