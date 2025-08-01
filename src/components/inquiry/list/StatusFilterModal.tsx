@@ -9,7 +9,7 @@ type Props = {
   selectedStatus: string;
   onSelectStatus: (status: string) => void;
   onClose: () => void;
-  triggerRef: React.RefObject<HTMLLIElement | null>;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
 };
 
 const StatusFilterModal = ({
