@@ -38,7 +38,7 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
     <aside
       ref={ref}
       className={clsx(
-        "fixed top-16 px-9 pt-[52px] w-[560px] h-[calc(100vh-64px)] bg-white border-x border-gray-20 z-100 transition-all duration-300",
+        "fixed top-16 px-8 pt-[52px] w-[560px] h-[calc(100vh-64px)] bg-white border-x border-gray-20 z-100 transition-all duration-300",
         isSidebarOpen ? "left-[320px]" : "left-[100px]",
         isOpen
           ? "opacity-100 translate-x-0 duration-300 pointer-events-auto delay-100"

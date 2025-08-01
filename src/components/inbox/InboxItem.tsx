@@ -20,8 +20,13 @@ type Props = {
 };
 
 const InboxItem = ({ inquiry, isArchived }: Props) => {
-  const { writer, notification_text, notification_description, created_at } =
-    inquiry;
+  const {
+    id,
+    writer,
+    notification_text,
+    notification_description,
+    created_at,
+  } = inquiry;
   const type = getInquiryTypeFromText(inquiry.notification_text);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
@@ -60,7 +65,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
     <li
       onClick={() => {
         setIsChecked(true);
-        navigate("/inquiries/:id");
+        navigate(`/inquiries/${id}`);
       }}
       className="group flex mt-2 w-full cursor-pointer bg-white transition duration-100 hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center"
     >
@@ -70,7 +75,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
           <p className="text-body2 text-gray-80 truncate">
             {notification_text}
           </p>
-          <p className="text-detail1 text-gray-60 truncate">
+          <p className="text-detail1 text-gray-40 transition duration-100 group-hover:text-gray-60 truncate">
             {notification_description}
           </p>
         </div>
@@ -105,13 +110,13 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
                 className="group/check relative w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]"
               >
                 {isChecked ? (
-                  <CheckBox className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
-                ) : (
                   <UnCheckBox className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
+                ) : (
+                  <CheckBox className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
                 )}
                 <div className="absolute bottom-8 h-[22px] px-2 bg-main-dark rounded-[8px] flex justify-center items-center opacity-0 group-hover/check:opacity-100 z-10">
                   <span className="text-detail3 text-white whitespace-nowrap">
-                    {isChecked ? "읽음 표시" : "읽지 않음 표시"}
+                    {isChecked ? "읽지 않음 표시" : "읽음 표시"}
                   </span>
                 </div>
               </div>
