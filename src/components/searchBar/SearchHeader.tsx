@@ -12,7 +12,7 @@ const SearchHeader = ({ query, total_count }: SearchHeaderProps) => {
     <div className="flex items-center justify-between mb-10">
       <div>
         <h1 className="text-gray-80 text-heading1 mt-[26px]">
-          ‘<span className="text-main">{query}</span>’에 대한 검색 결과
+          <span className="text-main">‘{query}’</span>에 대한 검색 결과
         </h1>
       </div>
 
