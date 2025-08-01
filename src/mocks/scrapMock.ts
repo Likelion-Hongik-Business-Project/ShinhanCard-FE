@@ -1,23 +1,17 @@
 import {
-  AssignedInquiryListResponse,
   InquiryServerStatus,
+  ScrapedInquiryListResponse,
 } from "@/types/inquiry";
 
-export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
+export const MOCK_SCRAP_RESPONSE: ScrapedInquiryListResponse = {
   total_count: 120,
   selected_team: {
-    team_id: 1,
-    group_name: "그룹 A",
-    division_name: "A 본부",
-    team_name: "A 팀",
+    team_id: 2,
+    group_name: "그룹 B",
+    division_name: "B 본부",
+    team_name: "B 팀",
   },
   teams: [
-    {
-      team_id: 1,
-      group_name: "그룹 A",
-      division_name: "A 본부",
-      team_name: "A 팀",
-    },
     {
       team_id: 2,
       group_name: "그룹 B",
@@ -45,18 +39,18 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
     return {
       inquiry_id,
       writer: {
-        user_id: 300 + (index % 5),
-        name: ["장윤영", "심수연", "원채영", "박규영", "김홍엽"][index % 5],
+        user_id: 100 + (index % 4),
+        name: ["심수연", "박규영", "장윤영", "원채영"][index % 4],
         profile_image_url: "",
       },
-      title: `내 담당 문의 ${inquiry_id}`,
+      title: `스크랩한 문의 ${inquiry_id}`,
       status: ["UNCHECKED", "IN_PROGRESS", "COMPLETED"][
         index % 3
       ] as InquiryServerStatus,
       created_at: `${year}-${month.toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}T${hour}:${minute}:00Z`,
-      is_scraped: index % 2 === 0,
+      is_scraped: true,
     };
   }),
   pagination: {
