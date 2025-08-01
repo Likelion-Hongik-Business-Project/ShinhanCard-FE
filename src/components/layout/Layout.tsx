@@ -4,11 +4,13 @@ import { Outlet } from "react-router-dom";
 
 import AddMemberSidebar from "@/components/home/AddMemberSidebar";
 import Header from "@/components/layout/Header";
-import SideBar from "@/components/layout/SideBar";
+import SideBar from "@/components/layout/sidebar/SideBar";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberSidebarOpen, setIsAddMemberSidebarOpen] = useState(false);
+  const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   return (
     <div className="h-screen flex flex-col">
@@ -18,7 +20,13 @@ const Layout = () => {
         onClose={() => setIsAddMemberSidebarOpen(false)}
       />
       <div className="flex flex-1">
-        <SideBar isOpen={isSidebarOpen} />
+        <SideBar
+          isOpen={isSidebarOpen}
+          isGroupSelectorOpen={isGroupSelectorOpen}
+          setIsGroupSelectorOpen={setIsGroupSelectorOpen}
+          selectedGroupId={selectedGroupId}
+          setSelectedGroupId={setSelectedGroupId}
+        />
         <main
           className={`bg-gray-10 flex flex-1 justify-start overflow-auto pt-16 transition-all duration-300 ${
             isSidebarOpen

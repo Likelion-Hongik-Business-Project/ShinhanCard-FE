@@ -1,8 +1,8 @@
+import { USERS } from "@/mocks/usersMock";
+
 import AssigneeSelector from "./AssigneeSelector";
 import FileUploadBox from "./FileUploadBox";
 import InquiryEditor from "./InquiryEditor";
-
-import { USERS } from "@/mocks/usersMock";
 
 interface Props {
   onDropdownStateChange: (isOpen: boolean) => void;
