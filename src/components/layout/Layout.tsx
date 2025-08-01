@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import AddMemberSidebar from "@/components/home/AddMemberSidebar";
 import Inbox from "@/components/inbox/Inbox";
 import Header from "@/components/layout/Header";
-import SideBar from "@/components/layout/SideBar";
+import SideBar from "@/components/layout/sidebar/SideBar";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,6 +14,8 @@ const Layout = () => {
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const inboxLargeRef = useRef<HTMLLIElement>(null);
   const inboxSmallRef = useRef<HTMLLIElement>(null);
+  const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   return (
     <div className="h-screen flex flex-col">
@@ -29,6 +31,10 @@ const Layout = () => {
           isInboxOpen={isInboxOpen}
           inboxLargeRef={inboxLargeRef}
           inboxSmallRef={inboxSmallRef}
+          isGroupSelectorOpen={isGroupSelectorOpen}
+          setIsGroupSelectorOpen={setIsGroupSelectorOpen}
+          selectedGroupId={selectedGroupId}
+          setSelectedGroupId={setSelectedGroupId}
         />
         {isInboxOpen && (
           <Inbox

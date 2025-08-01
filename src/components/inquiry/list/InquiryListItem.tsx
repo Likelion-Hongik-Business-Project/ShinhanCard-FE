@@ -17,20 +17,20 @@ const InquiryListItem = ({ item, isScraped, onToggleScrap }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <li className="cursor-pointer h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
+    <li className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
       <button
-        className="px-4 w-20 flex items-center"
+        className="px-4 mr-7 flex items-center cursor-pointer"
         onClick={() => onToggleScrap(item.id)}
       >
         {isScraped ? (
-          <StarActive className="cursor-pointer" />
+          <StarActive className="w-5 h-5" />
         ) : (
-          <Star className="text-gray-30 cursor-pointer" />
+          <Star className="text-gray-30 w-5 h-5" />
         )}
       </button>
 
       <div
-        className="flex flex-1"
+        className="flex flex-1 cursor-pointer"
         onClick={() => navigate(`/inquiries/${item.id}`)}
       >
         <div className="px-4 w-40 flex items-center gap-2">

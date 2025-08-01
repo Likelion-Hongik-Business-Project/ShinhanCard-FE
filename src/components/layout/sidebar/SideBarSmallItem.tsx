@@ -4,21 +4,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
   icon: FC<SVGProps<SVGSVGElement>>;
-  label: string;
+  activeIcon: FC<SVGProps<SVGSVGElement>>;
   path?: string;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   isActive?: boolean;
   disableActiveStyle?: boolean;
 };
 
-// 큰 사이드바 아이템
-const SideBarLargeItem = forwardRef<HTMLLIElement, Props>(
+// 작은 사이드바 아이템
+const SideBarSmallItem = forwardRef<HTMLLIElement, Props>(
   (
     {
       icon: Icon,
-      label,
+      activeIcon: ActiveIcon,
       path,
       onClick,
+      onMouseEnter,
+      onMouseLeave,
       isActive: isActiveProp,
       disableActiveStyle,
     },
@@ -39,18 +43,20 @@ const SideBarLargeItem = forwardRef<HTMLLIElement, Props>(
       <li
         ref={ref}
         onClick={handleClick}
-        className={`w-[256px] h-10 flex items-center cursor-pointer rounded-[8px] transition 
-        ${activeStyle ? "bg-gray-10" : "hover:bg-gray-10"}`}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        className={`p-[10px] rounded-[8px] transition cursor-pointer ${
+          activeStyle ? "bg-main-bright" : "hover:bg-gray-10"
+        }`}
       >
-        <Icon className="ml-2 w-5 h-5 text-gray-60" />
-        <span
-          className={`ml-4 text-gray-80 ${activeStyle ? "text-body1-b" : "text-body1"}`}
-        >
-          {label}
-        </span>
+        {activeStyle ? (
+          <ActiveIcon className="w-5 h-5" />
+        ) : (
+          <Icon className="w-5 h-5 text-gray-60" />
+        )}
       </li>
     );
   }
 );
 
-export default SideBarLargeItem;
+export default SideBarSmallItem;
