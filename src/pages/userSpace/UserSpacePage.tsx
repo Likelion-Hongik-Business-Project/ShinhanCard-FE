@@ -3,8 +3,8 @@ import { useState } from "react";
 import Heart from "@/assets/svgs/common/heart.svg";
 import HeartActive from "@/assets/svgs/common/heart-active.svg";
 import Profile from "@/assets/svgs/common/profile.svg";
-import Upload from "@/assets/svgs/common/upload.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
+import AssignedPage from "@/pages/assigned/AssignedPage";
 import Button from "@/components/common/Button";
 import { USER_SPACE_TABS } from "@/constants/userSpace";
 
@@ -23,7 +23,7 @@ const UserSpacePage = () => {
 
   return (
     <section>
-      <div className="flex flex-wrap  items-center w-full">
+      <div className="flex flex-wrap items-center w-full">
         <div className="w-40 h-40 rounded-full overflow-hidden relative shrink-0">
           <Profile className="w-full h-full object-cover" />
         </div>
@@ -96,25 +96,12 @@ const UserSpacePage = () => {
         )}
       </div>
 
-      <div className="flex flex-wrap  items-center w-full pt-10">
-        <p className="text-heading1 text-black  whitespace-nowrap">
-          @@@님이 쓴 문의 (6)
-        </p>
-
-        <Button
-          buttonType="default"
-          className="ml-auto whitespace-nowrap flex items-center gap-2 px-4 py-3"
-        >
-          <Upload />
-          <p className="text-heading3 text-gray-80">Export</p>
-        </Button>
-      </div>
-
-      {/* <div className="w-full mt-10">
-        {activeTab === "written" && <WrittenInquiries />}
-        {activeTab === "assigned" && <AssignedInquiries />}
-        {activeTab === "scrap" && <ScrappedInquiries />}
-      </div> */}
+      {/* activeTab이 'assigned' 일 때만 담당한 문의 내역 컴포넌트 렌더링 */}
+      {activeTab === "assigned" && (
+        <div className="mt-10">
+          <AssignedPage />
+        </div>
+      )}
     </section>
   );
 };
