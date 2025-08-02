@@ -2,7 +2,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
-import { Arrow, DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
+import { DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
+import Arrow from "@/assets/svgs/common/down.svg";
 import { Inquiry } from "@/types/teamBoard";
 
 interface InquiryItemProps {
@@ -76,7 +77,7 @@ const InquiryItem = ({
           </span>
         </div>
         <Arrow
-          className={clsx("w-[14px] h-[8px] ml-auto", {
+          className={clsx("w-6 h-6 ml-auto", {
             "rotate-180 text-main": isOpen,
             "rotate-0 text-gray-30": !isOpen,
           })}

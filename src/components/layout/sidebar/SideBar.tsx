@@ -232,7 +232,7 @@ const SideBar = ({
 
       <div
         className={clsx(
-          "absolute top-16 h-[calc(100vh-64px)] z-30 transition-all duration-300 ease-in-out group-selector",
+          "fixed left-0 top-16 h-[calc(100vh-64px)] bg-white overflow-visible z-30 transition-all duration-300 ease-in-out group-selector",
           isOpen ? "left-[320px]" : "left-[100px]",
           showGroupSelector
             ? "opacity-100 translate-x-0 pointer-events-auto"
@@ -254,7 +254,7 @@ const SideBar = ({
 
       <div
         className={clsx(
-          "absolute top-16 h-[calc(100vh-64px)] z-40 transition-all duration-300 ease-in-out team-selector",
+          "fixed left-0 top-16 h-[calc(100vh-64px)] bg-white overflow-visible z-40 transition-all duration-300 ease-in-out team-selector",
           isOpen ? "left-[560px]" : "left-[340px]",
           selectedGroupId && showTeamSelector
             ? "opacity-100 translate-x-0 pointer-events-auto"
