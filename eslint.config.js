@@ -54,6 +54,7 @@ export default tseslint.config([
               "^@/styles",
               "^@/utils",
               "^@/types",
+              "^@/mocks",
             ],
             [
               "^\\.\\.(?!/?$)",

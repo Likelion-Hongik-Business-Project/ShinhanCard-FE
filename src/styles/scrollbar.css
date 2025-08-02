@@ -1,0 +1,33 @@
+.custom-scrollbar::-webkit-scrollbar {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #dae1f4;
+  border-radius: 10px;
+  transition: background-color;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #747fd2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: #747fd2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f1f1f5;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
