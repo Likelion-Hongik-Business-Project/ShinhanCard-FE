@@ -18,6 +18,11 @@ export interface Inquiry {
   created_at: ISODateString;
   writer: Writer;
   is_scrapped: boolean;
+
+  // 검색 결과용으로 추가된 옵셔널 속성
+  group_name?: string;
+  division_name?: string;
+  team_name?: string;
 }
 
 export interface Writer {

@@ -17,9 +17,18 @@ const Layout = () => {
   const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
+  const handleSearchActiveChange = (isActive: boolean) => {
+    if (isActive && isSidebarOpen) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+    <div className="h-screen flex flex-col">
+      <Header
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onSearchActiveChange={handleSearchActiveChange}
+      />
       <AddMemberSidebar
         isOpen={isAddMemberSidebarOpen}
         onClose={() => setIsAddMemberSidebarOpen(false)}
