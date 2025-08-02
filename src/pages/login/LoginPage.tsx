@@ -56,6 +56,12 @@ const LoginPage = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && isLoginEnabled) {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="w-full h-screen bg-gray-10 flex items-center justify-center">
       <div className="w-[360px] h-[475px] flex flex-col items-center">
@@ -68,11 +74,13 @@ const LoginPage = () => {
             value={employeeId}
             setValue={setEmployeeId}
             errorTypeID={errorTypeID}
+            onKeyDown={handleKeyDown}
           />
           <PasswordInputField
             value={password}
             setValue={setPassword}
             errorTypePw={errorTypePw}
+            onKeyDown={handleKeyDown}
           />
         </form>
 

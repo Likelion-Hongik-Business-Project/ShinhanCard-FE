@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import clsx from "clsx";
 
@@ -16,9 +16,15 @@ interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수
   errorTypeID?: "none" | "invalid" | "notfound"; // 오류 상태
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const IDInputField = ({ value, setValue, errorTypeID = "none" }: Props) => {
+const IDInputField = ({
+  value,
+  setValue,
+  errorTypeID = "none",
+  onKeyDown,
+}: Props) => {
   const [isFocused, setIsFocused] = useState(false); // 포커스(클릭, 입력중) 여부
   const [isHovered, setIsHovered] = useState(false); // 호버 여부
 
@@ -84,6 +90,7 @@ const IDInputField = ({ value, setValue, errorTypeID = "none" }: Props) => {
             onChange={e => handleChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onKeyDown={onKeyDown}
             placeholder={!showLabel ? "Employee ID" : ""}
             autoComplete="username"
             className={`
