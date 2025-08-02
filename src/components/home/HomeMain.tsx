@@ -23,7 +23,6 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
     interest_count: number;
     interest_member: InterestMember[];
   } | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeTab === "interest") {
