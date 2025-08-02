@@ -14,7 +14,6 @@ type Props = {
 const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [content, setContent] = useState("");
-  const [hidePrefix, setHidePrefix] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedName = assignees.find(a => a.user_id === selectedId)?.name;
@@ -45,10 +44,6 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
     }
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
-    setHidePrefix(e.currentTarget.scrollTop > 0);
-  };
-
   return (
     <div className="w-full rounded-[15px] p-8 border-3 border-main flex gap-8 ">
       <div className="flex-1 min-h-[150px] flex flex-col gap-8">
@@ -69,11 +64,9 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
           </div>
         </div>
         <div className="relative flex bg-white">
-          {!hidePrefix && (
-            <span className="absolute text-body2-b text-state-progress-02">
-              {prefix}
-            </span>
-          )}
+          <span className="absolute text-body2-b text-state-progress-02">
+            {prefix}
+          </span>
           <textarea
             ref={textareaRef}
             className="
@@ -84,7 +77,6 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
               text-body2
             "
             placeholder=""
-            onScroll={handleScroll}
             value={prefix + content}
             onChange={handleChange}
           />

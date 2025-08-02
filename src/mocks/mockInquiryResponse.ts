@@ -20,25 +20,25 @@ POST /api/signup 500 Internal Server Error
   writer: {
     user_id: 501,
     name: "김철수",
-    profile_image_url: "https://example.com/profiles/501.png",
+    profile_image_url: "/assets/images/profile.png",
   },
   assignees: [
     {
       user_id: 601,
       name: "강채원",
-      profile_image_url: "https://example.com/profiles/601.png",
+      profile_image_url: "/assets/images/profile.png",
       is_confirmed: true,
     },
     {
       user_id: 602,
       name: "고다현",
-      profile_image_url: "https://example.com/profiles/602.png",
+      profile_image_url: "/assets/images/profile.png",
       is_confirmed: true,
     },
     {
       user_id: 603,
       name: "장윤영",
-      profile_image_url: "https://example.com/profiles/603.png",
+      profile_image_url: "/assets/images/profile.png",
       is_confirmed: false,
     },
   ],
@@ -46,7 +46,7 @@ POST /api/signup 500 Internal Server Error
     {
       user_id: 701,
       name: "홍길동",
-      profile_image_url: "https://example.com/profiles/701.png",
+      profile_image_url: "/assets/images/profile.png",
     },
   ],
   files: [
@@ -68,12 +68,12 @@ POST /api/signup 500 Internal Server Error
     {
       user_id: 601,
       name: "강채원",
-      profile_image_url: "https://example.com/profiles/601.png",
+      profile_image_url: "/assets/images/profile.png",
     },
     {
       user_id: 602,
       name: "고다현",
-      profile_image_url: "https://example.com/profiles/602.png",
+      profile_image_url: "/assets/images/profile.png",
     },
   ],
   comment_count: 6,
@@ -83,7 +83,7 @@ POST /api/signup 500 Internal Server Error
       writer: {
         user_id: 601,
         name: "강채원",
-        profile_image_url: "https://example.com/profiles/601.png",
+        profile_image_url: "/assets/images/profile.png",
       },
       content:
         "로그 확인해보니 DB 연결 오류로 보입니다. 해당 부분 점검하겠습니다.",
@@ -95,7 +95,7 @@ POST /api/signup 500 Internal Server Error
       writer: {
         user_id: 602,
         name: "고다현",
-        profile_image_url: "https://example.com/profiles/602.png",
+        profile_image_url: "/assets/images/profile.png",
       },
       content: "제가 이슈 재현 환경 세팅해서 PR 올려두었습니다.",
       created_at: "2025-07-28T11:15:00Z",
@@ -110,7 +110,7 @@ POST /api/signup 500 Internal Server Error
       writer: {
         user_id: 501,
         name: "김철수",
-        profile_image_url: "https://example.com/profiles/501.png",
+        profile_image_url: "/assets/images/profile.png",
       },
       comments: [
         {
@@ -120,7 +120,7 @@ POST /api/signup 500 Internal Server Error
           writer: {
             user_id: 603,
             name: "장윤영",
-            profile_image_url: "https://example.com/profiles/603.png",
+            profile_image_url: "/assets/images/profile.png",
           },
           parent_comment_id: null,
         },
@@ -131,7 +131,7 @@ POST /api/signup 500 Internal Server Error
           writer: {
             user_id: 501,
             name: "김철수",
-            profile_image_url: "https://example.com/profiles/501.png",
+            profile_image_url: "/assets/images/profile.png",
           },
           parent_comment_id: 9101,
         },
@@ -144,7 +144,7 @@ POST /api/signup 500 Internal Server Error
       writer: {
         user_id: 511,
         name: "김철수",
-        profile_image_url: "https://example.com/profiles/501.png",
+        profile_image_url: "/assets/images/profile.png",
       },
       comments: [
         {
@@ -154,7 +154,7 @@ POST /api/signup 500 Internal Server Error
           writer: {
             user_id: 613,
             name: "장윤영",
-            profile_image_url: "https://example.com/profiles/603.png",
+            profile_image_url: "/assets/images/profile.png",
           },
           parent_comment_id: null,
         },
@@ -165,7 +165,7 @@ POST /api/signup 500 Internal Server Error
           writer: {
             user_id: 511,
             name: "김철수",
-            profile_image_url: "https://example.com/profiles/501.png",
+            profile_image_url: "/assets/images/profile.png",
           },
           parent_comment_id: 9111,
         },
