@@ -16,6 +16,7 @@ type Props = {
 };
 
 const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("answer");
   const [isHovered, setIsHovered] = useState(false);
   const [homeMember, setHomeMember] = useState<{

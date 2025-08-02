@@ -59,7 +59,7 @@ const RecentSearch = ({
 
   return (
     <div className="fixed inset-0 z-200 flex items-start" onClick={onClose}>
-      <div className="absolute inset-0 ml-25 mt-16 bg-black/40" />
+      <div className="absolute inset-0 ml-25 mt-16 bg-black-80/40" />
 
       <div
         className="relative max-w-[880px] min-w-[640px] bg-white rounded-[15px] shadow-lg ml-[347px] mt-16"

@@ -31,10 +31,10 @@ const RecommendCard = ({
 
   return (
     <div
-      className="h-[94px] w-full bg-white hover:bg-gray-10 cursor-pointer p-6 flex items-center justify-between transition-colors"
+      className="h-[94px] w-full bg-white rounded-[15px] hover:bg-gray-10 cursor-pointer p-6 flex items-center justify-between transition-colors"
       onClick={onClick}
     >
-      <div className="flex flex-col justify-between h-full">
+      <div className="flex flex-col justify-between h-full gap-2">
         <span
           className={`text-gray-80 ${isSelected ? "text-body1-b" : "text-body1"}`}
         >
