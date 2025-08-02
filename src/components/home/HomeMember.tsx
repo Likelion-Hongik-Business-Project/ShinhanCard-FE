@@ -2,11 +2,11 @@ import { useOutletContext } from "react-router-dom";
 
 import AddMember from "@/components/home/AddMember";
 import MemberCard from "@/components/home/MemberCard";
-import { InterestMember } from "@/types/home";
+import { InterestMemberItem } from "@/types/home";
 
 type Props = {
   interestCount: number;
-  interestMember: InterestMember[];
+  interestMember: InterestMemberItem[];
 };
 
 const HomeMember = ({ interestCount, interestMember }: Props) => {

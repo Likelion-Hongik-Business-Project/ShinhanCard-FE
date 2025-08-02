@@ -1,4 +1,14 @@
 export interface InterestMember {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    interest_count: number;
+    interest_members: InterestMemberItem[];
+  };
+}
+
+export interface InterestMemberItem {
   name: string;
   member_id: string;
   group_name: string;

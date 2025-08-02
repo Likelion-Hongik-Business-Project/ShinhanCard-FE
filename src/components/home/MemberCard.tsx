@@ -1,9 +1,9 @@
 import FilledHeart from "@/assets/svgs/common/heart-active.svg";
 import User from "@/assets/svgs/home/icon-user.svg";
-import { InterestMember } from "@/types/home";
+import { InterestMemberItem } from "@/types/home";
 
 type Props = {
-  member: InterestMember;
+  member: InterestMemberItem;
 };
 
 const MemberCard = ({ member }: Props) => {

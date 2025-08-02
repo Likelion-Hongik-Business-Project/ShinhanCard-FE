@@ -111,3 +111,34 @@ export type TInquiryBase = {
   is_scraped: boolean;
   writer?: Profile;
 };
+
+// 홈페이지 초기 진입 응답
+export interface HomeInitialResponse {
+  total_unchecked_answer_count: number;
+  total_unchecked_inquiries_count: number;
+  interest_count: number;
+  writer: {
+    id: number;
+    name: string;
+    profile_image_url: string;
+  };
+  selected_team: TeamItem;
+  unchecked_answer_teams: TeamItem[];
+  unchecked_inquiries_teams: TeamItem[];
+  inquiries: MyInquiryItem[];
+  pagination: InquiryPagination;
+}
+
+// 미확인 답변 리스트 응답
+export interface UncheckedAnswerListResponse {
+  selected_team: TeamItem;
+  inquiries: MyInquiryItem[];
+  pagination: InquiryPagination;
+}
+
+// 미확인 문의 리스트 응답
+export interface UncheckedInquiryListResponse {
+  selected_team: TeamItem;
+  inquiries: AssignedInquiryItem[];
+  pagination: InquiryPagination;
+}
