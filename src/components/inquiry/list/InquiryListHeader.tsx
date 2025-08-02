@@ -7,7 +7,6 @@ import Clock from "@/assets/svgs/common/inquiryList/clock.svg";
 import Hash from "@/assets/svgs/common/inquiryList/hash.svg";
 import Loader from "@/assets/svgs/common/inquiryList/loader.svg";
 import User from "@/assets/svgs/common/inquiryList/user.svg";
-import Up from "@/assets/svgs/common/up.svg";
 import DateFilterModal from "@/components/inquiry/list/DateFilterModal";
 import StatusFilterModal from "@/components/inquiry/list/StatusFilterModal";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
@@ -80,17 +79,16 @@ const InquiryListHeader = ({
               })}
             />
             <span>문의 상태</span>
-            {isStatusModalOpen ? (
-              <Up className="text-gray-80" />
-            ) : (
-              <Down
-                className={clsx({
-                  [INQUIRY_STATUS_STYLES[selectedStatus]?.text]:
-                    selectedStatus !== "전체",
-                  "text-gray-50": selectedStatus === "전체",
-                })}
-              />
-            )}
+            <Down
+              className={clsx(
+                "w-6 h-6",
+                isStatusModalOpen && "rotate-180 text-gray-80",
+                !isStatusModalOpen &&
+                  (selectedStatus !== "전체"
+                    ? INQUIRY_STATUS_STYLES[selectedStatus]?.text
+                    : "text-gray-50")
+              )}
+            />
           </button>
 
           {/* 문의 상태 모달 */}
@@ -129,16 +127,16 @@ const InquiryListHeader = ({
               })}
             />
             <span>문의 일시 {isFiltering ? "(필터링중)" : "(전체)"}</span>
-            {isDateModalOpen ? (
-              <Up className="text-gray-80" />
-            ) : (
-              <Down
-                className={clsx({
+            <Down
+              className={clsx(
+                "w-6 h-6",
+                isDateModalOpen ? "rotate-180 text-gray-80" : "",
+                {
                   "text-main": isFiltering,
                   "text-gray-50": !isFiltering,
-                })}
-              />
-            )}
+                }
+              )}
+            />
           </button>
 
           {/* 문의 일시 모달 */}
