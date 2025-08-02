@@ -1,4 +1,3 @@
-export { default as Arrow } from "./arrow.svg";
 export { default as Clock } from "./clock.svg";
 export { default as DoubleArrow } from "./double-arrow.svg";
 export { default as FilledStar } from "./filled-star.svg";

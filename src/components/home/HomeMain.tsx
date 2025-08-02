@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { Heart } from "@/assets/svgs/commons";
+import { useNavigate } from "react-router-dom";
+
+import Heart from "@/assets/svgs/common/heart.svg";
 import { Message, Pencil } from "@/assets/svgs/layout";
 import HomeButton from "@/components/home/HomeButton";
 import HomeMember from "@/components/home/HomeMember";
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("answer");
   const [isHovered, setIsHovered] = useState(false);
   const [homeMember, setHomeMember] = useState<{
@@ -63,6 +66,7 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
               `}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={() => navigate("/inquiry/form")}
         >
           <Pencil
             className={

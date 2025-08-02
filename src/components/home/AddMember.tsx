@@ -1,4 +1,4 @@
-import { Plus } from "@/assets/svgs/home";
+import Plus from "@/assets/svgs/home/plus.svg";
 
 type Props = { onClick: () => void };
 

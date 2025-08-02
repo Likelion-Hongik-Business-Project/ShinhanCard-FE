@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
 
+import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
 import { InquiryData } from "@/types/inquiryTypes";
 import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
+import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +52,8 @@ const InquiryDetailPage = () => {
           comments={inquiry.comments}
           currentUserId={currentUserId}
         />
+
+        <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>
     </div>
   );
