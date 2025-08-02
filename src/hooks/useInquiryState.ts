@@ -6,8 +6,8 @@ import {
   InquiryState,
   STATUS_MAPPING,
 } from "@/constants/inquiryStates";
-import { USER_ROLE_PERMISSIONS, UserRole } from "@/constants/userRoles";
-import { InquiryData } from "@/types/inquiryTypes";
+import { USER_ROLE_PERMISSIONS } from "@/constants/userRoles";
+import { InquiryData, UserRole } from "@/types/inquiryTypes";
 
 export const useInquiryState = (
   inquiry: InquiryData,
@@ -20,7 +20,7 @@ export const useInquiryState = (
 
   // API에서 제공하는 권한 사용 (우선순위)
   const canEdit = inquiry.can_edit;
-  const canAnswer = inquiry.can_answer;  
+  const canAnswer = inquiry.can_answer;
   const canSendNotification = inquiry.can_notify;
 
   // 기본 권한 설정
@@ -29,11 +29,12 @@ export const useInquiryState = (
   const isAdmin = userRole === "admin";
 
   // 상태 매핑 및 계산
-  const mappedState = (STATUS_MAPPING[inquiry.inquiry_state] || "BEFORE_CONFIRM") as InquiryState;
+  const mappedState = (STATUS_MAPPING[inquiry.inquiry_state] ||
+    "BEFORE_CONFIRM") as InquiryState;
   const stateLabel = INQUIRY_STATE_LABELS[mappedState];
   const statusConfig = INQUIRY_STATE_STYLES[stateLabel] || {
     bg: "bg-gray-200",
-    text: "text-gray-600", 
+    text: "text-gray-600",
     dot: "bg-gray-400",
   };
 
@@ -41,14 +42,15 @@ export const useInquiryState = (
   const confirmedCount = inquiry.confirmed_assignees_count;
   const totalAssignees = inquiry.assignees?.length || 0;
   const answersCount = inquiry.comment_count;
-  const isPendingState = 
-    confirmedCount === totalAssignees && 
-    totalAssignees > 0 && 
+  const isPendingState =
+    confirmedCount === totalAssignees &&
+    totalAssignees > 0 &&
     answersCount === 0;
 
   // 실제 표시될 상태
   const finalStateLabel = isPendingState ? "등록 보류" : stateLabel;
-  const finalStatusConfig = INQUIRY_STATE_STYLES[finalStateLabel] || statusConfig;
+  const finalStatusConfig =
+    INQUIRY_STATE_STYLES[finalStateLabel] || statusConfig;
 
   // 남은 시간 (UI용 더미 데이터)
   const remainingTime = notificationSent ? "(3:59:59)" : "";
