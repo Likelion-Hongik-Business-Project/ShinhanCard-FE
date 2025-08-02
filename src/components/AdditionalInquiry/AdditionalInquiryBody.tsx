@@ -1,5 +1,5 @@
 import { Bubble, UserProfile } from "@/assets/svgs/AdditionalInquiry";
-import { formatDateTimeToKorean } from "@/utils/dateUtils";
+import { formatDateToKorean } from "@/utils/dateUtils";
 
 export interface UserInfo {
   name: string;
@@ -42,7 +42,7 @@ export const AdditionalInquiryBody = ({
           <span className="text-body1-b text-gray-100">{writer.name}</span>
         </div>
         <span className="text-detail2 text-gray-50">
-          {formatDateTimeToKorean(created_at)}
+          {formatDateToKorean(created_at, { showTime: true })}
         </span>
       </div>
 

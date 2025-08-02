@@ -1,5 +1,5 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
-import { formatDateToKorean } from "@/utils/formatDateToKorean";
+import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryContentProps } from "@/types/inquiryTypes";
 
 const InquiryContent = ({
