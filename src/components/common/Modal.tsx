@@ -1,12 +1,11 @@
+import { useEffect } from "react";
+
 import ReactDOM from "react-dom";
 
-interface ModalButton {
-  type: "blue" | "white" | "gray";
-  label: string;
-  onClick: () => void;
-}
+import { getButtonClass } from "@/utils/modalUtils";
+import { ModalButton } from "@/types/modal";
 
-interface ModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -14,30 +13,19 @@ interface ModalProps {
   buttons: ModalButton[];
 }
 
-const getButtonClass = (
-  type: ModalButton["type"],
-  isSingle: boolean
-): string => {
-  const widthClass = isSingle ? "w-[280px]" : "w-[200px]";
-  const base = `flex justify-center items-center gap-4 rounded-[15px] text-heading3 cursor-pointer ${widthClass} h-16 transition-colors duration-200`;
+const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
 
-  switch (type) {
-    case "blue":
-      return `${base} bg-main text-white hover:bg-main-dark hover:text-gray-30`;
-    case "white":
-      return `${base} bg-white border border-main text-main hover:bg-gray-10`;
-    case "gray":
-      return `${base} bg-gray-30 text-white hover:bg-gray-50`;
-  }
-};
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
-const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  description,
-  buttons,
-}: ModalProps) => {
   if (!isOpen) return null;
 
   const isSingle = buttons.length === 1;
@@ -46,12 +34,12 @@ const Modal = ({
   return ReactDOM.createPortal(
     <>
       <div
-        className="fixed inset-0 bg-background-default z-50"
+        className="fixed inset-0 bg-background-default z-[999]"
         onClick={onClose}
       />
 
       <div
-        className={`fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+        className={`fixed z-[999] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
           w-[552px] ${modalHeight} px-16 pt-12 pb-10 bg-white rounded-[15px] flex flex-col items-center justify-between`}
         onClick={e => e.stopPropagation()}
       >
