@@ -81,11 +81,14 @@ const SelectDropdown = ({
         <span className={isOpen ? "rotate-180" : ""}>
           <Down
             className={clsx(
-              type === "default"
-                ? "text-gray-50"
-                : isDefault
-                  ? "text-white"
-                  : "text-gray-40"
+              "h-6 w-6",
+              isYet
+                ? "text-gray-40"
+                : type === "default"
+                  ? "text-gray-50"
+                  : isDefault
+                    ? "text-white"
+                    : "text-gray-40"
             )}
           />
         </span>
