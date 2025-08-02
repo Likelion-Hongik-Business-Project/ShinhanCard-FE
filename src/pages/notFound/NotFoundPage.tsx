@@ -4,9 +4,11 @@ import Home from "@/assets/svgs/layout/home.svg";
 import NotFound from "@/assets/svgs/notFound/404.svg";
 import Button from "@/components/common/Button";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 const NotFoundPage = () => {
   const navigate = useNavigate();
-  const isLogin = true; // TODO: 로그인 연결 이후 변경
+  const isLogin = useAuthStore(state => state.isLogin);
 
   const handleClick = () => {
     if (isLogin) {

@@ -5,7 +5,7 @@ import {
   getRecentSearchKeywords,
   getRecommendSearchKeywords,
   getSearchResults,
-} from "@/api/search";
+} from "@/apis/search/search";
 
 // 최근 검색어 조회 훅
 export const useRecentSearchKeywords = () => {
