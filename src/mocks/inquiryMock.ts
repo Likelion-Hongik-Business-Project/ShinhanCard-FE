@@ -1,4 +1,7 @@
-import { AssignedInquiryListResponse } from "@/types/inquiry";
+import {
+  AssignedInquiryListResponse,
+  InquiryServerStatus,
+} from "@/types/inquiry";
 
 export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
   total_count: 120,
@@ -46,10 +49,10 @@ export const MOCK_ASSIGNED_INQUIRY_RESPONSE: AssignedInquiryListResponse = {
         name: ["장윤영", "심수연", "원채영", "박규영", "김홍엽"][index % 5],
         profile_image_url: "",
       },
-      title: `문의 제목 ${inquiry_id}`,
-      status: ["확인 전", "확인 중", "답변 완료"][
+      title: `내 담당 문의 ${inquiry_id}`,
+      status: ["UNCHECKED", "IN_PROGRESS", "COMPLETED"][
         index % 3
-      ] as AssignedInquiryListResponse["inquiries"][number]["status"],
+      ] as InquiryServerStatus,
       created_at: `${year}-${month.toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}T${hour}:${minute}:00Z`,

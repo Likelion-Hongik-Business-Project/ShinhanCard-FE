@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import AssignedPage from "@/pages/assigned/AssignedPage";
 import HomePage from "@/pages/home/HomePage";
-import InboxPage from "@/pages/inbox/InboxPage";
 import InquiryFormPage from "@/pages/inquiry/InquiryFormPage";
 import InquiryDetailPage from "@/pages/inquiryDetail/InquiryDetailPage";
 import LoginPage from "@/pages/login/LoginPage";
@@ -21,7 +20,6 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="/inbox" element={<InboxPage />} />
           <Route path="/assigned" element={<AssignedPage />} />
           <Route path="/team/:id" element={<TeamBoardPage />} />
           <Route path="/my-questions" element={<MyQuestionsPage />} />

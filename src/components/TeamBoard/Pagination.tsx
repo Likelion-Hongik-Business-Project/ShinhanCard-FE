@@ -1,4 +1,4 @@
-import { Arrow } from "@/assets/svgs/board";
+import Arrow from "@/assets/svgs/common/down.svg";
 
 const Pagination = () => {
   return (
@@ -8,7 +8,7 @@ const Pagination = () => {
         disabled
         className="text-detail1 text-gray-50 disabled:opacity-50"
       >
-        <Arrow className="w-[20px] h-[11px] text-gray-40 rotate-90" />
+        <Arrow className="w-6 h-6 text-gray-40 rotate-90" />
       </button>
       <button className="w-[38px] h-[38px] border-2 border-main text-main rounded-[5px] bg-white text-body1">
         1
@@ -20,7 +20,7 @@ const Pagination = () => {
         type="button"
         className="text-detail1 text-gray-50 disabled:opacity-50"
       >
-        <Arrow className="w-[20px] h-[11px] text-gray-50 -rotate-90" />
+        <Arrow className="w-6 h-6 text-gray-50 -rotate-90" />
       </button>
     </div>
   );
