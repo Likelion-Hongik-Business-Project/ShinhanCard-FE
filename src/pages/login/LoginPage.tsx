@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import Logo from "@/assets/svgs/login/logo.svg";
 import IDInputField from "@/components/login/IDInputField";
 import PasswordInputField from "@/components/login/PasswordInputField";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
@@ -11,43 +14,51 @@ const LoginPage = () => {
     "invalid" | "notfound" | "none"
   >("none");
   const [errorTypePw, seterrorTypePw] = useState<"none" | "invalid">("none");
-
-  const validAccounts = [
-    { id: "test@test.com", pw: "1234" },
-    { id: "admin@sh.com", pw: "admin123" },
-  ];
-
-  // 사번(이메일) 형식 유효성 검사
-  useEffect(() => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (employeeId.length === 0) {
-      setErrorTypeID("none");
-    } else if (!emailRegex.test(employeeId)) {
-      setErrorTypeID("invalid");
-    } else {
-      const matched = validAccounts.find(acc => acc.id === employeeId);
-      setErrorTypeID(matched ? "none" : "notfound");
-    }
-  }, [employeeId]);
+  const { login } = useAuth();
 
   // 로그인 버튼 활성화 조건
   const isLoginEnabled = employeeId.length > 0 && password.length > 0;
 
-  // 로그인 처리 함수
-  const handleLogin = async () => {
-    const matched = validAccounts.find(
-      acc => acc.id === employeeId && acc.pw === password
-    );
+  const navigate = useNavigate();
 
-    if (!matched) {
-      console.error("로그인 실패: 잘못된 ID 또는 PW");
+  // 사번 형식 (영어, 숫자만) 유효성 검사
+  useEffect(() => {
+    const idRegex = /^[a-zA-Z0-9]+$/;
+
+    if (employeeId.length === 0) {
       setErrorTypeID("none");
-      seterrorTypePw("invalid");
+    } else if (!idRegex.test(employeeId)) {
+      setErrorTypeID("invalid");
     } else {
-      console.log("로그인 성공");
+      setErrorTypeID("none");
+    }
+  }, [employeeId]);
+
+  const handleLogin = async () => {
+    try {
+      await login({ employeeId, password });
       setErrorTypeID("none");
       seterrorTypePw("none");
+      navigate("/");
+    } catch (code) {
+      if (code === "USER400") {
+        // 비밀번호 오류
+        setErrorTypeID("none");
+        seterrorTypePw("invalid");
+      } else if (code === "USER404") {
+        // 사번 오류
+        setErrorTypeID("notfound");
+        seterrorTypePw("none");
+      } else {
+        setErrorTypeID("invalid");
+        seterrorTypePw("invalid");
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && isLoginEnabled) {
+      handleLogin();
     }
   };
 
@@ -63,11 +74,13 @@ const LoginPage = () => {
             value={employeeId}
             setValue={setEmployeeId}
             errorTypeID={errorTypeID}
+            onKeyDown={handleKeyDown}
           />
           <PasswordInputField
             value={password}
             setValue={setPassword}
             errorTypePw={errorTypePw}
+            onKeyDown={handleKeyDown}
           />
         </form>
 
