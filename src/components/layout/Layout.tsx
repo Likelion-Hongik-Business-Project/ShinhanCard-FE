@@ -18,7 +18,7 @@ const Layout = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       <AddMemberSidebar
         isOpen={isAddMemberSidebarOpen}
