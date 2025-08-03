@@ -101,7 +101,43 @@ export interface AssigneeSectionProps {
   showAssigneeFeatures: boolean;
 }
 
-// 통합된 문의 타입 (API 스펙에 완전히 맞춤)
+// AssigneeActions Props 타입
+export interface AssigneeActionsProps {
+  showAssigneeFeatures: boolean;
+  onStartAnswer: () => void;
+}
+
+// 답변자 정보 타입
+export interface Answerer {
+  user_id: number;
+  name: string;
+  profile_image_url?: string;
+}
+
+// AnswerList Props 타입
+export interface AnswerListProps {
+  answerers: Answerer[];
+  selectedUserId: number | null;
+  onSelectUser: (id: number) => void;
+}
+
+// AnswerItem Props 타입
+export interface AnswerItemProps {
+  comment: Comment;
+  isOnlyComment: boolean;
+  currentUserId?: number;
+  onStartEdit: (userId: number) => void;
+}
+
+// AnswerEditor Props 타입
+export interface AnswerEditorProps {
+  mode: "create" | "edit";
+  initialContent: string;
+  onContentChange: (content: string) => void;
+  onSubmit: (content: string, files: File[]) => void;
+}
+
+// 통합된 문의 타입
 export interface InquiryData {
   inquiry_id: number;
   title: string;

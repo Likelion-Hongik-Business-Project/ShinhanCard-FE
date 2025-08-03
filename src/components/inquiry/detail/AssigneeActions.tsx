@@ -2,12 +2,12 @@ import Check from "@/assets/svgs/inquiry/detail/check.svg";
 import Pencil from "@/assets/svgs/inquiry/detail/pencil.svg";
 import Users from "@/assets/svgs/inquiry/detail/users.svg";
 import Button from "@/components/common/Button";
+import { AssigneeActionsProps } from "@/types/inquiryTypes";
 
-interface AssigneeActionsProps {
-  showAssigneeFeatures: boolean;
-}
-
-const AssigneeActions = ({ showAssigneeFeatures }: AssigneeActionsProps) => {
+const AssigneeActions = ({
+  showAssigneeFeatures,
+  onStartAnswer,
+}: AssigneeActionsProps) => {
   if (!showAssigneeFeatures) return null;
 
   return (
@@ -20,7 +20,7 @@ const AssigneeActions = ({ showAssigneeFeatures }: AssigneeActionsProps) => {
 
       <div className="flex items-center gap-[16px] ">
         {/* 답변 작성 버튼 */}
-        <Button buttonType="blue">
+        <Button buttonType="blue" onClick={onStartAnswer}>
           <Pencil />
           답변 작성
         </Button>

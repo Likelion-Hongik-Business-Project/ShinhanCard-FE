@@ -1,37 +1,24 @@
-import type { Comment } from "@/types/inquiryTypes";
-
-interface AnswerListProps {
-  comments: Comment[];
-  selectedCommentId: number | null;
-  onSelectComment: (id: number) => void;
-}
+import type { AnswerListProps } from "@/types/inquiryTypes";
 
 const AnswerList = ({
-  comments,
-  selectedCommentId,
-  onSelectComment,
+  answerers,
+  selectedUserId,
+  onSelectUser,
 }: AnswerListProps) => {
-  const uniqueCommenters = comments.reduce((acc, current) => {
-    if (!acc.find((item) => item.writer.user_id === current.writer.user_id)) {
-      acc.push(current);
-    }
-    return acc;
-  }, [] as Comment[]);
-
   return (
-    <div className="flex items-center gap-6 border-b-2 border-gray-10">
-      {uniqueCommenters.map((comment) => (
+    <div className="w-full flex items-center gap-6 border-b-2 border-gray-10">
+      {answerers.map(answerer => (
         <button
-          key={comment.writer.user_id}
-          onClick={() => onSelectComment(comment.comment_id)}
-          className={`border-b-2 px-6 py-4 text-heading3-b transition-colors ${
-            selectedCommentId === comment.comment_id
+          key={answerer.user_id}
+          onClick={() => onSelectUser(answerer.user_id)}
+          className={`border-b-2 px-6 py-4 text-heading3-b ${
+            selectedUserId === answerer.user_id
               ? "border-main text-main"
               : "border-transparent text-gray-30"
           }`}
           style={{ marginBottom: "-2px" }}
         >
-          {comment.writer.name}
+          {answerer.name}
         </button>
       ))}
     </div>
