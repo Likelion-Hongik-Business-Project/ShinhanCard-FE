@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
 import Arrow from "@/assets/svgs/common/down.svg";
-import { Inquiry } from "@/types/teamBoard";
+import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface InquiryItemProps {
   group_name: string;

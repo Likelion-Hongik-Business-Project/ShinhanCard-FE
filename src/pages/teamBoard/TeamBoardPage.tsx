@@ -1,36 +1,55 @@
 import { useState } from "react";
 
-import FilterBar from "@/components/TeamBoard/FilterBar";
-import Header from "@/components/TeamBoard/Header";
-import InquiryList from "@/components/TeamBoard/InquiryList";
-import Pagination from "@/components/TeamBoard/Pagination";
-import { mockTeamBoardResponse } from "@/mocks/mockTeamBoardResponse";
+import { useParams } from "react-router-dom";
+
+import TeamBoardLayout from "@/components/TeamBoard/layout/TeamBoardLayout";
+import { useTeamInquires } from "@/hooks/teamInquires/useTeamInquiresApi";
 
 const TeamBoardPage = () => {
-  const [isTeamEnd] = useState<boolean>(false);
+  const { id } = useParams<{ id: string }>();
+  const [page, setPage] = useState<number>(1);
+  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
+  const [selectedDate, setSelectedDate] = useState<
+    { year: number; month: number }[]
+  >([]);
+
+  const { data, isLoading, error } = useTeamInquires({
+    team_id: id ? parseInt(id) : undefined,
+    page,
+    status: selectedStatus,
+    date: selectedDate,
+  });
+
+  if (isLoading) {
+    // Todo: 로딩 시 UI?
+    return <div>로딩 중...</div>;
+  }
+
+  if (error || !data) {
+    //Todo: 에러 뜰 경우 로직 (재시도?)
+    return;
+  }
+
+  const { selected_team, inquiries, pagination } = data;
 
   return (
     <section className="w-full max-w-[1420px] h-[835px] flex flex-col">
-      <div className="w-full mx-auto flex flex-col gap-10">
-        <Header
-          group_name={mockTeamBoardResponse.group_name}
-          division_name={mockTeamBoardResponse.division_name}
-          team_name={mockTeamBoardResponse.team_name}
-          isTeamEnd={isTeamEnd}
-        />
-
-        <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <FilterBar />
-          <InquiryList
-            group_name={mockTeamBoardResponse.group_name}
-            division_name={mockTeamBoardResponse.division_name}
-            team_name={mockTeamBoardResponse.team_name}
-            inquiries={mockTeamBoardResponse.inquiries}
-          />
-        </div>
-
-        <Pagination />
-      </div>
+      <TeamBoardLayout
+        selected_team={selected_team}
+        inquiries={inquiries}
+        pagination={{
+          page: pagination.page,
+          page_size: pagination.page_size,
+          total: pagination.total,
+          has_next: pagination.has_next,
+        }}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        currentPage={page}
+        setCurrentPage={setPage}
+      />
     </section>
   );
 };

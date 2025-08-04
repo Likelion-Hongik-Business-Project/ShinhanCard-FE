@@ -5,7 +5,8 @@ interface HeaderProps {
   division_name: string;
   team_name: string;
   isActive: boolean;
-  onClickExport: ()=>void;
+  onClickExport: () => void;
+  onClickWrite: () => void;
 }
 
 const Header = ({
@@ -14,6 +15,7 @@ const Header = ({
   team_name,
   isActive,
   onClickExport,
+  onClickWrite,
 }: HeaderProps) => {
   return (
     <div className="flex justify-between items-end">
@@ -48,6 +50,7 @@ const Header = ({
         {isActive && (
           <button
             type="button"
+            onClick={onClickWrite}
             className="h-16 px-6 rounded-[15px] bg-main flex items-center cursor-pointer gap-4 text-heading3 text-white"
           >
             <Pen className="w-4 h-4 text-white" />

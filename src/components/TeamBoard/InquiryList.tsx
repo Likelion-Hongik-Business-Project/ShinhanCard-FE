@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 import InquiryItem from "@/components/TeamBoard/InquiryItem";
-import { Inquiry } from "@/types/teamBoard";
+import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface Props {
   //부모로부터 받는 팀 정보 props를 옵셔널로 변경
   group_name?: string;
   division_name?: string;
   team_name?: string;
-  inquiries: Inquiry[]; // teamBoard의 Inquiry 타입 사용
+  inquiries: Inquiry[];
 }
 
 const InquiryList = ({

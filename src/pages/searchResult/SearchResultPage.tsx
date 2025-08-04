@@ -3,15 +3,19 @@ import { useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
+import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
 import SearchHeader from "@/components/searchBar/SearchHeader";
-import FilterBar from "@/components/TeamBoard/FilterBar";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import { searchResultsMockData } from "@/mocks/searchMocks";
 
 const SearchResultPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
+  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
+  const [selectedDate, setSelectedDate] = useState<
+    { year: number; month: number }[]
+  >([]);
 
   // TODO: 백엔드 API 완료 시 React Query 훅으로 변경
   // const { data: searchData, isLoading, error } = useSearchResults(query, 1);
@@ -41,6 +45,23 @@ const SearchResultPage = () => {
     }
   };
 
+  // 페이지네이션
+
+  // 모달 상태
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+
+  // 모달 토글 함수: 상태 모달과 일시 모달 둘 중 하나만 열리게
+  const toggleStatusModal = () => {
+    setIsStatusModalOpen(prev => !prev);
+    setIsDateModalOpen(false);
+  };
+
+  const toggleDateModal = () => {
+    setIsDateModalOpen(prev => !prev);
+    setIsStatusModalOpen(false);
+  };
+
   return (
     <section className="w-full h-[835px] bg-gray-10">
       <SearchHeader query={query} total_count={searchData.result.total_count} />
@@ -51,7 +72,20 @@ const SearchResultPage = () => {
         </div>
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <FilterBar />
+          <div className="flex justify-end border-b border-gray-10">
+            <FilterBar
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              isStatusModalOpen={isStatusModalOpen}
+              setIsStatusModalOpen={setIsStatusModalOpen}
+              isDateModalOpen={isDateModalOpen}
+              setIsDateModalOpen={setIsDateModalOpen}
+              toggleStatusModal={toggleStatusModal}
+              toggleDateModal={toggleDateModal}
+            />
+          </div>
           <InquiryList inquiries={currentItems} />
         </div>
       )}
