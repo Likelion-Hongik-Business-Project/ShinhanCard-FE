@@ -4,14 +4,16 @@ interface HeaderProps {
   group_name: string;
   division_name: string;
   team_name: string;
-  isTeamEnd: boolean;
+  isActive: boolean;
+  onClickExport: ()=>void;
 }
 
 const Header = ({
   group_name,
   division_name,
   team_name,
-  isTeamEnd,
+  isActive,
+  onClickExport,
 }: HeaderProps) => {
   return (
     <div className="flex justify-between items-end">
@@ -26,7 +28,7 @@ const Header = ({
         <div className="flex items-center gap-4">
           <h1
             className={`text-heading1 ${
-              isTeamEnd ? "text-gray-50" : "text-gray-80"
+              isActive ? "text-gray-80" : "text-gray-50"
             }`}
           >
             {team_name}
@@ -37,12 +39,13 @@ const Header = ({
       <div className="flex gap-4">
         <button
           type="button"
+          onClick={onClickExport}
           className="h-16 px-6 rounded-[15px] border border-gray-20 cursor-pointer flex items-center gap-4 bg-white text-heading3 text-gray-80"
         >
           <Upload className="w-4 h-4 text-gray-60" />
           Export
         </button>
-        {!isTeamEnd && (
+        {isActive && (
           <button
             type="button"
             className="h-16 px-6 rounded-[15px] bg-main flex items-center cursor-pointer gap-4 text-heading3 text-white"
