@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/apiResponse.type";
+import { ApiResponse } from "@/types/common/api.type";
 import {
   PostLoginRequest,
   PostLoginResponse,

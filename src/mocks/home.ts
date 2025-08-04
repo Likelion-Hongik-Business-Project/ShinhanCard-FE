@@ -320,7 +320,7 @@ export const MOCK_UNCHECKED_INQUIRY_RESPONSE: UncheckedInquiryListResponse = {
   },
 };
 
-// 기존 데이터와의 호환성을 위한 별칭 (점진적 마이그레이션용)
+// 기존 데이터와의 호환성을 위한 별칭
 export const homepageData = {
   id: MOCK_HOME_INITIAL_RESPONSE.writer.id,
   name: MOCK_HOME_INITIAL_RESPONSE.writer.name,

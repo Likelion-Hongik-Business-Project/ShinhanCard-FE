@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { useProfileStore } from "./useProfileStore";
+
 type AuthState = {
   accessToken: string | null;
   isLogin: boolean;
@@ -14,7 +16,12 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       isLogin: false,
       setLogin: ({ accessToken }) => set({ accessToken, isLogin: true }),
-      setLogout: () => set({ accessToken: null, isLogin: false }),
+      setLogout: () => {
+        set({ accessToken: null, isLogin: false });
+        // 프로필 데이터 초기화
+        const { clearProfile } = useProfileStore.getState();
+        clearProfile();
+      },
     }),
     {
       name: "auth-storage",

@@ -17,10 +17,25 @@ const Layout = () => {
   const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
+  // AddMemberSidebar에 전달할 팀 정보 상태
+  const [sidebarTeamInfo, setSidebarTeamInfo] = useState<{
+    teamName: string;
+    teamId: number;
+  }>({
+    teamName: "",
+    teamId: 0,
+  });
+
   const handleSearchActiveChange = (isActive: boolean) => {
     if (isActive && isSidebarOpen) {
       setIsSidebarOpen(false);
     }
+  };
+
+  // AddMemberSidebar를 열 때 팀 정보를 받아서 설정하는 함수
+  const openAddMemberSidebar = (teamName: string, teamId: number) => {
+    setSidebarTeamInfo({ teamName, teamId });
+    setIsAddMemberSidebarOpen(true);
   };
 
   return (
@@ -32,6 +47,8 @@ const Layout = () => {
       <AddMemberSidebar
         isOpen={isAddMemberSidebarOpen}
         onClose={() => setIsAddMemberSidebarOpen(false)}
+        teamName={sidebarTeamInfo.teamName}
+        teamId={sidebarTeamInfo.teamId}
       />
       <div className="flex flex-1">
         <SideBar
@@ -68,7 +85,7 @@ const Layout = () => {
           <div className="w-full py-20 min-w-[1280px] max-w-[1580px] px-20">
             <Outlet
               context={{
-                openAddMemberSidebar: () => setIsAddMemberSidebarOpen(true),
+                openAddMemberSidebar,
               }}
             />
           </div>

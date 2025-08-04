@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
-import { RecentSearchProps } from "@/types/search";
-import { recentSearchMockData } from "@/mocks/searchMocks";
+import { RecentSearchProps } from "@/types/search/search";
+import { recentSearchMockData } from "@/mocks/search/searchMocks";
 
 import Keyword from "./Keyword";
 

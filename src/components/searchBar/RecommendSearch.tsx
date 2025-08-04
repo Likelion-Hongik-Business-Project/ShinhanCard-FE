@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
-import { RecommendSearchProps } from "@/types/search";
-import { recommendSearchMockData } from "@/mocks/searchMocks";
+import { RecommendSearchProps } from "@/types/search/search";
+import { recommendSearchMockData } from "@/mocks/search/searchMocks";
 
 import RecommendCard from "./RecommendCard";
 
@@ -100,7 +100,7 @@ const RecommendSearch = ({
           {!isLoading &&
             !error &&
             searchData &&
-            searchData.results.length === 0 && (
+            searchData.inquiries.length === 0 && (
               <div className="flex justify-center py-8">
                 <p className="text-gray-60">검색 결과가 없습니다.</p>
               </div>
@@ -109,9 +109,9 @@ const RecommendSearch = ({
           {!isLoading &&
             !error &&
             searchData &&
-            searchData.results.length > 0 && (
+            searchData.inquiries.length > 0 && (
               <div>
-                {searchData.results.slice(0, 5).map(result => (
+                {searchData.inquiries.slice(0, 5).map(result => (
                   <RecommendCard
                     key={result.inquiry_id}
                     title={result.title}

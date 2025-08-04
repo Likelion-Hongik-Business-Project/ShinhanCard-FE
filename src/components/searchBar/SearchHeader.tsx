@@ -1,7 +1,7 @@
 import Upload from "@/assets/svgs/common/upload.svg";
 import { Pencil } from "@/assets/svgs/layout";
 import Button from "@/components/common/Button";
-import { SearchHeaderProps } from "@/types/search";
+import { SearchHeaderProps } from "@/types/search/search";
 
 const SearchHeader = ({ query, total_count }: SearchHeaderProps) => {
   const handleExport = () => {

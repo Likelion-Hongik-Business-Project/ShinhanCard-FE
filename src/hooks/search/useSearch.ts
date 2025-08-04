@@ -1,17 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { SearchRequest } from "@/types/search/search";
+
 import {
   deleteRecentSearchKeyword,
   getRecentSearchKeywords,
   getRecommendSearchKeywords,
   getSearchResults,
-} from "@/apis/search/search";
+} from "@/apis/search/searchApi";
 
 // 최근 검색어 조회 훅
 export const useRecentSearchKeywords = () => {
   return useQuery({
     queryKey: ["recentSearchKeywords"],
-    queryFn: getRecentSearchKeywords,
+    queryFn: async () => {
+      try {
+        const response = await getRecentSearchKeywords();
+        return response;
+      } catch (error) {
+        console.error("최근 검색어 조회 실패:", error);
+        throw error;
+      }
+    },
     staleTime: 5 * 60 * 1000, // 5분
   });
 };
@@ -36,7 +46,15 @@ export const useDeleteRecentSearchKeyword = () => {
 export const useRecommendSearchKeywords = (query: string) => {
   return useQuery({
     queryKey: ["recommendSearchKeywords", query],
-    queryFn: () => getRecommendSearchKeywords(query),
+    queryFn: async () => {
+      try {
+        const response = await getRecommendSearchKeywords(query);
+        return response;
+      } catch (error) {
+        console.error("추천 검색어 조회 실패:", error);
+        throw error;
+      }
+    },
     enabled: query.length > 0,
     staleTime: 1 * 60 * 1000, // 1분
     refetchOnWindowFocus: false, // 창 포커스 시 재요청 방지
@@ -46,10 +64,27 @@ export const useRecommendSearchKeywords = (query: string) => {
 };
 
 // 검색 결과 조회 훅
-export const useSearchResults = (query: string, page: number = 1) => {
+export const useSearchResults = (
+  query: string,
+  page: number = 1,
+  pageSize: number = 6
+) => {
   return useQuery({
-    queryKey: ["searchResults", query, page],
-    queryFn: () => getSearchResults(query, page),
+    queryKey: ["searchResults", query, page, pageSize],
+    queryFn: async () => {
+      try {
+        const request: SearchRequest = {
+          query,
+          page,
+          pageSize,
+        };
+        const response = await getSearchResults(request);
+        return response;
+      } catch (error) {
+        console.error("검색 결과 조회 실패:", error);
+        throw error;
+      }
+    },
     enabled: query.length > 0,
     staleTime: 1 * 60 * 1000, // 1분
     refetchOnWindowFocus: false,
