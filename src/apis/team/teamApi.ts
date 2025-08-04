@@ -1,0 +1,35 @@
+import { ApiResponse } from "@/types/apiResponse.type";
+import {
+  GetDivisionResponse,
+  GetGroupResponse,
+  GetMemberResponse,
+  GetTeamResponse,
+} from "@/types/team/teamApi.type";
+
+import instance from "@/apis/instance";
+
+export const getGroups = async (): ApiResponse<GetGroupResponse[]> => {
+  const response = await instance.get("/groups");
+  return response.data;
+};
+
+export const getDivisionsByGroupId = async (
+  groupId: number
+): ApiResponse<GetDivisionResponse[]> => {
+  const response = await instance.get(`/groups/${groupId}/divisions`);
+  return response.data;
+};
+
+export const getTeamsByDivisionId = async (
+  divisionId: number
+): ApiResponse<GetTeamResponse[]> => {
+  const response = await instance.get(`/divisions/${divisionId}/teams`);
+  return response.data;
+};
+
+export const getMembersByTeamId = async (
+  teamId: number
+): ApiResponse<GetMemberResponse> => {
+  const response = await instance.get(`/api/teams/${teamId}/members/details`);
+  return response.data;
+};

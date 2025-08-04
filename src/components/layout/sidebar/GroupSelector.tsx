@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Group } from "@/types/user";
+import { Group } from "@/types/team/user";
 import { mockGroups } from "@/mocks/groupTeamData";
 
 type Props = {
@@ -29,20 +29,20 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
         {groups.map(group => {
           return (
             <li
-              key={group.group_id}
+              key={group.groupId}
               onClick={() => handleClick(group)}
               className={`
                 cursor-pointer text-heading2-b p-2 hover:bg-gray-10 rounded-lg
                 ${
                   selectedGroupId === null
                     ? "text-gray-80"
-                    : selectedGroupId === group.group_id
+                    : selectedGroupId === group.groupId
                       ? "text-main"
                       : "text-gray-30"
                 }
               `}
             >
-              {group.name}
+              {group.groupName}
             </li>
           );
         })}

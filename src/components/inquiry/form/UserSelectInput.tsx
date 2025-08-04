@@ -7,7 +7,7 @@ import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { User } from "@/types/user";
+import { Member } from "@/types/team/user";
 
 import DepartmentSelector from "./DepartmentSelector";
 import UserSearchList from "./UserSearchList";
@@ -16,7 +16,7 @@ interface Props {
   label: string;
   placeholder: string;
   maxCount: number;
-  allUsers: User[];
+  allUsers: Member[];
   isOpen: boolean;
   onDropdownToggle: (isOpen: boolean) => void;
 }
@@ -29,7 +29,7 @@ const UserMultiSelectInput = ({
   allUsers,
   onDropdownToggle,
 }: Props) => {
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<Partial<Member>[]>([]);
   const [inputValue, setInputValue] = useState("");
 
   const debouncedInput = useDebounce(inputValue, 300);
@@ -41,7 +41,7 @@ const UserMultiSelectInput = ({
     }
   });
 
-  const handleSelectUser = (user: User) => {
+  const handleSelectUser = (user: Partial<Member>) => {
     if (selectedUsers.some(u => u.id === user.id)) return;
     if (selectedUsers.length >= maxCount) return;
 
@@ -55,7 +55,7 @@ const UserMultiSelectInput = ({
 
   const filteredUsers = allUsers
     .filter(u =>
-      u.user_name.toLowerCase().includes(debouncedInput.trim().toLowerCase())
+      u.name.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
     .filter(u => !selectedUsers.some(selected => selected.id === u.id));
 
@@ -93,12 +93,12 @@ const UserMultiSelectInput = ({
             >
               <div className="flex gap-2 items-center">
                 <ProfileIcon />
-                <span>{user.user_name}</span>
+                <span>{user.name}</span>
               </div>
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleRemoveUser(user.id);
+                  handleRemoveUser(user.id!);
                 }}
                 className="cursor-pointer"
               >

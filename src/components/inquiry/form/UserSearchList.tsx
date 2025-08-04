@@ -1,9 +1,9 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { User } from "@/types/user";
+import { Member } from "@/types/team/user";
 
 interface Props {
-  users: User[];
-  onSelectUser: (user: User) => void;
+  users: Member[];
+  onSelectUser: (user: Member) => void;
 }
 
 const UserSearchList = ({ users, onSelectUser }: Props) => (
@@ -17,7 +17,7 @@ const UserSearchList = ({ users, onSelectUser }: Props) => (
           onClick={() => onSelectUser(user)}
         >
           <ProfileIcon />
-          <span className="text-body2 text-gray-100">{user.user_name}</span>
+          <span className="text-body2 text-gray-100">{user.name}</span>
           <span className="text-detail1 text-gray-60">
             {user.group_name} / {user.division_name} / {user.team_name}
           </span>

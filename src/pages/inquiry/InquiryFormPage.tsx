@@ -6,15 +6,15 @@ import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
-import { useOrganizationSelector } from "@/hooks/useOrganizationSelector";
+import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const {
-    group,
-    division,
-    team,
+    groupId,
+    divisionId,
+    teamId,
     groupOptions,
     divisionOptions,
     teamOptions,
@@ -36,23 +36,23 @@ const InquiryFormPage = () => {
         <div className="flex gap-2">
           <SelectDropdown
             options={groupOptions}
-            value={group}
+            value={groupId ?? 0}
             onChange={handleGroupChange}
             placeholder="그룹 선택"
           />
           <SelectDropdown
             options={divisionOptions}
-            value={division}
+            value={divisionId ?? 0}
             onChange={handleDivisionChange}
             placeholder="본부 선택"
-            disabled={!group}
+            disabled={!groupId}
           />
           <SelectDropdown
             options={teamOptions}
-            value={team}
+            value={teamId ?? 0}
             onChange={handleTeamChange}
             placeholder="팀 선택"
-            disabled={!division}
+            disabled={!divisionId}
           />
         </div>
 

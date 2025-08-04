@@ -20,28 +20,32 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
 
   const divisions = mockDivisions[String(groupId)] || [];
 
-  const sections = divisions
-    .map(division => {
-      const allTeams = mockTeams[division.division_id] || [];
-      const filteredTeams = allTeams.filter(
-        team => team.is_active === !showHiddenTeams
-      );
-
-      if (filteredTeams.length === 0) return null;
-
-      return {
-        head: division.name,
-        teams: filteredTeams,
-      };
-    })
-    .filter(Boolean) as {
+  const sections: {
     head: string;
     teams: {
       team_id: number;
       name: string;
       is_active: boolean;
     }[];
-  }[];
+  }[] = divisions.flatMap(division => {
+    const allTeams = mockTeams[division.divisionId] || [];
+    const filteredTeams = allTeams.filter(
+      team => team.active === !showHiddenTeams
+    );
+
+    if (filteredTeams.length === 0) return [];
+
+    return [
+      {
+        head: division.divisionName,
+        teams: filteredTeams.map(team => ({
+          team_id: team.teamId,
+          name: team.teamName,
+          is_active: team.active,
+        })),
+      },
+    ];
+  });
 
   const handleTeamClick = (team: { team_id: number; name: string }) => {
     setSelectedTeam(team.name);
