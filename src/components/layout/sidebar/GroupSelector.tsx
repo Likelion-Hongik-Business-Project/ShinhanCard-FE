@@ -13,7 +13,6 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
   const { useGroupsQuery } = useTeamApi();
   const { data: groupData, isLoading } = useGroupsQuery();
 
-  console.log(groupData);
   const groups = groupData?.result ?? [];
 
   const handleClick = (group: Group) => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { Member } from "@/types/team/user";
@@ -27,6 +27,10 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
   } = useOrganizationSelector();
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setSelectedUserId(null);
+  }, [teamId]);
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -79,6 +83,8 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
                 division_name: division,
                 team_name: team,
               });
+            } else {
+              onSelectUser({});
             }
           }}
           placeholder="이름"
