@@ -11,3 +11,13 @@ export const addInterestedMember = async (
   );
   return response.data;
 };
+
+// 관심 팀원 삭제
+export const removeInterestedMember = async (
+  userId: number
+): Promise<ApiResponse<Record<string, never>>> => {
+  const response = await instance.delete<ApiResponse<Record<string, never>>>(
+    `/api/home/interested/${userId}`
+  );
+  return response.data;
+};

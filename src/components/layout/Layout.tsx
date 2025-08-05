@@ -3,10 +3,13 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import { Outlet } from "react-router-dom";
 
+import ProfileModal from "@/components/common/ProfileModal";
 import AddMemberSidebar from "@/components/home/AddMemberSidebar";
 import Inbox from "@/components/inbox/Inbox";
 import Header from "@/components/layout/Header";
 import SideBar from "@/components/layout/sidebar/SideBar";
+
+import { useProfileStore } from "@/store/useProfileStore";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +19,14 @@ const Layout = () => {
   const inboxSmallRef = useRef<HTMLLIElement>(null);
   const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+
+  // 프로필 모달 상태
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileModalOffset, setProfileModalOffset] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const { profile } = useProfileStore();
 
   // AddMemberSidebar에 전달할 팀 정보 상태
   const [sidebarTeamInfo, setSidebarTeamInfo] = useState<{
@@ -38,11 +49,25 @@ const Layout = () => {
     setIsAddMemberSidebarOpen(true);
   };
 
+  // 프로필 호버 핸들러
+  const handleProfileHoverChange = (
+    isHovered: boolean,
+    offset?: { left: number; top: number }
+  ) => {
+    if (isHovered) {
+      setIsProfileModalOpen(true);
+      setProfileModalOffset(offset || null);
+    } else {
+      // ProfileModal 내부에서 호버 상태를 관리하므로 즉시 닫지 않음
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
       <Header
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         onSearchActiveChange={handleSearchActiveChange}
+        onProfileHoverChange={handleProfileHoverChange}
       />
       <AddMemberSidebar
         isOpen={isAddMemberSidebarOpen}
@@ -91,6 +116,27 @@ const Layout = () => {
           </div>
         </main>
       </div>
+
+      {/* 프로필 모달 */}
+      {isProfileModalOpen && profileModalOffset && profile && (
+        <div
+          className="fixed z-2000 transition-all duration-200 ease-in-out"
+          style={{
+            left: profileModalOffset.left,
+            top: profileModalOffset.top,
+          }}
+        >
+          <ProfileModal
+            id={profile.id}
+            isOpen={true}
+            onClose={() => {
+              setIsProfileModalOpen(false);
+              setProfileModalOffset(null);
+            }}
+            isOwnProfile={true}
+          />
+        </div>
+      )}
     </div>
   );
 };
