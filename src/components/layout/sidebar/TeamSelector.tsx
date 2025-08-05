@@ -1,9 +1,15 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 
+import { useQueries } from "@tanstack/react-query";
 import clsx from "clsx";
 
 import Arrow from "@/assets/svgs/common/down.svg";
-import { mockDivisions, mockTeams } from "@/mocks/groupTeamData";
+import { useTeamApi } from "@/hooks/team/useTeamApi";
+import { Team } from "@/types/team/user";
+
+import { getTeamsByDivisionId } from "@/apis/team/teamApi";
 
 type Props = {
   groupId: number;
@@ -13,47 +19,71 @@ type Props = {
 const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [showHiddenTeams, setShowHiddenTeams] = useState(false);
-
-  useEffect(() => {
-    setShowHiddenTeams(false);
-  }, [groupId]);
-
-  const divisions = mockDivisions[String(groupId)] || [];
-
-  const sections: {
-    head: string;
-    teams: {
-      team_id: number;
-      name: string;
-      is_active: boolean;
-    }[];
-  }[] = divisions.flatMap(division => {
-    const allTeams = mockTeams[division.divisionId] || [];
-    const filteredTeams = allTeams.filter(
-      team => team.active === !showHiddenTeams
-    );
-
-    if (filteredTeams.length === 0) return [];
-
-    return [
-      {
-        head: division.divisionName,
-        teams: filteredTeams.map(team => ({
-          team_id: team.teamId,
-          name: team.teamName,
-          is_active: team.active,
-        })),
-      },
-    ];
-  });
-
-  const handleTeamClick = (team: { team_id: number; name: string }) => {
-    setSelectedTeam(team.name);
-    onTeamSelect({ teamId: team.team_id, teamName: team.name });
-  };
-
+  const [teamMap, setTeamMap] = useState<Record<number, Team[]>>({});
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isNarrow, setIsNarrow] = useState(false);
+
+  const { useDivisionsByGroupIdQuery } = useTeamApi();
+  const { data: divisionData } = useDivisionsByGroupIdQuery(groupId);
+  const divisions = divisionData?.result ?? [];
+
+  const teamQueries = useQueries({
+    queries: divisions.map(division => ({
+      queryKey: ["teams", division.divisionId],
+      queryFn: () => getTeamsByDivisionId(division.divisionId),
+      enabled: !!division.divisionId,
+    })),
+  });
+
+  useEffect(() => {
+    const isAllFetched = teamQueries.every(query => query.isSuccess);
+    if (!isAllFetched) return;
+
+    const newTeamMap: Record<number, Team[]> = {};
+
+    teamQueries.forEach((query, idx) => {
+      const divisionId = divisions[idx]?.divisionId;
+      if (query.data && divisionId) {
+        newTeamMap[divisionId] = query.data.result;
+      }
+    });
+
+    setTeamMap(prev => {
+      const isSame = JSON.stringify(prev) === JSON.stringify(newTeamMap);
+      return isSame ? prev : newTeamMap;
+    });
+  }, [divisions, teamQueries.map(q => q.data).join(",")]);
+
+  const sections = divisions
+    .map(division => {
+      const teams = teamMap[division.divisionId]?.filter(
+        team => team.active === !showHiddenTeams
+      );
+
+      if (!teams || teams.length === 0) return null;
+
+      return {
+        head: division.divisionName,
+        teams: teams.map(team => ({
+          teamId: team.teamId,
+          teamName: team.teamName,
+          active: team.active,
+        })),
+      };
+    })
+    .filter(Boolean) as {
+    head: string;
+    teams: {
+      teamId: number;
+      teamName: string;
+      active: boolean;
+    }[];
+  }[];
+
+  const handleTeamClick = (team: { teamId: number; teamName: string }) => {
+    setSelectedTeam(team.teamName);
+    onTeamSelect({ teamId: team.teamId, teamName: team.teamName });
+  };
 
   useEffect(() => {
     const observer = new ResizeObserver(entries => {
@@ -62,7 +92,6 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
     });
 
     if (containerRef.current) observer.observe(containerRef.current);
-
     return () => {
       if (containerRef.current) observer.unobserve(containerRef.current);
     };
@@ -86,11 +115,11 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
               >
                 {section.teams.map(team => (
                   <button
-                    key={team.team_id}
+                    key={team.teamId}
                     onClick={() => handleTeamClick(team)}
                     className={clsx(
                       "cursor-pointer p-2 rounded-lg text-body2 transition-colors whitespace-nowrap",
-                      selectedTeam === team.name
+                      selectedTeam === team.teamName
                         ? "bg-main text-white"
                         : "bg-white hover:bg-gray-10"
                     )}
@@ -98,13 +127,13 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
                     <span
                       className={clsx(
                         "text-body2",
-                        team.is_active
+                        team.active
                           ? "text-gray-80"
                           : "text-gray-40 hover:text-gray-60"
                       )}
                     >
-                      {team.name}
-                      {!team.is_active && " (종료)"}
+                      {team.teamName}
+                      {!team.active && " (종료)"}
                     </span>
                   </button>
                 ))}

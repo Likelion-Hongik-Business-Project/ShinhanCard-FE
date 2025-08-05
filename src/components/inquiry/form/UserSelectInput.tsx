@@ -55,7 +55,7 @@ const UserMultiSelectInput = ({
 
   const filteredUsers = allUsers
     .filter(u =>
-      u.name.toLowerCase().includes(debouncedInput.trim().toLowerCase())
+      u.name?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
     .filter(u => !selectedUsers.some(selected => selected.id === u.id));
 

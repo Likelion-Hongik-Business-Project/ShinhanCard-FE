@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
+import { useTeamApi } from "@/hooks/team/useTeamApi";
 import { Group } from "@/types/team/user";
-import { mockGroups } from "@/mocks/groupTeamData";
 
 type Props = {
   onGroupSelect: (group: Group) => void;
@@ -10,11 +10,11 @@ type Props = {
 
 const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [groups, setGroups] = useState<Group[]>([]);
+  const { useGroupsQuery } = useTeamApi();
+  const { data: groupData, isLoading } = useGroupsQuery();
 
-  useEffect(() => {
-    setGroups(mockGroups);
-  }, []);
+  console.log(groupData);
+  const groups = groupData?.result ?? [];
 
   const handleClick = (group: Group) => {
     onGroupSelect(group);
@@ -25,9 +25,9 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
       ref={ref}
       className="w-[240px] h-[calc(100vh-64px)] bg-white px-8 py-[52px] border-x border-gray-20"
     >
-      <ul className="flex flex-col gap-10">
-        {groups.map(group => {
-          return (
+      {isLoading ? null : (
+        <ul className="flex flex-col gap-10">
+          {groups.map(group => (
             <li
               key={group.groupId}
               onClick={() => handleClick(group)}
@@ -44,9 +44,9 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
             >
               {group.groupName}
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

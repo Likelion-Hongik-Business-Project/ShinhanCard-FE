@@ -244,7 +244,7 @@ const SideBar = ({
         <GroupSelector
           onGroupSelect={group => {
             if (group) {
-              setSelectedGroupId(group.group_id);
+              setSelectedGroupId(group.groupId);
               setIsGroupSelectorFixed(true);
             }
           }}
