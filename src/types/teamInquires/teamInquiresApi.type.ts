@@ -18,6 +18,7 @@ export interface SelectedTeam {
   group_name: string;
   division_name: string;
   team_name: string;
+  active: boolean;
 }
 
 // 날짜 필터

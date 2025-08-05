@@ -67,8 +67,7 @@ const TeamBoardLayout = ({
         group_name={selected_team.group_name}
         division_name={selected_team.division_name}
         team_name={selected_team.team_name}
-        //selected_team.isActive
-        isActive={true}
+        isActive={selected_team.active}
         onClickExport={() => handleExport()}
         onClickWrite={() => handleWrite()}
       />
