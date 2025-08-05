@@ -21,6 +21,7 @@
     "@tanstack/react-query-devtools": "^5.81.5",
     "@toast-ui/editor": "^3.2.2",
     "@toast-ui/react-editor": "^3.2.3",
+    "@uiw/react-markdown-preview": "^5.1.5",
     "axios": "^1.10.0",
     "clsx": "^2.1.1",
     "prosemirror-transform": "^1.10.4",
