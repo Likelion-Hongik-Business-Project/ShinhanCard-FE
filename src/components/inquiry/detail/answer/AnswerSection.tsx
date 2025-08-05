@@ -1,25 +1,9 @@
-import type { Answerer, Comment, InquiryData } from "@/types/inquiryTypes";
+import type { AnswerSectionProps } from "@/types/inquiryTypes";
 
 import AnswerEditor from "./AnswerEditor";
 import AnswerItem from "./AnswerItem";
 import AnswerList from "./AnswerList";
 
-interface AnswerSectionProps {
-  inquiry: InquiryData;
-  currentUserId: number;
-  showEditor: boolean;
-  tabsToDisplay: Answerer[];
-  selectedUserId: number | null;
-  selectedComment: Comment | undefined;
-  myComment: Comment | undefined;
-  draftContent: string;
-  setDraftContent: (content: string) => void;
-  handleStartAnswer: () => void;
-  handleSelectTab: (id: number) => void;
-  handleSubmit: (content: string) => void;
-}
-
-// 문의 상세 페이지의 전체 답변 섹션을 렌더링하는 컴포넌트
 const AnswerSection = (props: AnswerSectionProps) => {
   const {
     inquiry,
@@ -33,7 +17,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
     setDraftContent,
     handleStartAnswer,
     handleSelectTab,
-    handleSubmit,
+    onEditorSubmit,
   } = props;
 
   // 답변 섹션의 클래스를 조건부로 설정
@@ -71,13 +55,13 @@ const AnswerSection = (props: AnswerSectionProps) => {
         />
       )}
 
-      {/* 답변 내용 (에디터 또는 조회) */}
+      {/* 답변 내용 */}
       {showEditor ? (
         <AnswerEditor
           mode={myComment ? "edit" : "create"}
           initialContent={draftContent}
           onContentChange={setDraftContent}
-          onSubmit={handleSubmit}
+          onSubmit={onEditorSubmit}
         />
       ) : selectedComment ? (
         <AnswerItem

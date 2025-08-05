@@ -7,6 +7,7 @@ import { AssigneeActionsProps } from "@/types/inquiryTypes";
 const AssigneeActions = ({
   showAssigneeFeatures,
   onStartAnswer,
+  onConfirm,
 }: AssigneeActionsProps) => {
   if (!showAssigneeFeatures) return null;
 
@@ -26,7 +27,7 @@ const AssigneeActions = ({
         </Button>
 
         {/* 확인 버튼*/}
-        <Button buttonType="green">
+        <Button buttonType="green" onClick={onConfirm}>
           <Check />
           확인
         </Button>

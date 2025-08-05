@@ -55,9 +55,7 @@ export const useAnswerHandler = ({
 
   // 답변 제출 핸들러
   const handleSubmit = (content: string) => {
-    alert(
-      `답변이 ${myComment ? "수정" : "등록"}되었습니다.\n\n내용: ${content}`
-    );
+    console.log("Submitted content:", content);
     setDraftContent("");
     setIsEditing(false);
     setIsReplying(false);

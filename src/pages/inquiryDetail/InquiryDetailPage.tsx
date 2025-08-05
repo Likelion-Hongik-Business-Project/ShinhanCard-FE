@@ -1,31 +1,27 @@
 import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
+import Modal from "@/components/common/Modal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import AssigneeActions from "@/components/inquiry/detail/AssigneeActions";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
 import NotificationButton from "@/components/inquiry/detail/NotificationButton";
 import PendingActions from "@/components/inquiry/detail/PendingActions";
-import { useAnswerHandler } from "@/hooks/useAnswerHandler";
-import { useInquiryData } from "@/hooks/useInquiryData";
-import { useInquiryState } from "@/hooks/useInquiryState";
+import { useInquiryPageHandler } from "@/hooks/useInquiryPageHandler";
 import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
-  // inquiryId를 기반으로 문의 데이터와 사용자 정보를 가져오는 커스텀 훅
-  const { inquiry, userRole, currentUserId } = useInquiryData();
-
-  // 상태 정보, 권한 계산 커스텀 훅
-  const state = useInquiryState(inquiry!, userRole, currentUserId);
-  const isAssignee =
-    inquiry?.assignees.some(a => a.user_id === currentUserId) ?? false;
-  const isAnswerable = state.canAnswer && isAssignee;
-
-  // 답변 관련 상태, 핸들러 커스텀 훅
-  const answerHandler = useAnswerHandler({
+  const {
     inquiry,
+    userRole,
     currentUserId,
-    isAnswerable,
-  });
+    state,
+    answerHandler,
+    modals,
+    modalProps,
+    confirmedUsers,
+    handleEditorSubmit,
+    closeModal,
+  } = useInquiryPageHandler();
 
   if (!inquiry) {
     return (
@@ -40,7 +36,6 @@ const InquiryDetailPage = () => {
     );
   }
 
-  // 버튼 영역 표시 여부 결정
   const showButtons =
     state.permissions.showAssigneeFeatures ||
     (state.isWriter &&
@@ -51,25 +46,27 @@ const InquiryDetailPage = () => {
     <div className="min-h-screen">
       <div className="mx-auto flex w-full flex-col gap-[56px]">
         <div>
-          {/* 헤더 */}
-          <Header isAdmin={userRole === "admin"} />
+          <Header
+            isAdmin={userRole === "admin"}
+            onDelete={modals.openDeletePostModal}
+          />
         </div>
 
-        {/* 문의글*/}
         <div className="self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
           <InquiryCard
             inquiry={inquiry}
             userRole={userRole}
             currentUserId={currentUserId}
+            confirmedUsers={confirmedUsers}
           />
 
-          {/* 답변 담당자 버튼, 알림 버튼, 등록보류 버튼 */}
           {showButtons &&
             (state.permissions.showAssigneeFeatures ? (
               <div className="w-full">
                 <AssigneeActions
                   showAssigneeFeatures={state.permissions.showAssigneeFeatures}
                   onStartAnswer={answerHandler.handleStartAnswer}
+                  onConfirm={modals.openConfirmInquiryModal}
                 />
               </div>
             ) : (
@@ -80,6 +77,7 @@ const InquiryDetailPage = () => {
                     notificationSent={state.notificationSent}
                     remainingTime={state.remainingTime}
                     finalStateLabel={state.finalStateLabel}
+                    onSend={modals.openSendNotificationModal}
                   />
                 </div>
                 <div className="flex justify-end">
@@ -92,15 +90,25 @@ const InquiryDetailPage = () => {
             ))}
         </div>
 
-        {/* 답변 섹션 */}
         <AnswerSection
           inquiry={inquiry}
           currentUserId={currentUserId}
           {...answerHandler}
+          onEditorSubmit={handleEditorSubmit}
         />
 
         <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>
+
+      {modalProps && (
+        <Modal
+          isOpen={true}
+          onClose={closeModal}
+          title={modalProps.title}
+          description={modalProps.description}
+          buttons={modalProps.buttons}
+        />
+      )}
     </div>
   );
 };

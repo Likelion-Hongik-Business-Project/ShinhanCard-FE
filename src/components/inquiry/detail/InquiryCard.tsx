@@ -8,6 +8,7 @@ const InquiryCard = ({
   inquiry,
   userRole = "default",
   currentUserId,
+  confirmedUsers,
 }: InquiryCardProps) => {
   const {
     isAssigneeEditMode,
@@ -54,6 +55,7 @@ const InquiryCard = ({
         isPendingState={isPendingState}
         isAssigneeEditMode={isAssigneeEditMode}
         showAssigneeFeatures={permissions.showAssigneeFeatures}
+        confirmedUsers={confirmedUsers}
       />
     </div>
   );
