@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useEditor } from "@/hooks/useEditor";
 
@@ -8,15 +8,38 @@ import "@/styles/editor.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 
-const InquiryEditor = () => {
+interface Props {
+  title: string;
+  content: string;
+  setTitle: (value: string) => void;
+  setContent: (value: string) => void;
+}
+
+const InquiryEditor = ({ title, setTitle, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
-  const [title, setTitle] = useState<string>("");
 
+  // 초기 마운트 시 editor 내용 초기화
   useEffect(() => {
     const editorInstance = editorRef.current?.getInstance();
     editorInstance?.setMarkdown("");
   }, [editorRef]);
+
+  // editor 내용 변경될 때마다 setContent에 반영
+  useEffect(() => {
+    const editorInstance = editorRef.current?.getInstance();
+    const observer = () => {
+      const content = editorInstance?.getMarkdown() || "";
+      setContent(content);
+    };
+
+    const el = editorRef.current?.getRootElement();
+    el?.addEventListener("input", observer);
+
+    return () => {
+      el?.removeEventListener("input", observer);
+    };
+  }, [editorRef, setContent]);
 
   return (
     <div className="flex flex-col gap-6">

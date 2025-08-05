@@ -3,50 +3,89 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
+import { useUploadFile } from "@/hooks/file/useUploadFile";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
-import { useFakeProgress } from "@/hooks/useFakeProgress";
+import { UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
-const FileUploadBox = () => {
-  const [files, setFiles] = useState<
-    {
-      id: number;
-      name: string;
-      size: number;
-      uploadedSize: number;
-      status: "uploading" | "done";
-    }[]
-  >([]);
+import { deleteFile } from "@/apis/file/fileApi";
+
+interface Props {
+  teamId: number;
+  setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+}
+
+const FileUploadBox = ({ setFileIds }: Props) => {
+  const [files, setFiles] = useState<UploadFile[]>([]);
+  const uploadFile = useUploadFile();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = () => {
-    inputRef.current?.click();
+  const handleClick = () => inputRef.current?.click();
+
+  const updateProgress = (id: number, progress: number) => {
+    setFiles(prev =>
+      prev.map(file => (file.id === id ? { ...file, progress } : file))
+    );
   };
 
-  const handleFileSelect = (fileList: FileList | null) => {
+  const handleFileSelect = async (fileList: FileList | null) => {
     if (!fileList) return;
 
-    const newFiles = Array.from(fileList).map((file, idx) => ({
-      id: Date.now() + idx,
-      name: file.name,
-      size: file.size,
-      uploadedSize: 0,
-      status: "uploading" as const,
-    }));
+    for (const file of Array.from(fileList)) {
+      const localId = Date.now() + Math.random();
 
-    setFiles(prev => [...prev, ...newFiles]);
+      setFiles(prev => [
+        ...prev,
+        {
+          id: localId,
+          name: file.name,
+          size: file.size,
+          progress: 0,
+          status: "uploading",
+        },
+      ]);
+
+      try {
+        const { fileId } = await uploadFile(file, percent =>
+          updateProgress(localId, percent)
+        );
+
+        // 업로드 완료 시 상태 업데이트
+        setFiles(prev =>
+          prev.map(f =>
+            f.id === localId
+              ? { ...f, fileId, progress: 100, status: "done" }
+              : f
+          )
+        );
+
+        setFileIds(prev => [...prev, fileId]);
+      } catch (err) {
+        console.error("파일 업로드 실패", err);
+        setFiles(prev =>
+          prev.map(f => (f.id === localId ? { ...f, status: "error" } : f))
+        );
+      }
+    }
+  };
+
+  const handleRemove = async (localId: number, fileId?: number) => {
+    if (fileId) {
+      try {
+        await deleteFile({ fileId });
+        setFileIds(prev => prev.filter(id => id !== fileId));
+      } catch (e) {
+        console.error("삭제 실패", e);
+      }
+    }
+
+    setFiles(prev => prev.filter(file => file.id !== localId));
   };
 
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
   });
-
-  const handleRemove = (id: number) => {
-    setFiles(prev => prev.filter(file => file.id !== id));
-  };
-
-  useFakeProgress(files, setFiles);
 
   return (
     <div className="flex flex-col gap-4">
@@ -69,7 +108,7 @@ const FileUploadBox = () => {
           onClick={handleClick}
           className={clsx(
             "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border cursor-pointer",
-            isDragging ? "bg-white border-main" : "bg-white border-gray-20 "
+            isDragging ? "bg-white border-main" : "bg-white border-gray-20"
           )}
         >
           <Upload className={clsx(isDragging ? "text-main" : "text-gray-60")} />
@@ -106,7 +145,7 @@ const FileUploadBox = () => {
             <FileUploadItem
               key={file.id}
               file={file}
-              onRemove={() => handleRemove(file.id)}
+              onRemove={() => handleRemove(file.id, file.fileId)}
             />
           ))}
         </div>

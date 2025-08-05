@@ -5,17 +5,48 @@ import FileUploadBox from "./FileUploadBox";
 import InquiryEditor from "./InquiryEditor";
 
 interface Props {
+  teamId: number;
+  title: string;
+  content: string;
+  assigneeId: number | null;
+  referenceIds: number[];
+  setTitle: (value: string) => void;
+  setContent: (value: string) => void;
+  setAssigneeId: (id: number | null) => void;
+  setReferenceIds: (ids: number[]) => void;
+  setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   onDropdownStateChange: (isOpen: boolean) => void;
 }
 
-const InquiryForm = ({ onDropdownStateChange }: Props) => {
+const InquiryForm = ({
+  teamId,
+  title,
+  content,
+  assigneeId,
+  referenceIds,
+  setTitle,
+  setContent,
+  setAssigneeId,
+  setReferenceIds,
+  setFileIds,
+  onDropdownStateChange,
+}: Props) => {
   return (
     <section className="flex flex-col gap-10 p-16 bg-white rounded-b-[15px]">
-      <InquiryEditor />
+      <InquiryEditor
+        title={title}
+        content={content}
+        setTitle={setTitle}
+        setContent={setContent}
+      />
       <div className="w-full h-[1px] bg-gray-10" />
-      <FileUploadBox />
+      <FileUploadBox teamId={teamId} setFileIds={setFileIds} />
       <div className="w-full h-[1px] bg-gray-10" />
       <AssigneeSelector
+        assigneeId={assigneeId}
+        referenceIds={referenceIds}
+        setAssigneeId={setAssigneeId}
+        setReferenceIds={setReferenceIds}
         onDropdownStateChange={onDropdownStateChange}
         allUsers={USERS}
       />

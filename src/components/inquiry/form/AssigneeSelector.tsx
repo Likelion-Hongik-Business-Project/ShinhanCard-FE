@@ -2,14 +2,25 @@ import { useState } from "react";
 
 import { Member } from "@/types/team/user";
 
-import UserMultiSelectInput from "./UserSelectInput";
+import UserMultiSelectInput from "./UserMultiSelectInput";
 
 interface Props {
   onDropdownStateChange: (isOpen: boolean) => void;
   allUsers: Member[];
+  assigneeId: number | null;
+  referenceIds: number[];
+  setAssigneeId: (id: number | null) => void;
+  setReferenceIds: (ids: number[]) => void;
 }
 
-const AssigneeSelector = ({ onDropdownStateChange, allUsers }: Props) => {
+const AssigneeSelector = ({
+  onDropdownStateChange,
+  allUsers,
+  assigneeId,
+  referenceIds,
+  setAssigneeId,
+  setReferenceIds,
+}: Props) => {
   const [openedDropdownIndex, setOpenedDropdownIndex] = useState<number | null>(
     null
   );
@@ -33,14 +44,19 @@ const AssigneeSelector = ({ onDropdownStateChange, allUsers }: Props) => {
         placeholder="필수입력"
         maxCount={3}
         allUsers={allUsers}
+        selectedIds={assigneeId !== null ? [assigneeId] : []}
+        onChange={(ids: number[]) => setAssigneeId(ids[0] ?? null)}
         isOpen={openedDropdownIndex === 0}
         onDropdownToggle={isOpen => handleToggle(0, isOpen)}
       />
+
       <UserMultiSelectInput
         label="답변 참조자"
         placeholder="선택입력"
         maxCount={5}
         allUsers={allUsers}
+        selectedIds={referenceIds}
+        onChange={setReferenceIds}
         isOpen={openedDropdownIndex === 1}
         onDropdownToggle={isOpen => handleToggle(1, isOpen)}
       />

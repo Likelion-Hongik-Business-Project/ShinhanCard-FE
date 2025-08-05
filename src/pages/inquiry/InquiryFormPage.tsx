@@ -6,7 +6,9 @@ import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
+import { useInquiryApi } from "@/hooks/inquiry/useInquiryApi";
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
+import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,10 +25,36 @@ const InquiryFormPage = () => {
     handleTeamChange,
   } = useOrganizationSelector();
 
+  // 문의 입력값 상태
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [assigneeId, setAssigneeId] = useState<number | null>(null);
+  const [referenceIds, setReferenceIds] = useState<number[]>([]);
+  const [fileIds, setFileIds] = useState<number[]>([]);
+
+  const { postInquiryMutation } = useInquiryApi();
+
+  const handleSubmit = () => {
+    if (!teamId) return;
+
+    const payload: PostInquiryRequest = {
+      title,
+      content,
+      assignee_ids: assigneeId !== null ? [assigneeId] : [],
+      observer_ids: referenceIds,
+      file_ids: fileIds,
+    };
+
+    postInquiryMutation.mutate({
+      teamId,
+      data: payload,
+    });
+  };
+
   return (
     <section
       className={clsx(
-        "flex flex-col  w-full",
+        "flex flex-col w-full",
         isDropdownOpen ? "pb-[220px]" : ""
       )}
     >
@@ -56,14 +84,26 @@ const InquiryFormPage = () => {
           />
         </div>
 
-        <InquiryForm onDropdownStateChange={setIsDropdownOpen} />
+        <InquiryForm
+          teamId={teamId ?? 0}
+          title={title}
+          content={content}
+          assigneeId={assigneeId}
+          referenceIds={referenceIds}
+          setTitle={setTitle}
+          setContent={setContent}
+          setAssigneeId={setAssigneeId}
+          setReferenceIds={setReferenceIds}
+          setFileIds={setFileIds}
+          onDropdownStateChange={setIsDropdownOpen}
+        />
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">
         <Button className="white">임시저장</Button>
-        <Button buttonType="blue">
+        <Button buttonType="blue" onClick={handleSubmit}>
           <PencilIcon />
-          <span className="text-heading3 text-white">답변 보내기</span>
+          <span className="text-heading3 text-white">문의 등록하기</span>
         </Button>
       </div>
     </section>

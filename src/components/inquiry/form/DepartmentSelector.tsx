@@ -28,9 +28,25 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
+  // 소속 변경 시 사용자 선택 초기화
   useEffect(() => {
     setSelectedUserId(null);
-  }, [teamId]);
+  }, [teamId, users]);
+
+  const handleUserChange = (userId: number) => {
+    setSelectedUserId(userId);
+    const user = users.find(u => u.id === userId);
+
+    if (user) {
+      onSelectUser({
+        id: user.id,
+        name: user.name,
+        group_name: group,
+        division_name: division,
+        team_name: team,
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -63,33 +79,15 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
           disabled={!divisionId}
         />
         <SelectDropdown
-          options={
-            Array.isArray(users)
-              ? users.map(user => ({
-                  label: user.name,
-                  value: user.id,
-                }))
-              : []
-          }
+          options={users.map(user => ({
+            label: user.name,
+            value: user.id,
+          }))}
           value={selectedUserId ?? 0}
-          onChange={userId => {
-            setSelectedUserId(userId);
-            const user = users.find(u => u.id === userId);
-            if (user) {
-              onSelectUser({
-                id: user.id,
-                name: user.name,
-                group_name: group,
-                division_name: division,
-                team_name: team,
-              });
-            } else {
-              onSelectUser({});
-            }
-          }}
+          onChange={handleUserChange}
           placeholder="이름"
           type="user"
-          disabled={!teamId}
+          disabled={!teamId || users.length === 0}
         />
       </div>
     </div>

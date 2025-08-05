@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import clsx from "clsx";
 
@@ -17,6 +17,8 @@ interface Props {
   placeholder: string;
   maxCount: number;
   allUsers: Member[];
+  selectedIds: number[];
+  onChange: (ids: number[]) => void;
   isOpen: boolean;
   onDropdownToggle: (isOpen: boolean) => void;
 }
@@ -25,45 +27,52 @@ const UserMultiSelectInput = ({
   label,
   placeholder,
   maxCount,
-  isOpen,
   allUsers,
+  selectedIds,
+  onChange,
+  isOpen,
   onDropdownToggle,
 }: Props) => {
-  const [selectedUsers, setSelectedUsers] = useState<Partial<Member>[]>([]);
   const [inputValue, setInputValue] = useState("");
 
   const debouncedInput = useDebounce(inputValue, 300);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(containerRef, () => {
-    if (isOpen) {
-      onDropdownToggle(false);
-    }
+    if (isOpen) onDropdownToggle(false);
   });
 
-  const handleSelectUser = (user: Partial<Member>) => {
-    if (selectedUsers.some(u => u.id === user.id)) return;
-    if (selectedUsers.length >= maxCount) return;
+  const selectedUsers = useMemo(() => {
+    if (!selectedIds) return [];
 
-    setSelectedUsers(prev => [...prev, user]);
+    return allUsers.filter(user => selectedIds.includes(user.id));
+  }, [allUsers, selectedIds]);
+
+  const handleSelectUser = (user: Partial<Member>) => {
+    if (user.id === undefined) return;
+
+    if (selectedIds.includes(user.id)) return;
+    if (selectedIds.length >= maxCount) return;
+
+    onChange([...selectedIds, user.id]);
     setInputValue("");
   };
 
   const handleRemoveUser = (id: number) => {
-    setSelectedUsers(prev => prev.filter(u => u.id !== id));
+    onChange(selectedIds.filter(userId => userId !== id));
   };
 
   const filteredUsers = allUsers
     .filter(u =>
       u.name?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
-    .filter(u => !selectedUsers.some(selected => selected.id === u.id));
+    .filter(u => !selectedIds?.includes(u.id));
 
   useEffect(() => {
-    if (selectedUsers.length >= maxCount && inputValue !== "") {
+    if (selectedIds?.length >= maxCount && inputValue !== "") {
       setInputValue("");
     }
-  }, [selectedUsers, inputValue, maxCount]);
+  }, [selectedIds, inputValue, maxCount]);
 
   return (
     <div
@@ -79,7 +88,7 @@ const UserMultiSelectInput = ({
         <div
           className={clsx(
             "rounded-[5px] px-2 py-1 cursor-pointer text-body2 flex flex-wrap items-center gap-4",
-            selectedUsers.length > 0 || isOpen
+            selectedIds?.length > 0 || isOpen
               ? "bg-gray-10 border-gray-40"
               : "bg-white text-gray-30 border-none",
             "hover:bg-gray-10"
@@ -98,7 +107,7 @@ const UserMultiSelectInput = ({
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleRemoveUser(user.id!);
+                  handleRemoveUser(user.id);
                 }}
                 className="cursor-pointer"
               >
@@ -110,7 +119,7 @@ const UserMultiSelectInput = ({
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             className="flex-1 min-w-0 cursor-pointer outline-none text-gray-100 placeholder:text-gray-30 bg-transparent"
-            placeholder={selectedUsers.length === 0 ? placeholder : ""}
+            placeholder={selectedIds?.length === 0 ? placeholder : ""}
           />
         </div>
 
