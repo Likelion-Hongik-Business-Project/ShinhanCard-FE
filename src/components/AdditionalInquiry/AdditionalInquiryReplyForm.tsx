@@ -1,26 +1,57 @@
 import { ChangeEvent, useRef, useState } from "react";
 
 import Pencil from "@/assets/svgs/common/pencil.svg";
+import { useCommentApi } from "@/hooks/comment/commentApi";
+import { TaggedUser } from "@/types/InquiryResponse";
 
 import Button from "../common/Button";
 
 export type Props = {
-  recipient: string; // 수신자
+  taggedUser: TaggedUser;
+  followUpId: number;
   onClose: () => void;
+  commentId?: number;
+  initialContent?: string;
 };
 
-const AdditionalInquiryReplyForm = ({ recipient, onClose }: Props) => {
-  const [content, setContent] = useState("");
+const AdditionalInquiryReplyForm = ({
+  taggedUser,
+  followUpId,
+  onClose,
+  commentId,
+  initialContent = "",
+}: Props) => {
+  const { postCommentsMutation, putCommentsMutation } =
+    useCommentApi(followUpId);
+  const [content, setContent] = useState(initialContent);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isCompleteEnabled = content.trim().length > 0;
 
-  const prefix = recipient + " ";
+  const prefix = taggedUser.username + " ";
 
   const handleComplete = () => {
-    if (isCompleteEnabled) {
-      // todo: 댓글 추가 or 수정: onSubmit(content.trim(), recipient);
-      onClose();
+    if (!isCompleteEnabled) return;
+    const trimmed = content.trim();
+    if (commentId) {
+      putCommentsMutation.mutate(
+        {
+          commentId,
+          data: { taggedUserId: taggedUser.user_id, content: trimmed },
+        },
+        {
+          onSuccess: () => onClose(),
+          // onError: 에러로직,
+        }
+      );
+    } else {
+      postCommentsMutation.mutate(
+        { taggedUserId: taggedUser.user_id, content: trimmed },
+        {
+          onSuccess: () => onClose(),
+          // onError: 에러로직,
+        }
+      );
     }
   };
 
@@ -39,7 +70,7 @@ const AdditionalInquiryReplyForm = ({ recipient, onClose }: Props) => {
     <div className="w-full rounded-[15px] p-8 border-3 border-main bg-white flex gap-8">
       <div className="flex-1 flex flex-col gap-4">
         <div className="relative flex">
-          <span className="absolute text-body2-b text-state-progress-02">
+          <span className="absolute text-body2 text-main bg-white">
             {prefix}
           </span>
           <textarea

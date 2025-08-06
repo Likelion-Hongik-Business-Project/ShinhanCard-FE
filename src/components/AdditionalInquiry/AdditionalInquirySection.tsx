@@ -20,7 +20,7 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
     <div className="w-full max-w-[1420px] rounded-[15px] py-14 px-16 bg-white flex flex-col gap-8">
       {/* 헤더에 onClickNew prop으로 토글 함수 전달 */}
       <AdditionalInquiryHeader
-        follow_ups_cnt={inquiry.follow_ups.length}
+        follow_ups_cnt={inquiry.follow_ups.count}
         isChatOpen={isChatOpen}
         onClick={handleToggleChat}
       />
@@ -28,15 +28,16 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
       {/* isChatOpen이 true일 때만 InquiryForm 렌더 */}
       {isChatOpen && (
         <AdditionalInquiryForm
+          inquiryId={inquiry.inquiry_id}
           assignees={inquiry.assignees}
           onClose={handleToggleChat}
         />
       )}
 
       <AdditionalInquiryThread
+        inquiryId={inquiry.inquiry_id}
         assignees={inquiry.assignees}
-        writer={inquiry.writer}
-        follow_ups={inquiry.follow_ups}
+        follow_ups={inquiry.follow_ups.follow_ups}
       />
     </div>
   );

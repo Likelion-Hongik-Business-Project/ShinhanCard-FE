@@ -1,175 +1,180 @@
-import { InquiryResponse } from "@/types/InquiryResponse";
-
-export const mockInquiryResponse: InquiryResponse = {
-  inquiry_id: 1001,
-  title: "회원가입 시 500 에러 문의",
-  content: `회원가입을 시도할 때 서버에서 500 에러가 발생합니다.
-
-- 발생 환경: Android Chrome
-- 재현 방법:
-  1. 회원가입 페이지 진입
-  2. 이메일·비밀번호 입력
-  3. ‘가입하기’ 버튼 클릭
-
-에러 로그:
-\`\`\`
-POST /api/signup 500 Internal Server Error
-\`\`\``,
-  created_at: "2025-07-28T09:30:00Z",
-  inquiry_state: "최종완료",
-  writer: {
-    user_id: 501,
-    name: "김철수",
+export const mockInquiryResponse = {
+  title: "회원가입 API 호출 시 400 오류 발생",
+  content:
+    "POST /api/signup 요청 시 400 Bad Request 응답이 반환됩니다. 요청 페이로드를 아래와 같이 전송했으나 서버에서 유효성 검사를 통과하지 못했습니다.",
+  status: "DRAFT",
+  role: "AUTHOR",
+  author: {
+    username: "김승찬",
+    teamname: "개발팀",
+    user_id: 101,
     profile_image_url: "/assets/images/profile.png",
   },
   assignees: [
     {
-      user_id: 601,
-      name: "강채원",
-      profile_image_url: "/assets/images/profile.png",
-      is_confirmed: true,
-    },
-    {
-      user_id: 602,
-      name: "고다현",
-      profile_image_url: "/assets/images/profile.png",
-      is_confirmed: true,
-    },
-    {
-      user_id: 603,
-      name: "장윤영",
-      profile_image_url: "/assets/images/profile.png",
-      is_confirmed: false,
-    },
-  ],
-  references: [
-    {
-      user_id: 701,
-      name: "홍길동",
+      username: "박지영",
+      is_checked: true,
+      user_id: 102,
       profile_image_url: "/assets/images/profile.png",
     },
   ],
+  observers: [
+    {
+      userId: 103,
+      userName: "최민수",
+      profileImageUrl: "/assets/images/profile.png",
+    },
+  ],
+  group: {
+    groupId: 1,
+    groupName: "서비스 개발팀",
+    active: true,
+  },
+  division: {
+    divisionId: 2,
+    divisionName: "백엔드 파트",
+    active: true,
+  },
+  team: {
+    teamId: 3,
+    teamName: "회원가입 API 팀",
+    active: true,
+  },
+  answers: {
+    count: 1,
+    answers: [
+      {
+        content:
+          "400 오류는 필수 필드 누락 또는 데이터 타입 불일치로 발생할 수 있습니다. 예를 들어 `email` 필드가 없거나 형식이 잘못되었는지 확인하세요.",
+        user: {
+          username: "이준호",
+          profile_url: "/assets/images/profile.png",
+          role: "AUTHOR",
+          user_id: 104,
+        },
+        files: [
+          {
+            fileId: 201,
+            fileKey: "request_example.json",
+            fileName: "request_example.json",
+            fileSize: 850,
+          },
+        ],
+        created_at: "2025-08-06T19:12:26.250Z",
+        is_selected: false,
+      },
+    ],
+  },
   files: [
     {
-      file_name: "error_screenshot.png",
-      file_url: "https://example.com/files/error_screenshot.png",
-    },
-    {
-      file_name: "server.log",
-      file_url: "https://example.com/files/server.log",
+      fileId: 301,
+      fileKey: "error_log.txt",
+      fileName: "error_log.txt",
+      fileSize: 2048,
     },
   ],
-  can_edit: false,
-  can_answer: true,
-  can_notify: true,
-  is_scrapped: false,
-  confirmed_assignees_count: 2,
-  confirmed_assignees: [
-    {
-      user_id: 601,
-      name: "강채원",
-      profile_image_url: "/assets/images/profile.png",
-    },
-    {
-      user_id: 602,
-      name: "고다현",
-      profile_image_url: "/assets/images/profile.png",
-    },
-  ],
-  comment_count: 6,
-  comments: [
-    {
-      comment_id: 8001,
-      writer: {
-        user_id: 601,
-        name: "강채원",
-        profile_image_url: "/assets/images/profile.png",
-      },
-      content:
-        "로그 확인해보니 DB 연결 오류로 보입니다. 해당 부분 점검하겠습니다.",
-      created_at: "2025-07-28T10:00:00Z",
-      can_delete: false,
-    },
-    {
-      comment_id: 8002,
-      writer: {
-        user_id: 602,
-        name: "고다현",
-        profile_image_url: "/assets/images/profile.png",
-      },
-      content: "제가 이슈 재현 환경 세팅해서 PR 올려두었습니다.",
-      created_at: "2025-07-28T11:15:00Z",
-      can_delete: true,
-    },
-  ],
-  follow_ups: [
-    {
-      follow_up_id: 9001,
-      content: "최종완료 후에도 동일 증상 확인되어 추가 문의드립니다.",
-      created_at: "2025-07-29T14:00:00Z",
-      writer: {
-        user_id: 501,
-        name: "김철수",
-        profile_image_url: "/assets/images/profile.png",
-      },
-      comments: [
-        {
-          comment_id: 9101,
-          content: "추가 로그 요청합니다. 서버 로그 전체 첨부 부탁드립니다.",
-          created_at: "2025-07-29T14:10:00Z",
-          writer: {
-            user_id: 603,
-            name: "장윤영",
-            profile_image_url: "/assets/images/profile.png",
-          },
-          parent_comment_id: null,
+  inquiry_id: 1234,
+  is_scraped: false,
+  created_at: "2025-08-06T19:12:26.250Z",
+  follow_ups: {
+    count: 2,
+    follow_ups: [
+      {
+        follow_up_id: 1,
+        content: "요청 페이로드에 `cardNumber` 필드를 추가해 주실 수 있나요?",
+        author: {
+          username: "김승찬",
+          profile_url: "/assets/images/profile.png",
+          role: "AUTHOR",
+          user_id: 101,
         },
-        {
-          comment_id: 9102,
-          content: "로그 공유했습니다. 확인 부탁드립니다.",
-          created_at: "2025-07-29T14:25:00Z",
-          writer: {
-            user_id: 501,
-            name: "김철수",
-            profile_image_url: "/assets/images/profile.png",
+        comments: [
+          {
+            comment_id: 401,
+            author: {
+              username: "박지영",
+              profile_url: "/assets/images/profile.png",
+              role: "AUTHOR",
+              user_id: 102,
+            },
+            content:
+              '추가했습니다. 아래 JSON을 참고하세요:\n```json\n{"email":"user@test.com","password":"Pass123!","cardNumber":"1234-5678-9012-3456"}\n```',
+            created_at: "2025-08-06T20:00:00.000Z",
+            tagged_user: {
+              username: "김승찬",
+              user_id: 101,
+            },
           },
-          parent_comment_id: 9101,
+          {
+            comment_id: 402,
+            author: {
+              username: "최민수",
+              profile_url: "/assets/images/profile.png",
+              role: "AUTHOR",
+              user_id: 103,
+            },
+            content: "해당 부분 반영하였습니다. 확인 부탁드립니다.",
+            created_at: "2025-08-06T20:15:00.000Z",
+            tagged_user: {
+              username: "박지영",
+              user_id: 102,
+            },
+          },
+        ],
+        tagged_user: {
+          username: "박지영",
+          user_id: 102,
         },
-      ],
-    },
-    {
-      follow_up_id: 9002,
-      content: "최종완료 후에도 동일 증상 확인되어 추가 문의드립니다.",
-      created_at: "2025-07-29T14:00:00Z",
-      writer: {
-        user_id: 511,
-        name: "김철수",
-        profile_image_url: "/assets/images/profile.png",
+        created_at: "2025-08-06T19:45:30.000Z",
       },
-      comments: [
-        {
-          comment_id: 9111,
-          content: "추가 로그 요청합니다. 서버 로그 전체 첨부 부탁드립니다.",
-          created_at: "2025-07-29T14:10:00Z",
-          writer: {
-            user_id: 613,
-            name: "장윤영",
-            profile_image_url: "/assets/images/profile.png",
-          },
-          parent_comment_id: null,
+      {
+        follow_up_id: 2,
+        content: "패스워드 유효성 검사는 어떻게 진행되고 있나요?",
+        author: {
+          username: "김승찬",
+          profile_url: "/assets/images/profile.png",
+          role: "AUTHOR",
+          user_id: 101,
         },
-        {
-          comment_id: 9112,
-          content: "로그 공유했습니다. 확인 부탁드립니다.",
-          created_at: "2025-07-29T14:25:00Z",
-          writer: {
-            user_id: 511,
-            name: "김철수",
-            profile_image_url: "/assets/images/profile.png",
+        comments: [
+          {
+            comment_id: 403,
+            author: {
+              username: "박지영",
+              profile_url: "/assets/images/profile.png",
+              role: "AUTHOR",
+              user_id: 102,
+            },
+            content:
+              "현재 서버에서 정규표현식으로 체크하도록 구현되어 있습니다.",
+            created_at: "2025-08-06T20:30:00.000Z",
+            tagged_user: {
+              username: "김승찬",
+              user_id: 101,
+            },
           },
-          parent_comment_id: 9111,
+          {
+            comment_id: 404,
+            author: {
+              username: "이준호",
+              profile_url: "/assets/images/profile.png",
+              role: "AUTHOR",
+              user_id: 104,
+            },
+            content: "프론트엔드에서도 간단한 유효성 검사를 추가할게요.",
+            created_at: "2025-08-06T20:45:00.000Z",
+            tagged_user: {
+              username: "김승찬",
+              user_id: 101,
+            },
+          },
+        ],
+        tagged_user: {
+          username: "박지영",
+          user_id: 102,
         },
-      ],
-    },
-  ],
+        created_at: "2025-08-06T20:00:00.000Z",
+      },
+    ],
+  },
 };

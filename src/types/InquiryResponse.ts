@@ -1,63 +1,124 @@
 export interface InquiryResponse {
   inquiry_id: number;
   title: string;
-  content: string; // Markdown, 이미지 URL 포함
-  created_at: string; // ISO 포맷
-  inquiry_state: InquiryState;
-  writer: User;
+  content: string;
+  status: string; // 필요한 상태를 추가하세요
+  role: string; // 필요한 역할을 추가하세요
+  author: Author;
   assignees: Assignee[];
-  references: ReferenceUser[];
+  observers: Observer[];
+  group: Group;
+  division: Division;
+  team: Team;
+  answers: AnswerSection;
   files: AttachedFile[];
-  can_edit: boolean;
-  can_answer: boolean;
-  can_notify: boolean;
-  is_scrapped: boolean;
-  confirmed_assignees_count: number;
-  confirmed_assignees: ReferenceUser[];
-  comment_count: number;
-  comments: Comment[];
-  follow_ups: FollowUp[];
+  is_scraped: boolean;
+  created_at: string;
+  follow_ups: FollowUpSection;
 }
 
-export type InquiryState = "확인 전" | "확인 중" | "최종완료" | "등록 보류";
-
-export interface User {
+export interface Author {
+  username: string;
+  teamname: string;
   user_id: number;
-  name: string;
   profile_image_url: string;
 }
 
-export interface Assignee extends User {
-  is_confirmed: boolean;
+export interface Assignee {
+  username: string;
+  is_checked: boolean;
+  user_id: number;
+  profile_image_url: string;
 }
 
-export type ReferenceUser = User;
+export interface Observer {
+  userId: number;
+  userName: string;
+  profileImageUrl: string;
+}
+
+export interface Group {
+  groupId: number;
+  groupName: string;
+  active: boolean;
+}
+
+export interface Division {
+  divisionId: number;
+  divisionName: string;
+  active: boolean;
+}
+
+export interface Team {
+  teamId: number;
+  teamName: string;
+  active: boolean;
+}
+
+export interface AnswerSection {
+  count: number;
+  answers: Answer[];
+}
+
+export interface Answer {
+  content: string;
+  user: AnswerUser;
+  files: FileInfo[];
+  created_at: string;
+  is_selected: boolean;
+}
+
+export interface AnswerUser {
+  username: string;
+  profile_url: string;
+  role: string;
+  user_id: number;
+}
+
+export interface FileInfo {
+  fileId: number;
+  fileKey: string;
+  fileName: string;
+  fileSize: number;
+}
 
 export interface AttachedFile {
-  file_name: string;
-  file_url: string;
+  fileId: number;
+  fileKey: string;
+  fileName: string;
+  fileSize: number;
 }
 
-export interface Comment {
-  comment_id: number;
-  writer: User;
-  content: string; // Markdown 지원 여부에 따라 변경 가능
-  created_at: string; // ISO 포맷
-  can_delete: boolean;
+export interface FollowUpSection {
+  count: number;
+  follow_ups: FollowUp[];
 }
 
 export interface FollowUp {
   follow_up_id: number;
-  content: string; // Markdown
-  created_at: string; // ISO 포맷
-  writer: User;
+  content: string;
+  author: FollowUpAuthor;
   comments: FollowUpComment[];
+  tagged_user: TaggedUser;
+  created_at: string;
+}
+
+export interface FollowUpAuthor {
+  username: string;
+  profile_url: string;
+  role: string;
+  user_id: number;
+}
+
+export interface TaggedUser {
+  username: string;
+  user_id: number;
 }
 
 export interface FollowUpComment {
   comment_id: number;
+  author: FollowUpAuthor;
   content: string;
-  created_at: string; // ISO 포맷
-  writer: User;
-  parent_comment_id: number | null;
+  created_at: string;
+  tagged_user: TaggedUser;
 }

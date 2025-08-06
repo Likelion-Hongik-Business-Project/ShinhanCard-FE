@@ -2,21 +2,38 @@ import { ChangeEvent, useRef, useState } from "react";
 
 import { FilledUnion, Union } from "@/assets/svgs/AdditionalInquiry";
 import Pencil from "@/assets/svgs/common/pencil.svg";
+import { useFollowupApi } from "@/hooks/followup/followupApi";
 import { Assignee } from "@/types/InquiryResponse";
 
 import Button from "../common/Button";
 
 type Props = {
+  inquiryId: number;
   assignees: Assignee[];
+  // 수정시
+  followupId?: number;
+  initialContent?: string;
+  initialAssigneeId?: number;
   onClose: () => void;
 };
 
-const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [content, setContent] = useState("");
+const AdditionalInquiryForm = ({
+  inquiryId,
+  assignees,
+  followupId,
+  initialContent,
+  initialAssigneeId,
+  onClose,
+}: Props) => {
+  const { postFollowupsMutation, putFollowupsMutation } =
+    useFollowupApi(inquiryId);
+  const [selectedId, setSelectedId] = useState<number | null>(
+    initialAssigneeId ?? null
+  );
+  const [content, setContent] = useState(initialContent ?? "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const selectedName = assignees.find(a => a.user_id === selectedId)?.name;
+  const selectedName = assignees.find(a => a.user_id === selectedId)?.username;
 
   const prefix = selectedName ? selectedName + " " : "";
 
@@ -27,9 +44,21 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
   };
 
   const handleComplete = () => {
-    if (isCompleteEnabled) {
-      // todo: 추가 문의 제출 or 수정 : onSubmit(content.trim(), selectedId);
-      onClose();
+    if (!isCompleteEnabled) return;
+    const payload = { content: content.trim(), assigneeId: selectedId! };
+    if (followupId != null) {
+      putFollowupsMutation.mutate(
+        { followupId, data: payload },
+        {
+          onSuccess: () => onClose(),
+          onError: error => console.error("Failed to update followup", error),
+        }
+      );
+    } else {
+      postFollowupsMutation.mutate(payload, {
+        onSuccess: () => onClose(),
+        onError: error => console.error("Failed to post followup", error),
+      });
     }
   };
 
@@ -58,13 +87,13 @@ const AdditionalInquiryForm = ({ assignees, onClose }: Props) => {
                 className="flex gap-2 items-center"
               >
                 {a.user_id === selectedId ? <FilledUnion /> : <Union />}
-                {a.name}
+                {a.username}
               </button>
             ))}
           </div>
         </div>
         <div className="relative flex bg-white">
-          <span className="absolute text-body2-b text-state-progress-02">
+          <span className="absolute text-body2 text-main bg-white">
             {prefix}
           </span>
           <textarea
