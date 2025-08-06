@@ -15,6 +15,8 @@ import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const [missingField, setMissingField] = useState<
     null | "team" | "title" | "content" | "assignee"
   >(null);
@@ -85,6 +87,10 @@ const InquiryFormPage = () => {
       return;
     }
 
+    setIsConfirmModalOpen(true); // 등록 확인 모달 오픈
+  };
+
+  const confirmSubmit = () => {
     if (!teamId) return;
 
     const payload: PostInquiryRequest = {
@@ -96,6 +102,7 @@ const InquiryFormPage = () => {
     };
 
     postInquiryMutation.mutate({ teamId, data: payload });
+    setIsConfirmModalOpen(false);
   };
 
   const handleRestore = () => {
@@ -201,6 +208,28 @@ const InquiryFormPage = () => {
             label: "확인",
             type: "blue",
             onClick: () => setMissingField(null),
+          },
+        ]}
+      />
+
+      {/* 문의 등록 모달 */}
+      <Modal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        title="게시판에 문의를 등록할까요?"
+        description={
+          "등록 시 담당자와 참조자에게 알림이 발송되며,\n답변이 달린 이후에는 글을 수정 및 삭제할 수 없습니다."
+        }
+        buttons={[
+          {
+            label: "취소",
+            type: "white",
+            onClick: () => setIsConfirmModalOpen(false),
+          },
+          {
+            label: "문의 등록하기",
+            type: "blue",
+            onClick: confirmSubmit,
           },
         ]}
       />
