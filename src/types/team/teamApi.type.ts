@@ -12,6 +12,7 @@ export interface GetMemberResponse {
 }
 
 export interface GetUsersResponse {
+  user_id: number;
   username: string;
   profile_url: string;
   group: Group;

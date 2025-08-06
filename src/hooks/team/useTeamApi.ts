@@ -17,7 +17,7 @@ export const useTeamApi = () => {
       queryFn: async () => {
         const { result } = await getUsers();
         return result.map(user => ({
-          id: 0,
+          id: user.user_id,
           name: user.username,
           profile_image_url: user.profile_url,
           group_name: user.group.groupName,
