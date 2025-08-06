@@ -8,12 +8,16 @@ import Modal from "@/components/common/Modal";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
 import { useInquiryApi } from "@/hooks/inquiry/useInquiryApi";
+import { useInquiryDraftApi } from "@/hooks/inquiry/useInquiryDraftApi";
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
+  const [missingField, setMissingField] = useState<
+    null | "team" | "title" | "content" | "assignee"
+  >(null);
 
   const {
     groupId,
@@ -27,7 +31,6 @@ const InquiryFormPage = () => {
     handleTeamChange,
   } = useOrganizationSelector();
 
-  // 문의 입력값 상태
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [assigneeId, setAssigneeId] = useState<number | null>(null);
@@ -35,8 +38,53 @@ const InquiryFormPage = () => {
   const [fileIds, setFileIds] = useState<number[]>([]);
 
   const { postInquiryMutation } = useInquiryApi();
+  const { useCheckDraftExists, usePostInquiryDraftMutation } =
+    useInquiryDraftApi();
+
+  const { data: draftExists, isLoading } = useCheckDraftExists(teamId ?? 0);
+  const { mutate: postDraft } = usePostInquiryDraftMutation();
+
+  // 필수 필드 누락 검사
+  const validateFields = (): typeof missingField => {
+    if (!teamId) return "team";
+    if (!title.trim()) return "title";
+    if (!content.trim()) return "content";
+    if (assigneeId === null) return "assignee";
+    return null;
+  };
+
+  const handleDraftClick = () => {
+    const missing = validateFields();
+    if (missing) {
+      setMissingField(missing);
+      return;
+    }
+
+    if (!teamId || isLoading) return;
+
+    if (draftExists?.result) {
+      setIsDraftModalOpen(true);
+    } else {
+      postDraft({
+        teamId,
+        data: {
+          title,
+          content,
+          assignee_ids: assigneeId !== null ? [assigneeId] : [],
+          observer_ids: referenceIds,
+          file_ids: fileIds,
+        },
+      });
+    }
+  };
 
   const handleSubmit = () => {
+    const missing = validateFields();
+    if (missing) {
+      setMissingField(missing);
+      return;
+    }
+
     if (!teamId) return;
 
     const payload: PostInquiryRequest = {
@@ -47,28 +95,22 @@ const InquiryFormPage = () => {
       file_ids: fileIds,
     };
 
-    postInquiryMutation.mutate({
-      teamId,
-      data: payload,
-    });
+    postInquiryMutation.mutate({ teamId, data: payload });
   };
 
   const handleRestore = () => {
     setIsDraftModalOpen(false);
-    // 불러오기 로직 실행
+    // TODO: 임시저장 불러오기 로직
   };
 
   const handleReset = () => {
     setIsDraftModalOpen(false);
-    // 새로 작성 로직 (임시저장 clear 등)
+    // TODO: 새로 작성 로직
   };
 
   return (
     <section
-      className={clsx(
-        "flex flex-col w-full",
-        isDropdownOpen ? "pb-[220px]" : ""
-      )}
+      className={clsx("flex flex-col w-full", isDropdownOpen && "pb-[220px]")}
     >
       <h1 className="text-heading1 text-gray-80 mb-10">문의 작성하기</h1>
 
@@ -112,7 +154,7 @@ const InquiryFormPage = () => {
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">
-        <Button className="white" onClick={() => setIsDraftModalOpen(true)}>
+        <Button className="white" onClick={handleDraftClick}>
           임시저장
         </Button>
         <Button buttonType="blue" onClick={handleSubmit}>
@@ -121,6 +163,7 @@ const InquiryFormPage = () => {
         </Button>
       </div>
 
+      {/* 기존 임시저장 감지 모달 */}
       <Modal
         isOpen={isDraftModalOpen}
         onClose={() => setIsDraftModalOpen(false)}
@@ -136,6 +179,28 @@ const InquiryFormPage = () => {
             label: "불러오기",
             type: "blue",
             onClick: handleRestore,
+          },
+        ]}
+      />
+
+      {/* 필수 항목 누락 시 모달 */}
+      <Modal
+        isOpen={!!missingField}
+        onClose={() => setMissingField(null)}
+        title={
+          missingField === "team"
+            ? "문의를 올릴 팀을 선택해주세요"
+            : missingField === "title"
+              ? "문의 제목을 입력해주세요"
+              : missingField === "content"
+                ? "문의 내용을 입력해주세요"
+                : "답변 담당자를 선택해주세요"
+        }
+        buttons={[
+          {
+            label: "확인",
+            type: "blue",
+            onClick: () => setMissingField(null),
           },
         ]}
       />
