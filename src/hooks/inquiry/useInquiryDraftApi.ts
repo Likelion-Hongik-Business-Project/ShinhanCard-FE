@@ -35,6 +35,7 @@ export const useInquiryDraftApi = () => {
     useQuery({
       queryKey: INQUIRY_DRAFT_KEYS.detail(teamId, inquiryId),
       queryFn: () => getInquiryDraft(teamId, inquiryId),
+      enabled: !!teamId && !!inquiryId,
     });
 
   // 임시 저장 생성

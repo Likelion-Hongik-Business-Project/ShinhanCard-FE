@@ -16,7 +16,15 @@ const UserSearchList = ({ users, onSelectUser }: Props) => (
           className="flex items-center gap-2 px-1 py-2 hover:bg-gray-10 cursor-pointer h-fit"
           onClick={() => onSelectUser(user)}
         >
-          <ProfileIcon />
+          {user.profile_image_url ? (
+            <img
+              src={user.profile_image_url}
+              alt="프로필 이미지"
+              className="w-5 h-5 rounded-full object-cover"
+            />
+          ) : (
+            <ProfileIcon />
+          )}
           <span className="text-body2 text-gray-100">{user.name}</span>
           <span className="text-detail1 text-gray-60">
             {user.group_name} / {user.division_name} / {user.team_name}

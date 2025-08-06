@@ -87,6 +87,7 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
           options={users.map(user => ({
             label: user.name,
             value: user.id,
+            profileImageUrl: user.profile_image_url,
           }))}
           value={selectedUserId ?? 0}
           onChange={handleUserChange}

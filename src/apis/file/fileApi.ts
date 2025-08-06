@@ -10,13 +10,13 @@ import instance from "@/apis/instance";
 export const postFile = async (
   data: PostFileRequest
 ): ApiResponse<PostFileResponse> => {
-  const response = await instance.post("/files/upload-url", data);
+  const response = await instance.post("/api/files/upload-url", data);
   return response.data;
 };
 
 export const deleteFile = async (
   fileId: number
 ): ApiResponse<DeleteFileResponse> => {
-  const response = await instance.delete(`/files/${fileId}/delete`);
+  const response = await instance.delete(`/api/files/${fileId}/delete`);
   return response.data;
 };

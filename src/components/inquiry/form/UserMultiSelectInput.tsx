@@ -101,7 +101,15 @@ const UserMultiSelectInput = ({
               className="flex items-center gap-1.5 bg-gray-10 rounded"
             >
               <div className="flex gap-2 items-center">
-                <ProfileIcon />
+                {user.profile_image_url ? (
+                  <img
+                    src={user.profile_image_url}
+                    alt="프로필 이미지"
+                    className="w-5 h-5 rounded-full object-cover"
+                  />
+                ) : (
+                  <ProfileIcon />
+                )}
                 <span>{user.name}</span>
               </div>
               <button

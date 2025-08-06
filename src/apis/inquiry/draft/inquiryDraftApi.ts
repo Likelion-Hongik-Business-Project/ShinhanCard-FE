@@ -1,6 +1,7 @@
 import { ApiResponse } from "@/types/apiResponse.type";
 import {
   DeleteInquiryDraftResponse,
+  GetInquiryDraftExistsResponse,
   GetInquiryDraftResponse,
   PostInquiryDraftRequest,
   PostInquiryDraftResponse,
@@ -11,7 +12,9 @@ import {
 import instance from "@/apis/instance";
 
 // 문의글 임시 저장 여부 조회
-export const getDraftExists = async (team_id: number): ApiResponse<boolean> => {
+export const getDraftExists = async (
+  team_id: number
+): ApiResponse<GetInquiryDraftExistsResponse> => {
   const response = await instance.get(
     `/api/teams/${team_id}/inquiries/check-draft`
   );

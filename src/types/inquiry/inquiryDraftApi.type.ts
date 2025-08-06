@@ -3,6 +3,11 @@ import { Division, Group, Team } from "@/types/team/user.type";
 import { PostInquiryRequest } from "./inquiryApi.type";
 import { UserPreview } from "./inquiryDraft.type";
 
+export interface GetInquiryDraftExistsResponse {
+  draft_id: number;
+  is_present: boolean;
+}
+
 export interface GetInquiryDraftResponse {
   title: string;
   content: string;

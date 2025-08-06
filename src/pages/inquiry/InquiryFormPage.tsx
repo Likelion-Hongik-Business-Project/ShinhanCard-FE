@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import clsx from "clsx";
 
@@ -20,6 +20,7 @@ const InquiryFormPage = () => {
   const [missingField, setMissingField] = useState<
     null | "team" | "title" | "content" | "assignee"
   >(null);
+  const [draftId, setDraftId] = useState<number | null>(null);
 
   const {
     title,
@@ -47,10 +48,19 @@ const InquiryFormPage = () => {
   } = useOrganizationSelector();
 
   const { postInquiryMutation } = useInquiryApi();
-  const { useCheckDraftExists, usePostInquiryDraftMutation } =
-    useInquiryDraftApi();
+  const {
+    useCheckDraftExists,
+    usePostInquiryDraftMutation,
+    useGetInquiryDraft,
+    // useDeleteInquiryDraftMutation,
+    usePutInquiryDraftMutation,
+  } = useInquiryDraftApi();
 
   const { data: draftExists, isLoading } = useCheckDraftExists(teamId ?? 0);
+  const { refetch: fetchDraft } = useGetInquiryDraft(
+    teamId ?? 0,
+    draftExists?.result.draft_id ?? 0
+  );
   const { mutate: postDraft } = usePostInquiryDraftMutation();
 
   const validateFields = (): typeof missingField => {
@@ -70,19 +80,27 @@ const InquiryFormPage = () => {
 
     if (!teamId || isLoading) return;
 
-    if (draftExists?.result) {
-      setIsDraftModalOpen(true);
+    // 이미 draft 저장한 적 있음 → PUT
+    if (draftExists?.result.is_present || draftId) {
+      updateDraft(); // PUT 로직
     } else {
-      postDraft({
-        teamId,
-        data: {
-          title,
-          content,
-          assignee_ids: assigneeId !== null ? [assigneeId] : [],
-          observer_ids: referenceIds,
-          file_ids: fileIds,
+      postDraft(
+        {
+          teamId,
+          data: {
+            title,
+            content,
+            assignee_ids: assigneeId !== null ? [assigneeId] : [],
+            observer_ids: referenceIds,
+            file_ids: fileIds,
+          },
         },
-      });
+        {
+          onSuccess: res => {
+            setDraftId(res.result.inquiry_id);
+          },
+        }
+      );
     }
   };
 
@@ -95,7 +113,23 @@ const InquiryFormPage = () => {
 
     setIsConfirmModalOpen(true);
   };
+  const { mutate: putDraft } = usePutInquiryDraftMutation();
 
+  const updateDraft = () => {
+    if (!draftId || !teamId) return;
+
+    putDraft({
+      inquiryId: draftId,
+      teamId,
+      data: {
+        title,
+        content,
+        assignee_ids: assigneeId !== null ? [assigneeId] : [],
+        observer_ids: referenceIds,
+        file_ids: fileIds,
+      },
+    });
+  };
   const confirmSubmit = () => {
     if (!teamId) return;
 
@@ -111,15 +145,49 @@ const InquiryFormPage = () => {
     setIsConfirmModalOpen(false);
   };
 
-  const handleRestore = () => {
+  const handleRestore = async () => {
     setIsDraftModalOpen(false);
-    // TODO: 임시저장 불러오기 로직
+
+    const { data } = await fetchDraft();
+    if (!data?.result) return;
+
+    const {
+      title,
+      content,
+      assignees,
+      observers,
+      group,
+      division,
+      team,
+      inquiry_id,
+    } = data.result;
+
+    // 폼 상태 세팅
+    setTitle(title);
+    setContent(content);
+    setAssigneeId(assignees?.[0]?.userId ?? null); // 단일 담당자
+    setReferenceIds(observers.map(user => user.userId));
+    setFileIds([]); // ⛔ file_ids가 응답에 없으니 빈 배열로 초기화 또는 필요 시 API 확장
+
+    // 조직 선택 상태도 같이 세팅
+    handleGroupChange(group.groupId);
+    handleDivisionChange(division.divisionId);
+    handleTeamChange(team.teamId);
+
+    // draftId 기억해두기 (PUT용)
+    setDraftId(inquiry_id);
   };
 
   const handleReset = () => {
     setIsDraftModalOpen(false);
     // TODO: 새로 작성 로직
   };
+
+  useEffect(() => {
+    if (!isLoading && draftExists?.result.is_present) {
+      setIsDraftModalOpen(true);
+    }
+  }, [draftExists]);
 
   return (
     <section

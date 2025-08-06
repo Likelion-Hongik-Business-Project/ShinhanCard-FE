@@ -9,6 +9,7 @@ import { useOutsideClick } from "@/hooks/useOutsideClick";
 interface Option {
   label: string;
   value: number;
+  profileImageUrl?: string;
 }
 
 interface Props {
@@ -114,7 +115,15 @@ const SelectDropdown = ({
             >
               {type === "user" ? (
                 <div className="w-full flex text-body2 gap-2 active:text-body2-b">
-                  <ProfileIcon className="w-5 h-5" />
+                  {option.profileImageUrl ? (
+                    <img
+                      src={option.profileImageUrl}
+                      alt={option.label}
+                      className="w-5 h-5 rounded-full object-cover"
+                    />
+                  ) : (
+                    <ProfileIcon className="w-5 h-5" />
+                  )}
                   <span className="text-gray-90">{option.label}</span>
                 </div>
               ) : (
