@@ -1,5 +1,5 @@
 import { ApiResponse } from "@/types/apiResponse.type";
-import { GetInitAssignedInquiriesResponse } from "@/types/inquiry/inquiryListApi.type";
+import { GetInquiriesResponse } from "@/types/inquiry/inquiryListApi.type";
 
 import instance from "@/apis/instance";
 
@@ -7,7 +7,7 @@ export const getInitAssignedInquiries = async (
   page = 1,
   status?: string,
   date?: string
-): ApiResponse<GetInitAssignedInquiriesResponse> => {
+): ApiResponse<GetInquiriesResponse> => {
   const response = await instance.get("/api/inquiries/assigned", {
     params: { page, status, date },
   });
@@ -19,7 +19,7 @@ export const getAssignedInquiriesByTeam = async (
   page = 1,
   status?: string,
   date?: string
-): ApiResponse<GetInitAssignedInquiriesResponse> => {
+): ApiResponse<GetInquiriesResponse> => {
   const response = await instance.get(`/api/inquiries/assigned/${teamId}`, {
     params: { page, status, date },
   });
