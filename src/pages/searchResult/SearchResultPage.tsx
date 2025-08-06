@@ -71,8 +71,8 @@ const SearchResultPage = () => {
           <p className="text-gray-40 text-heading2-b">검색 결과가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <div className="flex justify-end border-b border-gray-10">
+        <div className="bg-white rounded-[15px] flex flex-col">
+          <div className="flex justify-end border-b border-gray-10 z-10 ">
             <FilterBar
               selectedStatus={selectedStatus}
               setSelectedStatus={setSelectedStatus}

@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
 import Header from "@/components/TeamBoard/Header";
@@ -33,8 +35,13 @@ const TeamBoardLayout = ({
   currentPage,
   setCurrentPage,
 }: Props) => {
+  const navigate = useNavigate();
+
   // 페이지네이션
-  const totalPages = pagination.total;
+  const totalPages = Math.ceil(pagination.total / pagination.page_size);
+
+  // 데이터 여부
+  const hasInquiry = pagination.total > 0;
 
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -58,7 +65,8 @@ const TeamBoardLayout = ({
 
   // 문의 작성 함수
   const handleWrite = () => {
-    alert("엑셀 다운로드 기능");
+    // 팀 아이디를 안 넘겨도 될까요???
+    navigate("/inquiry/form");
   };
 
   return (
@@ -68,38 +76,47 @@ const TeamBoardLayout = ({
         division_name={selected_team.division_name}
         team_name={selected_team.team_name}
         isActive={selected_team.active}
+        hasInquiry={hasInquiry}
         onClickExport={() => handleExport()}
         onClickWrite={() => handleWrite()}
       />
-
-      <div className="bg-white rounded-[15px] flex flex-col h-[652px] overflow-auto">
-        <div className="flex justify-end border-b border-gray-10">
-          <FilterBar
-            selectedStatus={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            isStatusModalOpen={isStatusModalOpen}
-            setIsStatusModalOpen={setIsStatusModalOpen}
-            isDateModalOpen={isDateModalOpen}
-            setIsDateModalOpen={setIsDateModalOpen}
-            toggleStatusModal={toggleStatusModal}
-            toggleDateModal={toggleDateModal}
-          />
+      {hasInquiry ? (
+        <>
+          <div className="bg-white rounded-[15px] flex flex-col">
+            <div className="flex justify-end border-b border-gray-10 z-10">
+              <FilterBar
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                isStatusModalOpen={isStatusModalOpen}
+                setIsStatusModalOpen={setIsStatusModalOpen}
+                isDateModalOpen={isDateModalOpen}
+                setIsDateModalOpen={setIsDateModalOpen}
+                toggleStatusModal={toggleStatusModal}
+                toggleDateModal={toggleDateModal}
+              />
+            </div>
+            <InquiryList
+              group_name={selected_team.group_name}
+              division_name={selected_team.division_name}
+              team_name={selected_team.team_name}
+              inquiries={inquiries}
+            />
+          </div>
+          {totalPages > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
+        </>
+      ) : (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2">
+          <span className="text-gray-40 text-heading2-b">문의가 없습니다.</span>
         </div>
-        <InquiryList
-          group_name={selected_team.group_name}
-          division_name={selected_team.division_name}
-          team_name={selected_team.team_name}
-          inquiries={inquiries}
-        />
-      </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      )}
     </div>
   );
 };

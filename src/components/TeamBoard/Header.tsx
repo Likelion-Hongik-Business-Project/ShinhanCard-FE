@@ -1,10 +1,11 @@
 import { Pen, Upload, Users } from "@/assets/svgs/board";
 
-interface HeaderProps {
+interface Props {
   group_name: string;
   division_name: string;
   team_name: string;
   isActive: boolean;
+  hasInquiry: boolean;
   onClickExport: () => void;
   onClickWrite: () => void;
 }
@@ -14,9 +15,10 @@ const Header = ({
   division_name,
   team_name,
   isActive,
+  hasInquiry,
   onClickExport,
   onClickWrite,
-}: HeaderProps) => {
+}: Props) => {
   return (
     <div className="flex justify-between items-end">
       <div className="flex flex-col gap-4">
@@ -39,14 +41,16 @@ const Header = ({
         </div>
       </div>
       <div className="flex gap-4">
-        <button
-          type="button"
-          onClick={onClickExport}
-          className="h-16 px-6 rounded-[15px] border border-gray-20 cursor-pointer flex items-center gap-4 bg-white text-heading3 text-gray-80"
-        >
-          <Upload className="w-4 h-4 text-gray-60" />
-          Export
-        </button>
+        {hasInquiry && (
+          <button
+            type="button"
+            onClick={onClickExport}
+            className="h-16 px-6 rounded-[15px] border border-gray-20 cursor-pointer flex items-center gap-4 bg-white text-heading3 text-gray-80"
+          >
+            <Upload className="w-4 h-4 text-gray-60" />
+            Export
+          </button>
+        )}
         {isActive && (
           <button
             type="button"

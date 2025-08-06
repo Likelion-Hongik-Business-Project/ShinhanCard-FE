@@ -33,7 +33,7 @@ const TeamBoardPage = () => {
   const { selected_team, inquiries, pagination } = data;
 
   return (
-    <section className="w-full max-w-[1420px] h-[835px] flex flex-col">
+    <section className="w-full max-w-[1420px] flex flex-col">
       <TeamBoardLayout
         selected_team={selected_team}
         inquiries={inquiries}
