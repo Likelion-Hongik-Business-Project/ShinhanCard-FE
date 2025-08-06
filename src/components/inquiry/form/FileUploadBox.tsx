@@ -26,7 +26,7 @@ const FileUploadBox = ({ setFileIds, initialFiles = [] }: Props) => {
   const {
     inputRef,
     files,
-    setFiles, // 이거 useMultiFileUploader에서 노출되어야 함!
+    setFiles,
     showLimitModal,
     setShowLimitModal,
     triggerInput,

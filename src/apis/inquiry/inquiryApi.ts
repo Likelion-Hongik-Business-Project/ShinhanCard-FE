@@ -10,6 +10,6 @@ export const postInquiry = async (
   team_id: number,
   data: PostInquiryRequest
 ): ApiResponse<PostInquiryResponse> => {
-  const response = await instance.post(`/teams/${team_id}/inquiries`, data);
+  const response = await instance.post(`/api/teams/${team_id}/inquiries`, data);
   return response.data;
 };

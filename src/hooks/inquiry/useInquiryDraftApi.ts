@@ -30,6 +30,7 @@ export const useInquiryDraftApi = () => {
       enabled,
     });
   };
+
   // 임시 저장 조회
   const useGetInquiryDraft = (teamId: number, inquiryId: number) =>
     useQuery({
