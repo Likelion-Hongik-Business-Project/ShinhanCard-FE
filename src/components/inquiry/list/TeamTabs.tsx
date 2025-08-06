@@ -1,4 +1,4 @@
-import { TeamItem } from "@/types/inquiry";
+import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   teams: TeamItem[];

@@ -1,5 +1,5 @@
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { ScrapedInquiryItem } from "@/types/inquiry";
+import { ScrapedInquiryItem } from "@/types/inquiry/inquiryListApi.type";
 import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
 
 const ScrapPage = () => {

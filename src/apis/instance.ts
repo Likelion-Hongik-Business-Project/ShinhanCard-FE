@@ -19,11 +19,11 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
-// 응답 인터셉터: 401 (Unauthorized) 에러 시 처리
+// 응답 인터셉터: 401 (Unauthorized), 403 (Forbidden: 만료) 에러 시 처리
 instance.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
+    if (err.response?.status === 401 || err.response?.status === 403) {
       // 로그아웃 처리
       useAuthStore.getState().setLogout();
 

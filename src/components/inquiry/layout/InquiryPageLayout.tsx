@@ -11,7 +11,7 @@ import {
   Profile,
   TeamItem,
   TInquiryBase,
-} from "@/types/inquiry";
+} from "@/types/inquiry/inquiryListApi.type";
 
 type Props<TInquiry> = {
   title: string;

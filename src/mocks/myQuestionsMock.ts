@@ -1,4 +1,7 @@
-import { InquiryServerStatus, MyInquiryListResponse } from "@/types/inquiry";
+import {
+  InquiryServerStatus,
+  MyInquiryListResponse,
+} from "@/types/inquiry/inquiryListApi.type";
 
 export const MOCK_MY_QUESTIONS_RESPONSE: MyInquiryListResponse = {
   total_count: 120,

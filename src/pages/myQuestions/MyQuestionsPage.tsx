@@ -1,5 +1,5 @@
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { MyInquiryItem } from "@/types/inquiry";
+import { MyInquiryItem } from "@/types/inquiry/inquiryListApi.type";
 import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
 
 const MyQuestionsPage = () => {

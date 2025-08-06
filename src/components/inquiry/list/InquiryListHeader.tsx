@@ -10,7 +10,7 @@ import User from "@/assets/svgs/common/inquiryList/user.svg";
 import DateFilterModal from "@/components/inquiry/list/DateFilterModal";
 import StatusFilterModal from "@/components/inquiry/list/StatusFilterModal";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
-import { YearMonth } from "@/types/inquiry";
+import { YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   selectedStatus: string;

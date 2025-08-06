@@ -1,7 +1,7 @@
 import {
   InquiryServerStatus,
   ScrapedInquiryListResponse,
-} from "@/types/inquiry";
+} from "@/types/inquiry/inquiryListApi.type";
 
 export const MOCK_SCRAP_RESPONSE: ScrapedInquiryListResponse = {
   total_count: 120,

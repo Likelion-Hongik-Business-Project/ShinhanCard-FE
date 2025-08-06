@@ -6,6 +6,12 @@ export type InquiryServerStatus =
 
 export type InquiryStatus = "확인 전" | "확인 중" | "답변 완료";
 
+export type GetInitAssignedInquiriesRequest = {
+  page?: number;
+  status?: string;
+  date?: string;
+};
+
 export interface Profile {
   user_id: number;
   name: string;
@@ -36,7 +42,7 @@ export interface AssignedInquiryItem {
   is_scraped: boolean;
 }
 
-export interface AssignedInquiryListResponse {
+export interface GetInitAssignedInquiriesResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];

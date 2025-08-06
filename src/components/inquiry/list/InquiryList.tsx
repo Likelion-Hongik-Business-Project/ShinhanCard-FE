@@ -4,7 +4,7 @@ import Pagination from "@/components/common/Pagination";
 import {
   InquiryListItem as InquiryListItemType,
   YearMonth,
-} from "@/types/inquiry";
+} from "@/types/inquiry/inquiryListApi.type";
 
 import InquiryListHeader from "./InquiryListHeader";
 import InquiryListItem from "./InquiryListItem";

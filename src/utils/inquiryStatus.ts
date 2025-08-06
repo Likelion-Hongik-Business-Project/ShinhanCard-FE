@@ -1,4 +1,7 @@
-import { InquiryServerStatus, InquiryStatus } from "@/types/inquiry";
+import {
+  InquiryServerStatus,
+  InquiryStatus,
+} from "@/types/inquiry/inquiryListApi.type";
 
 export const INQUIRY_STATUS_LABEL: Record<
   InquiryServerStatus,

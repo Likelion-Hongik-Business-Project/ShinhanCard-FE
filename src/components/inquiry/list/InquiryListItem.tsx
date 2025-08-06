@@ -5,7 +5,7 @@ import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
 import { formatDateToKorean } from "@/utils/dateUtils";
-import { InquiryListItem as InquiryListItemType } from "@/types/inquiry";
+import { InquiryListItem as InquiryListItemType } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   item: InquiryListItemType;
