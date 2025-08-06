@@ -1,15 +1,11 @@
-import { useRef, useState } from "react";
-
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
-import { useUploadFile } from "@/hooks/file/useUploadFile";
+import Modal from "@/components/common/Modal";
+import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
-import { UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
-
-import { deleteFile } from "@/apis/file/fileApi";
 
 interface Props {
   teamId: number;
@@ -17,71 +13,15 @@ interface Props {
 }
 
 const FileUploadBox = ({ setFileIds }: Props) => {
-  const [files, setFiles] = useState<UploadFile[]>([]);
-  const uploadFile = useUploadFile();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleClick = () => inputRef.current?.click();
-
-  const updateProgress = (id: number, progress: number) => {
-    setFiles(prev =>
-      prev.map(file => (file.id === id ? { ...file, progress } : file))
-    );
-  };
-
-  const handleFileSelect = async (fileList: FileList | null) => {
-    if (!fileList) return;
-
-    for (const file of Array.from(fileList)) {
-      const localId = Date.now() + Math.random();
-
-      setFiles(prev => [
-        ...prev,
-        {
-          id: localId,
-          name: file.name,
-          size: file.size,
-          progress: 0,
-          status: "uploading",
-        },
-      ]);
-
-      try {
-        const { fileId } = await uploadFile(file, percent =>
-          updateProgress(localId, percent)
-        );
-
-        // 업로드 완료 시 상태 업데이트
-        setFiles(prev =>
-          prev.map(f =>
-            f.id === localId
-              ? { ...f, fileId, progress: 100, status: "done" }
-              : f
-          )
-        );
-
-        setFileIds(prev => [...prev, fileId]);
-      } catch (err) {
-        console.error("파일 업로드 실패", err);
-        setFiles(prev =>
-          prev.map(f => (f.id === localId ? { ...f, status: "error" } : f))
-        );
-      }
-    }
-  };
-
-  const handleRemove = async (localId: number, fileId?: number) => {
-    if (fileId) {
-      try {
-        await deleteFile(fileId);
-        setFileIds(prev => prev.filter(id => id !== fileId));
-      } catch (e) {
-        console.error("삭제 실패", e);
-      }
-    }
-
-    setFiles(prev => prev.filter(file => file.id !== localId));
-  };
+  const {
+    inputRef,
+    files,
+    showLimitModal,
+    setShowLimitModal,
+    triggerInput,
+    handleFileSelect,
+    handleRemove,
+  } = useMultiFileUploader(setFileIds);
 
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
@@ -105,7 +45,7 @@ const FileUploadBox = ({ setFileIds }: Props) => {
         />
 
         <button
-          onClick={handleClick}
+          onClick={triggerInput}
           className={clsx(
             "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border cursor-pointer",
             isDragging ? "bg-white border-main" : "bg-white border-gray-20"
@@ -149,6 +89,21 @@ const FileUploadBox = ({ setFileIds }: Props) => {
             />
           ))}
         </div>
+      )}
+
+      {showLimitModal && (
+        <Modal
+          isOpen={showLimitModal}
+          onClose={() => setShowLimitModal(false)}
+          title="파일은 최대 6개까지 첨부 가능합니다."
+          buttons={[
+            {
+              label: "확인",
+              type: "blue",
+              onClick: () => setShowLimitModal(false),
+            },
+          ]}
+        />
       )}
     </div>
   );

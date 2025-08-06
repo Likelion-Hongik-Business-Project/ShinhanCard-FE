@@ -27,6 +27,7 @@ export const useInquiryDraftApi = () => {
     useQuery({
       queryKey: INQUIRY_DRAFT_KEYS.exists(teamId),
       queryFn: () => getDraftExists(teamId),
+      enabled: !!teamId,
     });
 
   // 임시 저장 조회

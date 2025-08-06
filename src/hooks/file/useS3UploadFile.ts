@@ -2,7 +2,7 @@ import { uploadFileToS3 } from "@/utils/s3UploadUtils";
 
 import { postFile } from "@/apis/file/fileApi";
 
-export const useUploadFile = () => {
+export const useS3UploadFile = () => {
   const upload = async (
     file: File,
     onProgress?: (percent: number) => void
