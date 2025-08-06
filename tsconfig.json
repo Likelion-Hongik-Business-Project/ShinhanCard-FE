@@ -16,8 +16,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-    },
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src", "src/svg.d.ts"],
+  "include": ["src", "src/svg.d.ts"]
 }
