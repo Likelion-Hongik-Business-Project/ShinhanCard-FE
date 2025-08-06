@@ -1,31 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useTeamApi } from "@/hooks/team/useTeamApi";
-import { Member } from "@/types/team/user.type";
 
 export const useOrganizationSelector = () => {
   const [groupId, setGroupId] = useState<number | null>(null);
   const [divisionId, setDivisionId] = useState<number | null>(null);
   const [teamId, setTeamId] = useState<number | null>(null);
-  const [users, setUsers] = useState<Member[]>([]);
 
   const {
     useGroupsQuery,
     useDivisionsByGroupIdQuery,
     useTeamsByDivisionIdQuery,
-    useMembersByTeamIdQuery,
   } = useTeamApi();
 
   const { data: groupData } = useGroupsQuery();
   const { data: divisionData } = useDivisionsByGroupIdQuery(groupId);
   const { data: teamData } = useTeamsByDivisionIdQuery(divisionId);
-  const { data: memberData } = useMembersByTeamIdQuery(teamId);
-
-  useEffect(() => {
-    if (memberData?.result?.members) {
-      setUsers(memberData.result.members);
-    }
-  }, [memberData]);
 
   const groupOptions =
     groupData?.result.map(group => ({
@@ -49,13 +39,11 @@ export const useOrganizationSelector = () => {
     setGroupId(value);
     setDivisionId(null);
     setTeamId(null);
-    setUsers([]);
   };
 
   const handleDivisionChange = (value: number) => {
     setDivisionId(value);
     setTeamId(null);
-    setUsers([]);
   };
 
   const handleTeamChange = (value: number) => {
@@ -77,7 +65,6 @@ export const useOrganizationSelector = () => {
     groupOptions,
     divisionOptions,
     teamOptions,
-    users,
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,

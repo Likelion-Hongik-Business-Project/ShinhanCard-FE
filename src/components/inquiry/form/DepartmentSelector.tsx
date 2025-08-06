@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
+import { useTeamApi } from "@/hooks/team/useTeamApi";
 import { Member } from "@/types/team/user.type";
 
 import SelectDropdown from "./SelectDropdown";
@@ -20,7 +21,6 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
     groupOptions,
     divisionOptions,
     teamOptions,
-    users,
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,
@@ -28,10 +28,15 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
-  // 소속 변경 시 사용자 선택 초기화
+  // teamId 기준으로 팀원 쿼리 호출
+  const { useMembersByTeamIdQuery } = useTeamApi();
+  const { data: memberData } = useMembersByTeamIdQuery(teamId);
+  const users = memberData?.result?.members ?? [];
+
+  // 소속 변경 시 사용자 초기화
   useEffect(() => {
     setSelectedUserId(null);
-  }, [teamId, users]);
+  }, [teamId]);
 
   const handleUserChange = (userId: number) => {
     setSelectedUserId(userId);

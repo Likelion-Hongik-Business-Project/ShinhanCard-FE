@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type {
   PostInquiryDraftRequest,
@@ -38,8 +38,10 @@ export const useInquiryDraftApi = () => {
     });
 
   // 임시 저장 생성
-  const usePostInquiryDraftMutation = () =>
-    useMutation({
+  const usePostInquiryDraftMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
       mutationFn: ({
         teamId,
         data,
@@ -47,7 +49,15 @@ export const useInquiryDraftApi = () => {
         teamId: number;
         data: PostInquiryDraftRequest;
       }) => postInquiryDraft(teamId, data),
+
+      onSuccess: (_, variables) => {
+        const { teamId } = variables;
+        queryClient.invalidateQueries({
+          queryKey: INQUIRY_DRAFT_KEYS.exists(teamId),
+        });
+      },
     });
+  };
 
   // 임시 저장 수정
   const usePutInquiryDraftMutation = () =>

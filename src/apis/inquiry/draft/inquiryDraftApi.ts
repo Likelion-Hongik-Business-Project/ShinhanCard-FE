@@ -58,7 +58,7 @@ export const postInquiryDraft = async (
   team_id: number,
   data: PostInquiryDraftRequest
 ): ApiResponse<PostInquiryDraftResponse> => {
-  const response = await instance.put(
+  const response = await instance.post(
     `/api/teams/${team_id}/inquiries/drafts`,
     data
   );
