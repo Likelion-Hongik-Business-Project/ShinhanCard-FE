@@ -32,7 +32,7 @@ export interface Inquiry {
   inquiry_id: number;
   writer: Writer;
   title: string;
-  content_preview: string;
+  contentPreview: string;
   status?: InquiryStatus;
   created_at: string;
   is_scrapped: boolean;

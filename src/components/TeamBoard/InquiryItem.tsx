@@ -31,7 +31,8 @@ const InquiryItem = ({
   onToggleScrap,
 }: InquiryItemProps) => {
   const navigate = useNavigate();
-  const preview = truncateText(inquiry.content_preview, MAX_PREVIEW_LENGTH);
+
+  const preview = truncateText(inquiry.contentPreview, MAX_PREVIEW_LENGTH);
 
   // 아코디언 애니매이션을 위해 높이 측정
   const contentRef = useRef<HTMLDivElement>(null);
