@@ -1,4 +1,4 @@
-import { USERS } from "@/mocks/usersMock";
+import { useTeamApi } from "@/hooks/team/useTeamApi";
 
 import AssigneeSelector from "./AssigneeSelector";
 import FileUploadBox from "./FileUploadBox";
@@ -31,6 +31,9 @@ const InquiryForm = ({
   setFileIds,
   onDropdownStateChange,
 }: Props) => {
+  const { useUsersQuery } = useTeamApi();
+  const { data: users = [] } = useUsersQuery();
+
   return (
     <section className="flex flex-col gap-10 p-16 bg-white rounded-b-[15px]">
       <InquiryEditor
@@ -48,7 +51,7 @@ const InquiryForm = ({
         setAssigneeId={setAssigneeId}
         setReferenceIds={setReferenceIds}
         onDropdownStateChange={onDropdownStateChange}
-        allUsers={USERS}
+        allUsers={users}
       />
     </section>
   );

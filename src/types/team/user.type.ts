@@ -1,3 +1,12 @@
+export interface AssigneeUser {
+  id: number;
+  name: string;
+  profile_image_url: string;
+  group_name: string;
+  division_name: string;
+  team_name: string;
+}
+
 export interface Member {
   id: number;
   name: string;

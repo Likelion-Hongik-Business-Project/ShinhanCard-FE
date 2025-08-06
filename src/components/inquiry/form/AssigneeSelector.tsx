@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import { Member } from "@/types/team/user.type";
+import { AssigneeUser } from "@/types/team/user.type";
 
 import UserMultiSelectInput from "./UserMultiSelectInput";
 
 interface Props {
   onDropdownStateChange: (isOpen: boolean) => void;
-  allUsers: Member[];
+  allUsers: AssigneeUser[];
   assigneeId: number | null;
   referenceIds: number[];
   setAssigneeId: (id: number | null) => void;

@@ -4,9 +4,15 @@ import {
   GetGroupResponse,
   GetMemberResponse,
   GetTeamResponse,
+  GetUsersResponse,
 } from "@/types/team/teamApi.type";
 
 import instance from "@/apis/instance";
+
+export const getUsers = async (): ApiResponse<GetUsersResponse[]> => {
+  const response = await instance.get("/api/users");
+  return response.data;
+};
 
 export const getGroups = async (): ApiResponse<GetGroupResponse[]> => {
   const response = await instance.get("/groups");

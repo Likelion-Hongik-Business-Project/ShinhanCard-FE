@@ -1,9 +1,9 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { Member } from "@/types/team/user.type";
+import { AssigneeUser } from "@/types/team/user.type";
 
 interface Props {
-  users: Member[];
-  onSelectUser: (user: Member) => void;
+  users: AssigneeUser[];
+  onSelectUser: (user: AssigneeUser) => void;
 }
 
 const UserSearchList = ({ users, onSelectUser }: Props) => (

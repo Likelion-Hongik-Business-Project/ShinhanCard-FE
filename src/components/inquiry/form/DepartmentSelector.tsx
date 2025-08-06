@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { useTeamApi } from "@/hooks/team/useTeamApi";
-import { Member } from "@/types/team/user.type";
+import { AssigneeUser } from "@/types/team/user.type";
 
 import SelectDropdown from "./SelectDropdown";
 
 interface Props {
-  onSelectUser: (user: Partial<Member>) => void;
+  onSelectUser: (user: AssigneeUser) => void;
 }
 
 const DepartmentSelector = ({ onSelectUser }: Props) => {
@@ -49,6 +49,7 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
         group_name: group,
         division_name: division,
         team_name: team,
+        profile_image_url: user.profile_image_url,
       });
     }
   };

@@ -7,7 +7,7 @@ import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { Member } from "@/types/team/user.type";
+import { AssigneeUser } from "@/types/team/user.type";
 
 import DepartmentSelector from "./DepartmentSelector";
 import UserSearchList from "./UserSearchList";
@@ -16,7 +16,7 @@ interface Props {
   label: string;
   placeholder: string;
   maxCount: number;
-  allUsers: Member[];
+  allUsers: AssigneeUser[];
   selectedIds: number[];
   onChange: (ids: number[]) => void;
   isOpen: boolean;
@@ -44,11 +44,10 @@ const UserMultiSelectInput = ({
 
   const selectedUsers = useMemo(() => {
     if (!selectedIds) return [];
-
     return allUsers.filter(user => selectedIds.includes(user.id));
   }, [allUsers, selectedIds]);
 
-  const handleSelectUser = (user: Partial<Member>) => {
+  const handleSelectUser = (user: AssigneeUser) => {
     if (user.id === undefined) return;
 
     if (selectedIds.includes(user.id)) return;

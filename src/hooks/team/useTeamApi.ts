@@ -1,13 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { SimplifiedMember } from "@/types/team/user.type";
+
 import {
   getDivisionsByGroupId,
   getGroups,
   getMembersByTeamId,
   getTeamsByDivisionId,
+  getUsers,
 } from "@/apis/team/teamApi";
 
 export const useTeamApi = () => {
+  const useUsersQuery = () =>
+    useQuery<SimplifiedMember[]>({
+      queryKey: ["users"],
+      queryFn: async () => {
+        const { result } = await getUsers();
+        return result.map(
+          (user): SimplifiedMember => ({
+            name: user.username,
+            profile_image_url: user.profile_url,
+            group_name: user.group.groupName,
+            division_name: user.division.divisionName,
+            team_name: user.team.teamName,
+          })
+        );
+      },
+    });
+
   const useGroupsQuery = () =>
     useQuery({
       queryKey: ["groups"],
@@ -36,6 +56,7 @@ export const useTeamApi = () => {
     });
 
   return {
+    useUsersQuery,
     useGroupsQuery,
     useDivisionsByGroupIdQuery,
     useTeamsByDivisionIdQuery,
