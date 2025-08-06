@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { useEditorImageUpload } from "@/hooks/inquiry/useEditorImageUpload";
 import { useEditor } from "@/hooks/useEditor";
 
 import EditorToolbar from "./EditorToolbar";
@@ -19,6 +20,7 @@ const InquiryEditor = ({ title, setTitle, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
 
+  const uploadImage = useEditorImageUpload();
   // 초기 마운트 시 editor 내용 초기화
   useEffect(() => {
     const editorInstance = editorRef.current?.getInstance();
@@ -65,6 +67,13 @@ const InquiryEditor = ({ title, setTitle, setContent }: Props) => {
 
       <Editor
         ref={editorRef}
+        hooks={{
+          addImageBlobHook: async (blob, callback) => {
+            const imageUrl = await uploadImage(blob);
+            callback(imageUrl, "image");
+            return false;
+          },
+        }}
         initialValue=""
         placeholder="본문의 내용을 입력하세요"
         language="ko"
