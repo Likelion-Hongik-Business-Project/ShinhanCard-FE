@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import { useTeamApi } from "@/hooks/team/useTeamApi";
-import { Group } from "@/types/team/user";
+import { Group } from "@/types/team/user.type";
 
 type Props = {
   onGroupSelect: (group: Group) => void;

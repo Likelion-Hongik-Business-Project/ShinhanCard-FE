@@ -7,7 +7,7 @@ import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { Member } from "@/types/team/user";
+import { Member } from "@/types/team/user.type";
 
 import DepartmentSelector from "./DepartmentSelector";
 import UserSearchList from "./UserSearchList";

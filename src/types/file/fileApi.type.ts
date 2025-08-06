@@ -13,10 +13,6 @@ export interface PostFileResponse {
   fileSize: number;
 }
 
-export interface DeleteFileRequest {
-  fileId: number;
-}
-
 export interface DeleteFileResponse {
   fileId: number;
   fileKey: string;

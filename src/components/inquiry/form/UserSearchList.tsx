@@ -1,5 +1,5 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { Member } from "@/types/team/user";
+import { Member } from "@/types/team/user.type";
 
 interface Props {
   users: Member[];

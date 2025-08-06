@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
-import { Member } from "@/types/team/user";
+import { Member } from "@/types/team/user.type";
 
 import SelectDropdown from "./SelectDropdown";
 

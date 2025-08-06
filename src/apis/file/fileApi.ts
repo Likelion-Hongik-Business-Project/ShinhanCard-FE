@@ -1,6 +1,5 @@
 import { ApiResponse } from "@/types/apiResponse.type";
 import {
-  DeleteFileRequest,
   DeleteFileResponse,
   PostFileRequest,
   PostFileResponse,
@@ -16,7 +15,7 @@ export const postFile = async (
 };
 
 export const deleteFile = async (
-  fileId: DeleteFileRequest
+  fileId: number
 ): ApiResponse<DeleteFileResponse> => {
   const response = await instance.delete(`/files/${fileId}/delete`);
   return response.data;

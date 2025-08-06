@@ -1,4 +1,4 @@
-import { Division, Group, Member, Team } from "./user";
+import { Division, Group, Member, Team } from "./user.type";
 
 export type GetGroupResponse = Group;
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useTeamApi } from "@/hooks/team/useTeamApi";
-import { Member } from "@/types/team/user";
+import { Member } from "@/types/team/user.type";
 
 export const useOrganizationSelector = () => {
   const [groupId, setGroupId] = useState<number | null>(null);

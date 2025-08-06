@@ -7,7 +7,7 @@ import clsx from "clsx";
 
 import Arrow from "@/assets/svgs/common/down.svg";
 import { useTeamApi } from "@/hooks/team/useTeamApi";
-import { Team } from "@/types/team/user";
+import { Team } from "@/types/team/user.type";
 
 import { getTeamsByDivisionId } from "@/apis/team/teamApi";
 

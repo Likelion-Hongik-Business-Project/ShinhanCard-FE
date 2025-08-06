@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Member } from "@/types/team/user";
+import { Member } from "@/types/team/user.type";
 
 import UserMultiSelectInput from "./UserMultiSelectInput";
 

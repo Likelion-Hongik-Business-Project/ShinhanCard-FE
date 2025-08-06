@@ -73,7 +73,7 @@ const FileUploadBox = ({ setFileIds }: Props) => {
   const handleRemove = async (localId: number, fileId?: number) => {
     if (fileId) {
       try {
-        await deleteFile({ fileId });
+        await deleteFile(fileId);
         setFileIds(prev => prev.filter(id => id !== fileId));
       } catch (e) {
         console.error("삭제 실패", e);
