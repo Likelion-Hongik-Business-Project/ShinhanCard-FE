@@ -35,7 +35,7 @@ export interface Inquiry {
   contentPreview: string;
   status?: InquiryStatus;
   created_at: string;
-  is_scrapped: boolean;
+  is_scraped: boolean;
 
   group_name?: string;
   division_name?: string;
