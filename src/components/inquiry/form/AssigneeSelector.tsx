@@ -7,18 +7,18 @@ import UserMultiSelectInput from "./UserMultiSelectInput";
 interface Props {
   onDropdownStateChange: (isOpen: boolean) => void;
   allUsers: AssigneeUser[];
-  assigneeId: number | null;
+  assigneeIds: number[];
   referenceIds: number[];
-  setAssigneeId: (id: number | null) => void;
+  setAssigneeIds: (ids: number[]) => void;
   setReferenceIds: (ids: number[]) => void;
 }
 
 const AssigneeSelector = ({
   onDropdownStateChange,
   allUsers,
-  assigneeId,
+  assigneeIds,
   referenceIds,
-  setAssigneeId,
+  setAssigneeIds,
   setReferenceIds,
 }: Props) => {
   const [openedDropdownIndex, setOpenedDropdownIndex] = useState<number | null>(
@@ -44,8 +44,8 @@ const AssigneeSelector = ({
         placeholder="필수입력"
         maxCount={3}
         allUsers={allUsers}
-        selectedIds={assigneeId !== null ? [assigneeId] : []}
-        onChange={(ids: number[]) => setAssigneeId(ids[0] ?? null)}
+        selectedIds={assigneeIds}
+        onChange={setAssigneeIds}
         isOpen={openedDropdownIndex === 0}
         onDropdownToggle={isOpen => handleToggle(0, isOpen)}
       />

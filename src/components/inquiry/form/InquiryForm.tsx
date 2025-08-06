@@ -8,11 +8,11 @@ interface Props {
   teamId: number;
   title: string;
   content: string;
-  assigneeId: number | null;
+  assigneeIds: number[];
   referenceIds: number[];
   setTitle: (value: string) => void;
   setContent: (value: string) => void;
-  setAssigneeId: (id: number | null) => void;
+  setAssigneeIds: (ids: number[]) => void;
   setReferenceIds: (ids: number[]) => void;
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   onDropdownStateChange: (isOpen: boolean) => void;
@@ -22,11 +22,11 @@ const InquiryForm = ({
   teamId,
   title,
   content,
-  assigneeId,
+  assigneeIds,
   referenceIds,
   setTitle,
   setContent,
-  setAssigneeId,
+  setAssigneeIds,
   setReferenceIds,
   setFileIds,
   onDropdownStateChange,
@@ -46,9 +46,9 @@ const InquiryForm = ({
       <FileUploadBox teamId={teamId} setFileIds={setFileIds} />
       <div className="w-full h-[1px] bg-gray-10" />
       <AssigneeSelector
-        assigneeId={assigneeId}
+        assigneeIds={assigneeIds}
         referenceIds={referenceIds}
-        setAssigneeId={setAssigneeId}
+        setAssigneeIds={setAssigneeIds}
         setReferenceIds={setReferenceIds}
         onDropdownStateChange={onDropdownStateChange}
         allUsers={users}

@@ -15,21 +15,21 @@ export const getUsers = async (): ApiResponse<GetUsersResponse[]> => {
 };
 
 export const getGroups = async (): ApiResponse<GetGroupResponse[]> => {
-  const response = await instance.get("/groups");
+  const response = await instance.get("/api/groups");
   return response.data;
 };
 
 export const getDivisionsByGroupId = async (
   groupId: number
 ): ApiResponse<GetDivisionResponse[]> => {
-  const response = await instance.get(`/groups/${groupId}/divisions`);
+  const response = await instance.get(`/api/groups/${groupId}/divisions`);
   return response.data;
 };
 
 export const getTeamsByDivisionId = async (
   divisionId: number
 ): ApiResponse<GetTeamResponse[]> => {
-  const response = await instance.get(`/divisions/${divisionId}/teams`);
+  const response = await instance.get(`/api/divisions/${divisionId}/teams`);
   return response.data;
 };
 

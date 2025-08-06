@@ -5,6 +5,7 @@ import clsx from "clsx";
 import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
+import Modal from "@/components/common/Modal";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { AssigneeUser } from "@/types/team/user.type";
@@ -34,6 +35,7 @@ const UserMultiSelectInput = ({
   onDropdownToggle,
 }: Props) => {
   const [inputValue, setInputValue] = useState("");
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const debouncedInput = useDebounce(inputValue, 300);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,7 +53,11 @@ const UserMultiSelectInput = ({
     if (user.id === undefined) return;
 
     if (selectedIds.includes(user.id)) return;
-    if (selectedIds.length >= maxCount) return;
+
+    if (selectedIds.length >= maxCount) {
+      setShowLimitModal(true);
+      return;
+    }
 
     onChange([...selectedIds, user.id]);
     setInputValue("");
@@ -154,6 +160,25 @@ const UserMultiSelectInput = ({
           )}
         </div>
       </div>
+
+      {showLimitModal && (
+        <Modal
+          isOpen={showLimitModal}
+          onClose={() => setShowLimitModal(false)}
+          title={
+            label === "답변 담당자"
+              ? "담당자는 최대 3명까지 가능합니다"
+              : "참조자는 최대 5명까지 가능합니다"
+          }
+          buttons={[
+            {
+              label: "확인",
+              onClick: () => setShowLimitModal(false),
+              type: "blue",
+            },
+          ]}
+        />
+      )}
     </div>
   );
 };

@@ -27,8 +27,8 @@ const InquiryFormPage = () => {
     setTitle,
     content,
     setContent,
-    assigneeId,
-    setAssigneeId,
+    assigneeIds,
+    setAssigneeIds,
     referenceIds,
     setReferenceIds,
     fileIds,
@@ -67,7 +67,7 @@ const InquiryFormPage = () => {
     if (!teamId) return "team";
     if (!title.trim()) return "title";
     if (!content.trim()) return "content";
-    if (assigneeId === null) return "assignee";
+    if (assigneeIds.length === 0) return "assignee";
     return null;
   };
 
@@ -90,7 +90,7 @@ const InquiryFormPage = () => {
           data: {
             title,
             content,
-            assignee_ids: assigneeId !== null ? [assigneeId] : [],
+            assignee_ids: assigneeIds,
             observer_ids: referenceIds,
             file_ids: fileIds,
           },
@@ -124,7 +124,7 @@ const InquiryFormPage = () => {
       data: {
         title,
         content,
-        assignee_ids: assigneeId !== null ? [assigneeId] : [],
+        assignee_ids: assigneeIds,
         observer_ids: referenceIds,
         file_ids: fileIds,
       },
@@ -136,7 +136,7 @@ const InquiryFormPage = () => {
     const payload: PostInquiryRequest = {
       title,
       content,
-      assignee_ids: assigneeId !== null ? [assigneeId] : [],
+      assignee_ids: assigneeIds,
       observer_ids: referenceIds,
       file_ids: fileIds,
     };
@@ -165,7 +165,7 @@ const InquiryFormPage = () => {
     // 폼 상태 세팅
     setTitle(title);
     setContent(content);
-    setAssigneeId(assignees?.[0]?.userId ?? null); // 단일 담당자
+    setAssigneeIds(assignees?.map(user => user.userId) ?? []);
     setReferenceIds(observers.map(user => user.userId));
     setFileIds([]); // ⛔ file_ids가 응답에 없으니 빈 배열로 초기화 또는 필요 시 API 확장
 
@@ -223,11 +223,11 @@ const InquiryFormPage = () => {
           teamId={teamId ?? 0}
           title={title}
           content={content}
-          assigneeId={assigneeId}
+          assigneeIds={assigneeIds}
           referenceIds={referenceIds}
           setTitle={setTitle}
           setContent={setContent}
-          setAssigneeId={setAssigneeId}
+          setAssigneeIds={setAssigneeIds}
           setReferenceIds={setReferenceIds}
           setFileIds={setFileIds}
           onDropdownStateChange={setIsDropdownOpen}
