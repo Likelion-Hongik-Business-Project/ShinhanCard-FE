@@ -8,14 +8,13 @@ import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import InquiryFormModal from "@/components/inquiry/form/InquiryFormModal";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
 import { useInquiryApi } from "@/hooks/inquiry/useInquiryApi";
-import { useInquiryDraftApi } from "@/hooks/inquiry/useInquiryDraftApi";
+import { useInquiryDraft } from "@/hooks/inquiry/useInquiryDraft";
 import { useInquiryFormState } from "@/hooks/inquiry/useInquiryFormState";
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [missingField, setMissingField] = useState<
     null | "team" | "title" | "content" | "assignee"
@@ -46,27 +45,7 @@ const InquiryFormPage = () => {
     handleTeamChange,
   } = useOrganizationSelector();
 
-  const { postInquiryMutation } = useInquiryApi();
-  const {
-    useCheckDraftExists,
-    usePostInquiryDraftMutation,
-    useGetInquiryDraft,
-    useDeleteInquiryDraftMutation,
-    usePutInquiryDraftMutation,
-  } = useInquiryDraftApi();
-  const { data: draftExists, refetch } = useCheckDraftExists(
-    teamId ?? 0,
-    false
-  );
-
-  const { refetch: fetchDraft } = useGetInquiryDraft(
-    teamId ?? 0,
-    draftExists?.result.draft_id ?? 0
-  );
-  const { mutate: postDraft } = usePostInquiryDraftMutation();
-  const { mutate: putDraft } = usePutInquiryDraftMutation();
-  const { mutate: deleteDraft } = useDeleteInquiryDraftMutation();
-
+  // 필드 유효성 검사 함수
   const validateFields = (): typeof missingField => {
     if (!teamId) return "team";
     if (!title.trim()) return "title";
@@ -75,70 +54,34 @@ const InquiryFormPage = () => {
     return null;
   };
 
-  const [draftId, setDraftId] = useState<number | null>(null);
-  const [, setJustSavedDraft] = useState(false);
-  const [isDraftSaved, setIsDraftSaved] = useState(false);
+  const {
+    isDraftSaved,
+    isDraftModalOpen,
+    setIsDraftModalOpen,
+    saveDraft,
+    restoreDraft,
+    resetDraft,
+    clearDraftState,
+  } = useInquiryDraft({
+    teamId: teamId ?? 0,
+    title,
+    content,
+    assigneeIds,
+    referenceIds,
+    fileIds,
+    setTitle,
+    setContent,
+    setAssigneeIds,
+    setReferenceIds,
+    setFileIds,
+    handleGroupChange,
+    handleDivisionChange,
+    handleTeamChange,
+    validateFields,
+    setMissingField,
+  });
 
-  const handleDraftClick = async () => {
-    const missing = validateFields();
-    if (missing) {
-      setMissingField(missing);
-      return;
-    }
-
-    if (!teamId) return;
-
-    // 이미 draftId가 있다면 → 계속 putDraft
-    if (draftId) {
-      putDraft(
-        {
-          inquiryId: draftId,
-          teamId,
-          data: {
-            title,
-            content,
-            assignee_ids: assigneeIds,
-            observer_ids: referenceIds,
-            file_ids: fileIds,
-          },
-        },
-        {
-          onSuccess: () => {
-            setIsDraftSaved(true);
-          },
-        }
-      );
-      return;
-    }
-
-    // draftId가 없으면 처음 저장이므로 draft 존재 여부 확인
-    const { data: draft } = await refetch();
-
-    if (draft?.result.is_present) {
-      setIsDraftModalOpen(true);
-      setDraftId(draft.result.draft_id);
-    } else {
-      postDraft(
-        {
-          teamId,
-          data: {
-            title,
-            content,
-            assignee_ids: assigneeIds,
-            observer_ids: referenceIds,
-            file_ids: fileIds,
-          },
-        },
-        {
-          onSuccess: res => {
-            setDraftId(res.result.inquiry_id);
-            setJustSavedDraft(true);
-            setIsDraftSaved(true);
-          },
-        }
-      );
-    }
-  };
+  const { postInquiryMutation } = useInquiryApi();
 
   const handleSubmit = () => {
     const missing = validateFields();
@@ -146,18 +89,8 @@ const InquiryFormPage = () => {
       setMissingField(missing);
       return;
     }
-
     setIsConfirmModalOpen(true);
   };
-
-  const [initialFiles, setInitialFiles] = useState<
-    {
-      fileId: number;
-      fileName: string;
-      fileKey: string;
-      fileSize: number;
-    }[]
-  >([]);
 
   const confirmSubmit = () => {
     if (!teamId) return;
@@ -175,108 +108,17 @@ const InquiryFormPage = () => {
       {
         onSuccess: () => {
           setIsConfirmModalOpen(false);
-
-          // 등록 성공 후 임시저장 삭제
-          if (draftId) {
-            deleteDraft(
-              { inquiryId: draftId, teamId },
-              {
-                onSuccess: () => {
-                  setDraftId(null);
-                  setIsDraftSaved(false);
-                  setJustSavedDraft(false);
-                },
-              }
-            );
-          }
+          clearDraftState(); // 등록 후 draft 초기화
         },
       }
     );
-  };
-
-  const handleRestore = async () => {
-    setIsDraftModalOpen(false);
-
-    const { data } = await fetchDraft();
-    if (!data?.result) return;
-
-    const {
-      title,
-      content,
-      assignees,
-      observers,
-      group,
-      division,
-      team,
-      files,
-      inquiry_id,
-    } = data.result;
-
-    setTitle(title);
-    setContent(content);
-    setAssigneeIds(assignees?.map(user => user.userId) ?? []);
-    setReferenceIds(observers?.map(user => user.userId) ?? []);
-    setInitialFiles(
-      files.map(file => ({
-        fileId: file.fileId,
-        fileName: file.fileName,
-        fileKey: file.fileKey,
-        fileSize: file.fileSize,
-      }))
-    );
-
-    handleGroupChange(group.groupId);
-    handleDivisionChange(division.divisionId);
-    handleTeamChange(team.teamId);
-
-    setDraftId(inquiry_id); // 이후 put 대상
-  };
-
-  const handleReset = () => {
-    if (!draftId || !teamId) return;
-
-    deleteDraft(
-      { inquiryId: draftId, teamId },
-      {
-        onSuccess: () => {
-          setDraftId(null); // 기존 draftId 초기화
-
-          // 현재 상태로 새로 저장
-          postDraft(
-            {
-              teamId,
-              data: {
-                title,
-                content,
-                assignee_ids: assigneeIds,
-                observer_ids: referenceIds,
-                file_ids: fileIds,
-              },
-            },
-            {
-              onSuccess: res => {
-                setDraftId(res.result.inquiry_id);
-                setIsDraftSaved(true);
-                setJustSavedDraft(true);
-              },
-            }
-          );
-        },
-      }
-    );
-
-    setIsDraftModalOpen(false);
   };
 
   useEffect(() => {
-    setIsDraftSaved(false);
+    if (isDraftSaved) {
+      clearDraftState();
+    }
   }, [title, content, assigneeIds, referenceIds, fileIds]);
-
-  useEffect(() => {
-    setDraftId(null);
-    setJustSavedDraft(false);
-    setIsDraftSaved(false);
-  }, [teamId]);
 
   return (
     <section
@@ -319,18 +161,13 @@ const InquiryFormPage = () => {
           setContent={setContent}
           setAssigneeIds={setAssigneeIds}
           setReferenceIds={setReferenceIds}
-          initialFiles={initialFiles}
           setFileIds={setFileIds}
           onDropdownStateChange={setIsDropdownOpen}
         />
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">
-        <Button
-          className="white"
-          onClick={handleDraftClick}
-          disabled={isDraftSaved}
-        >
+        <Button className="white" onClick={saveDraft} disabled={isDraftSaved}>
           {isDraftSaved ? "임시저장완료" : "임시저장"}
         </Button>
         <Button buttonType="blue" onClick={handleSubmit}>
@@ -344,8 +181,8 @@ const InquiryFormPage = () => {
         onCloseMissing={() => setMissingField(null)}
         isDraftOpen={isDraftModalOpen}
         onCloseDraft={() => setIsDraftModalOpen(false)}
-        onRestoreDraft={handleRestore}
-        onResetDraft={handleReset}
+        onRestoreDraft={restoreDraft}
+        onResetDraft={resetDraft}
         isConfirmOpen={isConfirmModalOpen}
         onCloseConfirm={() => setIsConfirmModalOpen(false)}
         onConfirmSubmit={confirmSubmit}
