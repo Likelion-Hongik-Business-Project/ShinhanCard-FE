@@ -4,23 +4,27 @@ import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import Star from "@/assets/svgs/common/star.svg";
 import StarActive from "@/assets/svgs/common/star-active.svg";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
+import { useScrap } from "@/hooks/scrap/useScrap";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryListItem as InquiryListItemType } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   item: InquiryListItemType;
   isScraped: boolean;
-  onToggleScrap: (id: number) => void;
 };
 
-const InquiryListItem = ({ item, isScraped, onToggleScrap }: Props) => {
+const InquiryListItem = ({ item, isScraped }: Props) => {
   const navigate = useNavigate();
+  const { scrapInquiry, unscrapInquiry, isScrapLoading } = useScrap();
 
   return (
     <li className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
       <button
         className="px-4 mr-7 flex items-center cursor-pointer"
-        onClick={() => onToggleScrap(item.id)}
+        onClick={() =>
+          isScraped ? unscrapInquiry(item.id) : scrapInquiry(item.id)
+        }
+        disabled={isScrapLoading}
       >
         {isScraped ? (
           <StarActive className="w-5 h-5" />

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import Pagination from "@/components/common/Pagination";
 import {
   InquiryListItem as InquiryListItemType,
@@ -43,24 +41,6 @@ const InquiryList = ({
   toggleStatusModal,
   toggleDateModal,
 }: Props) => {
-  const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
-    inquiries.reduce(
-      (acc, item) => {
-        acc[item.id] = item.is_scraped;
-        return acc;
-      },
-      {} as Record<number, boolean>
-    )
-  );
-
-  // 스크랩 토글 함수
-  const handleToggleScrap = (id: number) => {
-    setScrapStates(prev => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
   // 날짜 필터링
   const filteredInquiries = inquiries.filter(item => {
     const date = new Date(item.created_at);
@@ -96,8 +76,7 @@ const InquiryList = ({
           <InquiryListItem
             key={item.id}
             item={item}
-            isScraped={scrapStates[item.id]}
-            onToggleScrap={handleToggleScrap}
+            isScraped={item.is_scraped}
           />
         ))}
       </div>
