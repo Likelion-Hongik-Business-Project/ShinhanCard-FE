@@ -16,3 +16,10 @@ export const INQUIRY_STATUS_LABEL: Record<
 export const getInquiryStatusLabel = (
   status: InquiryServerStatus
 ): InquiryStatus | null => INQUIRY_STATUS_LABEL[status] ?? null;
+
+export const INQUIRY_STATUS_VALUE: Record<InquiryStatus, InquiryServerStatus> =
+  {
+    "확인 전": "UNCHECKED",
+    "확인 중": "IN_PROGRESS",
+    "답변 완료": "COMPLETED",
+  };

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Pagination from "@/components/common/Pagination";
 import {
   InquiryListItem as InquiryListItemType,
+  InquiryStatus,
   YearMonth,
 } from "@/types/inquiry/inquiryListApi.type";
 
@@ -15,7 +16,7 @@ type Props = {
   totalPages: number; // 총 페이지 수
   onPageChange: (page: number) => void; // 현재 페이지
   selectedStatus: string; // 선택된 상태 필터
-  setSelectedStatus: (status: string) => void; // 상태 필터 변경 함수
+  setSelectedStatus: (status: InquiryStatus | "전체") => void; // 상태 필터 변경 함수
   selectedDate: YearMonth[]; // 선택된 날짜 필터
   setSelectedDate: React.Dispatch<React.SetStateAction<YearMonth[]>>; // 날짜 필터 변경 함수
   isStatusModalOpen: boolean; // 상태 모달 오픈 여부

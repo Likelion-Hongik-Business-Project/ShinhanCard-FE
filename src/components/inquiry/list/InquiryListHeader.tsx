@@ -10,11 +10,11 @@ import User from "@/assets/svgs/common/inquiryList/user.svg";
 import DateFilterModal from "@/components/inquiry/list/DateFilterModal";
 import StatusFilterModal from "@/components/inquiry/list/StatusFilterModal";
 import { INQUIRY_STATUS_STYLES } from "@/constants/inquiry";
-import { YearMonth } from "@/types/inquiry/inquiryListApi.type";
+import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   selectedStatus: string;
-  setSelectedStatus: (status: string) => void;
+  setSelectedStatus: (status: InquiryStatus | "전체") => void;
   selectedDate: YearMonth[];
   setSelectedDate: React.Dispatch<React.SetStateAction<YearMonth[]>>;
   isStatusModalOpen: boolean;
@@ -96,7 +96,7 @@ const InquiryListHeader = ({
             <StatusFilterModal
               selectedStatus={selectedStatus}
               onSelectStatus={status => {
-                setSelectedStatus(status);
+                setSelectedStatus(status as InquiryStatus | "전체");
                 setIsStatusModalOpen(false);
               }}
               onClose={() => setIsStatusModalOpen(false)}

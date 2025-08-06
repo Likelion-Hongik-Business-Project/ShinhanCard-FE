@@ -17,6 +17,7 @@ export const useAssignedApi = ({
     },
     staleTime: 1000 * 60,
   });
+  console.log(data);
 
   return {
     data,
