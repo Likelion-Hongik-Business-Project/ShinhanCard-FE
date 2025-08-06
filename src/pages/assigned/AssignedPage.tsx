@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { useAssignedApi } from "@/hooks/inquiry/assigned/useAssignedApi";
+import {
+  useAssignedByTeamApi,
+  useInitAssignedApi,
+} from "@/hooks/inquiry/assigned/useAssignedApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
 import {
@@ -13,32 +16,65 @@ const AssignedPage = () => {
   const [page, setPage] = useState(1);
   const [date, setDate] = useState<{ year: number; month: number }[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
-  const { data, isLoading, isError } = useAssignedApi({
+  // 최초 요청
+  const {
+    data: initData,
+    isLoading: initLoading,
+    isError: initError,
+  } = useInitAssignedApi({
     page: page - 1,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
   });
 
+  // 이후 팀 선택 시 요청
+  const {
+    data: teamData,
+    isLoading: teamLoading,
+    isError: teamError,
+  } = useAssignedByTeamApi({
+    teamId: selectedTeamId!,
+    page: page - 1,
+    status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
+    date: formatDateParams(date),
+  });
+
+  // 최초 팀 세팅
+  useEffect(() => {
+    if (!selectedTeamId && initData?.selected_team?.team_id) {
+      setSelectedTeamId(initData.selected_team.team_id);
+    }
+  }, [initData, selectedTeamId]);
+
+  const isLoading = selectedTeamId ? teamLoading : initLoading;
+  const isError = selectedTeamId ? teamError : initError;
+  const data = selectedTeamId ? teamData : initData;
+
   if (isLoading) return <div>로딩 중...</div>;
   if (isError || !data) return <div>에러 발생</div>;
-
-  const { inquiries, teams, selected_team } = data;
 
   const totalPages = Math.ceil(
     data.pagination.total / data.pagination.page_size
   );
+
+  const handleSelectTeam = (teamId: number) => {
+    setSelectedTeamId(teamId);
+    setPage(1);
+    setStatus("전체");
+    setDate([]);
+  };
 
   return (
     <InquiryPageLayout<AssignedInquiryItem>
       title="내 담당 문의"
       description="나의 담당 문의가 총"
       emptyText="나의 담당 문의가 없습니다"
-      inquiries={inquiries}
-      teams={teams}
-      selectedTeamId={selected_team.team_id}
-      onSelectTeam={() => {}}
-      pageSize={data.pagination.page_size}
+      inquiries={data.inquiries}
+      teams={initData?.teams ?? []}
+      selectedTeamId={selectedTeamId!}
+      onSelectTeam={handleSelectTeam}
       totalCount={data.total_count}
       totalPages={totalPages}
       currentPage={page}

@@ -13,3 +13,15 @@ export const getInitAssignedInquiries = async (
   });
   return response.data;
 };
+
+export const getAssignedInquiriesByTeam = async (
+  teamId: number,
+  page = 1,
+  status?: string,
+  date?: string
+): ApiResponse<GetInitAssignedInquiriesResponse> => {
+  const response = await instance.get(`/api/inquiries/assigned/${teamId}`, {
+    params: { page, status, date },
+  });
+  return response.data;
+};
