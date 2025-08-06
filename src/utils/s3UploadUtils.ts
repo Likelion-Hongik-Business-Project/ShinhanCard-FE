@@ -4,7 +4,8 @@ export const uploadFileToS3 = async (
   uploadUrl: string,
   file: File,
   fileType: string,
-  onProgress?: (percent: number) => void
+  onProgress?: (percent: number) => void,
+  signal?: AbortSignal
 ): Promise<void> => {
   await axios.put(uploadUrl, file, {
     headers: {
@@ -15,5 +16,6 @@ export const uploadFileToS3 = async (
       const percent = Math.round((e.loaded * 100) / e.total);
       onProgress(percent);
     },
+    signal,
   });
 };

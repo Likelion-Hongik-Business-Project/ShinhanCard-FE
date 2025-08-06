@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { UploadFile } from "@/types/file/file.type";
+import { UploadingFile } from "@/types/file/file.type";
 
 import { useS3UploadFile } from "./useS3UploadFile";
 
@@ -11,7 +11,7 @@ const MAX_FILE_COUNT = 6;
 export const useMultiFileUploader = (
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>
 ) => {
-  const [files, setFiles] = useState<UploadFile[]>([]);
+  const [files, setFiles] = useState<UploadingFile[]>([]);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadFile = useS3UploadFile();
@@ -34,7 +34,7 @@ export const useMultiFileUploader = (
     }
 
     const localIds: number[] = [];
-    const newFiles: UploadFile[] = filesArray.map(file => {
+    const newFiles: UploadingFile[] = filesArray.map(file => {
       const id = Date.now() + Math.random();
       localIds.push(id);
       return {
@@ -43,6 +43,7 @@ export const useMultiFileUploader = (
         size: file.size,
         progress: 0,
         status: "uploading",
+        controller: undefined, // 이후에 저장
       };
     });
 
@@ -51,21 +52,47 @@ export const useMultiFileUploader = (
     await Promise.all(
       filesArray.map((file, index) => {
         const localId = localIds[index];
-        return uploadFile(file, percent => updateProgress(localId, percent))
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        // controller 저장
+        setFiles(prev =>
+          prev.map(f => (f.id === localId ? { ...f, controller } : f))
+        );
+
+        return uploadFile(
+          file,
+          percent => updateProgress(localId, percent),
+          signal
+        )
           .then(({ fileId }) => {
             setFiles(prev =>
               prev.map(f =>
                 f.id === localId
-                  ? { ...f, fileId, progress: 100, status: "done" }
+                  ? {
+                      ...f,
+                      fileId,
+                      progress: 100,
+                      status: "done",
+                      controller: undefined,
+                    }
                   : f
               )
             );
             setFileIds(prev => [...prev, fileId]);
           })
           .catch(err => {
-            console.error("파일 업로드 실패", err);
+            if (err.name === "CanceledError") {
+              console.log("업로드 취소됨:", file.name);
+            } else {
+              console.error("파일 업로드 실패:", err);
+            }
             setFiles(prev =>
-              prev.map(f => (f.id === localId ? { ...f, status: "error" } : f))
+              prev.map(f =>
+                f.id === localId
+                  ? { ...f, status: "error", controller: undefined }
+                  : f
+              )
             );
           });
       })
@@ -73,6 +100,13 @@ export const useMultiFileUploader = (
   };
 
   const handleRemove = async (localId: number, fileId?: number) => {
+    const target = files.find(file => file.id === localId);
+
+    // 업로드 중이면 중단
+    if (target?.status === "uploading" && target.controller) {
+      target.controller.abort();
+    }
+
     if (fileId) {
       try {
         await deleteFile(fileId);
@@ -81,6 +115,7 @@ export const useMultiFileUploader = (
         console.error("파일 삭제 실패", e);
       }
     }
+
     setFiles(prev => prev.filter(file => file.id !== localId));
   };
 

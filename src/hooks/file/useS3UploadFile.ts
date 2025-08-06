@@ -5,7 +5,8 @@ import { postFile } from "@/apis/file/fileApi";
 export const useS3UploadFile = () => {
   const upload = async (
     file: File,
-    onProgress?: (percent: number) => void
+    onProgress?: (percent: number) => void,
+    signal?: AbortSignal
   ): Promise<{ fileId: number }> => {
     const payload = {
       fileName: file.name,
@@ -16,7 +17,7 @@ export const useS3UploadFile = () => {
     const { result } = await postFile(payload);
     const { uploadUrl, fileId, fileType } = result;
 
-    await uploadFileToS3(uploadUrl, file, fileType, onProgress);
+    await uploadFileToS3(uploadUrl, file, fileType, onProgress, signal);
     return { fileId };
   };
 

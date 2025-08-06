@@ -8,3 +8,7 @@ export interface UploadFile {
   progress: number;
   status: UploadFileStatus;
 }
+
+export type UploadingFile = UploadFile & {
+  controller?: AbortController;
+};
