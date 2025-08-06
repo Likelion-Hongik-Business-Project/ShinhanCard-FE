@@ -1,9 +1,12 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 import { DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
 import Arrow from "@/assets/svgs/common/down.svg";
+import { MAX_PREVIEW_LENGTH } from "@/constants/inquiry";
+import { truncateText } from "@/utils/truncateText";
 import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface InquiryItemProps {
@@ -17,12 +20,6 @@ interface InquiryItemProps {
   onToggleScrap: (id: number) => void;
 }
 
-const MAX_PREVIEW_LENGTH = 500;
-
-const truncateText = (text: string, maxLength: number): string => {
-  return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-};
-
 const InquiryItem = ({
   group_name,
   division_name,
@@ -33,6 +30,7 @@ const InquiryItem = ({
   isScraped,
   onToggleScrap,
 }: InquiryItemProps) => {
+  const navigate = useNavigate();
   const preview = truncateText(inquiry.content_preview, MAX_PREVIEW_LENGTH);
 
   // 아코디언 애니매이션을 위해 높이 측정
@@ -45,6 +43,10 @@ const InquiryItem = ({
       setHeight(`${contentRef.current.scrollHeight}px`);
     }
   }, [isOpen]);
+
+  const handleDetailClick = () => {
+    navigate(`/inquiries/${inquiry.inquiry_id}`);
+  };
 
   return (
     <li className="flex flex-col">
@@ -91,7 +93,10 @@ const InquiryItem = ({
         <div className="px-10 py-6 w-full border-t border-gray-10">
           <div className="pl-9 pr-10 py-8 bg-gray-10 rounded-[15px] text-gray-80 text-body2 flex flex-col gap-6">
             <p>{preview}</p>
-            <button className="mx-auto text-body2-b px-6 py-2 cursor-pointer text-gray-60 flex gap-4 items-center">
+            <button
+              onClick={handleDetailClick}
+              className="mx-auto text-body2-b px-6 py-2 cursor-pointer text-gray-60 flex gap-4 items-center"
+            >
               자세히
               <DoubleArrow className="w-[14px] h-[12px] text-gray-40" />
             </button>
