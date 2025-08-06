@@ -1,21 +1,32 @@
+import { useEffect } from "react";
+
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
 import Modal from "@/components/common/Modal";
 import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
+import { UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
 interface Props {
   teamId: number;
+  fileIds: number[];
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  initialFiles?: {
+    fileId: number;
+    fileName: string;
+    fileKey: string;
+    fileSize: number;
+  }[];
 }
 
-const FileUploadBox = ({ setFileIds }: Props) => {
+const FileUploadBox = ({ setFileIds, initialFiles = [] }: Props) => {
   const {
     inputRef,
     files,
+    setFiles, // 이거 useMultiFileUploader에서 노출되어야 함!
     showLimitModal,
     setShowLimitModal,
     triggerInput,
@@ -27,6 +38,22 @@ const FileUploadBox = ({ setFileIds }: Props) => {
     onDrop: handleFileSelect,
   });
 
+  // 초기 세팅
+  useEffect(() => {
+    if (initialFiles.length === 0) return;
+
+    const restoredFiles: UploadFile[] = initialFiles.map(file => ({
+      id: file.fileId,
+      fileId: file.fileId,
+      name: file.fileName,
+      size: file.fileSize,
+      progress: 100,
+      status: "done",
+    }));
+
+    setFileIds(restoredFiles.map(f => f.fileId!));
+    setFiles(restoredFiles);
+  }, [initialFiles, setFiles]);
   return (
     <div className="flex flex-col gap-4">
       <div

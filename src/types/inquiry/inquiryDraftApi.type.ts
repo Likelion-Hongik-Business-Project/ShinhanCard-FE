@@ -1,5 +1,6 @@
 import { Division, Group, Team } from "@/types/team/user.type";
 
+import { InquiryDraftFile } from "../file/file.type";
 import { PostInquiryRequest } from "./inquiryApi.type";
 import { UserPreview } from "./inquiryDraft.type";
 
@@ -17,6 +18,7 @@ export interface GetInquiryDraftResponse {
   group: Group;
   division: Division;
   team: Team;
+  files: InquiryDraftFile[];
   inquiry_id: number;
   created_at: string;
 }

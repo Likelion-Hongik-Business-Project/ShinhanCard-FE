@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import clsx from "clsx";
 
@@ -20,7 +20,7 @@ const InquiryFormPage = () => {
   const [missingField, setMissingField] = useState<
     null | "team" | "title" | "content" | "assignee"
   >(null);
-  const [draftId, setDraftId] = useState<number | null>(null);
+  const [, setDraftId] = useState<number | null>(null);
 
   const {
     title,
@@ -53,10 +53,14 @@ const InquiryFormPage = () => {
     usePostInquiryDraftMutation,
     useGetInquiryDraft,
     // useDeleteInquiryDraftMutation,
-    usePutInquiryDraftMutation,
+    // usePutInquiryDraftMutation,
   } = useInquiryDraftApi();
 
-  const { data: draftExists, isLoading } = useCheckDraftExists(teamId ?? 0);
+  const { data: draftExists, refetch } = useCheckDraftExists(
+    teamId ?? 0,
+    false
+  );
+
   const { refetch: fetchDraft } = useGetInquiryDraft(
     teamId ?? 0,
     draftExists?.result.draft_id ?? 0
@@ -70,19 +74,23 @@ const InquiryFormPage = () => {
     if (assigneeIds.length === 0) return "assignee";
     return null;
   };
+  const [, setJustSavedDraft] = useState(false);
 
-  const handleDraftClick = () => {
+  const handleDraftClick = async () => {
     const missing = validateFields();
     if (missing) {
       setMissingField(missing);
       return;
     }
 
-    if (!teamId || isLoading) return;
+    if (!teamId) return;
 
-    // 이미 draft 저장한 적 있음 → PUT
-    if (draftExists?.result.is_present || draftId) {
-      updateDraft(); // PUT 로직
+    const { data: draft } = await refetch();
+
+    if (draft?.result.is_present) {
+      setIsDraftModalOpen(true);
+
+      setDraftId(draft.result.draft_id);
     } else {
       postDraft(
         {
@@ -98,6 +106,7 @@ const InquiryFormPage = () => {
         {
           onSuccess: res => {
             setDraftId(res.result.inquiry_id);
+            setJustSavedDraft(true);
           },
         }
       );
@@ -113,23 +122,32 @@ const InquiryFormPage = () => {
 
     setIsConfirmModalOpen(true);
   };
-  const { mutate: putDraft } = usePutInquiryDraftMutation();
+  // const { mutate: putDraft } = usePutInquiryDraftMutation();
+  const [initialFiles, setInitialFiles] = useState<
+    {
+      fileId: number;
+      fileName: string;
+      fileKey: string;
+      fileSize: number;
+    }[]
+  >([]);
 
-  const updateDraft = () => {
-    if (!draftId || !teamId) return;
+  // const updateDraft = () => {
+  //   if (!draftId || !teamId) return;
 
-    putDraft({
-      inquiryId: draftId,
-      teamId,
-      data: {
-        title,
-        content,
-        assignee_ids: assigneeIds,
-        observer_ids: referenceIds,
-        file_ids: fileIds,
-      },
-    });
-  };
+  //   putDraft({
+  //     inquiryId: draftId,
+  //     teamId,
+  //     data: {
+  //       title,
+  //       content,
+  //       assignee_ids: assigneeIds,
+  //       observer_ids: referenceIds,
+  //       file_ids: fileIds,
+  //     },
+  //   });
+  // };
+
   const confirmSubmit = () => {
     if (!teamId) return;
 
@@ -151,6 +169,8 @@ const InquiryFormPage = () => {
     const { data } = await fetchDraft();
     if (!data?.result) return;
 
+    console.log(data?.result);
+
     const {
       title,
       content,
@@ -159,6 +179,7 @@ const InquiryFormPage = () => {
       group,
       division,
       team,
+      files,
       inquiry_id,
     } = data.result;
 
@@ -166,8 +187,15 @@ const InquiryFormPage = () => {
     setTitle(title);
     setContent(content);
     setAssigneeIds(assignees?.map(user => user.userId) ?? []);
-    setReferenceIds(observers.map(user => user.userId));
-    setFileIds([]); // ⛔ file_ids가 응답에 없으니 빈 배열로 초기화 또는 필요 시 API 확장
+    setReferenceIds(observers?.map(user => user.userId) ?? []);
+    setInitialFiles(
+      files.map(file => ({
+        fileId: file.fileId,
+        fileName: file.fileName,
+        fileKey: file.fileKey,
+        fileSize: file.fileSize,
+      }))
+    );
 
     // 조직 선택 상태도 같이 세팅
     handleGroupChange(group.groupId);
@@ -182,12 +210,6 @@ const InquiryFormPage = () => {
     setIsDraftModalOpen(false);
     // TODO: 새로 작성 로직
   };
-
-  useEffect(() => {
-    if (!isLoading && draftExists?.result.is_present) {
-      setIsDraftModalOpen(true);
-    }
-  }, [draftExists]);
 
   return (
     <section
@@ -225,10 +247,12 @@ const InquiryFormPage = () => {
           content={content}
           assigneeIds={assigneeIds}
           referenceIds={referenceIds}
+          fileIds={fileIds}
           setTitle={setTitle}
           setContent={setContent}
           setAssigneeIds={setAssigneeIds}
           setReferenceIds={setReferenceIds}
+          initialFiles={initialFiles}
           setFileIds={setFileIds}
           onDropdownStateChange={setIsDropdownOpen}
         />

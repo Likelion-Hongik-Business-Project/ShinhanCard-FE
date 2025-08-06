@@ -122,6 +122,7 @@ export const useMultiFileUploader = (
   return {
     inputRef,
     files,
+    setFiles,
     showLimitModal,
     setShowLimitModal,
     triggerInput,

@@ -23,13 +23,13 @@ const INQUIRY_DRAFT_KEYS = {
 
 export const useInquiryDraftApi = () => {
   // 임시 저장 존재 여부 조회
-  const useCheckDraftExists = (teamId: number) =>
-    useQuery({
+  const useCheckDraftExists = (teamId: number, enabled: boolean = false) => {
+    return useQuery({
       queryKey: INQUIRY_DRAFT_KEYS.exists(teamId),
       queryFn: () => getDraftExists(teamId),
-      enabled: !!teamId,
+      enabled,
     });
-
+  };
   // 임시 저장 조회
   const useGetInquiryDraft = (teamId: number, inquiryId: number) =>
     useQuery({

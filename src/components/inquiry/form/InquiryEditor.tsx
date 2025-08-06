@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useEditorImageUpload } from "@/hooks/inquiry/useEditorImageUpload";
 import { useEditor } from "@/hooks/useEditor";
@@ -16,18 +16,24 @@ interface Props {
   setContent: (value: string) => void;
 }
 
-const InquiryEditor = ({ title, setTitle, setContent }: Props) => {
+const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
-
+  const [isMounted, setIsMounted] = useState(false);
   const uploadImage = useEditorImageUpload();
-  // 초기 마운트 시 editor 내용 초기화
-  useEffect(() => {
-    const editorInstance = editorRef.current?.getInstance();
-    editorInstance?.setMarkdown("");
-  }, [editorRef]);
 
-  // editor 내용 변경될 때마다 setContent에 반영
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // ✅ content 상태 변경 시 에디터에 반영
+  useEffect(() => {
+    if (!isMounted) return;
+    const editorInstance = editorRef.current?.getInstance();
+    editorInstance?.setMarkdown(content || "");
+  }, [content, isMounted, editorRef]);
+
+  // ✅ 에디터 입력 감지
   useEffect(() => {
     const editorInstance = editorRef.current?.getInstance();
     const observer = () => {
@@ -37,7 +43,6 @@ const InquiryEditor = ({ title, setTitle, setContent }: Props) => {
 
     const el = editorRef.current?.getRootElement();
     el?.addEventListener("input", observer);
-
     return () => {
       el?.removeEventListener("input", observer);
     };

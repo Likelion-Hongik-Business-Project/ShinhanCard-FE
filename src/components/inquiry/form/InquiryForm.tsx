@@ -10,12 +10,19 @@ interface Props {
   content: string;
   assigneeIds: number[];
   referenceIds: number[];
+  fileIds: number[];
   setTitle: (value: string) => void;
   setContent: (value: string) => void;
   setAssigneeIds: (ids: number[]) => void;
   setReferenceIds: (ids: number[]) => void;
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   onDropdownStateChange: (isOpen: boolean) => void;
+  initialFiles?: {
+    fileId: number;
+    fileName: string;
+    fileKey: string;
+    fileSize: number;
+  }[];
 }
 
 const InquiryForm = ({
@@ -24,12 +31,14 @@ const InquiryForm = ({
   content,
   assigneeIds,
   referenceIds,
+  fileIds,
   setTitle,
   setContent,
   setAssigneeIds,
   setReferenceIds,
   setFileIds,
   onDropdownStateChange,
+  initialFiles,
 }: Props) => {
   const { useUsersQuery } = useTeamApi();
   const { data: users = [] } = useUsersQuery();
@@ -43,7 +52,12 @@ const InquiryForm = ({
         setContent={setContent}
       />
       <div className="w-full h-[1px] bg-gray-10" />
-      <FileUploadBox teamId={teamId} setFileIds={setFileIds} />
+      <FileUploadBox
+        teamId={teamId}
+        fileIds={fileIds}
+        setFileIds={setFileIds}
+        initialFiles={initialFiles}
+      />
       <div className="w-full h-[1px] bg-gray-10" />
       <AssigneeSelector
         assigneeIds={assigneeIds}
