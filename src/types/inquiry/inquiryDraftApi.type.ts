@@ -1,6 +1,6 @@
+import { InquiryDraftFile } from "@/types/file/file.type";
 import { Division, Group, Team } from "@/types/team/user.type";
 
-import { InquiryDraftFile } from "../file/file.type";
 import { PostInquiryRequest } from "./inquiryApi.type";
 import { UserPreview } from "./inquiryDraft.type";
 
@@ -34,13 +34,6 @@ export type PostInquiryDraftRequest = PostInquiryRequest;
 export interface PostInquiryDraftResponse {
   inquiry_id: number;
   status: "DRAFT";
-}
-
-export interface PatchInquiryDraftRequest {
-  title?: string;
-  content?: string;
-  assignee_ids?: number[];
-  observer_ids?: number[];
 }
 
 export interface DeleteInquiryDraftResponse {

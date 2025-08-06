@@ -27,6 +27,9 @@ const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
     const editorInstance = editorRef.current?.getInstance();
     if (!editorInstance) return;
 
+    const current = editorInstance.getMarkdown();
+    if (current === content) return;
+
     requestAnimationFrame(() => {
       editorInstance.setMarkdown(content || "");
     });
@@ -73,9 +76,14 @@ const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
       <Editor
         ref={editorRef}
         hooks={{
-          addImageBlobHook: async (blob, callback) => {
+          addImageBlobHook: async blob => {
             const imageUrl = await uploadImage(blob);
-            callback(imageUrl, "image");
+            const editorInstance = editorRef.current?.getInstance();
+            editorInstance?.exec("addImage", {
+              imageUrl,
+              altText: blob instanceof File ? blob.name : "image",
+            });
+
             return false;
           },
         }}

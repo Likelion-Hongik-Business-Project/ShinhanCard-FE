@@ -7,7 +7,11 @@ export const useS3UploadFile = () => {
     file: File,
     onProgress?: (percent: number) => void,
     signal?: AbortSignal
-  ): Promise<{ fileId: number }> => {
+  ): Promise<{
+    fileId: number;
+    fileKey: string;
+    fileUrl: string;
+  }> => {
     const payload = {
       fileName: file.name,
       fileType: file.type,
@@ -15,10 +19,13 @@ export const useS3UploadFile = () => {
     };
 
     const { result } = await postFile(payload);
-    const { uploadUrl, fileId, fileType } = result;
+    const { uploadUrl, fileId, fileType, fileKey } = result;
 
     await uploadFileToS3(uploadUrl, file, fileType, onProgress, signal);
-    return { fileId };
+
+    const fileUrl = `https://shinhanstorage.s3.ap-northeast-2.amazonaws.com/attachments/${fileKey}`;
+
+    return { fileId, fileKey, fileUrl };
   };
 
   return upload;
