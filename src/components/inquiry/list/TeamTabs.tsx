@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
 import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
 
@@ -30,6 +32,28 @@ const TeamTabs = ({
 
   const isMoreTabActive = isHiddenTeamSelected || isModalOpen;
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        isModalOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
+        onCloseModal();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen, onCloseModal]);
+
   return (
     <div className="relative flex">
       {visibleTabs.map(team => (
@@ -50,6 +74,7 @@ const TeamTabs = ({
       {hiddenTabs.length > 0 && (
         <div className="relative">
           <button
+            ref={buttonRef}
             onClick={onToggleModal}
             className={`px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[1px] ${
               isMoreTabActive
@@ -60,12 +85,14 @@ const TeamTabs = ({
             <span className="text-heading3-b">...</span>
           </button>
           {isModalOpen && (
-            <TeamTabsModal
-              teams={hiddenTeams}
-              selectedTeamId={selectedTeamId}
-              onSelectTeam={onSelectTeam}
-              onClose={onCloseModal}
-            />
+            <div ref={modalRef}>
+              <TeamTabsModal
+                teams={hiddenTeams}
+                selectedTeamId={selectedTeamId}
+                onSelectTeam={onSelectTeam}
+                onClose={onCloseModal}
+              />
+            </div>
           )}
         </div>
       )}
