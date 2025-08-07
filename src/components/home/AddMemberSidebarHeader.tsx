@@ -5,17 +5,14 @@ import clsx from "clsx";
 import CheckIcon from "@/assets/svgs/common/check.svg";
 import DownIcon from "@/assets/svgs/common/down.svg";
 import UsersIcon from "@/assets/svgs/inquiry/detail/users.svg";
+import { Division, Group, Team } from "@/types/team/user.type";
 
 type Props = {
   currentTeamName: string;
   totalCount: number;
-  groups: Array<{ groupId: number; groupName: string; active: boolean }>;
-  divisions: Array<{
-    divisionId: number;
-    divisionName: string;
-    active: boolean;
-  }>;
-  teams: Array<{ teamId: number; teamName: string; active: boolean }>;
+  groups: Group[];
+  divisions: Division[];
+  teams: Team[];
   selectedGroupId: number | null;
   selectedDivisionId: number | null;
   selectedTeamId: number | null;

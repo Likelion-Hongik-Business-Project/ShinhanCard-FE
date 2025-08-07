@@ -7,6 +7,7 @@ import User from "@/assets/svgs/home/icon-user.svg";
 import Modal from "@/components/common/Modal";
 import { useRemoveInterestedMember } from "@/hooks/home/useHomeMemberApi";
 import { InterestedMember } from "@/types/home/homeApi.type";
+import { getProfileImageUrl } from "@/types/profile/profile.type";
 
 type Props = {
   member: InterestedMember;
@@ -41,7 +42,7 @@ const MemberCard = ({ member }: Props) => {
         </div>
         <div className="flex justify-center w-full mb-6">
           <img
-            src={member.profile_image_url}
+            src={getProfileImageUrl(member.profile_image_url)}
             alt={member.name}
             className="w-20 h-20 rounded-full object-cover"
           />

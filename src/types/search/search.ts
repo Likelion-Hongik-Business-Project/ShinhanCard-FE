@@ -45,11 +45,6 @@ export interface SearchResultInquiry {
   content_preview: string;
   inquiry_state: string;
   created_at: string;
-  writer: {
-    user_id: number;
-    name: string;
-    profile_image_url: string;
-  };
   is_scrapped: boolean;
   group_name: string;
   division_name: string;

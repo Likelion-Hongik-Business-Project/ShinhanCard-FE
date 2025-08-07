@@ -13,15 +13,7 @@ import {
 export const useRecentSearchKeywords = () => {
   return useQuery({
     queryKey: ["recentSearchKeywords"],
-    queryFn: async () => {
-      try {
-        const response = await getRecentSearchKeywords();
-        return response;
-      } catch (error) {
-        console.error("최근 검색어 조회 실패:", error);
-        throw error;
-      }
-    },
+    queryFn: getRecentSearchKeywords,
     staleTime: 5 * 60 * 1000, // 5분
   });
 };
@@ -46,15 +38,7 @@ export const useDeleteRecentSearchKeyword = () => {
 export const useRecommendSearchKeywords = (query: string) => {
   return useQuery({
     queryKey: ["recommendSearchKeywords", query],
-    queryFn: async () => {
-      try {
-        const response = await getRecommendSearchKeywords(query);
-        return response;
-      } catch (error) {
-        console.error("추천 검색어 조회 실패:", error);
-        throw error;
-      }
-    },
+    queryFn: () => getRecommendSearchKeywords(query),
     enabled: query.length > 0,
     staleTime: 1 * 60 * 1000, // 1분
     refetchOnWindowFocus: false, // 창 포커스 시 재요청 방지
@@ -72,18 +56,12 @@ export const useSearchResults = (
   return useQuery({
     queryKey: ["searchResults", query, page, pageSize],
     queryFn: async () => {
-      try {
-        const request: SearchRequest = {
-          query,
-          page,
-          pageSize,
-        };
-        const response = await getSearchResults(request);
-        return response;
-      } catch (error) {
-        console.error("검색 결과 조회 실패:", error);
-        throw error;
-      }
+      const request: SearchRequest = {
+        query,
+        page,
+        pageSize,
+      };
+      return getSearchResults(request);
     },
     enabled: query.length > 0,
     staleTime: 1 * 60 * 1000, // 1분

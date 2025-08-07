@@ -1,9 +1,8 @@
-// import { useRecommendSearchKeywords } from "@/hooks/useSearch";
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import { useRecommendSearchKeywords } from "@/hooks/search/useSearch";
 import { RecommendSearchProps } from "@/types/search/search";
-import { recommendSearchMockData } from "@/mocks/search/searchMocks";
 
 import RecommendCard from "./RecommendCard";
 
@@ -13,28 +12,16 @@ const RecommendSearch = ({
   query,
   onCardClick,
 }: RecommendSearchProps) => {
-  // TODO: 백엔드 API 완료 시 React Query 훅으로 변경
-  // const { data: searchData, isLoading, error } = useRecommendSearchKeywords(query);
-
-  // Mock 데이터 사용
-  const [searchData, setSearchData] = useState<
-    typeof recommendSearchMockData | null
-  >(null);
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: searchData,
+    isLoading,
+    error,
+  } = useRecommendSearchKeywords(query);
 
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
 
   useEffect(() => {
     if (isOpen && query.trim()) {
-      // Mock 데이터 로딩 시뮬레이션 (실제 API 연동 시 제거)
-      setIsLoading(true);
-      setTimeout(() => {
-        setSearchData(recommendSearchMockData);
-        setError(null);
-        setIsLoading(false);
-      }, 300); // 300ms 로딩 시뮬레이션
-
       // 모달 열릴 때 배경 스크롤 방지
       document.body.style.overflow = "hidden";
     } else {
@@ -63,6 +50,8 @@ const RecommendSearch = ({
 
   if (!isOpen || !query.trim()) return null;
 
+  const inquiries = searchData?.result?.inquiries || [];
+
   return (
     <div className="fixed inset-0 z-200 flex items-start" onClick={onClose}>
       <div className="absolute inset-0 ml-25 mt-16 bg-black80/40" />
@@ -75,7 +64,7 @@ const RecommendSearch = ({
           <h3 className="text-gray-80 text-body1 pl-6 mb-6">
             검색결과 (총{" "}
             <span className="text-main text-body1-b">
-              {searchData?.total_count || 0}
+              {searchData?.result?.total_count || 0}
             </span>
             건)
           </h3>
@@ -97,36 +86,30 @@ const RecommendSearch = ({
             </div>
           )}
 
-          {!isLoading &&
-            !error &&
-            searchData &&
-            searchData.inquiries.length === 0 && (
-              <div className="flex justify-center py-8">
-                <p className="text-gray-60">검색 결과가 없습니다.</p>
-              </div>
-            )}
+          {!isLoading && !error && inquiries.length === 0 && (
+            <div className="flex justify-center py-8">
+              <p className="text-gray-60">검색 결과가 없습니다.</p>
+            </div>
+          )}
 
-          {!isLoading &&
-            !error &&
-            searchData &&
-            searchData.inquiries.length > 0 && (
-              <div>
-                {searchData.inquiries.slice(0, 5).map(result => (
-                  <RecommendCard
-                    key={result.inquiry_id}
-                    title={result.title}
-                    group_name={result.group_name}
-                    division_name={result.division_name}
-                    team_name={result.team_name}
-                    query={query}
-                    isSelected={selectedCardId === result.inquiry_id}
-                    onClick={() =>
-                      handleCardClick(result.inquiry_id, result.title)
-                    }
-                  />
-                ))}
-              </div>
-            )}
+          {!isLoading && !error && inquiries.length > 0 && (
+            <div>
+              {inquiries.slice(0, 5).map(result => (
+                <RecommendCard
+                  key={result.inquiry_id}
+                  title={result.title}
+                  group_name={result.group_name}
+                  division_name={result.division_name}
+                  team_name={result.team_name}
+                  query={query}
+                  isSelected={selectedCardId === result.inquiry_id}
+                  onClick={() =>
+                    handleCardClick(result.inquiry_id, result.title)
+                  }
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="h-16 px-6 flex items-center rounded-b-[15px] justify-end border-t bg-gray-10 border-gray-20">

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { MOCK_DIVISIONS, MOCK_GROUPS, MOCK_TEAMS } from "@/mocks/team/teamData";
+import { Division, Group, Team } from "@/types/team/user.type";
 
 import {
   getDivisionsByGroupId,
@@ -20,20 +20,7 @@ export const useTeamSelection = () => {
   // 그룹 목록 조회
   const { data: groupsData, isLoading: groupsLoading } = useQuery({
     queryKey: ["groups"],
-    queryFn: async () => {
-      try {
-        const response = await getGroups();
-        return response;
-      } catch (error) {
-        console.log("그룹 API 에러, Mock 데이터 사용:", error);
-        return {
-          is_success: true,
-          code: "COMMON200",
-          message: "요청 처리 성공",
-          result: MOCK_GROUPS,
-        };
-      }
-    },
+    queryFn: getGroups,
   });
 
   // 본부 목록 조회
@@ -42,18 +29,8 @@ export const useTeamSelection = () => {
     queryFn: async () => {
       if (!selectedGroupId) return { result: [] };
 
-      try {
-        const response = await getDivisionsByGroupId(selectedGroupId);
-        return response;
-      } catch (error) {
-        console.log("본부 API 에러, Mock 데이터 사용:", error);
-        return {
-          is_success: true,
-          code: "COMMON200",
-          message: "요청 처리 성공",
-          result: MOCK_DIVISIONS,
-        };
-      }
+      const response = await getDivisionsByGroupId(selectedGroupId);
+      return response;
     },
     enabled: !!selectedGroupId,
   });
@@ -64,25 +41,16 @@ export const useTeamSelection = () => {
     queryFn: async () => {
       if (!selectedDivisionId) return { result: [] };
 
-      try {
-        const response = await getTeamsByDivisionId(selectedDivisionId);
-        return response;
-      } catch (error) {
-        console.log("팀 API 에러, Mock 데이터 사용:", error);
-        return {
-          is_success: true,
-          code: "COMMON200",
-          message: "요청 처리 성공",
-          result: MOCK_TEAMS,
-        };
-      }
+      const response = await getTeamsByDivisionId(selectedDivisionId);
+      return response;
     },
     enabled: !!selectedDivisionId,
   });
 
-  const groups = groupsData?.result || [];
-  const divisions = divisionsData?.result || [];
-  const teams = teamsData?.result || [];
+  // API 데이터 사용
+  const groups: Group[] = groupsData?.result || [];
+  const divisions: Division[] = divisionsData?.result || [];
+  const teams: Team[] = teamsData?.result || [];
 
   const isLoading = groupsLoading || divisionsLoading || teamsLoading;
 
@@ -119,8 +87,10 @@ export const useTeamSelection = () => {
     },
 
     // 선택된 항목들
-    selectedGroup: groups.find(g => g.groupId === selectedGroupId),
-    selectedDivision: divisions.find(d => d.divisionId === selectedDivisionId),
-    selectedTeam: teams.find(t => t.teamId === selectedTeamId),
+    selectedGroup: groups.find((g: Group) => g.groupId === selectedGroupId),
+    selectedDivision: divisions.find(
+      (d: Division) => d.divisionId === selectedDivisionId
+    ),
+    selectedTeam: teams.find((t: Team) => t.teamId === selectedTeamId),
   };
 };

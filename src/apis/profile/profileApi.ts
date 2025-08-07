@@ -7,11 +7,9 @@ import {
 
 import instance from "@/apis/instance";
 
-export const getProfile = async (): Promise<ApiResponse<ProfileData>> => {
+export const getProfile = async (): ApiResponse<ProfileData> => {
   try {
-    const response = await instance.get<ApiResponse<ProfileData>>(
-      "/api/profile/preview"
-    );
+    const response = await instance.get("/api/profile/preview");
     return response.data;
   } catch (error) {
     // API 에러 시 Mock 데이터 사용
@@ -26,13 +24,9 @@ export const getProfile = async (): Promise<ApiResponse<ProfileData>> => {
 };
 
 // 타인의 프로필 정보 조회
-export const getOtherProfile = async (
-  id: number
-): Promise<ApiResponse<ProfileData>> => {
+export const getOtherProfile = async (id: number): ApiResponse<ProfileData> => {
   try {
-    const response = await instance.get<ApiResponse<ProfileData>>(
-      `/api/profile/preview/${id}`
-    );
+    const response = await instance.get(`/api/profile/preview/${id}`);
     return response.data;
   } catch (error) {
     // API 에러 시 Mock 데이터 사용

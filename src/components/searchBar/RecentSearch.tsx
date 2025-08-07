@@ -1,9 +1,11 @@
-// import { useDeleteRecentSearchKeyword, useRecentSearchKeywords } from "@/hooks/useSearch";
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import {
+  useDeleteRecentSearchKeyword,
+  useRecentSearchKeywords,
+} from "@/hooks/search/useSearch";
 import { RecentSearchProps } from "@/types/search/search";
-import { recentSearchMockData } from "@/mocks/search/searchMocks";
 
 import Keyword from "./Keyword";
 
@@ -12,18 +14,17 @@ const RecentSearch = ({
   onClose,
   onKeywordClick,
 }: RecentSearchProps) => {
-  // TODO: 백엔드 API 완료 시 React Query 훅으로 변경
-  // const { data: searchData, isLoading, error } = useRecentSearchKeywords();
-  // const deleteKeywordMutation = useDeleteRecentSearchKeyword();
+  const { data: searchData, isLoading, error } = useRecentSearchKeywords();
+  const deleteKeywordMutation = useDeleteRecentSearchKeyword();
 
   const [keywords, setKeywords] = useState<string[]>([]);
-  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      // Mock 데이터 즉시 설정
-      setKeywords(recentSearchMockData.keywords);
-      setError(null); // 에러 상태 초기화
+      // API 데이터 설정
+      if (searchData?.result?.keywords) {
+        setKeywords(searchData.result.keywords);
+      }
 
       // 모달 열릴 때 배경 스크롤 방지
       document.body.style.overflow = "hidden";
@@ -36,19 +37,15 @@ const RecentSearch = ({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [isOpen, searchData]);
 
   const handleKeywordRemove = async (keywordToRemove: string) => {
-    // TODO: 백엔드 API 완료 시 실제 API 호출로 변경
-    // try {
-    //   await deleteKeywordMutation.mutateAsync(keywordToRemove);
-    //   // 성공 시 React Query가 자동으로 데이터를 다시 조회
-    // } catch (error) {
-    //   console.error('검색어 삭제 실패:', error);
-    // }
-
-    // Mock 데이터에서 제거
-    setKeywords(prev => prev.filter(keyword => keyword !== keywordToRemove));
+    try {
+      await deleteKeywordMutation.mutateAsync(keywordToRemove);
+      // 성공 시 React Query가 자동으로 데이터를 다시 조회
+    } catch (error) {
+      console.error("검색어 삭제 실패:", error);
+    }
   };
 
   const handleKeywordClick = (keyword: string) => {
@@ -68,6 +65,15 @@ const RecentSearch = ({
         <div className="px-16 py-10">
           <h3 className="text-gray-80 text-body1 mb-6">최근 검색어</h3>
 
+          {isLoading && (
+            <div className="flex justify-center py-8">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-gray-30 border-t-main rounded-full animate-spin"></div>
+                <p className="text-gray-60">로딩 중...</p>
+              </div>
+            </div>
+          )}
+
           {error && (
             <div className="flex justify-center py-8">
               <p className="text-red-500">
@@ -76,13 +82,13 @@ const RecentSearch = ({
             </div>
           )}
 
-          {!error && keywords.length === 0 && (
+          {!isLoading && !error && keywords.length === 0 && (
             <div className="flex justify-center py-8">
               <p className="text-gray-60">최근 검색어가 없습니다.</p>
             </div>
           )}
 
-          {!error && keywords.length > 0 && (
+          {!isLoading && !error && keywords.length > 0 && (
             <div className="flex flex-wrap gap-[19px]">
               {keywords.map((keyword: string, index: number) => (
                 <Keyword
@@ -90,8 +96,7 @@ const RecentSearch = ({
                   keyword={keyword}
                   onRemove={handleKeywordRemove}
                   onClick={() => handleKeywordClick(keyword)}
-                  // isRemoving={deleteKeywordMutation.isPending}
-                  isRemoving={false}
+                  isRemoving={deleteKeywordMutation.isPending}
                 />
               ))}
             </div>
