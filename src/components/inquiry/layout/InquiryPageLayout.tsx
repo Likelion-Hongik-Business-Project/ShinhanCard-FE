@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 
-import Upload from "@/assets/svgs/common/upload.svg";
-import Button from "@/components/common/Button";
+import ExportDropdown from "@/components/common/ExportDropdown";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
@@ -104,8 +103,9 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
   };
 
   // 엑셀 다운로드 함수
-  const handleExport = () => {
-    alert("엑셀 다운로드 기능");
+  const handleExport = async (option: "filtered" | "all") => {
+    console.log(option);
+    // TODO: API 각각 연결
   };
 
   return (
@@ -119,10 +119,9 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
           </p>
         </div>
         {totalCount !== 0 && (
-          <Button className="self-end" onClick={handleExport}>
-            <Upload />
-            <span className="text-gray-80 text-heading3">Export</span>
-          </Button>
+          <div className="self-end">
+            <ExportDropdown onExport={handleExport} />
+          </div>
         )}
       </div>
 
