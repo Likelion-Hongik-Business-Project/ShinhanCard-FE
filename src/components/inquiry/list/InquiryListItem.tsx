@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import ProfileIcon from "@/assets/svgs/common/profile.svg";
@@ -16,14 +18,22 @@ type Props = {
 const InquiryListItem = ({ item, isScraped }: Props) => {
   const navigate = useNavigate();
   const { scrapInquiry, unscrapInquiry, isScrapLoading } = useScrap();
+  const [scraped, setScraped] = useState(isScraped);
 
+  const handleScrapClick = () => {
+    if (scraped) {
+      unscrapInquiry(item.id);
+    } else {
+      scrapInquiry(item.id);
+    }
+    // 낙관적 업데이트
+    setScraped(prev => !prev);
+  };
   return (
     <li className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
       <button
         className="px-4 mr-7 flex items-center cursor-pointer"
-        onClick={() =>
-          isScraped ? unscrapInquiry(item.id) : scrapInquiry(item.id)
-        }
+        onClick={handleScrapClick}
         disabled={isScrapLoading}
       >
         {isScraped ? (

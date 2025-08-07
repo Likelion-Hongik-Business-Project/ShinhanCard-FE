@@ -9,7 +9,7 @@ import {
 
 export const useInitAssignedApi = ({ page = 1 }: GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["assignedInquiries", page],
+    queryKey: ["inquiries", "assigned", "init", page],
     queryFn: async () => {
       const response = await getInitAssignedInquiries(page);
       return response.result;
@@ -34,7 +34,7 @@ export const useAssignedByTeamApi = ({
   teamId: number;
 } & GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["assignedInquiries", "team", teamId, page, status, date],
+    queryKey: ["inquiries", "assigned", "team", teamId, page, status, date],
     queryFn: async () => {
       const response = await getAssignedInquiriesByTeam(
         teamId,

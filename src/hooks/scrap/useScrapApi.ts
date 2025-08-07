@@ -16,7 +16,9 @@ export const useScrapApi = () => {
   const addScrap = useMutation({
     mutationFn: (inquiryId: number) => postScrapInquiry(inquiryId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignedInquiries"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "assigned"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "scrap"] });
     },
   });
 
@@ -24,7 +26,9 @@ export const useScrapApi = () => {
   const removeScrap = useMutation({
     mutationFn: (inquiryId: number) => deleteScrapInquiry(inquiryId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignedInquiries"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "assigned"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["inquiries", "scrap"] });
     },
   });
 
@@ -36,7 +40,7 @@ export const useScrapApi = () => {
 
 export const useInitScrapApi = ({ page = 1 }: GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["scrapInquiries", page],
+    queryKey: ["inquiries", "scrap", "init", page],
     queryFn: async () => {
       const response = await getInitScrapInquiries(page);
       return response.result;
@@ -61,7 +65,7 @@ export const useScrapByTeamApi = ({
   teamId: number;
 } & GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["scrapInquiries", "team", teamId, page, status, date],
+    queryKey: ["inquiries", "scrap", "team", teamId, page, status, date],
     queryFn: async () => {
       const response = await getScrapInquiriesByTeam(
         teamId,

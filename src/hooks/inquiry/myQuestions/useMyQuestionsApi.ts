@@ -9,7 +9,7 @@ import {
 
 export const useInitMyQuestionsApi = ({ page = 1 }: GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["myQuestionsInquiries", page],
+    queryKey: ["inquiries", "mine", "init", page],
     queryFn: async () => {
       const response = await getInitMyQuestionsInquiries(page);
       return response.result;
@@ -34,7 +34,7 @@ export const useMyQuestionsByTeamApi = ({
   teamId: number;
 } & GetInquiriesRequest) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["myQuestionsInquiries", "team", teamId, page, status, date],
+    queryKey: ["inquiries", "mine", "team", teamId, page, status, date],
     queryFn: async () => {
       const response = await getMyQuestionsInquiriesByTeam(
         teamId,
