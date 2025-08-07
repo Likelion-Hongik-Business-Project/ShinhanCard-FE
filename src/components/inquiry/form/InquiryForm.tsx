@@ -20,12 +20,6 @@ interface Props {
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
   onDropdownStateChange: (isOpen: boolean) => void;
-  initialFiles?: {
-    fileId: number;
-    fileName: string;
-    fileKey: string;
-    fileSize: number;
-  }[];
 }
 
 const InquiryForm = ({
@@ -41,7 +35,6 @@ const InquiryForm = ({
   setReferenceIds,
   setFileIds,
   onDropdownStateChange,
-  initialFiles,
   files,
   setFiles,
 }: Props) => {
@@ -63,7 +56,6 @@ const InquiryForm = ({
         files={files}
         setFileIds={setFileIds}
         setFiles={setFiles}
-        initialFiles={initialFiles}
       />
       <div className="w-full h-[1px] bg-gray-10" />
       <AssigneeSelector

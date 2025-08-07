@@ -1,12 +1,10 @@
-import { useEffect } from "react";
-
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
 import Modal from "@/components/common/Modal";
 import { useDragAndDrop } from "@/hooks/file/useDragAndDrop";
 import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
-import { InquiryDraftFile, UploadFile } from "@/types/file/file.type";
+import { UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
@@ -16,12 +14,11 @@ interface Props {
   files: UploadFile[];
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
-  initialFiles?: InquiryDraftFile[];
 }
 
 const FileUploadBox = ({
   setFileIds,
-  initialFiles = [],
+
   files,
   setFiles,
 }: Props) => {
@@ -37,23 +34,6 @@ const FileUploadBox = ({
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
   });
-
-  // 초기 세팅
-  useEffect(() => {
-    if (initialFiles.length === 0) return;
-
-    const restoredFiles: UploadFile[] = initialFiles.map(file => ({
-      id: file.fileId,
-      fileId: file.fileId,
-      name: file.fileName,
-      size: file.fileSize,
-      progress: 100,
-      status: "done",
-    }));
-
-    setFileIds(restoredFiles.map(f => f.fileId!));
-    setFiles(restoredFiles);
-  }, [initialFiles, setFiles]);
 
   return (
     <div className="flex flex-col gap-4">

@@ -78,6 +78,7 @@ const InquiryFormPage = () => {
     setAssigneeIds,
     setReferenceIds,
     setFileIds,
+    setFiles,
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,
@@ -185,7 +186,11 @@ const InquiryFormPage = () => {
       </div>
 
       <div className="flex gap-8 w-full justify-end mt-10">
-        <Button className="white" onClick={saveDraft} disabled={isDraftSaved}>
+        <Button
+          buttonType={isDraftSaved ? "done" : "white"}
+          onClick={saveDraft}
+          disabled={isDraftSaved}
+        >
           {isDraftSaved ? "임시저장완료" : "임시저장"}
         </Button>
         <Button buttonType="blue" onClick={handleSubmit}>

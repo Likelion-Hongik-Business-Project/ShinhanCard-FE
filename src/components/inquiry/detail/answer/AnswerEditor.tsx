@@ -76,7 +76,6 @@ const AnswerEditor = ({
         files={files}
         setFileIds={setFileIds}
         setFiles={setFiles}
-        initialFiles={[]}
       />
       <div className="flex justify-end gap-4">
         <Button buttonType="default" className="text-gray-80">

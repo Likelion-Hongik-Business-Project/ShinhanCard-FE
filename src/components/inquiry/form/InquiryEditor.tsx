@@ -73,29 +73,31 @@ const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
         />
       </div>
 
-      <Editor
-        ref={editorRef}
-        hooks={{
-          addImageBlobHook: async blob => {
-            const imageUrl = await uploadImage(blob);
-            const editorInstance = editorRef.current?.getInstance();
-            editorInstance?.exec("addImage", {
-              imageUrl,
-              altText: blob instanceof File ? blob.name : "image",
-            });
+      <div className="min-h-[230px]">
+        <Editor
+          ref={editorRef}
+          hooks={{
+            addImageBlobHook: async blob => {
+              const imageUrl = await uploadImage(blob);
+              const editorInstance = editorRef.current?.getInstance();
+              editorInstance?.exec("addImage", {
+                imageUrl,
+                altText: blob instanceof File ? blob.name : "image",
+              });
 
-            return false;
-          },
-        }}
-        initialValue=""
-        placeholder="본문의 내용을 입력하세요"
-        language="ko"
-        height="auto"
-        initialEditType="wysiwyg"
-        hideModeSwitch={true}
-        previewStyle="tab"
-        toolbarItems={[]}
-      />
+              return false;
+            },
+          }}
+          initialValue=""
+          placeholder="본문의 내용을 입력하세요"
+          language="ko"
+          height="auto"
+          initialEditType="wysiwyg"
+          hideModeSwitch={true}
+          previewStyle="tab"
+          toolbarItems={[]}
+        />
+      </div>
     </div>
   );
 };

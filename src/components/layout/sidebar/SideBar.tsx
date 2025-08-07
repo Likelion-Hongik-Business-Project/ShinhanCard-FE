@@ -23,8 +23,6 @@ import SideBarLargeItem from "@/components/layout/sidebar/SideBarLargeItem";
 import SideBarSmallItem from "@/components/layout/sidebar/SideBarSmallItem";
 import TeamSelector from "@/components/layout/sidebar/TeamSelector";
 
-import instance from "@/apis/instance";
-
 type Props = {
   isOpen: boolean;
   isGroupSelectorOpen: boolean;
@@ -133,10 +131,6 @@ const SideBar = ({
     scheduleClose();
   };
 
-  const handleClick = async () => {
-    const res = await instance.get("api/teams/1/inquiries/export");
-    return res.data;
-  };
   return (
     <div className="relative">
       <aside
@@ -153,10 +147,7 @@ const SideBar = ({
               : "opacity-0 -translate-x-2 duration-200 delay-0 pointer-events-none"
           )}
         >
-          <SideBarLargeItem icon={Home} label="홈" path="/" />{" "}
-          <div className="h-50" onClick={handleClick}>
-            아아아{" "}
-          </div>
+          <SideBarLargeItem icon={Home} label="홈" path="/" />
           <SideBarLargeItem
             icon={Bell}
             label="수신함"
