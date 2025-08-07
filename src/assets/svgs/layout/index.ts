@@ -14,3 +14,7 @@ export { default as Message } from "./message.svg";
 export { default as MessageActive } from "./message-active.svg";
 export { default as Pencil } from "./pencil.svg";
 export { default as PencilActive } from "./pencil-active.svg";
+
+// SearchBar 아이콘
+
+export { default as Xmark } from "./icon-x.svg";

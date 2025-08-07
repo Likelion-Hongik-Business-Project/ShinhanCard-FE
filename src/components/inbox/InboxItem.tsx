@@ -94,7 +94,10 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
           {/* hover 상태일 때만 표시 */}
           {isArchived ? (
             <div className="hidden transition group-hover:flex w-[32px] ml-auto h-[32px] items-center bg-white border border-gray-20 rounded-[8px] p-1">
-              <div className="group/reset relative w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]">
+              <div
+                onClick={e => e.stopPropagation()}
+                className="group/reset relative w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]"
+              >
                 <Reset className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
                 <div className="absolute bottom-8 h-[22px] px-2 bg-main-dark rounded-[8px] flex justify-center items-center opacity-0 group-hover/reset:opacity-100 z-10">
                   <span className="text-detail3 text-white whitespace-nowrap">

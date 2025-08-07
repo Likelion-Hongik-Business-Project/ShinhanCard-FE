@@ -1,5 +1,5 @@
-import { FilledHeart } from "@/assets/svgs/commons";
-import { User } from "@/assets/svgs/home";
+import FilledHeart from "@/assets/svgs/common/heart-active.svg";
+import User from "@/assets/svgs/home/icon-user.svg";
 import { InterestMember } from "@/types/home";
 
 type Props = {
