@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
 import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
@@ -22,7 +22,8 @@ const TeamTabs = ({
   hiddenTeams,
   onCloseModal,
 }: Props) => {
-  const maxVisibleTabs = 3;
+  const [maxVisibleTabs, setMaxVisibleTabs] = useState(3);
+
   const visibleTabs = teams.slice(0, maxVisibleTabs);
   const hiddenTabs = teams.slice(maxVisibleTabs);
 
@@ -31,6 +32,20 @@ const TeamTabs = ({
   );
 
   const isMoreTabActive = isHiddenTeamSelected || isModalOpen;
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setMaxVisibleTabs(width <= 1120 ? 2 : 3);
+      }
+    });
+
+    if (wrapperRef.current) observer.observe(wrapperRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -55,18 +70,18 @@ const TeamTabs = ({
   }, [isModalOpen, onCloseModal]);
 
   return (
-    <div className="relative flex">
+    <div ref={wrapperRef} className="relative flex w-full">
       {visibleTabs.map(team => (
         <button
           key={team.team_id}
           onClick={() => onSelectTeam(team.team_id)}
-          className={`px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[1px] ${
+          className={`px-7 py-5 rounded-t-[15px] min-w-0 max-w-[440px] cursor-pointer transition mb-[1px] ${
             team.team_id === selectedTeamId
               ? "border-t-[2px] text-gray-80 border-main bg-white pt-[18px]"
               : "bg-gray-20 text-gray-50"
           }`}
         >
-          <span className="text-heading3-b">
+          <span className="text-heading3-b truncate block overflow-hidden whitespace-nowrap text-ellipsis">
             {team.group_name} &gt; {team.division_name} &gt; {team.team_name}
           </span>
         </button>
@@ -78,7 +93,7 @@ const TeamTabs = ({
             onClick={onToggleModal}
             className={`px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[1px] ${
               isMoreTabActive
-                ? "border-t-[2px] border-x-[2px] border-gray-20 text-gray-80 bg-white py-[18px] px-[26px]"
+                ? "border-[2px] border-gray-20 text-gray-80 bg-white py-[18px] px-[26px]"
                 : "bg-gray-20 text-gray-50"
             }`}
           >
