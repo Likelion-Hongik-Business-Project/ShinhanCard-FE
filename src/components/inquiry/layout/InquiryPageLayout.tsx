@@ -4,7 +4,6 @@ import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
-import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
 import {
   InquiryListItem,
@@ -133,22 +132,15 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
         </div>
       ) : (
         <>
-          <div className="relative">
-            <TeamTabs
-              teams={teams}
-              selectedTeamId={selectedTeamId}
-              onSelectTeam={onSelectTeam}
-              onOpenModal={() => setIsTeamModalOpen(true)}
-            />
-            {isTeamModalOpen && (
-              <TeamTabsModal
-                teams={hiddenTeams}
-                selectedTeamId={selectedTeamId}
-                onSelectTeam={onSelectTeam}
-                onClose={() => setIsTeamModalOpen(false)}
-              />
-            )}
-          </div>
+          <TeamTabs
+            teams={teams}
+            selectedTeamId={selectedTeamId}
+            onSelectTeam={onSelectTeam}
+            onToggleModal={() => setIsTeamModalOpen(prev => !prev)}
+            isModalOpen={isTeamModalOpen}
+            hiddenTeams={hiddenTeams}
+            onCloseModal={() => setIsTeamModalOpen(false)}
+          />
           <InquiryList
             inquiries={filteredInquiries}
             currentPage={currentPage}
