@@ -1,22 +1,17 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import { formatDateToKorean } from "@/utils/dateUtils";
-import type { Comment } from "@/types/inquiryTypes";
-
-interface AnswerItemProps {
-  comment: Comment;
-  isOnlyComment: boolean;
-  currentUserId?: number;
-}
+import type { AnswerItemProps } from "@/types/inquiryTypes";
 
 const AnswerItem = ({
   comment,
   isOnlyComment,
   currentUserId,
+  onStartEdit,
 }: AnswerItemProps) => {
   const isWriter = comment.writer.user_id === currentUserId;
 
   return (
-    <div className="flex flex-col gap-8 pt-8">
+    <div className="flex flex-col gap-8">
       <div className="whitespace-pre-line px-4 text-body2 text-gray-100">
         {comment.content}
       </div>
@@ -47,7 +42,12 @@ const AnswerItem = ({
 
           {isWriter && (
             <div className="flex items-center gap-8">
-              <button className="text-body2 text-gray-50">수정</button>
+              <button
+                onClick={() => onStartEdit(comment.writer.user_id)}
+                className="text-body2 text-gray-50"
+              >
+                수정
+              </button>
               <button
                 disabled={isOnlyComment}
                 className="text-body2 text-gray-50 disabled:cursor-not-allowed disabled:text-gray-30"

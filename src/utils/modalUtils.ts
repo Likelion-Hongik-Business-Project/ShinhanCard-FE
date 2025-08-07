@@ -14,5 +14,7 @@ export const getButtonClass = (
       return `${base} bg-white border border-main text-main hover:bg-gray-10`;
     case "gray":
       return `${base} bg-gray-30 text-white hover:bg-gray-50`;
+    case "red":
+      return `${base} bg-point-red text-white`;
   }
 };

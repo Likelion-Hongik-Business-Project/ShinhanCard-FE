@@ -16,10 +16,8 @@ const getAssigneeTextColor = (
 const AssigneeSection = ({
   assignees,
   references,
-  // confirmedAssignees, 커밋용 임시 주석 처리
   isPendingState,
-  isAssigneeEditMode,
-  showAssigneeFeatures,
+  confirmedUsers = [],
 }: AssigneeSectionProps) => {
   return (
     <div className="px-[16px] flex flex-col justify-start items-start gap-[16px]">
@@ -35,7 +33,9 @@ const AssigneeSection = ({
         </div>
         <div className="w-[728px] px-[8px] py-[4px] bg-white rounded-[5px] flex justify-start items-center gap-[16px]">
           {assignees?.map(assignee => {
-            const isConfirmed = assignee.is_confirmed;
+            const isConfirmed =
+              assignee.is_confirmed ||
+              confirmedUsers.includes(assignee.user_id);
 
             const textColor = getAssigneeTextColor(isPendingState, isConfirmed);
 
@@ -113,15 +113,6 @@ const AssigneeSection = ({
           )}
         </div>
       </div>
-
-      {/* 담당자용 수정 섹션 */}
-      {showAssigneeFeatures && isAssigneeEditMode && (
-        <div className="w-full mt-4 p-4 bg-gray-10 rounded-lg">
-          <div className="text-gray-60 text-body2">
-            담당자 수정 섹션 (UI 추가 예정)
-          </div>
-        </div>
-      )}
     </div>
   );
 };

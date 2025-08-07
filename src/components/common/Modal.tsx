@@ -44,25 +44,14 @@ const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
         onClick={e => e.stopPropagation()}
       >
         <div className="text-center">
-          <h2 className="text-heading2-b text-gray-80 break-words">
-            {typeof title === "string"
-              ? title.split("\n").map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    <br />
-                  </span>
-                ))
-              : title}
+          <h2 className="text-heading2-b text-gray-80 break-words whitespace-pre-line">
+            {title}
           </h2>
+
           {description && (
             <div className="mt-4 h-12 flex items-center max-w-[400px]">
-              <p className="text-body2 text-gray-60 mx-auto">
-                {description.split("\n").map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    <br />
-                  </span>
-                ))}
+              <p className="text-body2 text-gray-60 mx-auto whitespace-pre-line">
+                {description}
               </p>
             </div>
           )}
