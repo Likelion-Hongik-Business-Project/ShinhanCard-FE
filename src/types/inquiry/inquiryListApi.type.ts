@@ -134,6 +134,6 @@ export interface UncheckedAnswerListResponse {
 // 미확인 문의 리스트 응답
 export interface UncheckedInquiryListResponse {
   selected_team: TeamItem;
-  inquiries: AssignedInquiryItem[];
+  inquiries: InquiryItem[];
   pagination: InquiryPagination;
 }

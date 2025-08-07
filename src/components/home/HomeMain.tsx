@@ -18,8 +18,9 @@ import { GetHomeInitialResponse } from "@/types/home/homeApi.type";
 import {
   InquiryListItem,
   InquiryServerStatus,
+  Profile,
   YearMonth,
-} from "@/types/inquiry";
+} from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   answerCount: number;
@@ -46,6 +47,7 @@ const HomeMain = ({
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,6 +92,7 @@ const HomeMain = ({
     setCurrentPage(1);
     setIsStatusModalOpen(false);
     setIsDateModalOpen(false);
+    setIsTeamModalOpen(false);
 
     // 탭 변경 시 해당 탭의 첫 번째 팀으로 초기화
     const currentTeams = getCurrentTeams();
@@ -111,11 +114,23 @@ const HomeMain = ({
   const toggleStatusModal = () => {
     setIsStatusModalOpen(prev => !prev);
     setIsDateModalOpen(false);
+    setIsTeamModalOpen(false);
   };
 
   const toggleDateModal = () => {
     setIsDateModalOpen(prev => !prev);
     setIsStatusModalOpen(false);
+    setIsTeamModalOpen(false);
+  };
+
+  const toggleTeamModal = () => {
+    setIsTeamModalOpen(prev => !prev);
+    setIsStatusModalOpen(false);
+    setIsDateModalOpen(false);
+  };
+
+  const closeTeamModal = () => {
+    setIsTeamModalOpen(false);
   };
 
   // 현재 탭에 따른 원본 데이터 선택
@@ -188,11 +203,7 @@ const HomeMain = ({
         if (!statusLabel) return null;
 
         // 미확인 답변과 미확인 문의의 데이터 구조가 다름
-        let leftProfiles: {
-          user_id: number;
-          name: string;
-          profile_image_url: string;
-        }[];
+        let leftProfiles: Profile[];
 
         if (activeTab === "answer") {
           // 미확인 답변: result.writer 사용 (모든 문의가 동일한 작성자)
@@ -200,7 +211,7 @@ const HomeMain = ({
           if (writer) {
             leftProfiles = [
               {
-                user_id: writer.id,
+                id: writer.id,
                 name: writer.name,
                 profile_image_url: writer.profile_image_url,
               },
@@ -213,7 +224,7 @@ const HomeMain = ({
           if ("writer" in item && item.writer) {
             leftProfiles = [
               {
-                user_id: item.writer.id,
+                id: item.writer.id,
                 name: item.writer.name,
                 profile_image_url: item.writer.profile_image_url,
               },
@@ -227,7 +238,7 @@ const HomeMain = ({
           if (writer) {
             leftProfiles = [
               {
-                user_id: writer.id,
+                id: writer.id,
                 name: writer.name,
                 profile_image_url: writer.profile_image_url,
               },
@@ -255,6 +266,11 @@ const HomeMain = ({
     selectedStatus === "전체"
       ? currentItems
       : currentItems.filter(item => item.status === selectedStatus);
+
+  // 숨겨진 팀들 계산 (TeamTabs에서 사용)
+  const currentTeams = getCurrentTeams();
+  const maxVisibleTabs = 3; // TeamTabs에서 사용하는 기본값
+  const hiddenTeams = currentTeams.slice(maxVisibleTabs);
 
   return (
     <>
@@ -315,6 +331,10 @@ const HomeMain = ({
               teams={getCurrentTeams()}
               selectedTeamId={selectedTeamId}
               onSelectTeam={handleSelectTeam}
+              onToggleModal={toggleTeamModal}
+              isModalOpen={isTeamModalOpen}
+              hiddenTeams={hiddenTeams}
+              onCloseModal={closeTeamModal}
             />
             <InquiryList
               inquiries={filteredInquiries}
@@ -342,6 +362,10 @@ const HomeMain = ({
               teams={getCurrentTeams()}
               selectedTeamId={selectedTeamId}
               onSelectTeam={handleSelectTeam}
+              onToggleModal={toggleTeamModal}
+              isModalOpen={isTeamModalOpen}
+              hiddenTeams={hiddenTeams}
+              onCloseModal={closeTeamModal}
             />
             <InquiryList
               inquiries={filteredInquiries}
