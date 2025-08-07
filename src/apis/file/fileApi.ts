@@ -1,6 +1,8 @@
 import { ApiResponse } from "@/types/apiResponse.type";
 import {
   DeleteFileResponse,
+  GetImageFileRequest,
+  GetImageFileResponse,
   PostFileRequest,
   PostFileResponse,
 } from "@/types/file/fileApi.type";
@@ -18,5 +20,17 @@ export const deleteFile = async (
   fileId: number
 ): ApiResponse<DeleteFileResponse> => {
   const response = await instance.delete(`/api/files/${fileId}/delete`);
+  return response.data;
+};
+
+export const getImageFile = async (
+  data: GetImageFileRequest
+): ApiResponse<GetImageFileResponse> => {
+  const response = await instance.get("/api/files/images/upload-url", {
+    params: {
+      fileName: data.fileName,
+      contentType: data.contentType,
+    },
+  });
   return response.data;
 };

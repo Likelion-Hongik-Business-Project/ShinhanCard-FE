@@ -67,22 +67,16 @@ export const useInquiryDraft = ({
 
   const { data: draftExists, refetch: refetchDraftExists } =
     useCheckDraftExists(teamId, false);
+
   const { refetch: fetchDraft } = useGetInquiryDraft(
     teamId,
     draftExists?.result.draft_id ?? 0,
     !!teamId && !!draftExists?.result.draft_id
   );
+
   const { mutate: postDraft } = usePostInquiryDraftMutation();
   const { mutate: putDraft } = usePutInquiryDraftMutation();
   const { mutate: deleteDraft } = useDeleteInquiryDraftMutation();
-
-  const buildDraftPayload = () => ({
-    title,
-    content,
-    assignee_ids: assigneeIds,
-    observer_ids: referenceIds,
-    file_ids: fileIds,
-  });
 
   const saveDraft = async () => {
     const missing = validateFields();
@@ -91,59 +85,108 @@ export const useInquiryDraft = ({
       return;
     }
 
-    const payload = buildDraftPayload();
+    const draftData = {
+      title,
+      content,
+      assignee_ids: assigneeIds,
+      observer_ids: referenceIds,
+      file_ids: fileIds,
+    };
+
     if (justSavedDraft) return;
 
-    // case 1: draftId 존재 → PUT
+    // ✅ 여기에 추가! draftExists에 draft가 있지만 draftId는 아직 null인 경우
+    if (draftExists?.result.is_present && draftId === null) {
+      const newDraftId = draftExists.result.draft_id;
+      setDraftId(newDraftId);
+      console.log("➡️ setDraftId 실행됨. 새로운 ID:", newDraftId);
+    }
+
+    // ✅ 이 조건이 확실하게 첫 번째로 작동하도록
     if (draftId !== null) {
       putDraft(
-        { inquiryId: draftId, teamId, data: payload },
-        { onSuccess: handleSaveSuccess }
+        { inquiryId: draftId, teamId, data: draftData },
+        {
+          onSuccess: () => {
+            setIsDraftSaved(true);
+            setJustSavedDraft(true);
+            prevRef.current = {
+              title,
+              content,
+              assigneeIds,
+              referenceIds,
+              fileIds,
+            };
+          },
+        }
       );
       return;
     }
 
-    // case 2: draftExists만 있고 draftId는 없을 때 → draftId 세팅만
-    if (draftExists?.result.is_present && draftId === null) {
-      setDraftId(draftExists.result.draft_id);
-      return;
-    }
+    const { data: existing } = await refetchDraftExists();
+    const newDraftId = existing?.result.draft_id ?? null;
+    const previousDraftId = draftId;
 
-    // case 3: 새로 조회 후 비교
-    const idFromState = draftExists?.result.draft_id ?? null;
+    if (existing?.result.is_present) {
+      console.log("🟨 [모달 조건 검사]");
+      console.log(
+        "📌 existing.result.is_present:",
+        existing?.result.is_present
+      );
+      console.log("📌 newDraftId:", newDraftId, typeof newDraftId);
+      console.log(
+        "📌 previousDraftId:",
+        previousDraftId,
+        typeof previousDraftId
+      );
+      console.log(
+        "📌 비교 결과 (newDraftId !== previousDraftId):",
+        newDraftId !== previousDraftId
+      );
 
-    if (draftExists?.result.is_present) {
-      if (draftId !== null && draftId !== idFromState) {
-        setDraftId(idFromState);
+      if (existing.result.is_present && existing.result.draft_id !== draftId) {
+        setDraftId(existing.result.draft_id);
         setIsDraftModalOpen(true);
-        return;
+      } else if (newDraftId !== null) {
+        putDraft(
+          {
+            inquiryId: newDraftId,
+            teamId,
+            data: draftData,
+          },
+          {
+            onSuccess: () => {
+              setIsDraftSaved(true);
+              setJustSavedDraft(true);
+              prevRef.current = {
+                title,
+                content,
+                assigneeIds,
+                referenceIds,
+                fileIds,
+              };
+            },
+          }
+        );
       }
-
-      putDraft(
-        { inquiryId: idFromState!, teamId, data: payload },
-        { onSuccess: handleSaveSuccess }
-      );
     } else {
+      // 🆕 draft 자체가 존재하지 않으면 새로 생성
       postDraft(
-        { teamId, data: payload },
+        { teamId, data: draftData },
         {
           onSuccess: res => {
             setDraftId(res.result.inquiry_id);
-            handleSaveSuccess();
+            setIsDraftSaved(true);
+            setJustSavedDraft(true);
           },
         }
       );
     }
   };
 
-  const handleSaveSuccess = () => {
-    setIsDraftSaved(true);
-    setJustSavedDraft(true);
-    prevRef.current = { title, content, assigneeIds, referenceIds, fileIds };
-  };
-
   const restoreDraft = async () => {
     setIsDraftModalOpen(false);
+
     const { data } = await fetchDraft();
     if (!data?.result) return;
 
@@ -159,28 +202,36 @@ export const useInquiryDraft = ({
       inquiry_id,
     } = data.result;
 
+    prevRef.current = {
+      title,
+      content,
+      assigneeIds: assignees?.map(u => u.userId) ?? [],
+      referenceIds: observers?.map(u => u.userId) ?? [],
+      fileIds: files.map(f => f.fileId),
+    };
+
     setTitle(title);
     setContent(content);
     setAssigneeIds(assignees?.map(u => u.userId) ?? []);
     setReferenceIds(observers?.map(u => u.userId) ?? []);
     setFileIds(files.map(f => f.fileId));
     setFiles(
-      files.map(f => ({
-        id: f.fileId,
-        fileId: f.fileId,
-        name: f.fileName,
-        size: f.fileSize,
+      files.map(file => ({
+        id: file.fileId,
+        fileId: file.fileId,
+        name: file.fileName,
+        size: file.fileSize,
         progress: 100,
         status: "done",
       }))
     );
-
     handleGroupChange(group.groupId);
     handleDivisionChange(division.divisionId);
     handleTeamChange(team.teamId);
 
     setDraftId(inquiry_id);
-    handleSaveSuccess();
+    setIsDraftSaved(true);
+    setJustSavedDraft(true);
   };
 
   const resetDraft = () => {
@@ -192,11 +243,22 @@ export const useInquiryDraft = ({
         onSuccess: () => {
           setDraftId(null);
           postDraft(
-            { teamId, data: buildDraftPayload() },
+            {
+              teamId,
+              data: {
+                title,
+                content,
+                assignee_ids: assigneeIds,
+                observer_ids: referenceIds,
+                file_ids: fileIds,
+              },
+            },
             {
               onSuccess: res => {
                 setDraftId(res.result.inquiry_id);
-                handleSaveSuccess();
+                console.log(draftId);
+                setIsDraftSaved(true);
+                setJustSavedDraft(true);
               },
             }
           );
@@ -209,8 +271,8 @@ export const useInquiryDraft = ({
 
   const clearDraftState = () => {
     setDraftId(null);
-    setIsDraftSaved(false);
     setJustSavedDraft(false);
+    setIsDraftSaved(false);
   };
 
   useEffect(() => {
@@ -222,43 +284,20 @@ export const useInquiryDraft = ({
   useEffect(() => {
     if (!isDraftSaved) return;
 
-    const isChanged = (
-      prev: typeof prevRef.current,
-      current: typeof prevRef.current
-    ) =>
-      prev.title !== current.title ||
-      prev.content !== current.content ||
-      !arraysEqual(prev.assigneeIds, current.assigneeIds) ||
-      !arraysEqual(prev.referenceIds, current.referenceIds) ||
-      !arraysEqual(prev.fileIds, current.fileIds);
+    const arrayEqual = (a: number[], b: number[]) =>
+      a.length === b.length && a.every((v, i) => v === b[i]);
 
-    if (
-      isChanged(prevRef.current, {
-        title,
-        content,
-        assigneeIds,
-        referenceIds,
-        fileIds,
-      })
-    ) {
+    const changed =
+      prevRef.current.title !== title ||
+      prevRef.current.content !== content ||
+      !arrayEqual(prevRef.current.assigneeIds, assigneeIds) ||
+      !arrayEqual(prevRef.current.referenceIds, referenceIds) ||
+      !arrayEqual(prevRef.current.fileIds, fileIds);
+
+    if (changed) {
       setIsDraftSaved(false);
     }
   }, [title, content, assigneeIds, referenceIds, fileIds]);
-
-  const arraysEqual = (a: number[], b: number[]) =>
-    a.length === b.length && a.every((v, i) => v === b[i]);
-
-  useEffect(() => {
-    if (!teamId) return;
-
-    // 팀이 바뀌면 상태 초기화
-    setDraftId(null);
-    setIsDraftSaved(false);
-    setJustSavedDraft(false);
-
-    // draft 존재 여부 다시 조회
-    refetchDraftExists();
-  }, [teamId]);
 
   return {
     isDraftSaved,

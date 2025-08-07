@@ -19,3 +19,16 @@ export interface DeleteFileResponse {
   fileName: string;
   deleteTime: string;
 }
+
+export interface GetImageFileRequest {
+  fileName: string;
+  contentType: string;
+}
+
+export interface GetImageFileResponse {
+  uploadUrl: string;
+  fileKey: string;
+  fileName: string;
+  fileType: string;
+  previewUrl: string;
+}

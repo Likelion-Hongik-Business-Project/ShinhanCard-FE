@@ -1,16 +1,27 @@
-import { useS3UploadFile } from "@/hooks/file/useS3UploadFile";
+import { uploadFileToS3 } from "@/utils/s3UploadUtils";
+
+import { getImageFile } from "@/apis/file/fileApi";
 
 export const useEditorImageUpload = () => {
-  const uploadFile = useS3UploadFile();
-
   const uploadImage = async (blob: Blob | File): Promise<string> => {
     const file =
       blob instanceof File
         ? blob
         : new File([blob], "image.png", { type: blob.type });
 
-    const { fileUrl } = await uploadFile(file);
-    return fileUrl;
+    // 1. presigned URL 요청
+    const { result } = await getImageFile({
+      fileName: file.name,
+      contentType: file.type || "image/png",
+    });
+
+    const { uploadUrl, previewUrl } = result;
+
+    // 2. S3에 실제 업로드
+    await uploadFileToS3(uploadUrl, file, file.type || "image/png");
+
+    // 3. 최종 URL 반환
+    return previewUrl;
   };
 
   return uploadImage;
