@@ -49,7 +49,7 @@ export const AdditionalInquiryBody = ({
 
       {/* 본문 */}
       <div className="text-body2 text-gray-800 whitespace-pre-wrap">
-        <span className="text-body2 text-main ">
+        <span className="text-body2-b text-state-progress-02">
           {taggedUser.username + " "}
         </span>
         {content}

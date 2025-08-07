@@ -26,8 +26,6 @@ const AdditionalInquiryReplyForm = ({
   const [content, setContent] = useState(initialContent);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const prefix = taggedUser.username + " ";
-
   const isCompleteEnabled = content.trim().length > 0;
 
   useEffect(() => {
@@ -36,7 +34,7 @@ const AdditionalInquiryReplyForm = ({
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
     }
-  }, [initialContent, prefix]);
+  }, [initialContent]);
 
   const handleComplete = () => {
     if (!isCompleteEnabled) return;
@@ -64,8 +62,7 @@ const AdditionalInquiryReplyForm = ({
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setContent(val.slice(prefix.length));
+    setContent(e.target.value);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -77,9 +74,9 @@ const AdditionalInquiryReplyForm = ({
   return (
     <div className="w-full rounded-[15px] p-8 border-3 border-main bg-white flex gap-8">
       <div className="flex-1 flex flex-col gap-4">
-        <div className="relative flex">
-          <span className="absolute text-body2 text-main bg-white">
-            {prefix}
+        <div>
+          <span className="text-body2-b text-state-progress-02">
+            {taggedUser.username}
           </span>
           <textarea
             ref={textareaRef}
@@ -91,7 +88,7 @@ const AdditionalInquiryReplyForm = ({
               text-body2
             "
             placeholder=""
-            value={prefix + content}
+            value={content}
             onChange={handleChange}
           />
         </div>

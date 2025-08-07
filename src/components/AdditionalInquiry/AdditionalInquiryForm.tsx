@@ -35,8 +35,6 @@ const AdditionalInquiryForm = ({
 
   const selectedName = assignees.find(a => a.user_id === selectedId)?.username;
 
-  const prefix = selectedName ? selectedName + " " : "";
-
   const isCompleteEnabled = selectedId !== null && content.trim().length > 0;
 
   useEffect(() => {
@@ -71,8 +69,7 @@ const AdditionalInquiryForm = ({
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setContent(val.slice(prefix.length));
+    setContent(e.target.value);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -100,9 +97,9 @@ const AdditionalInquiryForm = ({
             ))}
           </div>
         </div>
-        <div className="relative flex bg-white">
-          <span className="absolute text-body2 text-main bg-white">
-            {prefix}
+        <div>
+          <span className="text-body2-b text-state-progress-02">
+            {selectedName}
           </span>
           <textarea
             ref={textareaRef}
@@ -114,7 +111,7 @@ const AdditionalInquiryForm = ({
               text-body2
             "
             placeholder=""
-            value={prefix + content}
+            value={content}
             onChange={handleChange}
           />
         </div>

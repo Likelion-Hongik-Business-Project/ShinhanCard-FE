@@ -5,7 +5,7 @@ export const mockInquiryResponse = {
   status: "DRAFT",
   role: "AUTHOR",
   author: {
-    username: "김승찬",
+    username: "kimseunghan",
     teamname: "개발팀",
     user_id: 101,
     profile_image_url: "/assets/images/profile.png",
@@ -83,7 +83,7 @@ export const mockInquiryResponse = {
         follow_up_id: 1,
         content: "요청 페이로드에 `cardNumber` 필드를 추가해 주실 수 있나요?",
         author: {
-          username: "김승찬",
+          username: "kimseunghan",
           profile_url: "/assets/images/profile.png",
           role: "AUTHOR",
           user_id: 101,
@@ -101,7 +101,7 @@ export const mockInquiryResponse = {
               '추가했습니다. 아래 JSON을 참고하세요:\n```json\n{"email":"user@test.com","password":"Pass123!","cardNumber":"1234-5678-9012-3456"}\n```',
             created_at: "2025-08-06T20:00:00.000Z",
             tagged_user: {
-              username: "김승찬",
+              username: "kimseunghan",
               user_id: 101,
             },
           },
@@ -131,7 +131,7 @@ export const mockInquiryResponse = {
         follow_up_id: 2,
         content: "패스워드 유효성 검사는 어떻게 진행되고 있나요?",
         author: {
-          username: "김승찬",
+          username: "kimseunghan",
           profile_url: "/assets/images/profile.png",
           role: "AUTHOR",
           user_id: 101,
@@ -149,7 +149,7 @@ export const mockInquiryResponse = {
               "현재 서버에서 정규표현식으로 체크하도록 구현되어 있습니다.",
             created_at: "2025-08-06T20:30:00.000Z",
             tagged_user: {
-              username: "김승찬",
+              username: "kimseunghan",
               user_id: 101,
             },
           },
@@ -164,7 +164,7 @@ export const mockInquiryResponse = {
             content: "프론트엔드에서도 간단한 유효성 검사를 추가할게요.",
             created_at: "2025-08-06T20:45:00.000Z",
             tagged_user: {
-              username: "김승찬",
+              username: "kimseunghan",
               user_id: 101,
             },
           },
