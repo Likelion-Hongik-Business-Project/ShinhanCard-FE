@@ -16,7 +16,7 @@ interface Props {
   setContent: (value: string) => void;
 }
 
-const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
+const InquiryEditor = ({ title, setTitle, content }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
 
@@ -27,57 +27,45 @@ const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
     const editorInstance = editorRef.current?.getInstance();
     if (!editorInstance) return;
 
+    const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+
+    // 줄 단위로 split
     const lines = content.split("\n");
-    const imageRegex = /!\[.*?\]\((.*?)\)/;
 
     requestAnimationFrame(() => {
-      editorInstance.setMarkdown("");
+      editorInstance.setMarkdown(""); // 전체 초기화
       editorInstance.changeMode("wysiwyg", true);
 
       lines.forEach(line => {
-        const match = line.match(imageRegex);
+        let remaining = line;
+        let match: RegExpExecArray | null;
 
-        if (match) {
-          const imageUrl = match[1];
-          // 줄에 이미지 마크다운만 있는 경우: 해당 위치에 이미지 삽입
-          if (line.trim() === match[0]) {
-            editorInstance.insertText("\n"); // 줄바꿈
-            editorInstance.exec("addImage", {
-              imageUrl,
-              altText: "image",
-            });
-          } else {
-            // 이미지 외 텍스트도 있는 줄이면 텍스트 먼저 삽입
-            const cleanedLine = line.replace(imageRegex, "");
-            editorInstance.insertText(`${cleanedLine}\n`);
-            editorInstance.exec("addImage", {
-              imageUrl,
-              altText: "image",
-            });
+        while ((match = imageRegex.exec(remaining))) {
+          const [fullMatch, alt, url] = match;
+          const prefix = remaining.slice(0, match.index);
+          if (prefix) {
+            editorInstance.insertText(prefix); // 텍스트 먼저 삽입
           }
-        } else {
-          // 이미지 없는 일반 줄은 그대로 삽입
-          editorInstance.insertText(`${line}\n`);
+
+          editorInstance.exec("addImage", {
+            imageUrl: url,
+            altText: alt || "image",
+          });
+
+          // 다음 루프를 위해 이미지 마크다운 이후 텍스트만 남김
+          remaining = remaining.slice(match.index + fullMatch.length);
+          imageRegex.lastIndex = 0; // 내부 문자열 변경되었으니 리셋
         }
+
+        // 남은 텍스트 삽입
+        if (remaining.trim()) {
+          editorInstance.insertText(remaining);
+        }
+
+        editorInstance.insertText("\n"); // 줄바꿈
       });
     });
   }, [content]);
-
-  // editor 내용 변경될 때마다 setContent에 반영
-  useEffect(() => {
-    const editorInstance = editorRef.current?.getInstance();
-    const observer = () => {
-      const content = editorInstance?.getMarkdown() || "";
-      setContent(content);
-    };
-
-    const el = editorRef.current?.getRootElement();
-    el?.addEventListener("input", observer);
-
-    return () => {
-      el?.removeEventListener("input", observer);
-    };
-  }, [editorRef, setContent]);
 
   return (
     <div className="flex flex-col gap-6">
