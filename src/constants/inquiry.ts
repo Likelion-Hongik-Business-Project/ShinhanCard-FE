@@ -31,3 +31,5 @@ export const INQUIRY_STATUS_STYLES: Record<
     dot: "bg-state-done-02",
   },
 };
+
+export const MAX_PREVIEW_LENGTH = 500;

@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import InquiryItem from "@/components/TeamBoard/InquiryItem";
-import { Inquiry } from "@/types/teamBoard";
+import { useScrap } from "@/hooks/scrap/useScrap";
+import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface Props {
   //부모로부터 받는 팀 정보 props를 옵셔널로 변경
   group_name?: string;
   division_name?: string;
   team_name?: string;
-  inquiries: Inquiry[]; // teamBoard의 Inquiry 타입 사용
+  inquiries: Inquiry[];
 }
 
 const InquiryList = ({
@@ -25,23 +26,31 @@ const InquiryList = ({
     setOpenId(prev => (prev === id ? null : id));
   };
 
+  const toggleScrapMutation = useScrap();
+
   // 스크랩
-  const [scrapStates, setScrapStates] = useState<Record<number, boolean>>(
-    inquiries.reduce(
+  const [scrapStates, setScrapStates] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const initStates = inquiries.reduce(
       (acc, item) => {
-        acc[item.inquiry_id] = item.is_scrapped;
+        acc[item.inquiry_id] = item.is_scraped;
         return acc;
       },
       {} as Record<number, boolean>
-    )
-  );
+    );
+    setScrapStates(initStates);
+  }, [inquiries]);
+
+  console.log(scrapStates);
 
   // 스크랩 토글
   const handleToggleScrap = (id: number) => {
-    setScrapStates(prev => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    const Scraped = scrapStates[id];
+
+    setScrapStates(prev => ({ ...prev, [id]: !Scraped }));
+
+    toggleScrapMutation.scrapInquiry(id);
   };
 
   return (
@@ -56,7 +65,7 @@ const InquiryList = ({
           inquiry={inq}
           isOpen={openId === inq.inquiry_id}
           onToggleOpen={handleToggleOpen}
-          isScraped={!!scrapStates[inq.inquiry_id]}
+          isScraped={scrapStates[inq.inquiry_id]}
           onToggleScrap={handleToggleScrap}
         />
       ))}

@@ -2,21 +2,29 @@ import { useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
+import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
 import SearchHeader from "@/components/searchBar/SearchHeader";
-import FilterBar from "@/components/TeamBoard/FilterBar";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import { useSearchResults } from "@/hooks/search/useSearch";
 import { SearchResultInquiry } from "@/types/search/search";
-import { Inquiry } from "@/types/teamBoard";
+import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 const SearchResultPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
+  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
+  const [selectedDate, setSelectedDate] = useState<
+    { year: number; month: number }[]
+  >([]);
 
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6; // 페이지당 6개 아이템
+
+  // 모달 상태
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
 
   // 검색 결과 조회
   const {
@@ -29,15 +37,15 @@ const SearchResultPage = () => {
   const convertToInquiry = (searchInquiry: SearchResultInquiry): Inquiry => ({
     inquiry_id: searchInquiry.inquiry_id,
     title: searchInquiry.title,
-    content_preview: searchInquiry.content_preview,
-    inquiry_state: searchInquiry.inquiry_state,
+    contentPreview: searchInquiry.content_preview,
+    status: searchInquiry.inquiry_state,
     created_at: searchInquiry.created_at,
     writer: {
       user_id: 0, // 검색 결과에는 writer 정보가 없으므로 기본값 설정
       name: "작성자", // 기본값 설정
       profile_image_url: "",
     },
-    is_scrapped: searchInquiry.is_scrapped,
+    is_scraped: searchInquiry.is_scrapped,
     group_name: searchInquiry.group_name,
     division_name: searchInquiry.division_name,
     team_name: searchInquiry.team_name,
@@ -54,6 +62,17 @@ const SearchResultPage = () => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  // 모달 토글 함수: 상태 모달과 일시 모달 둘 중 하나만 열리게
+  const toggleStatusModal = () => {
+    setIsStatusModalOpen(prev => !prev);
+    setIsDateModalOpen(false);
+  };
+
+  const toggleDateModal = () => {
+    setIsDateModalOpen(prev => !prev);
+    setIsStatusModalOpen(false);
   };
 
   if (isLoading) {
@@ -93,7 +112,20 @@ const SearchResultPage = () => {
         </div>
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <FilterBar />
+          <div className="flex justify-end border-b border-gray-10 z-10 ">
+            <FilterBar
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              isStatusModalOpen={isStatusModalOpen}
+              setIsStatusModalOpen={setIsStatusModalOpen}
+              isDateModalOpen={isDateModalOpen}
+              setIsDateModalOpen={setIsDateModalOpen}
+              toggleStatusModal={toggleStatusModal}
+              toggleDateModal={toggleDateModal}
+            />
+          </div>
           <InquiryList inquiries={currentItems} />
         </div>
       )}

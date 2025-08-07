@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import FilterBar from "@/components/TeamBoard/FilterBar";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import Pagination from "@/components/TeamBoard/Pagination";
@@ -20,7 +19,6 @@ const TeamBoardPage = () => {
         />
 
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <FilterBar />
           <InquiryList
             group_name={mockTeamBoardResponse.group_name}
             division_name={mockTeamBoardResponse.division_name}
