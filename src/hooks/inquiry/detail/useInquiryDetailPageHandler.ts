@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { ModalProps } from "@/types/modal";
 
-import { useAnswerHandler } from "./useAnswerHandler";
+import { useAnswerHandler } from "./answer/useAnswerHandler";
 import { useInquiryData } from "./useInquiryData";
 import { useInquiryModals } from "./useInquiryModals";
 import { useInquiryState } from "./useInquiryState";

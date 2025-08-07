@@ -6,7 +6,7 @@ import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
 import NotificationButton from "@/components/inquiry/detail/NotificationButton";
 import PendingActions from "@/components/inquiry/detail/PendingActions";
-import { useInquiryPageHandler } from "@/hooks/useInquiryPageHandler";
+import { useInquiryPageHandler } from "@/hooks/inquiry/detail/useInquiryDetailPageHandler";
 import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {

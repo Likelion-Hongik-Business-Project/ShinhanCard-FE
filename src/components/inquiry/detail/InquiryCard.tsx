@@ -1,7 +1,7 @@
 import AssigneeSection from "@/components/inquiry/detail/AssigneeSection";
 import InquiryContent from "@/components/inquiry/detail/InquiryContent";
 import InquiryHeader from "@/components/inquiry/detail/InquiryHeader";
-import { useInquiryState } from "@/hooks/useInquiryState";
+import { useInquiryState } from "@/hooks/inquiry/detail/useInquiryState";
 import { InquiryCardProps } from "@/types/inquiryTypes";
 
 const InquiryCard = ({
