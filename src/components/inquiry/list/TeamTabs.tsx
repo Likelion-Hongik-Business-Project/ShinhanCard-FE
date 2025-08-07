@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import TeamTabButton from "@/components/inquiry/list/TeamTabButton";
 import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
 import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
 
@@ -24,6 +25,10 @@ const TeamTabs = ({
 }: Props) => {
   const [maxVisibleTabs, setMaxVisibleTabs] = useState(3);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const visibleTabs = teams.slice(0, maxVisibleTabs);
   const hiddenTabs = teams.slice(maxVisibleTabs);
 
@@ -32,8 +37,6 @@ const TeamTabs = ({
   );
 
   const isMoreTabActive = isHiddenTeamSelected || isModalOpen;
-
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new ResizeObserver(entries => {
@@ -46,9 +49,6 @@ const TeamTabs = ({
     if (wrapperRef.current) observer.observe(wrapperRef.current);
     return () => observer.disconnect();
   }, []);
-
-  const modalRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -72,19 +72,12 @@ const TeamTabs = ({
   return (
     <div ref={wrapperRef} className="relative flex w-full">
       {visibleTabs.map(team => (
-        <button
+        <TeamTabButton
           key={team.team_id}
+          team={team}
+          isSelected={team.team_id === selectedTeamId}
           onClick={() => onSelectTeam(team.team_id)}
-          className={`px-7 py-5 rounded-t-[15px] min-w-0 max-w-[440px] cursor-pointer transition mb-[1px] ${
-            team.team_id === selectedTeamId
-              ? "border-t-[2px] text-gray-80 border-main bg-white pt-[18px]"
-              : "bg-gray-20 text-gray-50"
-          }`}
-        >
-          <span className="text-heading3-b truncate block overflow-hidden whitespace-nowrap text-ellipsis">
-            {team.group_name} &gt; {team.division_name} &gt; {team.team_name}
-          </span>
-        </button>
+        />
       ))}
       {hiddenTabs.length > 0 && (
         <div className="relative">
