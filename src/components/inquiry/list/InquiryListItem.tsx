@@ -36,7 +36,7 @@ const InquiryListItem = ({ item, isScraped }: Props) => {
         onClick={handleScrapClick}
         disabled={isScrapLoading}
       >
-        {isScraped ? (
+        {scraped ? (
           <StarActive className="w-5 h-5" />
         ) : (
           <Star className="text-gray-30 w-5 h-5" />
