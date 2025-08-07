@@ -1,7 +1,11 @@
 import { Users } from "@/assets/svgs/board";
 import { HeaderProps } from "@/types/inquiryTypes";
 
-const Header = ({ isTeamEnd = false, isAdmin = false }: HeaderProps) => {
+const Header = ({
+  isTeamEnd = false,
+  isAdmin = false,
+  onDelete,
+}: HeaderProps) => {
   const teamInfo = {
     group_name: "경영기획 그룹",
     division_name: "ICT 기획본부",
@@ -37,7 +41,10 @@ const Header = ({ isTeamEnd = false, isAdmin = false }: HeaderProps) => {
       {/* 팀관리자 삭제 버튼 */}
       {isAdmin && (
         <div className="px-[16px] flex justify-center items-center gap-[10px]">
-          <button className="justify-start text-point-red text-body1 cursor-pointer">
+          <button
+            onClick={onDelete}
+            className="justify-start text-point-red text-body1 cursor-pointer"
+          >
             게시물 삭제
           </button>
         </div>

@@ -3,10 +3,18 @@ import { useState } from "react";
 import Heart from "@/assets/svgs/common/heart.svg";
 import HeartActive from "@/assets/svgs/common/heart-active.svg";
 import Profile from "@/assets/svgs/common/profile.svg";
-import Upload from "@/assets/svgs/common/upload.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
 import Button from "@/components/common/Button";
+// import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
 import { USER_SPACE_TABS } from "@/constants/userSpace";
+// import {
+//   AssignedInquiryItem,
+//   MyInquiryItem,
+//   ScrapedInquiryItem,
+// } from "@/types/inquiry";
+// import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
+// import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
+// import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
 
 const UserSpacePage = () => {
   const [isHearted, setIsHearted] = useState(false);
@@ -23,7 +31,8 @@ const UserSpacePage = () => {
 
   return (
     <section>
-      <div className="flex flex-wrap  items-center w-full">
+      {/* 상단 프로필 및 버튼 */}
+      <div className="flex flex-wrap items-center w-full">
         <div className="w-40 h-40 rounded-full overflow-hidden relative shrink-0">
           <Profile className="w-full h-full object-cover" />
         </div>
@@ -96,25 +105,51 @@ const UserSpacePage = () => {
         )}
       </div>
 
-      <div className="flex flex-wrap  items-center w-full pt-10">
-        <p className="text-heading1 text-black  whitespace-nowrap">
-          @@@님이 쓴 문의 (6)
-        </p>
+      <div className="pt-10">
+        {/* {activeTab === "assigned" && (
+          <InquiryPageLayout<AssignedInquiryItem>
+            title="@@@님의 담당 문의"
+            description="@@@님의 담당 문의가 총"
+            emptyText="@@@님의 담당 문의가 없습니다"
+            inquiries={MOCK_ASSIGNED_INQUIRY_RESPONSE.inquiries}
+            teams={MOCK_ASSIGNED_INQUIRY_RESPONSE.teams}
+            selectedTeamId={
+              MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
+            }
+            pageSize={MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size}
+          />
+        )}
 
-        <Button
-          buttonType="default"
-          className="ml-auto whitespace-nowrap flex items-center gap-2 px-4 py-3"
-        >
-          <Upload />
-          <p className="text-heading3 text-gray-80">Export</p>
-        </Button>
+        {activeTab === "scrap" && (
+          <InquiryPageLayout<ScrapedInquiryItem>
+            title="스크랩"
+            description="@@@님이 스크랩한 문의가 총"
+            emptyText="스크랩한 문의가 없습니다"
+            inquiries={MOCK_SCRAP_RESPONSE.inquiries}
+            teams={MOCK_SCRAP_RESPONSE.teams}
+            selectedTeamId={MOCK_SCRAP_RESPONSE.selected_team.team_id}
+            pageSize={MOCK_SCRAP_RESPONSE.pagination.page_size}
+          />
+        )}
+
+        {activeTab === "written" && (
+          <InquiryPageLayout<MyInquiryItem>
+            title="@@@님이 쓴 문의"
+            description="@@@님이 쓴 문의가 총"
+            emptyText="@@@님이 쓴 문의가 없습니다"
+            inquiries={MOCK_MY_QUESTIONS_RESPONSE.inquiries}
+            teams={MOCK_MY_QUESTIONS_RESPONSE.teams}
+            selectedTeamId={MOCK_MY_QUESTIONS_RESPONSE.selected_team.team_id}
+            writer={{
+              user_id: MOCK_MY_QUESTIONS_RESPONSE.writer.id,
+              name: MOCK_MY_QUESTIONS_RESPONSE.writer.name,
+              profile_image_url:
+                MOCK_MY_QUESTIONS_RESPONSE.writer.profile_image_url,
+            }}
+            pageSize={MOCK_MY_QUESTIONS_RESPONSE.pagination.page_size}
+          />
+        )} */}
       </div>
-
-      {/* <div className="w-full mt-10">
-        {activeTab === "written" && <WrittenInquiries />}
-        {activeTab === "assigned" && <AssignedInquiries />}
-        {activeTab === "scrap" && <ScrappedInquiries />}
-      </div> */}
     </section>
   );
 };
