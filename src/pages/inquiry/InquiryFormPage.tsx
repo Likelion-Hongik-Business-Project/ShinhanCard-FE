@@ -7,9 +7,9 @@ import Button from "@/components/common/Button";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import InquiryFormModal from "@/components/inquiry/form/InquiryFormModal";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
+import { useInquiryDraft } from "@/hooks/inquiry/create/useInquiryDraft";
+import { useInquiryFormState } from "@/hooks/inquiry/create/useInquiryFormState";
 import { useInquiryApi } from "@/hooks/inquiry/useInquiryApi";
-import { useInquiryDraft } from "@/hooks/inquiry/useInquiryDraft";
-import { useInquiryFormState } from "@/hooks/inquiry/useInquiryFormState";
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 
@@ -31,6 +31,8 @@ const InquiryFormPage = () => {
     setReferenceIds,
     fileIds,
     setFileIds,
+    files,
+    setFiles,
   } = useInquiryFormState();
 
   const {
@@ -62,6 +64,8 @@ const InquiryFormPage = () => {
     restoreDraft,
     resetDraft,
     clearDraftState,
+    draftId,
+    deleteDraft,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
     title,
@@ -108,7 +112,19 @@ const InquiryFormPage = () => {
       {
         onSuccess: () => {
           setIsConfirmModalOpen(false);
-          clearDraftState(); // 등록 후 draft 초기화
+
+          if (draftId) {
+            deleteDraft(
+              { inquiryId: draftId, teamId },
+              {
+                onSuccess: () => {
+                  clearDraftState();
+                },
+              }
+            );
+          } else {
+            clearDraftState();
+          }
         },
       }
     );
@@ -157,11 +173,13 @@ const InquiryFormPage = () => {
           assigneeIds={assigneeIds}
           referenceIds={referenceIds}
           fileIds={fileIds}
+          files={files}
           setTitle={setTitle}
           setContent={setContent}
           setAssigneeIds={setAssigneeIds}
           setReferenceIds={setReferenceIds}
           setFileIds={setFileIds}
+          setFiles={setFiles}
           onDropdownStateChange={setIsDropdownOpen}
         />
       </div>

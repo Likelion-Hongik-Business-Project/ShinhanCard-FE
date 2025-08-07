@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useEditorImageUpload } from "@/hooks/inquiry/useEditorImageUpload";
+import { useEditorImageUpload } from "@/hooks/inquiry/create/useEditorImageUpload";
 import { useEditor } from "@/hooks/useEditor";
 
 import EditorToolbar from "./EditorToolbar";

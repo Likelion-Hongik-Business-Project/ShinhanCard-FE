@@ -1,8 +1,6 @@
-// hooks/inquiry/useInquiryDraft.ts
-
 import { useState } from "react";
 
-import { useInquiryDraftApi } from "@/hooks/inquiry/useInquiryDraftApi";
+import { useInquiryDraftApi } from "@/hooks/inquiry/create/useInquiryDraftApi";
 
 export interface UseInquiryDraftParams {
   teamId: number;
@@ -46,7 +44,7 @@ export const useInquiryDraft = ({
   const [draftId, setDraftId] = useState<number | null>(null);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
-  const [, setJustSavedDraft] = useState(false);
+  const [justSavedDraft, setJustSavedDraft] = useState(false);
 
   const {
     useCheckDraftExists,
@@ -81,16 +79,26 @@ export const useInquiryDraft = ({
       file_ids: fileIds,
     };
 
+    // 이미 draftId가 있으면 수정
     if (draftId) {
-      // 이미 있는 draft → 수정
       putDraft(
         { inquiryId: draftId, teamId, data: draftData },
-        { onSuccess: () => setIsDraftSaved(true) }
+        {
+          onSuccess: () => {
+            setIsDraftSaved(true);
+            setJustSavedDraft(true);
+          },
+        }
       );
       return;
     }
 
-    // 처음 저장하는 경우 → 존재 여부 확인
+    // 바로 이전에 저장된 상태면, refetchDraftExists() 생략
+    if (justSavedDraft) {
+      return;
+    }
+
+    // 이 시점엔 draftId가 없고, 서버에 존재하는 경우 → 모달 열림
     const { data: existing } = await refetchDraftExists();
 
     if (existing?.result.is_present) {
@@ -190,5 +198,7 @@ export const useInquiryDraft = ({
     restoreDraft,
     resetDraft,
     clearDraftState,
+    draftId,
+    deleteDraft,
   };
 };

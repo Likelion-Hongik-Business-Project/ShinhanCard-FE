@@ -1,4 +1,5 @@
 import { useTeamApi } from "@/hooks/team/useTeamApi";
+import { UploadFile } from "@/types/file/file.type";
 
 import AssigneeSelector from "./AssigneeSelector";
 import FileUploadBox from "./FileUploadBox";
@@ -11,11 +12,13 @@ interface Props {
   assigneeIds: number[];
   referenceIds: number[];
   fileIds: number[];
+  files: UploadFile[];
   setTitle: (value: string) => void;
   setContent: (value: string) => void;
   setAssigneeIds: (ids: number[]) => void;
   setReferenceIds: (ids: number[]) => void;
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
   onDropdownStateChange: (isOpen: boolean) => void;
   initialFiles?: {
     fileId: number;
@@ -39,6 +42,8 @@ const InquiryForm = ({
   setFileIds,
   onDropdownStateChange,
   initialFiles,
+  files,
+  setFiles,
 }: Props) => {
   const { useUsersQuery } = useTeamApi();
   const { data: users = [] } = useUsersQuery();
@@ -55,7 +60,9 @@ const InquiryForm = ({
       <FileUploadBox
         teamId={teamId}
         fileIds={fileIds}
+        files={files}
         setFileIds={setFileIds}
+        setFiles={setFiles}
         initialFiles={initialFiles}
       />
       <div className="w-full h-[1px] bg-gray-10" />
