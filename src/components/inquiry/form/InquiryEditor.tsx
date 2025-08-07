@@ -16,7 +16,7 @@ interface Props {
   setContent: (value: string) => void;
 }
 
-const InquiryEditor = ({ title, setTitle, content }: Props) => {
+const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
 
@@ -33,10 +33,10 @@ const InquiryEditor = ({ title, setTitle, content }: Props) => {
     const lines = content.split("\n");
 
     requestAnimationFrame(() => {
-      editorInstance.setMarkdown(""); // 전체 초기화
+      editorInstance.setMarkdown(content || "");
       editorInstance.changeMode("wysiwyg", true);
 
-      lines.forEach(line => {
+      lines.forEach((line, index) => {
         let remaining = line;
         let match: RegExpExecArray | null;
 
@@ -44,7 +44,7 @@ const InquiryEditor = ({ title, setTitle, content }: Props) => {
           const [fullMatch, alt, url] = match;
           const prefix = remaining.slice(0, match.index);
           if (prefix) {
-            editorInstance.insertText(prefix); // 텍스트 먼저 삽입
+            editorInstance.insertText(prefix);
           }
 
           editorInstance.exec("addImage", {
@@ -52,20 +52,20 @@ const InquiryEditor = ({ title, setTitle, content }: Props) => {
             altText: alt || "image",
           });
 
-          // 다음 루프를 위해 이미지 마크다운 이후 텍스트만 남김
           remaining = remaining.slice(match.index + fullMatch.length);
-          imageRegex.lastIndex = 0; // 내부 문자열 변경되었으니 리셋
+          imageRegex.lastIndex = 0;
         }
 
-        // 남은 텍스트 삽입
         if (remaining.trim()) {
           editorInstance.insertText(remaining);
         }
 
-        editorInstance.insertText("\n"); // 줄바꿈
+        if (index !== 0) {
+          editorInstance.insertText("\n");
+        }
       });
     });
-  }, [content]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -112,6 +112,13 @@ const InquiryEditor = ({ title, setTitle, content }: Props) => {
           hideModeSwitch={true}
           previewStyle="tab"
           toolbarItems={[]}
+          onChange={() => {
+            const editorInstance = editorRef.current?.getInstance();
+            if (editorInstance) {
+              const current = editorInstance.getMarkdown();
+              setContent(current);
+            }
+          }}
         />
       </div>
     </div>
