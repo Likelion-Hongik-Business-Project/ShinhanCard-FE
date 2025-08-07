@@ -9,9 +9,10 @@ import { deleteFile } from "@/apis/file/fileApi";
 const MAX_FILE_COUNT = 6;
 
 export const useMultiFileUploader = (
-  setFileIds: React.Dispatch<React.SetStateAction<number[]>>
+  files: UploadingFile[],
+  setFileIds: React.Dispatch<React.SetStateAction<number[]>>,
+  setFiles: React.Dispatch<React.SetStateAction<UploadingFile[]>>
 ) => {
-  const [files, setFiles] = useState<UploadingFile[]>([]);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadFile = useS3UploadFile();
@@ -43,7 +44,7 @@ export const useMultiFileUploader = (
         size: file.size,
         progress: 0,
         status: "uploading",
-        controller: undefined, // 이후에 저장
+        controller: undefined,
       };
     });
 
@@ -55,7 +56,6 @@ export const useMultiFileUploader = (
         const controller = new AbortController();
         const signal = controller.signal;
 
-        // controller 저장
         setFiles(prev =>
           prev.map(f => (f.id === localId ? { ...f, controller } : f))
         );
@@ -102,7 +102,6 @@ export const useMultiFileUploader = (
   const handleRemove = async (localId: number, fileId?: number) => {
     const target = files.find(file => file.id === localId);
 
-    // 업로드 중이면 중단
     if (target?.status === "uploading" && target.controller) {
       target.controller.abort();
     }
@@ -121,11 +120,10 @@ export const useMultiFileUploader = (
 
   return {
     inputRef,
+    triggerInput,
     files,
-    setFiles,
     showLimitModal,
     setShowLimitModal,
-    triggerInput,
     handleFileSelect,
     handleRemove,
   };

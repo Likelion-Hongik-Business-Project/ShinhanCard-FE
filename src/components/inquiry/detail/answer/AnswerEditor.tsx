@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@/components/common/Button";
 import EditorToolbar from "@/components/inquiry/form/EditorToolbar";
 import FileUploadBox from "@/components/inquiry/form/FileUploadBox";
 import { useEditor } from "@/hooks/useEditor";
+import { UploadFile } from "@/types/file/file.type";
 import { AnswerEditorProps } from "@/types/inquiryTypes";
 
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -17,6 +18,9 @@ const AnswerEditor = ({
 }: AnswerEditorProps) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
+
+  const [fileIds, setFileIds] = useState<number[]>([]);
+  const [files, setFiles] = useState<UploadFile[]>([]);
 
   // 내용 변경 감지 및 부모 컴포넌트로 전파 (수정)
   useEffect(() => {
@@ -66,7 +70,14 @@ const AnswerEditor = ({
           language="ko-KR"
         />
       </div>
-      <FileUploadBox />
+      <FileUploadBox
+        teamId={0} // 실제 teamId TODO!!!!!!
+        fileIds={fileIds}
+        files={files}
+        setFileIds={setFileIds}
+        setFiles={setFiles}
+        initialFiles={[]}
+      />
       <div className="flex justify-end gap-4">
         <Button buttonType="default" className="text-gray-80">
           임시저장

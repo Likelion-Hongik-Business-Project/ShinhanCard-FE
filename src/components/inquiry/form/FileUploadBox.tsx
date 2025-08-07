@@ -13,7 +13,9 @@ import FileUploadItem from "./FileUploadItem";
 interface Props {
   teamId: number;
   fileIds: number[];
+  files: UploadFile[];
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
   initialFiles?: {
     fileId: number;
     fileName: string;
@@ -22,17 +24,20 @@ interface Props {
   }[];
 }
 
-const FileUploadBox = ({ setFileIds, initialFiles = [] }: Props) => {
+const FileUploadBox = ({
+  setFileIds,
+  initialFiles = [],
+  files,
+  setFiles,
+}: Props) => {
   const {
     inputRef,
-    files,
-    setFiles,
     showLimitModal,
     setShowLimitModal,
     triggerInput,
     handleFileSelect,
     handleRemove,
-  } = useMultiFileUploader(setFileIds);
+  } = useMultiFileUploader(files, setFileIds, setFiles);
 
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
