@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Button from "@/components/common/Button";
 import EditorToolbar from "@/components/inquiry/form/EditorToolbar";
 import FileUploadBox from "@/components/inquiry/form/FileUploadBox";
-import { useEditor } from "@/hooks/useEditor";
+import { useEditor } from "@/hooks/inquiry/useEditor";
 import { UploadFile } from "@/types/file/file.type";
 import { AnswerEditorProps } from "@/types/inquiryTypes";
 

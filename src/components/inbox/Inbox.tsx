@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import { Tab } from "@/types/inbox";
 import {
   MOCK_ARCHIVED_INBOX_RESPONSE,

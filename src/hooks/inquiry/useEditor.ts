@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { isHeadingCommand, isInlineCommand } from "@/utils/commandUtils";
 import { EditorCommand } from "@/types/toolbar";
 
-import { useEditorImageUpload } from "./inquiry/create/useEditorImageUpload";
+import { useEditorImageUpload } from "./create/useEditorImageUpload";
 
 import { Editor as EditorCore } from "@toast-ui/editor";
 import { Editor } from "@toast-ui/react-editor";

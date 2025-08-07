@@ -4,9 +4,9 @@ import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
 import Modal from "@/components/common/Modal";
+import { useDragAndDrop } from "@/hooks/file/useDragAndDrop";
 import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
-import { useDragAndDrop } from "@/hooks/useDragAndDrop";
-import { UploadFile } from "@/types/file/file.type";
+import { InquiryDraftFile, UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
@@ -16,12 +16,7 @@ interface Props {
   files: UploadFile[];
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
   setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
-  initialFiles?: {
-    fileId: number;
-    fileName: string;
-    fileKey: string;
-    fileSize: number;
-  }[];
+  initialFiles?: InquiryDraftFile[];
 }
 
 const FileUploadBox = ({
@@ -59,6 +54,7 @@ const FileUploadBox = ({
     setFileIds(restoredFiles.map(f => f.fileId!));
     setFiles(restoredFiles);
   }, [initialFiles, setFiles]);
+
   return (
     <div className="flex flex-col gap-4">
       <div

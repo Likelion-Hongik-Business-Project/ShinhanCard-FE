@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import Down from "@/assets/svgs/common/down.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 
 interface Option {
   label: string;

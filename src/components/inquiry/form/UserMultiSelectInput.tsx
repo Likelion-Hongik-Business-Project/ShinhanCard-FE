@@ -6,8 +6,8 @@ import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
 import UserCheckIcon from "@/assets/svgs/inquiry/user-check.svg";
 import Modal from "@/components/common/Modal";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useDebounce } from "@/hooks/common/useDebounce";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import { AssigneeUser } from "@/types/team/user.type";
 
 import DepartmentSelector from "./DepartmentSelector";
