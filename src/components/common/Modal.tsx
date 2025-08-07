@@ -47,7 +47,9 @@ const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
           <h2 className="text-heading2-b text-gray-80 break-words">{title}</h2>
           {description && (
             <div className="mt-4 h-12 flex items-center max-w-[400px]">
-              <p className="text-body2 text-gray-60 mx-auto">{description}</p>
+              <p className="text-body2 text-gray-60 mx-auto whitespace-pre-line">
+                {description}
+              </p>
             </div>
           )}
         </div>
