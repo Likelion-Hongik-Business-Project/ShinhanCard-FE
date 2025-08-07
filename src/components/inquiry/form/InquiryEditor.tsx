@@ -27,11 +27,39 @@ const InquiryEditor = ({ title, setTitle, setContent, content }: Props) => {
     const editorInstance = editorRef.current?.getInstance();
     if (!editorInstance) return;
 
-    const current = editorInstance.getMarkdown();
-    if (current === content) return;
+    const lines = content.split("\n");
+    const imageRegex = /!\[.*?\]\((.*?)\)/;
 
     requestAnimationFrame(() => {
-      editorInstance.setMarkdown(content || "");
+      editorInstance.setMarkdown("");
+      editorInstance.changeMode("wysiwyg", true);
+
+      lines.forEach(line => {
+        const match = line.match(imageRegex);
+
+        if (match) {
+          const imageUrl = match[1];
+          // 줄에 이미지 마크다운만 있는 경우: 해당 위치에 이미지 삽입
+          if (line.trim() === match[0]) {
+            editorInstance.insertText("\n"); // 줄바꿈
+            editorInstance.exec("addImage", {
+              imageUrl,
+              altText: "image",
+            });
+          } else {
+            // 이미지 외 텍스트도 있는 줄이면 텍스트 먼저 삽입
+            const cleanedLine = line.replace(imageRegex, "");
+            editorInstance.insertText(`${cleanedLine}\n`);
+            editorInstance.exec("addImage", {
+              imageUrl,
+              altText: "image",
+            });
+          }
+        } else {
+          // 이미지 없는 일반 줄은 그대로 삽입
+          editorInstance.insertText(`${line}\n`);
+        }
+      });
     });
   }, [content]);
 
