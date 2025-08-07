@@ -4,12 +4,22 @@ type Props = {
   teams: TeamItem[];
   selectedTeamId: number;
   onSelectTeam: (teamId: number) => void;
+  onOpenModal: () => void;
 };
 
-const TeamTabs = ({ teams, selectedTeamId, onSelectTeam }: Props) => {
+const TeamTabs = ({
+  teams,
+  selectedTeamId,
+  onSelectTeam,
+  onOpenModal,
+}: Props) => {
+  const maxVisibleTabs = 3;
+  const visibleTabs = teams.slice(0, maxVisibleTabs);
+  const hiddenTabs = teams.slice(maxVisibleTabs);
+
   return (
     <div className="flex">
-      {teams.map(team => (
+      {visibleTabs.map(team => (
         <button
           key={team.team_id}
           onClick={() => onSelectTeam(team.team_id)}
@@ -24,6 +34,14 @@ const TeamTabs = ({ teams, selectedTeamId, onSelectTeam }: Props) => {
           </span>
         </button>
       ))}
+      {hiddenTabs && (
+        <button
+          onClick={onOpenModal}
+          className="px-7 py-5 rounded-t-[15px] cursor-pointer transition mb-[1px] bg-gray-20 text-gray-50"
+        >
+          <span className="text-heading3-b">...</span>
+        </button>
+      )}
     </div>
   );
 };

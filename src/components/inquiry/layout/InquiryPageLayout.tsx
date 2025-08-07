@@ -4,6 +4,7 @@ import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
+import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
 import {
   InquiryListItem,
@@ -55,6 +56,10 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+
+  const maxVisibleTabs = 3;
+  const hiddenTeams = teams.slice(maxVisibleTabs);
 
   const currentItems = inquiries
     .map((item: TInquiry) => {
@@ -128,12 +133,22 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
         </div>
       ) : (
         <>
-          <TeamTabs
-            teams={teams}
-            selectedTeamId={selectedTeamId}
-            onSelectTeam={onSelectTeam}
-          />
-
+          <div className="relative">
+            <TeamTabs
+              teams={teams}
+              selectedTeamId={selectedTeamId}
+              onSelectTeam={onSelectTeam}
+              onOpenModal={() => setIsTeamModalOpen(true)}
+            />
+            {isTeamModalOpen && (
+              <TeamTabsModal
+                teams={hiddenTeams}
+                selectedTeamId={selectedTeamId}
+                onSelectTeam={onSelectTeam}
+                onClose={() => setIsTeamModalOpen(false)}
+              />
+            )}
+          </div>
           <InquiryList
             inquiries={filteredInquiries}
             currentPage={currentPage}
