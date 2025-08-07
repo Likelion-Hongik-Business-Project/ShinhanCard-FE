@@ -69,7 +69,7 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
         team_id: selectedTeamId,
         leftProfiles: [
           {
-            user_id: profile.user_id,
+            id: profile.id,
             name: profile.name,
             profile_image_url: profile.profile_image_url,
           },

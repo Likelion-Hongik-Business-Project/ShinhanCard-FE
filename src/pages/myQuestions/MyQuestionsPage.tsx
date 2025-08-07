@@ -1,22 +1,95 @@
+import { useEffect, useState } from "react";
+
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { MyInquiryItem } from "@/types/inquiry/inquiryListApi.type";
-import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
+import {
+  useInitMyQuestionsApi,
+  useMyQuestionsByTeamApi,
+} from "@/hooks/inquiry/myQuestions/useMyQuestionsApi";
+import { formatDateParams } from "@/utils/dateUtils";
+import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import {
+  InquiryStatus,
+  MyInquiryItem,
+  TInquiryBase,
+} from "@/types/inquiry/inquiryListApi.type";
 
 const MyQuestionsPage = () => {
+  const [page, setPage] = useState(1);
+  const [date, setDate] = useState<{ year: number; month: number }[]>([]);
+  const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+
+  // 최초 요청
+  const {
+    data: initData,
+    isLoading: initLoading,
+    isError: initError,
+  } = useInitMyQuestionsApi({
+    page: page,
+    status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
+    date: formatDateParams(date),
+  });
+
+  // 이후 팀 선택 시 요청
+  const {
+    data: teamData,
+    isLoading: teamLoading,
+    isError: teamError,
+  } = useMyQuestionsByTeamApi({
+    teamId: selectedTeamId!,
+    page: page,
+    status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
+    date: formatDateParams(date),
+  });
+
+  // 최초 팀 세팅
+  useEffect(() => {
+    if (!selectedTeamId && initData?.selected_team?.team_id) {
+      setSelectedTeamId(initData.selected_team.team_id);
+    }
+  }, [initData, selectedTeamId]);
+
+  const isLoading = selectedTeamId ? teamLoading : initLoading;
+  const isError = selectedTeamId ? teamError : initError;
+  const data = selectedTeamId ? teamData : initData;
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError || !data) return <div>에러 발생</div>;
+
+  const writer = data.writer;
+  const inquiries: TInquiryBase[] = data.inquiries.map(inquiry => ({
+    ...inquiry,
+    writer, // writer 필드 주입
+  }));
+
+  const totalPages = Math.ceil(
+    data.pagination.total / data.pagination.page_size
+  );
+
+  const handleSelectTeam = (teamId: number) => {
+    setSelectedTeamId(teamId);
+    setPage(1);
+    setStatus("전체");
+    setDate([]);
+  };
+
   return (
     <InquiryPageLayout<MyInquiryItem>
       title="내가 쓴 문의"
       description="내가 쓴 문의가 총"
       emptyText="내가 쓴 문의가 없습니다"
-      inquiries={MOCK_MY_QUESTIONS_RESPONSE.inquiries}
-      teams={MOCK_MY_QUESTIONS_RESPONSE.teams}
-      selectedTeamId={MOCK_MY_QUESTIONS_RESPONSE.selected_team.team_id}
-      writer={{
-        user_id: MOCK_MY_QUESTIONS_RESPONSE.writer.id,
-        name: MOCK_MY_QUESTIONS_RESPONSE.writer.name,
-        profile_image_url: MOCK_MY_QUESTIONS_RESPONSE.writer.profile_image_url,
-      }}
-      pageSize={MOCK_MY_QUESTIONS_RESPONSE.pagination.page_size}
+      inquiries={inquiries}
+      teams={initData?.teams ?? []}
+      selectedTeamId={selectedTeamId!}
+      onSelectTeam={handleSelectTeam}
+      totalCount={data.total_count}
+      totalPages={totalPages}
+      currentPage={page}
+      onPageChange={setPage}
+      selectedStatus={status}
+      onStatusChange={setStatus}
+      selectedDate={date}
+      onDateChange={setDate}
     />
   );
 };

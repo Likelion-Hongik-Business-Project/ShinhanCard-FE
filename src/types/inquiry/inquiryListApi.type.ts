@@ -13,7 +13,7 @@ export type GetInquiriesRequest = {
 };
 
 export interface Profile {
-  user_id: number;
+  id: number;
   name: string;
   profile_image_url: string;
 }
@@ -33,7 +33,7 @@ export interface InquiryPagination {
 }
 
 // assigned
-export interface AssignedInquiryItem {
+export interface InquiryItem {
   inquiry_id: number;
   writer: Profile;
   title: string;
@@ -46,7 +46,7 @@ export interface GetInquiriesResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];
-  inquiries: AssignedInquiryItem[];
+  inquiries: InquiryItem[];
   pagination: InquiryPagination;
 }
 
@@ -63,49 +63,38 @@ export interface InquiryListItem {
 export type YearMonth = { year: number; month: number };
 
 // my questions
-export interface InquiryAssignee {
-  id: number;
-  name: string;
-  profile_image_url: string;
-}
 
 export interface MyInquiryItem {
   inquiry_id: number;
   title: string;
-  inquiry_assignees: InquiryAssignee[];
   status: InquiryServerStatus;
   created_at: string;
   is_scraped: boolean;
 }
 
-export interface MyInquiryListResponse {
+export interface GetInitMyInquiryListResponse {
   total_count: number;
-  writer: {
-    id: number;
-    name: string;
-    profile_image_url: string;
-  };
+  writer: Profile;
   selected_team: TeamItem;
   teams: TeamItem[];
   inquiries: MyInquiryItem[];
   pagination: InquiryPagination;
 }
 
-// scrap
-export interface ScrapedInquiryItem {
-  inquiry_id: number;
+export interface GetMyInquiryListByTeamResponse {
+  total_count: number;
   writer: Profile;
-  title: string;
-  status: InquiryServerStatus;
-  created_at: string;
-  is_scraped: boolean;
+  selected_team: TeamItem;
+  inquiries: MyInquiryItem[];
+  pagination: InquiryPagination;
 }
 
+// scrap
 export interface ScrapedInquiryListResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];
-  inquiries: ScrapedInquiryItem[];
+  inquiries: InquiryItem[];
   pagination: InquiryPagination;
 }
 

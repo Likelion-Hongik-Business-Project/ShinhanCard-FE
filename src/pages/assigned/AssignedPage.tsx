@@ -8,7 +8,7 @@ import {
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
 import {
-  AssignedInquiryItem,
+  InquiryItem,
   InquiryStatus,
 } from "@/types/inquiry/inquiryListApi.type";
 
@@ -24,7 +24,7 @@ const AssignedPage = () => {
     isLoading: initLoading,
     isError: initError,
   } = useInitAssignedApi({
-    page: page - 1,
+    page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
   });
@@ -36,7 +36,7 @@ const AssignedPage = () => {
     isError: teamError,
   } = useAssignedByTeamApi({
     teamId: selectedTeamId!,
-    page: page - 1,
+    page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
   });
@@ -67,7 +67,7 @@ const AssignedPage = () => {
   };
 
   return (
-    <InquiryPageLayout<AssignedInquiryItem>
+    <InquiryPageLayout<InquiryItem>
       title="내 담당 문의"
       description="나의 담당 문의가 총"
       emptyText="나의 담당 문의가 없습니다"

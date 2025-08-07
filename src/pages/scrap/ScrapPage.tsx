@@ -5,8 +5,8 @@ import { useInitScrapApi, useScrapByTeamApi } from "@/hooks/scrap/useScrapApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
 import {
+  InquiryItem,
   InquiryStatus,
-  ScrapedInquiryItem,
 } from "@/types/inquiry/inquiryListApi.type";
 
 const ScrapPage = () => {
@@ -21,7 +21,7 @@ const ScrapPage = () => {
     isLoading: initLoading,
     isError: initError,
   } = useInitScrapApi({
-    page: page - 1,
+    page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
   });
@@ -33,7 +33,7 @@ const ScrapPage = () => {
     isError: teamError,
   } = useScrapByTeamApi({
     teamId: selectedTeamId!,
-    page: page - 1,
+    page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
   });
@@ -64,7 +64,7 @@ const ScrapPage = () => {
   };
 
   return (
-    <InquiryPageLayout<ScrapedInquiryItem>
+    <InquiryPageLayout<InquiryItem>
       title="스크랩"
       description="내가 스크랩한 문의가 총"
       emptyText="스크랩한 문의가 없습니다"
