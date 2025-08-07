@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import { Search } from "@/assets/svgs/layout";
-import { useAddInterestedMember } from "@/hooks/home/useHome";
+import { useAddInterestedMember } from "@/hooks/home/useHomeMemberApi";
 import { useTeamMembers } from "@/hooks/team/useTeamMembers";
 import { useTeamSelection } from "@/hooks/team/useTeamSelection";
 import { getProfileImageUrl } from "@/types/profile/profile.type";
@@ -90,13 +90,13 @@ const AddMemberSidebar = ({ isOpen, onClose, teamName, teamId }: Props) => {
   };
 
   // 모든 상태 초기화 함수
-  const resetAllStates = () => {
+  const resetAllStates = useCallback(() => {
     setHoveredMemberId(null);
     setModalOffset(null);
     setSearchTerm("");
     currentHoveredMemberRef.current = null;
     resetSelection(); // 팀 선택 상태 초기화
-  };
+  }, [resetSelection]);
 
   // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(() => {
@@ -184,7 +184,7 @@ const AddMemberSidebar = ({ isOpen, onClose, teamName, teamId }: Props) => {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [isOpen, resetAllStates]);
 
   return (
     <>

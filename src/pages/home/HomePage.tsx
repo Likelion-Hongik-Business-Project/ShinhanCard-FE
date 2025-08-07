@@ -1,47 +1,39 @@
-import { useEffect, useState } from "react";
-
 import HomeMain from "@/components/home/HomeMain";
 import HomeProfile from "@/components/home/HomeProfile";
+import { useHomeInitial } from "@/hooks/home/useHomeApi";
 import { useProfile } from "@/hooks/profile/useProfile";
-import { HomeData } from "@/types/home";
-import { MOCK_HOME_INITIAL_RESPONSE } from "@/mocks/home";
 
 import { useProfileStore } from "@/store/useProfileStore";
 
 const HomePage = () => {
-  const [data, setData] = useState<HomeData | null>(null);
-
   // useProfile 훅 실행 (로직만 실행, 데이터는 반환하지 않음)
   useProfile();
+
+  // 홈페이지 초기 데이터 조회
+  const { data: homeInitialData, isLoading, error } = useHomeInitial();
 
   // store에서 profile 데이터 직접 가져오기
   const { profile } = useProfileStore();
 
-  useEffect(() => {
-    const homeData: HomeData = {
-      id: MOCK_HOME_INITIAL_RESPONSE.writer.id,
-      name: MOCK_HOME_INITIAL_RESPONSE.writer.name,
-      profile_image_url: MOCK_HOME_INITIAL_RESPONSE.writer.profile_image_url,
-      answer_count: MOCK_HOME_INITIAL_RESPONSE.total_unchecked_answer_count,
-      inquiry_count: MOCK_HOME_INITIAL_RESPONSE.total_unchecked_inquiries_count,
-      interest_count: MOCK_HOME_INITIAL_RESPONSE.interest_count,
-    };
-    setData(homeData);
-  }, []);
+  // 로딩 중이거나 에러가 있거나 데이터가 없으면 null 반환
+  if (isLoading || error || !homeInitialData?.result) return null;
 
-  if (!data) return null;
+  const homeData = homeInitialData.result;
 
   return (
     <section className="w-full h-auto bg-gray-10">
       <div className="w-full">
         <HomeProfile
-          name={profile?.name || data.name}
-          profileImage={profile?.profile_image_url || data.profile_image_url}
+          name={profile?.name || homeData.writer.name}
+          profileImage={
+            profile?.profile_image_url || homeData.writer.profile_image_url
+          }
         />
         <HomeMain
-          answerCount={data.answer_count}
-          inquiryCount={data.inquiry_count}
-          interestCount={data.interest_count}
+          answerCount={homeData.total_unchecked_answer_count}
+          inquiryCount={homeData.total_unchecked_inquries_count}
+          interestCount={homeData.interest_count}
+          homeInitialData={homeData}
         />
       </div>
     </section>

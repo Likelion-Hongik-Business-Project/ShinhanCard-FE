@@ -1,25 +1,33 @@
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import FilledHeart from "@/assets/svgs/common/heart-active.svg";
 import User from "@/assets/svgs/home/icon-user.svg";
 import Modal from "@/components/common/Modal";
-import { useRemoveInterestedMember } from "@/hooks/home/useHome";
-import { InterestMemberItem } from "@/types/home";
+import { useRemoveInterestedMember } from "@/hooks/home/useHomeMemberApi";
+import { InterestedMember } from "@/types/home/homeApi.type";
 
 type Props = {
-  member: InterestMemberItem;
+  member: InterestedMember;
 };
 
 const MemberCard = ({ member }: Props) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { mutate: removeInterestedMember } = useRemoveInterestedMember();
+  const navigate = useNavigate();
 
   const handleDeleteClick = () => {
-    removeInterestedMember(Number(member.member_id), {
+    removeInterestedMember(member.member_id, {
       onSuccess: () => {
         setIsDeleteModalOpen(false);
       },
     });
+  };
+
+  // 스페이스 방문하기 버튼 클릭 핸들러
+  const handleVisitSpace = () => {
+    navigate(`/space/${encodeURIComponent(member.name)}`);
   };
 
   return (
@@ -47,7 +55,10 @@ const MemberCard = ({ member }: Props) => {
             {member.group_name} 그룹 &gt; {member.division_name}
           </div>
         </div>
-        <button className="w-60 h-10 px-3 flex items-center justify-center gap-4 border border-gray-20 rounded-[12px] bg-white text-detail1 text-gray-80 mx-auto cursor-pointer">
+        <button
+          className="w-60 h-10 px-3 flex items-center justify-center gap-4 border border-gray-20 rounded-[12px] bg-white text-detail1 text-gray-80 mx-auto cursor-pointer"
+          onClick={handleVisitSpace}
+        >
           <User className="w-4 h-4" />
           {member.name}님 스페이스 방문하기
         </button>

@@ -2,13 +2,13 @@ import { useOutletContext } from "react-router-dom";
 
 import AddMember from "@/components/home/AddMember";
 import MemberCard from "@/components/home/MemberCard";
-import { InterestMemberItem } from "@/types/home";
+import { InterestedMember } from "@/types/home/homeApi.type";
 
 import { useProfileStore } from "@/store/useProfileStore";
 
 type Props = {
   interestCount: number;
-  interestMember: InterestMemberItem[];
+  interestMember: InterestedMember[];
 };
 
 const HomeMember = ({ interestCount, interestMember }: Props) => {

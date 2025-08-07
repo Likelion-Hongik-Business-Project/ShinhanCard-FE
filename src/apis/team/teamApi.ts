@@ -11,7 +11,7 @@ import instance from "@/apis/instance";
 // 그룹 목록 조회
 export const getGroups = async (): Promise<ApiResponse<GetGroupResponse[]>> => {
   const response =
-    await instance.get<ApiResponse<GetGroupResponse[]>>("/groups");
+    await instance.get<ApiResponse<GetGroupResponse[]>>("/api/groups");
   return response.data;
 };
 
@@ -20,7 +20,7 @@ export const getDivisionsByGroupId = async (
   groupId: number
 ): Promise<ApiResponse<GetDivisionResponse[]>> => {
   const response = await instance.get<ApiResponse<GetDivisionResponse[]>>(
-    `/groups/${groupId}/divisions`
+    `/api/groups/${groupId}/divisions`
   );
   return response.data;
 };
@@ -30,7 +30,7 @@ export const getTeamsByDivisionId = async (
   divisionId: number
 ): Promise<ApiResponse<GetTeamResponse[]>> => {
   const response = await instance.get<ApiResponse<GetTeamResponse[]>>(
-    `/divisions/${divisionId}/teams`
+    `/api/divisions/${divisionId}/teams`
   );
   return response.data;
 };

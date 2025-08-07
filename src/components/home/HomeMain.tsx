@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -8,36 +8,38 @@ import HomeButton from "@/components/home/HomeButton";
 import HomeMember from "@/components/home/HomeMember";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
+import {
+  useUncheckedAnswer,
+  useUncheckedInquiries,
+} from "@/hooks/home/useHomeApi";
+import { useInterestedMembers } from "@/hooks/home/useHomeMemberApi";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
-import { InterestMember } from "@/types/home";
+import { GetHomeInitialResponse } from "@/types/home/homeApi.type";
 import {
   InquiryListItem,
   InquiryServerStatus,
   YearMonth,
 } from "@/types/inquiry";
-import {
-  MOCK_HOME_INITIAL_RESPONSE,
-  MOCK_HOME_MEMBER_RESPONSE,
-  MOCK_UNCHECKED_ANSWER_RESPONSE,
-  MOCK_UNCHECKED_INQUIRY_RESPONSE,
-} from "@/mocks/home";
 
 type Props = {
   answerCount: number;
   inquiryCount: number;
   interestCount: number;
+  homeInitialData?: GetHomeInitialResponse;
 };
 
-const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
+const HomeMain = ({
+  answerCount,
+  inquiryCount,
+  interestCount,
+  homeInitialData,
+}: Props) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("answer");
   const [isHovered, setIsHovered] = useState(false);
-  const [homeMember, setHomeMember] = useState<InterestMember | null>(null);
 
   // 팀/필터 관련 상태
-  const [selectedTeamId, setSelectedTeamId] = useState(
-    MOCK_HOME_INITIAL_RESPONSE.selected_team.team_id
-  );
+  const [selectedTeamId, setSelectedTeamId] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("전체");
   const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
 
@@ -49,11 +51,37 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
+  // 2번, 3번 API 훅
+  const { data: uncheckedAnswerData } = useUncheckedAnswer(
+    activeTab === "answer" ? selectedTeamId : 0
+  );
+  const { data: uncheckedInquiriesData } = useUncheckedInquiries(
+    activeTab === "inquiry" ? selectedTeamId : 0
+  );
+
+  //관심 팀원 조회 API 훅
+  const { data: interestedMembersData } = useInterestedMembers();
+
+  // homeInitialData가 로드되면 selectedTeamId 초기화
   useEffect(() => {
-    if (activeTab === "interest") {
-      setHomeMember(MOCK_HOME_MEMBER_RESPONSE);
+    if (homeInitialData?.selected_team?.team_id) {
+      setSelectedTeamId(homeInitialData.selected_team.team_id);
     }
-  }, [activeTab]);
+  }, [homeInitialData]);
+
+  // 현재 탭에 따른 팀 리스트 선택
+  const getCurrentTeams = useCallback(() => {
+    if (!homeInitialData) return [];
+
+    switch (activeTab) {
+      case "answer":
+        return homeInitialData.unchecked_answer_teams;
+      case "inquiry":
+        return homeInitialData.unchecked_inquries_teams;
+      default:
+        return homeInitialData.unchecked_answer_teams;
+    }
+  }, [homeInitialData, activeTab]);
 
   // 탭 변경 시 필터 및 페이지네이션 초기화
   useEffect(() => {
@@ -68,7 +96,7 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
     if (currentTeams.length > 0) {
       setSelectedTeamId(currentTeams[0].team_id);
     }
-  }, [activeTab]);
+  }, [activeTab, getCurrentTeams]);
 
   // 팀 선택 핸들러
   const handleSelectTeam = (teamId: number) => {
@@ -90,36 +118,20 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
     setIsStatusModalOpen(false);
   };
 
-  // 현재 탭에 따른 팀 리스트 선택
-  const getCurrentTeams = () => {
-    switch (activeTab) {
-      case "answer":
-        return MOCK_HOME_INITIAL_RESPONSE.unchecked_answer_teams;
-      case "inquiry":
-        return MOCK_HOME_INITIAL_RESPONSE.unchecked_inquiries_teams;
-      default:
-        return MOCK_HOME_INITIAL_RESPONSE.unchecked_answer_teams;
-    }
-  };
-
   // 현재 탭에 따른 원본 데이터 선택
   const getCurrentRawData = () => {
     if (activeTab === "answer") {
-      // 현재 페이지에 해당하는 데이터만 반환 (실제 API 동작 시뮬레이션)
+      // 미확인 답변 데이터 사용
+      const data = uncheckedAnswerData?.result?.inquiries || [];
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      return MOCK_UNCHECKED_ANSWER_RESPONSE.inquiries.slice(
-        startIndex,
-        endIndex
-      );
+      return data.slice(startIndex, endIndex);
     } else if (activeTab === "inquiry") {
-      // 현재 페이지에 해당하는 데이터만 반환 (실제 API 동작 시뮬레이션)
+      // 미확인 문의 데이터 사용
+      const data = uncheckedInquiriesData?.result?.inquiries || [];
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      return MOCK_UNCHECKED_INQUIRY_RESPONSE.inquiries.slice(
-        startIndex,
-        endIndex
-      );
+      return data.slice(startIndex, endIndex);
     }
     return [];
   };
@@ -128,11 +140,32 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
   const getCurrentPagination = () => {
     switch (activeTab) {
       case "answer":
-        return MOCK_UNCHECKED_ANSWER_RESPONSE.pagination;
+        return (
+          uncheckedAnswerData?.result?.pagination || {
+            page: 1,
+            page_size: 10,
+            total: 0,
+            has_next: false,
+          }
+        );
       case "inquiry":
-        return MOCK_UNCHECKED_INQUIRY_RESPONSE.pagination;
+        return (
+          uncheckedInquiriesData?.result?.pagination || {
+            page: 1,
+            page_size: 10,
+            total: 0,
+            has_next: false,
+          }
+        );
       default:
-        return { page: 1, page_size: 10, total: 0, has_next: false };
+        return (
+          homeInitialData?.pagination || {
+            page: 1,
+            page_size: 10,
+            total: 0,
+            has_next: false,
+          }
+        );
     }
   };
 
@@ -143,54 +176,78 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
 
   // 현재 페이지 문의들을 InquiryListItem 형태로 변환
   const currentItems = rawData
-    .map(item => {
-      // InquiryServerStatus로 변환 (Mock 데이터는 이미 올바른 형태)
-      const serverStatus = item.status as InquiryServerStatus;
-      const statusLabel = getInquiryStatusLabel(serverStatus);
-      if (!statusLabel) return null;
+    .map(
+      (
+        item:
+          | import("@/types/home/homeApi.type").InquiryItem
+          | import("@/types/home/homeApi.type").InquiryItemWithoutWriter
+      ) => {
+        // InquiryServerStatus로 변환
+        const serverStatus = item.status as InquiryServerStatus;
+        const statusLabel = getInquiryStatusLabel(serverStatus);
+        if (!statusLabel) return null;
 
-      // 미확인 답변과 미확인 문의의 데이터 구조가 다름
-      let leftProfiles: {
-        user_id: number;
-        name: string;
-        profile_image_url: string;
-      }[];
-      if ("inquiry_assignees" in item) {
-        // 미확인 답변: inquiry_assignees 사용
-        leftProfiles = item.inquiry_assignees.map(
-          (assignee: {
-            id: number;
-            name: string;
-            profile_image_url: string;
-          }) => ({
-            user_id: assignee.id,
-            name: assignee.name,
-            profile_image_url: assignee.profile_image_url,
-          })
-        );
-      } else if ("writer" in item) {
-        // 미확인 문의: writer 사용
-        leftProfiles = [
-          {
-            user_id: item.writer.user_id,
-            name: item.writer.name,
-            profile_image_url: item.writer.profile_image_url,
-          },
-        ];
-      } else {
-        leftProfiles = [];
+        // 미확인 답변과 미확인 문의의 데이터 구조가 다름
+        let leftProfiles: {
+          user_id: number;
+          name: string;
+          profile_image_url: string;
+        }[];
+
+        if (activeTab === "answer") {
+          // 미확인 답변: result.writer 사용 (모든 문의가 동일한 작성자)
+          const writer = uncheckedAnswerData?.result?.writer;
+          if (writer) {
+            leftProfiles = [
+              {
+                user_id: writer.id,
+                name: writer.name,
+                profile_image_url: writer.profile_image_url,
+              },
+            ];
+          } else {
+            leftProfiles = [];
+          }
+        } else if (activeTab === "inquiry") {
+          // 미확인 문의: 각 inquiry의 writer 사용
+          if ("writer" in item && item.writer) {
+            leftProfiles = [
+              {
+                user_id: item.writer.id,
+                name: item.writer.name,
+                profile_image_url: item.writer.profile_image_url,
+              },
+            ];
+          } else {
+            leftProfiles = [];
+          }
+        } else {
+          // 홈페이지 초기 데이터: result.writer 사용 (모든 문의가 동일한 작성자)
+          const writer = homeInitialData?.writer;
+          if (writer) {
+            leftProfiles = [
+              {
+                user_id: writer.id,
+                name: writer.name,
+                profile_image_url: writer.profile_image_url,
+              },
+            ];
+          } else {
+            leftProfiles = [];
+          }
+        }
+
+        return {
+          id: item.inquiry_id,
+          team_id: selectedTeamId,
+          leftProfiles,
+          title: item.title,
+          status: statusLabel,
+          created_at: item.created_at,
+          is_scraped: item.is_scraped,
+        };
       }
-
-      return {
-        id: item.inquiry_id,
-        team_id: selectedTeamId,
-        leftProfiles,
-        title: item.title,
-        status: statusLabel,
-        created_at: item.created_at,
-        is_scraped: item.is_scraped,
-      };
-    })
+    )
     .filter((item): item is InquiryListItem => item !== null);
 
   // 필터링 로직: InquiryPageLayout과 동일한 방식
@@ -251,6 +308,7 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
       </div>
 
       <div className="w-full h-auto">
+        {/* 미확인 답변 */}
         {activeTab === "answer" && (
           <div className="w-full">
             <TeamTabs
@@ -276,6 +334,8 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
             />
           </div>
         )}
+
+        {/* 미확인 문의 */}
         {activeTab === "inquiry" && (
           <div className="w-full">
             <TeamTabs
@@ -301,10 +361,12 @@ const HomeMain = ({ answerCount, inquiryCount, interestCount }: Props) => {
             />
           </div>
         )}
-        {activeTab === "interest" && homeMember && (
+
+        {/* 관심 팀원 */}
+        {activeTab === "interest" && interestedMembersData?.result && (
           <HomeMember
-            interestCount={homeMember.result.interest_count}
-            interestMember={homeMember.result.interest_members}
+            interestCount={interestedMembersData.result.interest_count}
+            interestMember={interestedMembersData.result.interested_members}
           />
         )}
       </div>
