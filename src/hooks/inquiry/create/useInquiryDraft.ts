@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useInquiryDraftApi } from "@/hooks/inquiry/create/useInquiryDraftApi";
 
@@ -46,6 +46,14 @@ export const useInquiryDraft = ({
   const [isDraftSaved, setIsDraftSaved] = useState(false);
   const [justSavedDraft, setJustSavedDraft] = useState(false);
 
+  const prevRef = useRef({
+    title,
+    content,
+    assigneeIds,
+    referenceIds,
+    fileIds,
+  });
+
   const {
     useCheckDraftExists,
     usePostInquiryDraftMutation,
@@ -56,10 +64,13 @@ export const useInquiryDraft = ({
 
   const { data: draftExists, refetch: refetchDraftExists } =
     useCheckDraftExists(teamId, false);
+
   const { refetch: fetchDraft } = useGetInquiryDraft(
     teamId,
-    draftExists?.result.draft_id ?? 0
+    draftExists?.result.draft_id ?? 0,
+    !!teamId && !!draftExists?.result.draft_id
   );
+
   const { mutate: postDraft } = usePostInquiryDraftMutation();
   const { mutate: putDraft } = usePutInquiryDraftMutation();
   const { mutate: deleteDraft } = useDeleteInquiryDraftMutation();
@@ -79,26 +90,31 @@ export const useInquiryDraft = ({
       file_ids: fileIds,
     };
 
-    // 이미 draftId가 있으면 수정
-    if (draftId) {
+    // ✅ 1. 최근 저장했으면 return (가장 먼저 확인)
+    if (justSavedDraft) return;
+
+    // ✅ 2. draftId가 있으면 PUT
+    if (draftId !== null) {
       putDraft(
         { inquiryId: draftId, teamId, data: draftData },
         {
           onSuccess: () => {
             setIsDraftSaved(true);
             setJustSavedDraft(true);
+            prevRef.current = {
+              title,
+              content,
+              assigneeIds,
+              referenceIds,
+              fileIds,
+            };
           },
         }
       );
       return;
     }
 
-    // 바로 이전에 저장된 상태면, refetchDraftExists() 생략
-    if (justSavedDraft) {
-      return;
-    }
-
-    // 이 시점엔 draftId가 없고, 서버에 존재하는 경우 → 모달 열림
+    // ✅ 3. 존재 여부 확인 후 POST or 모달
     const { data: existing } = await refetchDraftExists();
 
     if (existing?.result.is_present) {
@@ -110,8 +126,8 @@ export const useInquiryDraft = ({
         {
           onSuccess: res => {
             setDraftId(res.result.inquiry_id);
-            setJustSavedDraft(true);
             setIsDraftSaved(true);
+            setJustSavedDraft(true);
           },
         }
       );
@@ -136,6 +152,14 @@ export const useInquiryDraft = ({
       inquiry_id,
     } = data.result;
 
+    prevRef.current = {
+      title,
+      content,
+      assigneeIds: assignees?.map(u => u.userId) ?? [],
+      referenceIds: observers?.map(u => u.userId) ?? [],
+      fileIds: files.map(f => f.fileId),
+    };
+
     setTitle(title);
     setContent(content);
     setAssigneeIds(assignees?.map(u => u.userId) ?? []);
@@ -148,6 +172,7 @@ export const useInquiryDraft = ({
 
     setDraftId(inquiry_id);
     setIsDraftSaved(true);
+    setJustSavedDraft(true);
   };
 
   const resetDraft = () => {
@@ -189,6 +214,30 @@ export const useInquiryDraft = ({
     setJustSavedDraft(false);
     setIsDraftSaved(false);
   };
+
+  useEffect(() => {
+    if (draftExists?.result.is_present && draftId === null) {
+      setDraftId(draftExists.result.draft_id);
+    }
+  }, [draftExists, draftId]);
+
+  useEffect(() => {
+    if (!isDraftSaved) return;
+
+    const arrayEqual = (a: number[], b: number[]) =>
+      a.length === b.length && a.every((v, i) => v === b[i]);
+
+    const changed =
+      prevRef.current.title !== title ||
+      prevRef.current.content !== content ||
+      !arrayEqual(prevRef.current.assigneeIds, assigneeIds) ||
+      !arrayEqual(prevRef.current.referenceIds, referenceIds) ||
+      !arrayEqual(prevRef.current.fileIds, fileIds);
+
+    if (changed) {
+      setIsDraftSaved(false);
+    }
+  }, [title, content, assigneeIds, referenceIds, fileIds]);
 
   return {
     isDraftSaved,
