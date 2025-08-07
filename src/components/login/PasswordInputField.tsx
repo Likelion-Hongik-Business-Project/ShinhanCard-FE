@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
@@ -16,12 +16,14 @@ interface Props {
   value: string; // 입력값
   setValue: (v: string) => void; // 입력값 변경 함수
   errorTypePw?: "none" | "invalid"; // 오류 상태
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const PasswordInputField = ({
   value,
   setValue,
   errorTypePw = "none",
+  onKeyDown,
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false); // 포커스 상태
   const [isHovered, setIsHovered] = useState(false); // 호버 상태
@@ -122,6 +124,7 @@ const PasswordInputField = ({
             onChange={e => handleChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onKeyDown={onKeyDown}
             placeholder={!showLabel ? "Password" : ""}
             autoComplete="current-password"
             className={`
