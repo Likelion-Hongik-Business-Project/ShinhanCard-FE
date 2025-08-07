@@ -1,20 +1,27 @@
-import { useParams } from "react-router-dom";
-
 import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
+import Modal from "@/components/common/Modal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
+import AssigneeActions from "@/components/inquiry/detail/AssigneeActions";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
-import { InquiryData } from "@/types/inquiryTypes";
-import { mockInquiryDetailResponse } from "@/mocks/mockInquiryDetailResponse";
+import NotificationButton from "@/components/inquiry/detail/NotificationButton";
+import PendingActions from "@/components/inquiry/detail/PendingActions";
+import { useInquiryPageHandler } from "@/hooks/inquiry/detail/useInquiryDetailPageHandler";
 import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
-
-  // mockInquiryDetailResponse에서 해당 inquiry 찾기
-  const inquiry = mockInquiryDetailResponse.inquiries.find(
-    item => item.inquiry_id === Number(id)
-  ) as InquiryData | undefined;
+  const {
+    inquiry,
+    userRole,
+    currentUserId,
+    state,
+    answerHandler,
+    modals,
+    modalProps,
+    confirmedUsers,
+    handleEditorSubmit,
+    closeModal,
+  } = useInquiryPageHandler();
 
   if (!inquiry) {
     return (
@@ -29,32 +36,79 @@ const InquiryDetailPage = () => {
     );
   }
 
-  // 각 문의별 테스트 시나리오의 권한과 사용자 ID 사용
-  const userRole = inquiry.test_user_role;
-  const currentUserId = inquiry.test_current_user_id;
+  const showButtons =
+    state.permissions.showAssigneeFeatures ||
+    (state.isWriter &&
+      !["답변 완료", "등록 보류"].includes(state.finalStateLabel)) ||
+    (state.isWriter && state.isPendingState);
 
   return (
     <div className="min-h-screen">
       <div className="mx-auto flex w-full flex-col gap-[56px]">
-        <div className="flex flex-col gap-10">
-          {/* 헤더 */}
-          <Header isAdmin={userRole === "admin"} />
+        <div>
+          <Header
+            isAdmin={userRole === "admin"}
+            onDelete={modals.openDeletePostModal}
+          />
+        </div>
 
-          {/* 문의글 카드 - 자동 권한 설정 */}
+        <div className="self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
           <InquiryCard
             inquiry={inquiry}
             userRole={userRole}
             currentUserId={currentUserId}
+            confirmedUsers={confirmedUsers}
           />
+
+          {showButtons &&
+            (state.permissions.showAssigneeFeatures ? (
+              <div className="w-full">
+                <AssigneeActions
+                  showAssigneeFeatures={state.permissions.showAssigneeFeatures}
+                  onStartAnswer={answerHandler.handleStartAnswer}
+                  onConfirm={modals.openConfirmInquiryModal}
+                />
+              </div>
+            ) : (
+              <div className="w-full flex justify-between items-center">
+                <div className="flex justify-start">
+                  <NotificationButton
+                    isWriter={state.isWriter}
+                    notificationSent={state.notificationSent}
+                    remainingTime={state.remainingTime}
+                    finalStateLabel={state.finalStateLabel}
+                    onSend={modals.openSendNotificationModal}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <PendingActions
+                    isWriter={state.isWriter}
+                    isPendingState={state.isPendingState}
+                  />
+                </div>
+              </div>
+            ))}
         </div>
-        {/* 답변 섹션 카드*/}
+
         <AnswerSection
-          comments={inquiry.comments}
+          inquiry={inquiry}
           currentUserId={currentUserId}
+          {...answerHandler}
+          onEditorSubmit={handleEditorSubmit}
         />
 
         <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>
+
+      {modalProps && (
+        <Modal
+          isOpen={true}
+          onClose={closeModal}
+          title={modalProps.title}
+          description={modalProps.description}
+          buttons={modalProps.buttons}
+        />
+      )}
     </div>
   );
 };
