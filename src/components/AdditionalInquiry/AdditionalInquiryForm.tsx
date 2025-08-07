@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { FilledUnion, Union } from "@/assets/svgs/AdditionalInquiry";
 import Pencil from "@/assets/svgs/common/pencil.svg";
@@ -38,6 +38,14 @@ const AdditionalInquiryForm = ({
   const prefix = selectedName ? selectedName + " " : "";
 
   const isCompleteEnabled = selectedId !== null && content.trim().length > 0;
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, [initialContent, selectedId]);
 
   const handleToggleAssignee = (id: number) => {
     setSelectedId(prev => (prev === id ? null : id));

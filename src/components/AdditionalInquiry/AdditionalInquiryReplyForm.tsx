@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import Pencil from "@/assets/svgs/common/pencil.svg";
 import { useCommentApi } from "@/hooks/comment/commentApi";
@@ -26,9 +26,17 @@ const AdditionalInquiryReplyForm = ({
   const [content, setContent] = useState(initialContent);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const prefix = taggedUser.username + " ";
+
   const isCompleteEnabled = content.trim().length > 0;
 
-  const prefix = taggedUser.username + " ";
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, [initialContent, prefix]);
 
   const handleComplete = () => {
     if (!isCompleteEnabled) return;
