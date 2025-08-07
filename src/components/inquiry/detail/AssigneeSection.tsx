@@ -15,7 +15,7 @@ const getAssigneeTextColor = (
 
 const AssigneeSection = ({
   assignees,
-  references,
+  observers,
   // confirmedAssignees, 커밋용 임시 주석 처리
   isPendingState,
   isAssigneeEditMode,
@@ -48,14 +48,14 @@ const AssigneeSection = ({
                   {assignee.profile_image_url ? (
                     <img
                       src={assignee.profile_image_url}
-                      alt={`${assignee.name}의 프로필 이미지`}
+                      alt={`${assignee.username}의 프로필 이미지`}
                       className="w-[20px] h-[20px] rounded-full"
                     />
                   ) : (
                     <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
                   )}
                   <div className={`justify-start ${textColor} text-body2`}>
-                    {assignee.name}
+                    {assignee.username}
                   </div>
                 </div>
                 {!isPendingState && (
@@ -86,23 +86,23 @@ const AssigneeSection = ({
           <div className="text-gray-50 text-body2">답변 참조자</div>
         </div>
         <div className="w-[728px] px-[8px] py-[4px] bg-white rounded-[5px] flex justify-start items-center gap-[16px]">
-          {references?.map(reference => (
+          {observers?.map(observer => (
             <div
-              key={reference.user_id}
+              key={observer.user_id}
               className="flex justify-start items-center gap-[6px]"
             >
               <div className="flex justify-start items-center gap-[8px]">
-                {reference.profile_image_url ? (
+                {observer.profile_image_url ? (
                   <img
-                    src={reference.profile_image_url}
-                    alt={`${reference.name}의 프로필 이미지`}
+                    src={observer.profile_image_url}
+                    alt={`${observer.username}의 프로필 이미지`}
                     className="w-[20px] h-[20px] rounded-full"
                   />
                 ) : (
                   <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
                 )}
                 <div className="justify-start text-gray-100 text-body2">
-                  {reference.name}
+                  {observer.username}
                 </div>
               </div>
             </div>

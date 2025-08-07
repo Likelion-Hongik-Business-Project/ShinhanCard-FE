@@ -5,7 +5,7 @@ import { InquiryContentProps } from "@/types/inquiryTypes";
 const InquiryContent = ({
   title,
   content,
-  writer,
+  author,
   createdAt,
   isWriter,
   isAdmin,
@@ -29,18 +29,18 @@ const InquiryContent = ({
       <div className="self-stretch rounded-[30px] flex flex-col justify-center items-start gap-4">
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-2">
-            {writer.profile_image_url ? (
+            {author.profile_image_url ? (
               <img
-                src={writer.profile_image_url}
-                alt={`${writer.name}의 프로필 이미지`}
+                src={author.profile_image_url}
+                alt={`${author.username}의 프로필 이미지`}
                 className="w-[20px] h-[20px] rounded-full"
               />
             ) : (
               <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
             )}
-            <div className="text-gray-80 text-body1-b">{writer.name}</div>
+            <div className="text-gray-80 text-body1-b">{author.username}</div>
             <div className="text-main text-detail1-b mt-[1px]">
-              {writer.team_name}
+              {author.teamname}
             </div>
           </div>
           {/* 문의자 수정/삭제 버튼 */}

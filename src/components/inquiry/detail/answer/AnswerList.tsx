@@ -11,8 +11,12 @@ const AnswerList = ({
   selectedCommentId,
   onSelectComment,
 }: AnswerListProps) => {
-  const uniqueCommenters = comments.reduce((acc, current) => {
-    if (!acc.find((item) => item.writer.user_id === current.writer.user_id)) {
+  const validComments = comments.filter(comment => comment && comment.author);
+
+  // 동일한 작성자의 답변이 여러 개 있을 경우 탭에는 한 번만 표시
+  const uniqueCommenters = validComments.reduce((acc, current) => {
+    // 이제 current.author는 항상 존재하므로 안전합니다.
+    if (!acc.find(item => item.author.user_id === current.author.user_id)) {
       acc.push(current);
     }
     return acc;
@@ -20,9 +24,9 @@ const AnswerList = ({
 
   return (
     <div className="flex items-center gap-6 border-b-2 border-gray-10">
-      {uniqueCommenters.map((comment) => (
+      {uniqueCommenters.map(comment => (
         <button
-          key={comment.writer.user_id}
+          key={comment.author.user_id}
           onClick={() => onSelectComment(comment.comment_id)}
           className={`border-b-2 px-6 py-4 text-heading3-b transition-colors ${
             selectedCommentId === comment.comment_id
@@ -31,7 +35,7 @@ const AnswerList = ({
           }`}
           style={{ marginBottom: "-2px" }}
         >
-          {comment.writer.name}
+          {comment.author.username}
         </button>
       ))}
     </div>

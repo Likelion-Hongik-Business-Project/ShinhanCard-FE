@@ -25,7 +25,7 @@ export const useInquiryState = (
 
   // 기본 권한 설정
   const permissions = USER_ROLE_PERMISSIONS[userRole];
-  const isWriter = inquiry.writer.user_id === currentUserId;
+  const isWriter = inquiry.author.user_id === currentUserId;
   const isAdmin = userRole === "admin";
 
   // 상태 매핑 및 계산
@@ -41,7 +41,7 @@ export const useInquiryState = (
   // 등록 보류 상태 확인 - API 데이터 기준으로 단순화
   const confirmedCount = inquiry.confirmed_assignees_count;
   const totalAssignees = inquiry.assignees?.length || 0;
-  const answersCount = inquiry.comment_count;
+  const answersCount = inquiry.answers.count;
   const isPendingState =
     confirmedCount === totalAssignees &&
     totalAssignees > 0 &&

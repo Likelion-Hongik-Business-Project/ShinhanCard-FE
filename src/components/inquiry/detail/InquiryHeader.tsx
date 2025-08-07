@@ -1,10 +1,8 @@
-import { useState } from "react";
-
-import Bell from "@/assets/svgs/inquiry/detail/bell.svg";
 import BellOff from "@/assets/svgs/inquiry/detail/bell-off.svg";
 import BellOn from "@/assets/svgs/inquiry/detail/bell-on.svg";
 import Star from "@/assets/svgs/inquiry/detail/star.svg";
 import StarActive from "@/assets/svgs/inquiry/detail/star-active.svg";
+import { useScrapApi } from "@/hooks/scrap/useScrapApi";
 import { InquiryHeaderProps } from "@/types/inquiryTypes";
 
 const InquiryHeader = ({
@@ -13,14 +11,23 @@ const InquiryHeader = ({
   isWriter,
   isAdmin,
   canSendNotification,
-  isScrapped: isScrappedProp,
+  inquiry,
 }: InquiryHeaderProps) => {
-  // 스크랩 상태 관리
-  const [isScrapped, setIsScrapped] = useState(isScrappedProp);
+  const { postScrapMutation, deleteScrapMutation } = useScrapApi();
 
-  // 스크랩 토글 함수
-  const handleScrapClick = () => {
-    setIsScrapped(!isScrapped);
+  // 스크랩 토글 핸들러
+  const handleToggleScrap = async () => {
+    try {
+      if (inquiry.is_scraped || false) {
+        await deleteScrapMutation.mutateAsync({
+          inquiry_id: inquiry.inquiry_id,
+        });
+      } else {
+        await postScrapMutation.mutateAsync({ inquiry_id: inquiry.inquiry_id });
+      }
+    } catch (error) {
+      console.error("스크랩 처리 실패:", error);
+    }
   };
 
   return (
@@ -41,7 +48,7 @@ const InquiryHeader = ({
         {/* 기본 알림 버튼 (문의자가 아닌 경우에만) */}
         {!isWriter && !isAdmin && (
           <button className="w-[20px] h-[20px] relative cursor-pointer">
-            <Bell className="text-gray-30" />
+            <BellOff className="text-gray-30" />
           </button>
         )}
 
@@ -62,11 +69,15 @@ const InquiryHeader = ({
         {/* 스크랩 버튼 (팀관리자가 아닌 경우에만) */}
         {!isAdmin && (
           <button
-            onClick={handleScrapClick}
+            onClick={handleToggleScrap}
             className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
-            aria-label={isScrapped ? "스크랩 취소" : "스크랩"}
+            aria-label={inquiry.is_scraped || false ? "스크랩 취소" : "스크랩"}
           >
-            {isScrapped ? <StarActive /> : <Star className="text-gray-50" />}
+            {inquiry.is_scraped || false ? (
+              <StarActive />
+            ) : (
+              <Star className="text-gray-50" />
+            )}
           </button>
         )}
       </div>

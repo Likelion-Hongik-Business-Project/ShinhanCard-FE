@@ -3,9 +3,10 @@ export type UserRole = "default" | "assignee" | "writer" | "admin";
 // 답변 타입
 export interface Comment {
   comment_id: number;
-  writer: {
+  // [수정] 'writer'를 'author'로, 'name'을 'username'으로 통일
+  author: {
     user_id: number;
-    name: string;
+    username: string;
     profile_image_url?: string;
     team_name?: string;
   };
@@ -19,9 +20,9 @@ export interface FollowUp {
   follow_up_id: number;
   content: string;
   created_at: string;
-  writer: {
+  author: {
     user_id: number;
-    name: string;
+    username: string;
     profile_image_url?: string;
   };
   comments: Comment[];
@@ -31,17 +32,22 @@ export interface FollowUp {
 export interface HeaderProps {
   isTeamEnd?: boolean;
   isAdmin?: boolean;
+  teamInfo: {
+    group_name: string;
+    division_name: string;
+    team_name: string;
+  };
 }
 
 // InquiryContent Props 타입
 export interface InquiryContentProps {
   title: string;
   content: string;
-  writer: {
+  author: {
     user_id: number;
-    name: string;
+    username: string;
     profile_image_url?: string;
-    team_name: string;
+    teamname: string;
   };
   createdAt: string;
   isWriter: boolean;
@@ -56,12 +62,12 @@ export interface InquiryHeaderProps {
     bg: string;
     text: string;
     dot: string;
-    border?: string; // 등록 보류 상태에만 적용
+    border?: string;
   };
   isWriter: boolean;
   isAdmin: boolean;
   canSendNotification: boolean;
-  isScrapped: boolean;
+  inquiry: InquiryData;
 }
 
 // NotificationButton Props 타입
@@ -82,18 +88,19 @@ export interface PendingActionsProps {
 export interface AssigneeSectionProps {
   assignees?: Array<{
     user_id: number;
-    name: string;
+    username: string; // [수정] 'name'을 'username'으로 통일
     profile_image_url?: string;
     is_confirmed: boolean;
   }>;
-  references?: Array<{
+  // [수정] 'references'를 실제 데이터 키인 'observers'로 변경
+  observers?: Array<{
     user_id: number;
-    name: string;
+    username: string; // [수정] 'name'을 'username'으로 통일
     profile_image_url?: string;
   }>;
   confirmedAssignees?: Array<{
     user_id: number;
-    name: string;
+    username: string; // [수정] 'name'을 'username'으로 통일
     profile_image_url?: string;
   }>;
   isPendingState: boolean;
@@ -108,39 +115,57 @@ export interface InquiryData {
   content: string;
   created_at: string;
   inquiry_state: string;
-  writer: {
+  author: {
     user_id: number;
-    name: string;
+    username: string;
     profile_image_url?: string;
-    team_name: string;
+    teamname: string;
   };
   assignees: Array<{
     user_id: number;
-    name: string;
+    username: string;
     profile_image_url?: string;
     is_confirmed: boolean;
   }>;
-  references: Array<{
+  // [수정] 'references'를 실제 데이터 키인 'observers'로 변경
+  observers: Array<{
     user_id: number;
-    name: string;
+    username: string; // [수정] 'name'을 'username'으로 통일
     profile_image_url?: string;
   }>;
   files: Array<{
     file_name: string;
     file_url: string;
   }>;
+  group: {
+    groupId: number;
+    groupName: string;
+    active: boolean;
+  };
+  division: {
+    divisionId: number;
+    divisionName: string;
+    active: boolean;
+  };
+  team: {
+    teamId: number;
+    teamName: string;
+    active: boolean;
+  };
   can_edit: boolean;
   can_answer: boolean;
   can_notify: boolean;
-  is_scrapped: boolean;
+  is_scraped: boolean;
   confirmed_assignees_count: number;
   confirmed_assignees: Array<{
     user_id: number;
-    name: string;
+    username: string; // [수정] 'name'을 'username'으로 통일
     profile_image_url?: string;
   }>;
-  comment_count: number;
-  comments: Comment[];
+  answers: {
+    count: number;
+    answers: Comment[];
+  };
   follow_ups: FollowUp[];
 
   // 테스트용 필드들 (mock 데이터에서만 사용, 컴포넌트에서는 옵셔널)
