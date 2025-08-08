@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+import { useAssignedExport } from "@/hooks/excel/useExcelApi";
 import {
   useAssignedByTeamApi,
   useInitAssignedApi,
@@ -17,6 +18,21 @@ const AssignedPage = () => {
   const [date, setDate] = useState<{ year: number; month: number }[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+
+  // export
+  const assignedExport = useAssignedExport();
+
+  const handleExport = (option: "filtered" | "all") => {
+    if (!selectedTeamId) return;
+
+    assignedExport.mutate({
+      teamId: selectedTeamId,
+      option,
+      status,
+      date,
+      page,
+    });
+  };
 
   // 최초 요청
   const {
@@ -35,7 +51,7 @@ const AssignedPage = () => {
     isLoading: teamLoading,
     isError: teamError,
   } = useAssignedByTeamApi({
-    teamId: selectedTeamId!,
+    teamId: selectedTeamId as number,
     page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
@@ -83,6 +99,7 @@ const AssignedPage = () => {
       onStatusChange={setStatus}
       selectedDate={date}
       onDateChange={setDate}
+      onExport={handleExport}
     />
   );
 };

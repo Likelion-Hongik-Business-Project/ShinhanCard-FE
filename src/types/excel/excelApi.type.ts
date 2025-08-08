@@ -5,6 +5,7 @@ export type ExportOption = "filtered" | "all";
 export type GetAssignedExcelRequest = {
   teamId: number;
   option: ExportOption;
+  page: number;
   status: InquiryStatus | "전체";
   date: YearMonth[];
 };
