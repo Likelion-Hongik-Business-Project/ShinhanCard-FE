@@ -15,3 +15,14 @@ export const getNotifications = async ({
   });
   return response.data;
 };
+
+export const getArchivedNotifications = async ({
+  page,
+  page_size,
+}: GetNotificationsRequest): ApiResponse<GetNotificationsResponse> => {
+  const { data } = await instance.get<ApiResponse<GetNotificationsResponse>>(
+    "/api/notifications/archive",
+    { params: { page, page_size } }
+  );
+  return data;
+};
