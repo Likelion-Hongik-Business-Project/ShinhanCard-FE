@@ -37,3 +37,14 @@ export type PatchArchiveNotificationResponse = {
   is_archived: boolean;
   updated_at: string;
 };
+
+export type PatchReadNotificationRequest = {
+  notification_id: number;
+  is_read: boolean;
+};
+
+export type PatchReadNotificationResponse = {
+  notification_id: number;
+  is_read: boolean;
+  updated_at: string;
+};

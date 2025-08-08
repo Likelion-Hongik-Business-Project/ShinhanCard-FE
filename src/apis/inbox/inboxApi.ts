@@ -4,6 +4,8 @@ import {
   GetNotificationsResponse,
   PatchArchiveNotificationRequest,
   PatchArchiveNotificationResponse,
+  PatchReadNotificationRequest,
+  PatchReadNotificationResponse,
 } from "@/types/inbox/inboxApi.type";
 
 import instance from "@/apis/instance";
@@ -40,5 +42,16 @@ export const patchArchiveNotification = async ({
     ApiResponse<PatchArchiveNotificationResponse>
   >(`/api/notifications/${notification_id}/archive`, { is_archived });
   console.log("변경", data);
+  return data;
+};
+
+// 읽음 상태 변경
+export const patchReadNotification = async ({
+  notification_id,
+  is_read,
+}: PatchReadNotificationRequest): ApiResponse<PatchReadNotificationResponse> => {
+  const { data } = await instance.patch<
+    ApiResponse<PatchReadNotificationResponse>
+  >(`/api/notifications/${notification_id}/read`, { is_read });
   return data;
 };

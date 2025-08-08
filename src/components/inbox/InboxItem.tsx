@@ -10,7 +10,10 @@ import Box from "@/assets/svgs/inbox/inbox-box.svg";
 import Reset from "@/assets/svgs/inbox/reset.svg";
 import UnCheckBox from "@/assets/svgs/inbox/uncheck-box.svg";
 import Warning from "@/assets/svgs/inbox/warning.svg";
-import { usePatchArchiveNotificationApi } from "@/hooks/inbox/useInboxApi";
+import {
+  usePatchArchiveNotificationApi,
+  usePatchReadNotificationApi,
+} from "@/hooks/inbox/useInboxApi";
 import { formatTime } from "@/utils/dateUtils";
 import { getInquiryTypeFromText } from "@/utils/inboxMapping";
 import { NotificationItem } from "@/types/inbox/inboxApi.type";
@@ -23,33 +26,44 @@ type Props = {
 const InboxItem = ({ inquiry, isArchived }: Props) => {
   const { writer, notification_title, notification_body, created_at } = inquiry;
   const type = getInquiryTypeFromText(inquiry.notification_title);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(inquiry.is_read);
+  const { mutate: markRead } = usePatchReadNotificationApi();
+  const { mutate: archive, isPending: archiving } =
+    usePatchArchiveNotificationApi();
   const navigate = useNavigate();
-  const { mutate: archive, isPending } = usePatchArchiveNotificationApi();
 
-  const handleCheckToggle = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      setIsChecked(prev => !prev);
-    },
-    []
-  );
+  const handleCheckToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const next = !isChecked;
+    setIsChecked(next); // 로컬 즉시 반영: 낙관적 업데이트
+    markRead(
+      { notification_id: inquiry.notification_id, is_read: next },
+      { onError: () => setIsChecked(prev => !prev) } // 실패 시 롤백
+    );
+  };
 
   const handleArchive = useCallback(
     (e: React.MouseEvent, next: boolean) => {
       e.stopPropagation();
-      if (isPending) return; // 중복 방지
+      if (archiving) return; // 중복 방지
       archive({ notification_id: inquiry.notification_id, is_archived: next });
     },
-    [archive, inquiry.notification_id, isPending]
+    [archive, inquiry.notification_id, archiving]
   );
 
-  const handleNavigate = useCallback(() => {
-    setIsChecked(true);
-    if (inquiry.inquiry_id != null) {
-      navigate(`/inquiries/${inquiry.inquiry_id}`);
+  const handleNavigate = async () => {
+    if (!isChecked) setIsChecked(true); // ← 즉시 점 제거 (낙관적 업데이트)
+    try {
+      await markRead({
+        notification_id: inquiry.notification_id,
+        is_read: true,
+      });
+    } finally {
+      if (inquiry.inquiry_id != null) {
+        navigate(`/inquiries/${inquiry.inquiry_id}`);
+      }
     }
-  }, [navigate, inquiry.inquiry_id]);
+  };
 
   const renderIcon = () => {
     switch (type) {
@@ -98,9 +112,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
             <p className="text-detail1 text-gray-30">
               {formatTime(created_at)}
             </p>
-            {!isChecked && !isArchived && (
-              <div className="w-2 h-2 bg-main rounded-full" />
-            )}
+            {!isChecked && <div className="w-2 h-2 bg-main rounded-full" />}
           </div>
 
           {/* hover 상태일 때만 표시 */}

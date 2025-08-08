@@ -1,16 +1,22 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import {
   GetNotificationsRequest,
   GetNotificationsResponse,
   PatchArchiveNotificationRequest,
+  PatchReadNotificationRequest,
 } from "@/types/inbox/inboxApi.type";
 
 import {
   getArchivedNotifications,
   getNotifications,
   patchArchiveNotification,
+  patchReadNotification,
 } from "@/apis/inbox/inboxApi";
 
 type Opt = { enabled?: boolean };
@@ -141,6 +147,22 @@ export const usePatchArchiveNotificationApi = () => {
   return useMutation({
     mutationFn: (vars: PatchArchiveNotificationRequest) =>
       patchArchiveNotification(vars),
+
+    onSettled: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+        exact: false,
+      });
+    },
+  });
+};
+
+export const usePatchReadNotificationApi = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (vars: PatchReadNotificationRequest) =>
+      patchReadNotification(vars),
 
     onSettled: async () => {
       await queryClient.invalidateQueries({
