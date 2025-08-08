@@ -151,6 +151,7 @@ export const usePatchArchiveNotificationApi = () => {
   });
 };
 
+// 읽기 상태 변경
 export const usePatchReadNotificationApi = () => {
   const queryClient = useQueryClient();
 
@@ -167,6 +168,7 @@ export const usePatchReadNotificationApi = () => {
   });
 };
 
+// 알림 개수 정보 필요한 sidebar, badge 에 사용
 export const useUnreadCount = () => {
   const { data } = useQuery({
     queryKey: ["notifications", "unread_count"],

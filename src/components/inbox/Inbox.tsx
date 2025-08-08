@@ -7,6 +7,7 @@ import InboxTabs from "@/components/inbox/InboxTabs";
 import {
   useArchivedNotificationsInfinite,
   useNotificationsInfinite,
+  useUnreadCount,
 } from "@/hooks/inbox/useInboxApi";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { Tab } from "@/types/inbox";
@@ -47,8 +48,8 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
     ? (archiveInfinite?.items ?? [])
     : (inboxInfinite?.items ?? []);
 
-  const unreadCount = inboxInfinite?.unread ?? 0;
-  const badgeText = unreadCount > 99 ? "99+" : `${unreadCount}`;
+  const unread = useUnreadCount();
+  const badgeText = unread > 99 ? "99+" : `${unread}`;
 
   const hasNextPage = isArchiveTab ? hasNextArchive : hasNextInbox;
   const isFetchingNextPage = isArchiveTab
