@@ -5,7 +5,7 @@ import clsx from "clsx";
 import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
 import {
-  useArchivedNotificationsApi,
+  useArchivedNotificationsInfinite,
   useNotificationsInfinite,
 } from "@/hooks/inbox/useInboxApi";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
@@ -25,33 +25,38 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
   useOutsideClick([ref, ...triggerRefs], onClose);
 
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
+  const isArchiveTab = selectedTab === "보관함";
 
-  // const {
-  //   data: allData,
-  //   isLoading: isAllLoading,
-  //   isError: isAllError,
-  // } = useNotificationsApi({ page: 0, page_size: 20 });
-
-  const { data: archivedData } = useArchivedNotificationsApi({
-    page: 0,
-    page_size: 20,
-  });
-
-  // const allInquiries = allData?.notifications ?? [];
-  // const unreadCount = allData?.unread_count ?? 0;
-  const archivedInquiries = archivedData?.notifications ?? [];
-
+  // 수신함 인피니트
   const {
     data: inboxInfinite,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useNotificationsInfinite(true);
+    fetchNextPage: fetchNextInbox,
+    hasNextPage: hasNextInbox,
+    isFetchingNextPage: fetchingNextInbox,
+  } = useNotificationsInfinite(!isArchiveTab);
 
-  const items = inboxInfinite?.items ?? [];
+  // 보관함 인피니트
+  const {
+    data: archiveInfinite,
+    fetchNextPage: fetchNextArchive,
+    hasNextPage: hasNextArchive,
+    isFetchingNextPage: fetchingNextArchive,
+  } = useArchivedNotificationsInfinite(isArchiveTab);
+
+  const items = isArchiveTab
+    ? (archiveInfinite?.items ?? [])
+    : (inboxInfinite?.items ?? []);
+
   const unreadCount = inboxInfinite?.unread ?? 0;
   const badgeText = unreadCount > 99 ? "99+" : `${unreadCount}`;
-  // sentinel
+
+  const hasNextPage = isArchiveTab ? hasNextArchive : hasNextInbox;
+  const isFetchingNextPage = isArchiveTab
+    ? fetchingNextArchive
+    : fetchingNextInbox;
+  const fetchNextPage = isArchiveTab ? fetchNextArchive : fetchNextInbox;
+
+  // IO: 스크롤 컨테이너(ul)를 root로 (sentinel)
   useEffect(() => {
     const rootEl = scrollRef.current;
     const target = loadMoreRef.current;
@@ -75,7 +80,13 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
     );
     io.observe(target);
     return () => io.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    isArchiveTab,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    items.length,
+  ]);
 
   return (
     <aside
@@ -100,18 +111,12 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
       <InboxTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
 
       {/* 탭별 데이터 렌더링 */}
-      {selectedTab === "보관함" ? (
-        <InboxList inquiries={archivedInquiries} tab="보관함" />
-      ) : (
-        <>
-          <InboxList
-            inquiries={items}
-            tab="전체"
-            listRef={scrollRef}
-            loadMoreRef={loadMoreRef}
-          />
-        </>
-      )}
+      <InboxList
+        inquiries={items}
+        tab={isArchiveTab ? "보관함" : "전체"}
+        listRef={scrollRef}
+        loadMoreRef={loadMoreRef}
+      />
     </aside>
   );
 };

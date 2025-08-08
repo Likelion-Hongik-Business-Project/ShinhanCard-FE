@@ -102,30 +102,37 @@ export const useNotificationsInfinite = (enabled = true) =>
     refetchOnWindowFocus: false,
   });
 
-// export const useArchivedNotificationsInfinite = () => {
-//   return useInfiniteQuery<
-//     GetNotificationsResponse,
-//     Error,
-//     GetNotificationsResponse,
-//     readonly ["notifications", "archive", "infinite", number],
-//     number
-//   >({
-//     queryKey: ["notifications", "archive", "infinite", PAGE_SIZE] as const,
-//     initialPageParam: 0,
-//     queryFn: async ({ pageParam }) => {
-//       const { result } = await getArchivedNotifications({
-//         page: pageParam,
-//         page_size: PAGE_SIZE,
-//       });
-//       return result;
-//     },
-//     getNextPageParam: last =>
-//       last.pagination.has_next ? last.pagination.page + 1 : undefined,
-//     staleTime: 1000 * 60,
-//     retry: 1,
-//     refetchOnWindowFocus: false,
-//   });
-// };
+// 보관함 무한스크롤
+export const useArchivedNotificationsInfinite = (enabled = true) =>
+  useInfiniteQuery<
+    GetNotificationsResponse,
+    Error,
+    { items: GetNotificationsResponse["notifications"] },
+    readonly ["notifications", "archive", "infinite", number],
+    number
+  >({
+    queryKey: ["notifications", "archive", "infinite", PAGE_SIZE] as const,
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const { result } = await getArchivedNotifications({
+        page: pageParam,
+        page_size: PAGE_SIZE,
+      });
+      return result;
+    },
+    getNextPageParam: last =>
+      last.pagination.has_next ? last.pagination.page + 1 : undefined,
+
+    // 평탄화
+    select: data => ({
+      items: data.pages.flatMap(p => p.notifications),
+    }),
+
+    enabled,
+    staleTime: 60_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
 
 // 보관 상태 변경
 export const usePatchArchiveNotificationApi = () => {
