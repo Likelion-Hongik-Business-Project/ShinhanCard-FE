@@ -8,6 +8,7 @@ import {
 } from "@/hooks/inquiry/assigned/useAssignedApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryItem,
   InquiryStatus,
@@ -22,7 +23,7 @@ const AssignedPage = () => {
   // export
   const excelExport = useExcelExport();
 
-  const handleExport = (option: "filtered" | "all") => {
+  const handleExport = (option: ExportOption) => {
     if (!selectedTeamId) return;
 
     excelExport.mutate({

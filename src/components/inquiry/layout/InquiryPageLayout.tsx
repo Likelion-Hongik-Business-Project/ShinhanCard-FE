@@ -4,6 +4,7 @@ import ExportDropdown from "@/components/common/ExportDropdown";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryListItem,
   InquiryServerStatus,
@@ -29,9 +30,9 @@ type Props<TInquiry> = {
   onPageChange: (page: number) => void;
   selectedStatus: string;
   onStatusChange: (status: InquiryStatus | "전체") => void;
-  selectedDate: { year: number; month: number }[];
+  selectedDate: YearMonth[];
   onDateChange: Dispatch<SetStateAction<YearMonth[]>>;
-  onExport: (option: "filtered" | "all") => void;
+  onExport: (option: ExportOption) => void;
 };
 
 const InquiryPageLayout = <TInquiry extends TInquiryBase>({

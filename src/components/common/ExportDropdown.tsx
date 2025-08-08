@@ -3,8 +3,7 @@ import { useRef, useState } from "react";
 import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-
-type ExportOption = "filtered" | "all";
+import { ExportOption } from "@/types/excel/excelApi.type";
 
 type Props = {
   onExport: (option: ExportOption) => void;
