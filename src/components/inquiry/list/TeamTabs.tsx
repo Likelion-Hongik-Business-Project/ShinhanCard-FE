@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import TeamTabButton from "@/components/inquiry/list/TeamTabButton";
 import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
@@ -38,6 +39,18 @@ const TeamTabs = ({
 
   const isMoreTabActive = isHiddenTeamSelected || isModalOpen;
 
+  const clickableRefs = useMemo(
+    () => [
+      modalRef as React.RefObject<HTMLElement>,
+      buttonRef as React.RefObject<HTMLElement>,
+    ],
+    []
+  );
+
+  useOutsideClick(clickableRefs, () => {
+    if (isModalOpen) onCloseModal();
+  });
+
   useEffect(() => {
     const observer = new ResizeObserver(entries => {
       for (const entry of entries) {
@@ -49,25 +62,6 @@ const TeamTabs = ({
     if (wrapperRef.current) observer.observe(wrapperRef.current);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        isModalOpen &&
-        modalRef.current &&
-        !modalRef.current.contains(e.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target as Node)
-      ) {
-        onCloseModal();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isModalOpen, onCloseModal]);
 
   return (
     <div ref={wrapperRef} className="relative flex w-full">
