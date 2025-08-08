@@ -4,6 +4,7 @@ import ExportDropdown from "@/components/common/ExportDropdown";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import { getInquiryStatusLabel } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryListItem,
   InquiryServerStatus,
@@ -29,8 +30,9 @@ type Props<TInquiry> = {
   onPageChange: (page: number) => void;
   selectedStatus: string;
   onStatusChange: (status: InquiryStatus | "전체") => void;
-  selectedDate: { year: number; month: number }[];
+  selectedDate: YearMonth[];
   onDateChange: Dispatch<SetStateAction<YearMonth[]>>;
+  onExport: (option: ExportOption) => void;
 };
 
 const InquiryPageLayout = <TInquiry extends TInquiryBase>({
@@ -50,6 +52,7 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
   onStatusChange,
   selectedDate,
   onDateChange,
+  onExport,
 }: Props<TInquiry>) => {
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -102,12 +105,6 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
     setIsStatusModalOpen(false);
   };
 
-  // 엑셀 다운로드 함수
-  const handleExport = async (option: "filtered" | "all") => {
-    console.log(option);
-    // TODO: API 각각 연결
-  };
-
   return (
     <>
       <div className="flex justify-between mb-10">
@@ -120,7 +117,7 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
         </div>
         {totalCount !== 0 && (
           <div className="self-end">
-            <ExportDropdown onExport={handleExport} />
+            <ExportDropdown onExport={onExport} />
           </div>
         )}
       </div>
