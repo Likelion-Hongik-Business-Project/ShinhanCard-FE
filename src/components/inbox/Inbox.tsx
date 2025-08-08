@@ -4,12 +4,9 @@ import clsx from "clsx";
 
 import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
+import { useNotificationsApi } from "@/hooks/inbox/useInboxApi";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { Tab } from "@/types/inbox";
-import {
-  MOCK_ARCHIVED_INBOX_RESPONSE,
-  MOCK_INBOX_RESPONSE,
-} from "@/mocks/inboxMock";
 
 type Props = {
   isSidebarOpen: boolean;
@@ -24,14 +21,14 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
 
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
 
-  const allInquiries = MOCK_INBOX_RESPONSE.teams.flatMap(
-    team => team.inquiries
-  );
-  const archivedInquiries = MOCK_ARCHIVED_INBOX_RESPONSE.teams.flatMap(
-    team => team.inquiries
-  );
+  const { data, isLoading, isError } = useNotificationsApi({
+    page: 0,
+    page_size: 20,
+  });
 
-  const unreadCount = 3; // TODO: API 연결 이후 동적으로 변경
+  const notifications = data?.notifications ?? [];
+  const unreadCount = data?.unread_count ?? 0;
+
   const badgeText = unreadCount > 99 ? "99+" : `${unreadCount}`;
 
   return (
@@ -52,10 +49,18 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
         </div>
       </div>
       <InboxTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
-      {selectedTab === "보관함" ? (
+      {/* {selectedTab === "보관함" ? (
         <InboxList inquiries={archivedInquiries} tab="보관함" /> // TODO: API 명세 나오면 거기에 맞게 바꿔야 함
       ) : (
         <InboxList inquiries={allInquiries} tab="전체" />
+      )} */}
+
+      {isLoading ? (
+        <p className="mt-6 text-gray-60">불러오는 중...</p>
+      ) : isError ? (
+        <p className="mt-6 text-red-500">데이터를 불러오지 못했습니다.</p>
+      ) : (
+        <InboxList inquiries={notifications} tab={selectedTab} />
       )}
     </aside>
   );

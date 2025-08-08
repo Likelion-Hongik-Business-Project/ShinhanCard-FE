@@ -12,22 +12,16 @@ import UnCheckBox from "@/assets/svgs/inbox/uncheck-box.svg";
 import Warning from "@/assets/svgs/inbox/warning.svg";
 import { formatTime } from "@/utils/dateUtils";
 import { getInquiryTypeFromText } from "@/utils/inboxMapping";
-import { Inquiry } from "@/types/inbox";
+import { NotificationItem } from "@/types/inbox/inboxApi.type";
 
 type Props = {
-  inquiry: Inquiry;
+  inquiry: NotificationItem;
   isArchived?: boolean;
 };
 
 const InboxItem = ({ inquiry, isArchived }: Props) => {
-  const {
-    id,
-    writer,
-    notification_text,
-    notification_description,
-    created_at,
-  } = inquiry;
-  const type = getInquiryTypeFromText(inquiry.notification_text);
+  const { writer, notification_title, notification_body, created_at } = inquiry;
+  const type = getInquiryTypeFromText(inquiry.notification_title);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -49,7 +43,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
       case "DELETED":
         return <Warning className="w-10 h-10" />;
       default:
-        return writer.profile_image_url ? (
+        return writer?.profile_image_url ? (
           <img
             src={writer.profile_image_url}
             alt={writer.name}
@@ -65,7 +59,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
     <li
       onClick={() => {
         setIsChecked(true);
-        navigate(`/inquiries/${id}`);
+        navigate(`/inquiries/${inquiry.inquiry_id}`);
       }}
       className="group flex mt-2 w-full cursor-pointer bg-white transition duration-100 hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center"
     >
@@ -73,10 +67,10 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
       <div className="flex ml-4 w-full justify-between items-center">
         <div className="flex flex-col gap-2 w-[319px]">
           <p className="text-body2 text-gray-80 truncate">
-            {notification_text}
+            {notification_title}
           </p>
           <p className="text-detail1 text-gray-40 transition duration-100 group-hover:text-gray-60 truncate">
-            {notification_description}
+            {notification_body}
           </p>
         </div>
 

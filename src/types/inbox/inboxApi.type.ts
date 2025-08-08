@@ -1,4 +1,4 @@
-import { Pagination, Profile } from "@/types/inquiry/inquiryListApi.type";
+import { Pagination } from "@/types/inquiry/inquiryListApi.type";
 
 export type NotificationItem = {
   notification_id: number;
@@ -6,7 +6,11 @@ export type NotificationItem = {
   notification_type: string;
   notification_title: string;
   notification_body: string;
-  writer: Profile;
+  writer?: {
+    writer_id: number;
+    name: string;
+    profile_image_url: string | null;
+  };
   created_at: string;
   is_read: boolean;
   is_archived: boolean;
