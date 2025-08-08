@@ -67,34 +67,14 @@ export const useArchivedNotificationsApi = (
   };
 };
 
-// TODO: 무한스크롤 로직 다시
 const PAGE_SIZE = 20;
 
-// export const useNotificationsInfinite = () => {
-//   return useInfiniteQuery<GetNotificationsResponse>({
-//     queryKey: ["notifications", "infinite", PAGE_SIZE],
-//     initialPageParam: 0,
-//     queryFn: async ({ pageParam }) => {
-//       const response = await getNotifications({
-//         page: pageParam as number,
-//         page_size: PAGE_SIZE,
-//       });
-//       return response.result;
-//     },
-//     getNextPageParam: lastPage => {
-//       return lastPage.pagination.has_next
-//         ? lastPage.pagination.page + 1
-//         : undefined;
-//     },
-//     staleTime: 1000 * 60,
-//   });
-// };
-
-export const useNotificationsInfinite = () => {
-  return useInfiniteQuery<
+// 수신함 무한스크롤
+export const useNotificationsInfinite = (enabled = true) =>
+  useInfiniteQuery<
     GetNotificationsResponse,
     Error,
-    GetNotificationsResponse,
+    { items: GetNotificationsResponse["notifications"]; unread: number },
     readonly ["notifications", "infinite", number],
     number
   >({
@@ -109,36 +89,43 @@ export const useNotificationsInfinite = () => {
     },
     getNextPageParam: last =>
       last.pagination.has_next ? last.pagination.page + 1 : undefined,
+
+    // 평탄화
+    select: data => ({
+      items: data.pages.flatMap(p => p.notifications),
+      unread: data.pages[0]?.unread_count ?? 0,
+    }),
+
+    enabled,
     staleTime: 60_000,
     retry: 1,
     refetchOnWindowFocus: false,
   });
-};
 
-export const useArchivedNotificationsInfinite = () => {
-  return useInfiniteQuery<
-    GetNotificationsResponse,
-    Error,
-    GetNotificationsResponse,
-    readonly ["notifications", "archive", "infinite", number],
-    number
-  >({
-    queryKey: ["notifications", "archive", "infinite", PAGE_SIZE] as const,
-    initialPageParam: 0,
-    queryFn: async ({ pageParam }) => {
-      const { result } = await getArchivedNotifications({
-        page: pageParam,
-        page_size: PAGE_SIZE,
-      });
-      return result;
-    },
-    getNextPageParam: last =>
-      last.pagination.has_next ? last.pagination.page + 1 : undefined,
-    staleTime: 1000 * 60,
-    retry: 1,
-    refetchOnWindowFocus: false,
-  });
-};
+// export const useArchivedNotificationsInfinite = () => {
+//   return useInfiniteQuery<
+//     GetNotificationsResponse,
+//     Error,
+//     GetNotificationsResponse,
+//     readonly ["notifications", "archive", "infinite", number],
+//     number
+//   >({
+//     queryKey: ["notifications", "archive", "infinite", PAGE_SIZE] as const,
+//     initialPageParam: 0,
+//     queryFn: async ({ pageParam }) => {
+//       const { result } = await getArchivedNotifications({
+//         page: pageParam,
+//         page_size: PAGE_SIZE,
+//       });
+//       return result;
+//     },
+//     getNextPageParam: last =>
+//       last.pagination.has_next ? last.pagination.page + 1 : undefined,
+//     staleTime: 1000 * 60,
+//     retry: 1,
+//     refetchOnWindowFocus: false,
+//   });
+// };
 
 // 보관 상태 변경
 export const usePatchArchiveNotificationApi = () => {

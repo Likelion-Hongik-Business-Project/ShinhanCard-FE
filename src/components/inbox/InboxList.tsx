@@ -9,9 +9,11 @@ import "@/styles/scrollbar.css";
 type Props = {
   inquiries: NotificationItem[];
   tab: Tab;
+  listRef?: React.RefObject<HTMLUListElement | null>;
+  loadMoreRef?: React.RefObject<HTMLDivElement | null>;
 };
 
-const InboxList = ({ inquiries, tab }: Props) => {
+const InboxList = ({ inquiries, tab, listRef, loadMoreRef }: Props) => {
   if (inquiries.length === 0) {
     return <InboxEmpty tab={tab} />;
   }
@@ -28,7 +30,10 @@ const InboxList = ({ inquiries, tab }: Props) => {
   );
 
   return (
-    <ul className="flex flex-col custom-scrollbar overflow-y-auto pr-[12px] pb-10 -mr-[20px] h-[calc(100%-116px)]">
+    <ul
+      ref={listRef}
+      className="flex flex-col custom-scrollbar overflow-y-auto pr-[12px] pb-10 -mr-[20px] h-[calc(100%-116px)]"
+    >
       {Object.entries(grouped).map(([label, items]) => (
         <div key={label} className="flex flex-col gap-[14px] mt-10">
           <div className="text-body1 text-gray-40">{label}</div>
@@ -41,6 +46,7 @@ const InboxList = ({ inquiries, tab }: Props) => {
           ))}
         </div>
       ))}
+      <div ref={loadMoreRef} className="h-[1px]" />
     </ul>
   );
 };
