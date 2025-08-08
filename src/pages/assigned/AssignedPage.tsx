@@ -32,7 +32,6 @@ const AssignedPage = () => {
       option,
       status,
       date,
-      page,
     });
   };
 

@@ -33,7 +33,6 @@ const MyQuestionsPage = () => {
       option,
       status,
       date,
-      page,
     });
   };
 
