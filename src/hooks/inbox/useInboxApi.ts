@@ -172,3 +172,20 @@ export const usePatchReadNotificationApi = () => {
     },
   });
 };
+
+export const useUnreadCount = () => {
+  const { data } = useQuery({
+    queryKey: ["notifications", "unread_count"],
+    queryFn: async () => {
+      const { result } = await getNotifications({ page: 0, page_size: 1 });
+      return result.unread_count; // 숫자만 반환
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+  });
+
+  return data ?? 0;
+};

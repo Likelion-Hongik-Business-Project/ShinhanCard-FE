@@ -8,6 +8,7 @@ import StarActive from "@/assets/svgs/common/star-active.svg";
 import {
   Bell,
   BellActive,
+  BellNoti,
   Grid,
   GridActive,
   Home,
@@ -22,6 +23,7 @@ import SideBarDivider from "@/components/layout/sidebar/SideBarDivider";
 import SideBarLargeItem from "@/components/layout/sidebar/SideBarLargeItem";
 import SideBarSmallItem from "@/components/layout/sidebar/SideBarSmallItem";
 import TeamSelector from "@/components/layout/sidebar/TeamSelector";
+import { useUnreadCount } from "@/hooks/inbox/useInboxApi";
 
 type Props = {
   isOpen: boolean;
@@ -57,6 +59,12 @@ const SideBar = ({
 
   const navigate = useNavigate();
   const hoverOutTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const unread = useUnreadCount();
+  const hasUnread = unread > 0;
+
+  const LargeBellIcon = hasUnread ? BellNoti : Bell;
+  const SmallBellIcon = hasUnread ? BellNoti : Bell;
 
   const clearHoverOutTimer = () => {
     if (hoverOutTimer.current) {
@@ -149,7 +157,7 @@ const SideBar = ({
         >
           <SideBarLargeItem icon={Home} label="홈" path="/" />
           <SideBarLargeItem
-            icon={Bell}
+            icon={LargeBellIcon}
             label="수신함"
             onClick={toggleInbox}
             isActive={isInboxOpen}
@@ -195,7 +203,7 @@ const SideBar = ({
         >
           <SideBarSmallItem icon={Home} activeIcon={HomeActive} path="/" />
           <SideBarSmallItem
-            icon={Bell}
+            icon={SmallBellIcon}
             activeIcon={BellActive}
             onClick={toggleInbox}
             isActive={isInboxOpen}
