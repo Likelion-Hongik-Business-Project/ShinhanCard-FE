@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,7 @@ import Box from "@/assets/svgs/inbox/inbox-box.svg";
 import Reset from "@/assets/svgs/inbox/reset.svg";
 import UnCheckBox from "@/assets/svgs/inbox/uncheck-box.svg";
 import Warning from "@/assets/svgs/inbox/warning.svg";
+import { usePatchArchiveNotificationApi } from "@/hooks/inbox/useInboxApi";
 import { formatTime } from "@/utils/dateUtils";
 import { getInquiryTypeFromText } from "@/utils/inboxMapping";
 import { NotificationItem } from "@/types/inbox/inboxApi.type";
@@ -24,11 +25,31 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
   const type = getInquiryTypeFromText(inquiry.notification_title);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
+  const { mutate: archive, isPending } = usePatchArchiveNotificationApi();
 
-  const handleCheckToggle = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setIsChecked(prev => !prev);
-  };
+  const handleCheckToggle = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      setIsChecked(prev => !prev);
+    },
+    []
+  );
+
+  const handleArchive = useCallback(
+    (e: React.MouseEvent, next: boolean) => {
+      e.stopPropagation();
+      if (isPending) return; // 중복 방지
+      archive({ notification_id: inquiry.notification_id, is_archived: next });
+    },
+    [archive, inquiry.notification_id, isPending]
+  );
+
+  const handleNavigate = useCallback(() => {
+    setIsChecked(true);
+    if (inquiry.inquiry_id != null) {
+      navigate(`/inquiries/${inquiry.inquiry_id}`);
+    }
+  }, [navigate, inquiry.inquiry_id]);
 
   const renderIcon = () => {
     switch (type) {
@@ -57,10 +78,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
 
   return (
     <li
-      onClick={() => {
-        setIsChecked(true);
-        navigate(`/inquiries/${inquiry.inquiry_id}`);
-      }}
+      onClick={handleNavigate}
       className="group flex mt-2 w-full cursor-pointer bg-white transition duration-100 hover:bg-gray-10 rounded-[15px] py-4 pl-2 pr-4 items-center"
     >
       {renderIcon()}
@@ -89,7 +107,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
           {isArchived ? (
             <div className="hidden transition group-hover:flex w-[32px] ml-auto h-[32px] items-center bg-white border border-gray-20 rounded-[8px] p-1">
               <div
-                onClick={e => e.stopPropagation()}
+                onClick={e => handleArchive(e, false)}
                 className="group/reset relative w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]"
               >
                 <Reset className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />
@@ -118,7 +136,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
                 </div>
               </div>
               <div
-                onClick={e => e.stopPropagation()}
+                onClick={e => handleArchive(e, true)}
                 className="group/box relative w-6 h-6 bg-white transition duration-100 hover:bg-gray-10 active:bg-gray-20 flex justify-center items-center rounded-[5px]"
               >
                 <Box className="w-4 h-auto transition duration-100 text-gray-50 hover:text-gray-70" />

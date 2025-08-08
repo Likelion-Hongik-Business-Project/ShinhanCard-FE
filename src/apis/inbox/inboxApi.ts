@@ -2,10 +2,13 @@ import { ApiResponse } from "@/types/apiResponse.type";
 import {
   GetNotificationsRequest,
   GetNotificationsResponse,
+  PatchArchiveNotificationRequest,
+  PatchArchiveNotificationResponse,
 } from "@/types/inbox/inboxApi.type";
 
 import instance from "@/apis/instance";
 
+// 수신함 조회
 export const getNotifications = async ({
   page,
   page_size,
@@ -16,6 +19,7 @@ export const getNotifications = async ({
   return response.data;
 };
 
+// 보관함 조회
 export const getArchivedNotifications = async ({
   page,
   page_size,
@@ -24,5 +28,17 @@ export const getArchivedNotifications = async ({
     "/api/notifications/archive",
     { params: { page, page_size } }
   );
+  return data;
+};
+
+// 보관 상태 변경
+export const patchArchiveNotification = async ({
+  notification_id,
+  is_archived,
+}: PatchArchiveNotificationRequest): ApiResponse<PatchArchiveNotificationResponse> => {
+  const { data } = await instance.patch<
+    ApiResponse<PatchArchiveNotificationResponse>
+  >(`/api/notifications/${notification_id}/archive`, { is_archived });
+  console.log("변경", data);
   return data;
 };

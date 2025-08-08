@@ -1,17 +1,21 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   GetNotificationsRequest,
   GetNotificationsResponse,
+  PatchArchiveNotificationRequest,
 } from "@/types/inbox/inboxApi.type";
 
 import {
   getArchivedNotifications,
   getNotifications,
+  patchArchiveNotification,
 } from "@/apis/inbox/inboxApi";
 
 type Opt = { enabled?: boolean };
 
+// 수신함 조회
 export const useNotificationsApi = (
   { page, page_size }: GetNotificationsRequest,
   opt: Opt = {}
@@ -34,6 +38,7 @@ export const useNotificationsApi = (
   };
 };
 
+// 보관함 조회
 export const useArchivedNotificationsApi = (
   { page, page_size }: GetNotificationsRequest,
   opt: Opt = {}
@@ -126,5 +131,22 @@ export const useArchivedNotificationsInfinite = () => {
     staleTime: 1000 * 60,
     retry: 1,
     refetchOnWindowFocus: false,
+  });
+};
+
+// 보관 상태 변경
+export const usePatchArchiveNotificationApi = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (vars: PatchArchiveNotificationRequest) =>
+      patchArchiveNotification(vars),
+
+    onSettled: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+        exact: false,
+      });
+    },
   });
 };

@@ -26,3 +26,14 @@ export type GetNotificationsRequest = {
   page: number;
   page_size: number;
 };
+
+export type PatchArchiveNotificationRequest = {
+  notification_id: number;
+  is_archived: boolean;
+};
+
+export type PatchArchiveNotificationResponse = {
+  notification_id: number;
+  is_archived: boolean;
+  updated_at: string;
+};
