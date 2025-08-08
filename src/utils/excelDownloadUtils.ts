@@ -46,11 +46,9 @@ export const buildExcelParams = ({
   option,
   status,
   date,
-  page,
 }: GetAssignedExcelRequest) => {
-  const pageParam = option === "all" ? "" : page;
   const statusParam =
     option === "all" || status === "전체" ? "" : INQUIRY_STATUS_VALUE[status];
   const dateParam = option === "all" ? "" : formatDateParams(date);
-  return { page: pageParam, status: statusParam, date: dateParam };
+  return { status: statusParam, date: dateParam };
 };

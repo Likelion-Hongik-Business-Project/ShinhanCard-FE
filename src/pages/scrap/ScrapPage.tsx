@@ -29,7 +29,6 @@ const ScrapPage = () => {
       option,
       status,
       date,
-      page,
     });
   };
 
