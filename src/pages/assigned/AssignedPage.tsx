@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { useAssignedExport } from "@/hooks/excel/useExcelApi";
+import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import {
   useAssignedByTeamApi,
   useInitAssignedApi,
@@ -20,12 +20,13 @@ const AssignedPage = () => {
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
   // export
-  const assignedExport = useAssignedExport();
+  const excelExport = useExcelExport();
 
   const handleExport = (option: "filtered" | "all") => {
     if (!selectedTeamId) return;
 
-    assignedExport.mutate({
+    excelExport.mutate({
+      scope: "assigned",
       teamId: selectedTeamId,
       option,
       status,

@@ -9,3 +9,8 @@ export type GetAssignedExcelRequest = {
   status: InquiryStatus | "전체";
   date: YearMonth[];
 };
+
+export type ExcelScopedRequest = GetAssignedExcelRequest & {
+  scope: "assigned" | "submitted" | "scraped";
+  teamId: number;
+};

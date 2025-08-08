@@ -1,3 +1,7 @@
+import { formatDateParams } from "@/utils/dateUtils";
+import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { GetAssignedExcelRequest } from "@/types/excel/excelApi.type";
+
 /**
  * Content-Disposition 헤더에서 파일명 추출
  */
@@ -33,4 +37,20 @@ export const triggerDownload = (blob: Blob, filename: string) => {
   a.click();
   a.remove();
   URL.revokeObjectURL(blobUrl);
+};
+
+/**
+ * Excel Parameter (all / filtered)
+ */
+export const buildExcelParams = ({
+  option,
+  status,
+  date,
+  page,
+}: GetAssignedExcelRequest) => {
+  const pageParam = option === "all" ? "" : page;
+  const statusParam =
+    option === "all" || status === "전체" ? "" : INQUIRY_STATUS_VALUE[status];
+  const dateParam = option === "all" ? "" : formatDateParams(date);
+  return { page: pageParam, status: statusParam, date: dateParam };
 };

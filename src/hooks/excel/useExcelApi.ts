@@ -4,18 +4,18 @@ import {
   parseFilenameFromDisposition,
   triggerDownload,
 } from "@/utils/excelDownloadUtils";
-import { GetAssignedExcelRequest } from "@/types/excel/excelApi.type";
+import { ExcelScopedRequest } from "@/types/excel/excelApi.type";
 
-import { getAssignedExcel } from "@/apis/excel/excelApi";
+import { getExcelByScope } from "@/apis/excel/excelApi";
 
-export const useAssignedExport = () => {
+export const useExcelExport = () => {
   return useMutation({
-    mutationFn: (vars: GetAssignedExcelRequest) => getAssignedExcel(vars),
+    mutationFn: (vars: ExcelScopedRequest) => getExcelByScope(vars),
     onSuccess: response => {
-      const disposition =
+      const dispo =
         response.headers["content-disposition"] ??
         response.headers["Content-Disposition"];
-      const filename = parseFilenameFromDisposition(disposition);
+      const filename = parseFilenameFromDisposition(dispo);
       triggerDownload(response.data, filename);
     },
   });
