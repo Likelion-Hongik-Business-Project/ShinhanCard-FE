@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   GetInquiriesRequest,
-  InquiryPagination,
+  Pagination,
   TeamItem,
   TInquiryBase,
 } from "@/types/inquiry/inquiryListApi.type";
@@ -16,7 +16,7 @@ import {
 
 type InquiriesResponseWithBase<T extends TInquiryBase = TInquiryBase> = {
   inquiries: T[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
   total_count?: number;
   selected_team?: TeamItem;
   teams?: TeamItem[];
