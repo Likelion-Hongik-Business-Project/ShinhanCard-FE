@@ -16,12 +16,7 @@ interface Props {
   setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
 }
 
-const FileUploadBox = ({
-  setFileIds,
-
-  files,
-  setFiles,
-}: Props) => {
+const FileUploadBox = ({ setFileIds, files, setFiles }: Props) => {
   const {
     inputRef,
     showLimitModal,
@@ -93,7 +88,7 @@ const FileUploadBox = ({
             <FileUploadItem
               key={file.id}
               file={file}
-              onRemove={() => handleRemove(file.id, file.fileId)}
+              onRemove={() => handleRemove(file.id, file.file_id)}
             />
           ))}
         </div>

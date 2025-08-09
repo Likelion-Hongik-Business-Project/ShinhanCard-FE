@@ -65,13 +65,13 @@ export const useMultiFileUploader = (
           percent => updateProgress(localId, percent),
           signal
         )
-          .then(({ fileId }) => {
+          .then(({ file_id }) => {
             setFiles(prev =>
               prev.map(f =>
                 f.id === localId
                   ? {
                       ...f,
-                      fileId,
+                      file_id,
                       progress: 100,
                       status: "done",
                       controller: undefined,
@@ -79,7 +79,7 @@ export const useMultiFileUploader = (
                   : f
               )
             );
-            setFileIds(prev => [...prev, fileId]);
+            setFileIds(prev => [...prev, file_id]);
           })
           .catch(err => {
             if (err.name === "CanceledError") {

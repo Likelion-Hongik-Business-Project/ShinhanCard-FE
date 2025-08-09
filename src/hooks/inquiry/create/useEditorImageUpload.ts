@@ -15,13 +15,13 @@ export const useEditorImageUpload = () => {
       contentType: file.type || "image/png",
     });
 
-    const { uploadUrl, previewUrl } = result;
+    const { upload_url, preview_url } = result;
 
     // 2. S3에 실제 업로드
-    await uploadFileToS3(uploadUrl, file, file.type || "image/png");
+    await uploadFileToS3(upload_url, file, file.type || "image/png");
 
     // 3. 최종 URL 반환
-    return previewUrl;
+    return preview_url;
   };
 
   return uploadImage;

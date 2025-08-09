@@ -5,19 +5,19 @@ export interface PostFileRequest {
 }
 
 export interface PostFileResponse {
-  fileId: number;
-  uploadUrl: string;
-  fileKey: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
+  file_id: number;
+  upload_url: string;
+  file_key: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
 }
 
 export interface DeleteFileResponse {
-  fileId: number;
-  fileKey: string;
-  fileName: string;
-  deleteTime: string;
+  file_id: number;
+  file_key: string;
+  file_name: string;
+  delete_time: string;
 }
 
 export interface GetImageFileRequest {
@@ -26,9 +26,9 @@ export interface GetImageFileRequest {
 }
 
 export interface GetImageFileResponse {
-  uploadUrl: string;
-  fileKey: string;
-  fileName: string;
-  fileType: string;
-  previewUrl: string;
+  upload_url: string;
+  file_key: string;
+  file_name: string;
+  file_type: string;
+  preview_url: string;
 }
