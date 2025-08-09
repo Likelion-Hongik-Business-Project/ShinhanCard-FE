@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { AssigneeUser } from "@/types/team/user.type";
-
 import {
   getDivisionsByGroupId,
   getGroups,
@@ -12,19 +10,9 @@ import {
 
 export const useTeamApi = () => {
   const useUsersQuery = () =>
-    useQuery<AssigneeUser[]>({
+    useQuery({
       queryKey: ["users"],
-      queryFn: async () => {
-        const { result } = await getUsers();
-        return result.map(user => ({
-          id: user.user_id,
-          name: user.username,
-          profile_image_url: user.profile_url,
-          group_name: user.group.groupName,
-          division_name: user.division.divisionName,
-          team_name: user.team.teamName,
-        }));
-      },
+      queryFn: getUsers,
     });
 
   const useGroupsQuery = () =>

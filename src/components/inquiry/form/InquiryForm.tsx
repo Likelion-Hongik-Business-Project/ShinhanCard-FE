@@ -1,5 +1,6 @@
 import { useTeamApi } from "@/hooks/team/useTeamApi";
 import { UploadFile } from "@/types/file/file.type";
+import { AssigneeUser } from "@/types/team/user.type";
 
 import AssigneeSelector from "./AssigneeSelector";
 import FileUploadBox from "./FileUploadBox";
@@ -39,7 +40,8 @@ const InquiryForm = ({
   setFiles,
 }: Props) => {
   const { useUsersQuery } = useTeamApi();
-  const { data: users = [] } = useUsersQuery();
+  const { data } = useUsersQuery();
+  const users: AssigneeUser[] = data?.result ?? [];
 
   return (
     <section className="flex flex-col gap-10 p-16 bg-white rounded-b-[15px]">

@@ -46,20 +46,20 @@ const UserMultiSelectInput = ({
 
   const selectedUsers = useMemo(() => {
     if (!selectedIds) return [];
-    return allUsers.filter(user => selectedIds.includes(user.id));
+    return allUsers.filter(user => selectedIds.includes(user.user_id));
   }, [allUsers, selectedIds]);
 
   const handleSelectUser = (user: AssigneeUser) => {
-    if (user.id === undefined) return;
+    if (user.user_id === undefined) return;
 
-    if (selectedIds.includes(user.id)) return;
+    if (selectedIds.includes(user.user_id)) return;
 
     if (selectedIds.length >= maxCount) {
       setShowLimitModal(true);
       return;
     }
 
-    onChange([...selectedIds, user.id]);
+    onChange([...selectedIds, user.user_id]);
     setInputValue("");
   };
 
@@ -69,9 +69,9 @@ const UserMultiSelectInput = ({
 
   const filteredUsers = allUsers
     .filter(u =>
-      u.name?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
+      u.username?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
     )
-    .filter(u => !selectedIds?.includes(u.id));
+    .filter(u => !selectedIds?.includes(u.user_id));
 
   useEffect(() => {
     if (selectedIds?.length >= maxCount && inputValue !== "") {
@@ -102,25 +102,25 @@ const UserMultiSelectInput = ({
         >
           {selectedUsers.map(user => (
             <div
-              key={user.id}
+              key={user.user_id}
               className="flex items-center gap-1.5 bg-gray-10 rounded"
             >
               <div className="flex gap-2 items-center">
-                {user.profile_image_url ? (
+                {user.profile_url ? (
                   <img
-                    src={user.profile_image_url}
+                    src={user.profile_url}
                     alt="프로필 이미지"
                     className="w-5 h-5 rounded-full object-cover"
                   />
                 ) : (
                   <ProfileIcon />
                 )}
-                <span>{user.name}</span>
+                <span>{user.username}</span>
               </div>
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleRemoveUser(user.id);
+                  handleRemoveUser(user.user_id);
                 }}
                 className="cursor-pointer"
               >
@@ -140,7 +140,10 @@ const UserMultiSelectInput = ({
           {isOpen && (
             <div className="absolute top-full mt-1 w-full bg-white rounded-[5px] shadow-02 flex flex-col z-50">
               {inputValue.trim() === "" ? (
-                <DepartmentSelector onSelectUser={handleSelectUser} />
+                <DepartmentSelector
+                  allUsers={allUsers}
+                  onSelectUser={handleSelectUser}
+                />
               ) : filteredUsers.length === 0 ? (
                 <div className="flex flex-col gap-4 p-2">
                   <span className="text-detail1 text-gray-50">

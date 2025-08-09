@@ -29,9 +29,9 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
 
   const teamQueries = useQueries({
     queries: divisions.map(division => ({
-      queryKey: ["teams", division.divisionId],
-      queryFn: () => getTeamsByDivisionId(division.divisionId),
-      enabled: !!division.divisionId,
+      queryKey: ["teams", division.division_id],
+      queryFn: () => getTeamsByDivisionId(division.division_id),
+      enabled: !!division.division_id,
     })),
   });
 
@@ -42,7 +42,7 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
     const newTeamMap: Record<number, Team[]> = {};
 
     teamQueries.forEach((query, idx) => {
-      const divisionId = divisions[idx]?.divisionId;
+      const divisionId = divisions[idx]?.division_id;
       if (query.data && divisionId) {
         newTeamMap[divisionId] = query.data.result;
       }
@@ -56,17 +56,17 @@ const TeamSelector = ({ groupId, onTeamSelect }: Props) => {
 
   const sections = divisions
     .map(division => {
-      const teams = teamMap[division.divisionId]?.filter(
+      const teams = teamMap[division.division_id]?.filter(
         team => team.active === !showHiddenTeams
       );
 
       if (!teams || teams.length === 0) return null;
 
       return {
-        head: division.divisionName,
+        head: division.division_name,
         teams: teams.map(team => ({
-          teamId: team.teamId,
-          teamName: team.teamName,
+          teamId: team.team_id,
+          teamName: team.team_name,
           active: team.active,
         })),
       };

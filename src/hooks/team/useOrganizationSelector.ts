@@ -19,20 +19,20 @@ export const useOrganizationSelector = () => {
 
   const groupOptions =
     groupData?.result.map(group => ({
-      label: group.groupName,
-      value: Number(group.groupId),
+      label: group.group_name,
+      value: Number(group.group_id),
     })) ?? [];
 
   const divisionOptions =
     divisionData?.result.map(division => ({
-      label: division.divisionName,
-      value: division.divisionId,
+      label: division.division_name,
+      value: division.division_id,
     })) ?? [];
 
   const teamOptions =
     teamData?.result.map(team => ({
-      label: team.teamName,
-      value: team.teamId,
+      label: team.team_name,
+      value: team.team_id,
     })) ?? [];
 
   const handleGroupChange = (value: number) => {

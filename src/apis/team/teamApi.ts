@@ -3,6 +3,7 @@ import {
   GetDivisionResponse,
   GetGroupResponse,
   GetMemberResponse,
+  GetMemberSummaryResponse,
   GetTeamResponse,
   GetUsersResponse,
 } from "@/types/team/teamApi.type";
@@ -30,6 +31,13 @@ export const getTeamsByDivisionId = async (
   divisionId: number
 ): ApiResponse<GetTeamResponse[]> => {
   const response = await instance.get(`/api/divisions/${divisionId}/teams`);
+  return response.data;
+};
+
+export const getMembers = async (
+  teamId: number
+): ApiResponse<GetMemberSummaryResponse[]> => {
+  const response = await instance.get(`/api/teams/${teamId}`);
   return response.data;
 };
 

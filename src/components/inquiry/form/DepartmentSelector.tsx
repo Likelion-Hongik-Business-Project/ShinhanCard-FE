@@ -1,58 +1,28 @@
-import { useEffect, useState } from "react";
-
-import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
-import { useTeamApi } from "@/hooks/team/useTeamApi";
+import { useDepartmentSelector } from "@/hooks/team/useDepartmentSelector";
 import { AssigneeUser } from "@/types/team/user.type";
 
 import SelectDropdown from "./SelectDropdown";
 
 interface Props {
+  allUsers: AssigneeUser[];
   onSelectUser: (user: AssigneeUser) => void;
 }
 
-const DepartmentSelector = ({ onSelectUser }: Props) => {
+const DepartmentSelector = ({ allUsers, onSelectUser }: Props) => {
   const {
-    group,
-    division,
-    team,
     groupId,
     divisionId,
     teamId,
+    selectedUserId,
     groupOptions,
     divisionOptions,
     teamOptions,
+    userOptions,
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,
-  } = useOrganizationSelector();
-
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-
-  // teamId 기준으로 팀원 쿼리 호출
-  const { useMembersByTeamIdQuery } = useTeamApi();
-  const { data: memberData } = useMembersByTeamIdQuery(teamId);
-  const users = memberData?.result?.members ?? [];
-
-  // 소속 변경 시 사용자 초기화
-  useEffect(() => {
-    setSelectedUserId(null);
-  }, [teamId]);
-
-  const handleUserChange = (userId: number) => {
-    setSelectedUserId(userId);
-    const user = users.find(u => u.id === userId);
-
-    if (user) {
-      onSelectUser({
-        id: user.id,
-        name: user.name,
-        group_name: group,
-        division_name: division,
-        team_name: team,
-        profile_image_url: user.profile_image_url,
-      });
-    }
-  };
+    handleUserChange,
+  } = useDepartmentSelector(allUsers);
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -85,16 +55,15 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
           disabled={!divisionId}
         />
         <SelectDropdown
-          options={users.map(user => ({
-            label: user.name,
-            value: user.id,
-            profileImageUrl: user.profile_image_url,
-          }))}
+          options={userOptions}
           value={selectedUserId ?? 0}
-          onChange={handleUserChange}
+          onChange={id => {
+            const picked = handleUserChange(id);
+            if (picked) onSelectUser(picked);
+          }}
           placeholder="이름"
           type="user"
-          disabled={!teamId || users.length === 0}
+          disabled={!teamId || userOptions.length === 0}
         />
       </div>
     </div>

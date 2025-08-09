@@ -225,9 +225,9 @@ export const useInquiryDraft = ({
         status: "done",
       }))
     );
-    handleGroupChange(group.groupId);
-    handleDivisionChange(division.divisionId);
-    handleTeamChange(team.teamId);
+    handleGroupChange(group.group_id);
+    handleDivisionChange(division.division_id);
+    handleTeamChange(team.team_id);
 
     setDraftId(inquiry_id);
     setIsDraftSaved(true);

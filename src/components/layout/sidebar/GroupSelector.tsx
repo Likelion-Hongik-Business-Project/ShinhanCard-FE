@@ -28,20 +28,20 @@ const GroupSelector = ({ onGroupSelect, selectedGroupId }: Props) => {
         <ul className="flex flex-col gap-10">
           {groups.map(group => (
             <li
-              key={group.groupId}
+              key={group.group_id}
               onClick={() => handleClick(group)}
               className={`
                 cursor-pointer text-heading2-b p-2 hover:bg-gray-10 rounded-lg
                 ${
                   selectedGroupId === null
                     ? "text-gray-80"
-                    : selectedGroupId === group.groupId
+                    : selectedGroupId === group.group_id
                       ? "text-main"
                       : "text-gray-30"
                 }
               `}
             >
-              {group.groupName}
+              {group.group_name}
             </li>
           ))}
         </ul>
