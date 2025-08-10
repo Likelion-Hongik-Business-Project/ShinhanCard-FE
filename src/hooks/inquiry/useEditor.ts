@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { isHeadingCommand, isInlineCommand } from "@/utils/commandUtils";
 import { EditorCommand } from "@/types/toolbar";
 
+import { useEditorImageUpload } from "./create/useEditorImageUpload";
+
 import { Editor as EditorCore } from "@toast-ui/editor";
 import { Editor } from "@toast-ui/react-editor";
 
@@ -23,6 +25,7 @@ interface SafeEditor extends EditorCore {
 }
 
 export const useEditor = () => {
+  const uploadImage = useEditorImageUpload();
   const editorRef = useRef<Editor>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeSet, setActiveSet] = useState<Set<string>>(new Set());
@@ -68,20 +71,32 @@ export const useEditor = () => {
     setActiveSet(newSet);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    const editorInstance =
-      editorRef.current?.getInstance() as unknown as SafeEditor;
+    try {
+      const editorInstance =
+        editorRef.current?.getInstance() as unknown as SafeEditor;
 
-    editorInstance.exec("addImage", {
-      imageUrl,
-      altText: "이미지 설명",
-    });
+      // 이미지 업로드
+      const imageUrl = await uploadImage(file);
 
-    e.target.value = "";
+      // WYSIWYG 모드로 강제 전환
+      editorInstance.changeMode("wysiwyg", true);
+
+      // 다음 프레임에서 이미지 삽입
+      requestAnimationFrame(() => {
+        editorInstance.exec("addImage", {
+          imageUrl,
+          altText: file.name,
+        });
+      });
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+    } finally {
+      e.target.value = "";
+    }
   };
 
   useEffect(() => {

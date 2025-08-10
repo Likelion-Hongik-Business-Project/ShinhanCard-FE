@@ -31,6 +31,7 @@ export interface FollowUp {
 export interface HeaderProps {
   isTeamEnd?: boolean;
   isAdmin?: boolean;
+  onDelete?: () => void;
 }
 
 // InquiryContent Props 타입
@@ -70,6 +71,7 @@ export interface NotificationButtonProps {
   notificationSent: boolean;
   remainingTime: string;
   finalStateLabel: string;
+  onSend?: () => void;
 }
 
 // PendingActions Props 타입
@@ -99,9 +101,47 @@ export interface AssigneeSectionProps {
   isPendingState: boolean;
   isAssigneeEditMode: boolean;
   showAssigneeFeatures: boolean;
+  confirmedUsers?: number[];
 }
 
-// 통합된 문의 타입 (API 스펙에 완전히 맞춤)
+// AssigneeActions Props 타입
+export interface AssigneeActionsProps {
+  showAssigneeFeatures: boolean;
+  onStartAnswer: () => void;
+  onConfirm: () => void;
+}
+
+// 답변자 정보 타입
+export interface Answerer {
+  user_id: number;
+  name: string;
+  profile_image_url?: string;
+}
+
+// AnswerList Props 타입
+export interface AnswerListProps {
+  answerers: Answerer[];
+  selectedUserId: number | null;
+  onSelectUser: (id: number) => void;
+}
+
+// AnswerItem Props 타입
+export interface AnswerItemProps {
+  comment: Comment;
+  isOnlyComment: boolean;
+  currentUserId?: number;
+  onStartEdit: (userId: number) => void;
+}
+
+// AnswerEditor Props 타입
+export interface AnswerEditorProps {
+  mode: "create" | "edit";
+  initialContent: string;
+  onContentChange: (content: string) => void;
+  onSubmit: (content: string, files: File[]) => void;
+}
+
+// 통합된 문의 타입
 export interface InquiryData {
   inquiry_id: number;
   title: string;
@@ -154,4 +194,23 @@ export interface InquiryCardProps {
   inquiry: InquiryData;
   userRole?: UserRole;
   currentUserId?: number;
+  confirmedUsers?: number[];
+}
+
+// AnswerSection 컴포넌트 Props
+export interface AnswerSectionProps {
+  inquiry: InquiryData;
+  currentUserId: number;
+  isEditing: boolean;
+  selectedUserId: number | null;
+  draftContent: string;
+  tabsToDisplay: Answerer[];
+  selectedComment: Comment | undefined;
+  showEditor: boolean;
+  myComment: Comment | undefined;
+  setDraftContent: (content: string) => void;
+  handleStartAnswer: () => void;
+  handleSelectTab: (id: number) => void;
+  handleSubmit: (content: string) => void;
+  onEditorSubmit: (content: string, files: File[]) => void;
 }

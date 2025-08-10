@@ -465,7 +465,7 @@ export const mockInquiryDetailResponse: {
       title: "프로필 이미지 업로드 용량 제한",
       content:
         "프로필 이미지 업로드 시 허용 용량과 확장자 제한이 어떻게 되는지 문의드립니다.\n\n현재 5MB 이상의 이미지가 업로드되지 않는 상황입니다.",
-      inquiry_state: "RESOLVED",
+      inquiry_state: "OPEN", // 확인 전 상태로 변경 (수정)
       created_at: "2025-07-14T11:05:33+09:00",
       writer: {
         user_id: 100,
@@ -478,7 +478,7 @@ export const mockInquiryDetailResponse: {
           user_id: 2,
           name: "이윤영",
           profile_image_url: "/assets/images/profile.png",
-          is_confirmed: true,
+          is_confirmed: false, // 확인 전 상태로 변경 (수정)
         },
       ],
       references: [
@@ -493,34 +493,51 @@ export const mockInquiryDetailResponse: {
       can_answer: true,
       can_notify: false,
       is_scrapped: false,
-      confirmed_assignees_count: 1,
-      confirmed_assignees: [
-        {
-          user_id: 2,
-          name: "이윤영",
-          profile_image_url: "/assets/images/profile.png",
-        },
+      confirmed_assignees_count: 0, // 확인 전 상태로 변경 (수정)
+      confirmed_assignees: [], // 확인 전 상태로 변경 (수정)
+      comment_count: 0, // 답변 없는 상태로 변경 (수정)
+      comments: [], // 답변 없는 상태로 변경 (수정)
+      follow_ups: [],
+      test_scenario: "담당자 1명, 확인 전 (이윤영으로 접속)", // 시나리오 문구 수정 (수정)
+      test_user_role: "assignee",
+      test_current_user_id: 2,
+    },
+    {
+      // case8: 확인 중 상태 - 이수연이 답변 단 후, 고다현이 답변 작성하는 상황
+      inquiry_id: 1008,
+      title: "확인 중 상태 / 이수연 답변 후 고다현 답변 작성",
+      content:
+        "이수연 님은 답변을 완료했고, 고다현 님이 답변을 작성할 차례입니다.",
+      inquiry_state: "IN_PROGRESS",
+      created_at: "2025-07-22T14:00:00+09:00",
+      writer: { user_id: 777, name: "이승찬", team_name: "프론트엔드팀" },
+      assignees: [
+        { user_id: 1, name: "고다현", is_confirmed: false },
+        { user_id: 4, name: "이수연", is_confirmed: true },
       ],
+      references: [],
+      files: [],
+      can_edit: false,
+      can_answer: true,
+      can_notify: false,
+      is_scrapped: false,
+      confirmed_assignees_count: 1,
+      confirmed_assignees: [{ user_id: 4, name: "이수연" }],
       comment_count: 1,
       comments: [
         {
-          comment_id: 7001,
-          writer: {
-            user_id: 2,
-            name: "이윤영",
-            profile_image_url: "/assets/images/profile.png",
-            team_name: "Core 개발 2부",
-          },
+          comment_id: 8001,
+          writer: { user_id: 4, name: "이수연", team_name: "Core 개발 1부" },
           content:
-            "프로필 이미지 업로드 제한사항:\n\n• 최대 용량: 5MB\n• 허용 확장자: JPG, PNG, GIF\n• 권장 해상도: 200x200px 이상\n• 정사각형 비율 권장\n\n업로드 후 자동으로 리사이징되며, 원본은 30일 후 삭제됩니다.",
-          created_at: "2025-07-14T13:20:00+09:00",
+            "이수연의 기존 답변입니다. 이 내용을 참고하여 새 답변을 작성할 수 있습니다.",
+          created_at: "2025-07-22T15:30:00+09:00",
           can_delete: false,
         },
       ],
       follow_ups: [],
-      test_scenario: "담당자 1명인 경우 - 담당자(이윤영) 관점",
+      test_scenario: "담당자 2명, 확인 중 (고다현으로 접속)",
       test_user_role: "assignee",
-      test_current_user_id: 2,
+      test_current_user_id: 1,
     },
   ],
 };

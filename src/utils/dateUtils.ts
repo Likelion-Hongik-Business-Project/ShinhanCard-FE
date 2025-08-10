@@ -39,6 +39,16 @@ interface FormatDateOptions {
   showTime?: boolean;
 }
 
+export const formatDateParams = (
+  selectedDate: { year: number; month: number }[]
+) => {
+  if (selectedDate.length === 0) return undefined;
+
+  return selectedDate
+    .map(({ year, month }) => `${year}-${String(month).padStart(2, "0")}`)
+    .join(",");
+};
+
 export const formatDateToKorean = (
   dateString: string | Date,
   // options 객체를 받되, 기본값은 빈 객체로 설정

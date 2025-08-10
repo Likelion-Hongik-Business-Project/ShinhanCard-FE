@@ -6,6 +6,7 @@ export { default as Search } from "./search.svg";
 // SideBar 아이콘
 export { default as Bell } from "./bell.svg";
 export { default as BellActive } from "./bell-active.svg";
+export { default as BellNoti } from "./bell-noti.svg";
 export { default as Grid } from "./grid.svg";
 export { default as GridActive } from "./grid-active.svg";
 export { default as Home } from "./home.svg";
