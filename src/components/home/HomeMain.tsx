@@ -258,7 +258,7 @@ const HomeMain = ({
     )
     .filter((item): item is InquiryListItem => item !== null);
 
-  // 필터링 로직: InquiryPageLayout과 동일한 방식
+  // 필터링 로직
   const filteredInquiries =
     selectedStatus === "전체"
       ? currentItems

@@ -156,7 +156,7 @@ const ProfileModal = ({
                 onClick={e => {
                   e.stopPropagation();
                   if (profile) {
-                    navigate(`/space/${profile.name}`);
+                    navigate(`/space/${profile.id}`);
                     onClose();
                     onSidebarClose?.(); // 사이드바 닫기
                   }
