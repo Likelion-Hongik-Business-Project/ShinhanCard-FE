@@ -27,7 +27,7 @@ const InboxList = ({ inquiries, tab }: Props) => {
     <ul className="flex flex-col custom-scrollbar overflow-y-auto pr-[12px] pb-10 -mr-[20px] h-[calc(100%-116px)]">
       {Object.entries(grouped).map(([label, items]) => (
         <div key={label} className="flex flex-col gap-[14px] mt-10">
-          <div className="text-body2 text-gray-40">{label}</div>
+          <div className="text-body1 text-gray-40">{label}</div>
           {items.map(inquiry => (
             <InboxItem
               key={inquiry.id}

@@ -5,16 +5,16 @@ import HeartActive from "@/assets/svgs/common/heart-active.svg";
 import Profile from "@/assets/svgs/common/profile.svg";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
 import Button from "@/components/common/Button";
-import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+// import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
 import { USER_SPACE_TABS } from "@/constants/userSpace";
-import {
-  AssignedInquiryItem,
-  MyInquiryItem,
-  ScrapedInquiryItem,
-} from "@/types/inquiry";
-import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
-import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
-import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
+// import {
+//   AssignedInquiryItem,
+//   MyInquiryItem,
+//   ScrapedInquiryItem,
+// } from "@/types/inquiry";
+// import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
+// import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
+// import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
 
 const UserSpacePage = () => {
   const [isHearted, setIsHearted] = useState(false);
@@ -106,7 +106,7 @@ const UserSpacePage = () => {
       </div>
 
       <div className="pt-10">
-        {activeTab === "assigned" && (
+        {/* {activeTab === "assigned" && (
           <InquiryPageLayout<AssignedInquiryItem>
             title="@@@님의 담당 문의"
             description="@@@님의 담당 문의가 총"
@@ -148,7 +148,7 @@ const UserSpacePage = () => {
             }}
             pageSize={MOCK_MY_QUESTIONS_RESPONSE.pagination.page_size}
           />
-        )}
+        )} */}
       </div>
     </section>
   );
