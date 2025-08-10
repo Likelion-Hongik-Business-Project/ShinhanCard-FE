@@ -1,52 +1,34 @@
-import { useRef, useState } from "react";
-
 import clsx from "clsx";
 
 import Upload from "@/assets/svgs/inquiry/upload.svg";
-import { useDragAndDrop } from "@/hooks/useDragAndDrop";
-import { useFakeProgress } from "@/hooks/useFakeProgress";
+import Modal from "@/components/common/Modal";
+import { useDragAndDrop } from "@/hooks/file/useDragAndDrop";
+import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
+import { UploadFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
-const FileUploadBox = () => {
-  const [files, setFiles] = useState<
-    {
-      id: number;
-      name: string;
-      size: number;
-      uploadedSize: number;
-      status: "uploading" | "done";
-    }[]
-  >([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+interface Props {
+  teamId: number;
+  fileIds: number[];
+  files: UploadFile[];
+  setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
+}
 
-  const handleClick = () => {
-    inputRef.current?.click();
-  };
-
-  const handleFileSelect = (fileList: FileList | null) => {
-    if (!fileList) return;
-
-    const newFiles = Array.from(fileList).map((file, idx) => ({
-      id: Date.now() + idx,
-      name: file.name,
-      size: file.size,
-      uploadedSize: 0,
-      status: "uploading" as const,
-    }));
-
-    setFiles(prev => [...prev, ...newFiles]);
-  };
+const FileUploadBox = ({ setFileIds, files, setFiles }: Props) => {
+  const {
+    inputRef,
+    showLimitModal,
+    setShowLimitModal,
+    triggerInput,
+    handleFileSelect,
+    handleRemove,
+  } = useMultiFileUploader(files, setFileIds, setFiles);
 
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
   });
-
-  const handleRemove = (id: number) => {
-    setFiles(prev => prev.filter(file => file.id !== id));
-  };
-
-  useFakeProgress(files, setFiles);
 
   return (
     <div className="flex flex-col gap-4">
@@ -66,10 +48,10 @@ const FileUploadBox = () => {
         />
 
         <button
-          onClick={handleClick}
+          onClick={triggerInput}
           className={clsx(
             "px-6 flex gap-4 items-center rounded-[15px] w-fit h-16 border cursor-pointer",
-            isDragging ? "bg-white border-main" : "bg-white border-gray-20 "
+            isDragging ? "bg-white border-main" : "bg-white border-gray-20"
           )}
         >
           <Upload className={clsx(isDragging ? "text-main" : "text-gray-60")} />
@@ -106,10 +88,25 @@ const FileUploadBox = () => {
             <FileUploadItem
               key={file.id}
               file={file}
-              onRemove={() => handleRemove(file.id)}
+              onRemove={() => handleRemove(file.id, file.file_id)}
             />
           ))}
         </div>
+      )}
+
+      {showLimitModal && (
+        <Modal
+          isOpen={showLimitModal}
+          onClose={() => setShowLimitModal(false)}
+          title="파일은 최대 6개까지 첨부 가능합니다."
+          buttons={[
+            {
+              label: "확인",
+              type: "blue",
+              onClick: () => setShowLimitModal(false),
+            },
+          ]}
+        />
       )}
     </div>
   );

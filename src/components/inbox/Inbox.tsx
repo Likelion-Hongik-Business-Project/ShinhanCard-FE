@@ -4,12 +4,12 @@ import clsx from "clsx";
 
 import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import {
   useArchivedNotificationsInfinite,
   useNotificationsInfinite,
   useUnreadCount,
 } from "@/hooks/inbox/useInboxApi";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { Tab } from "@/types/inbox";
 
 type Props = {

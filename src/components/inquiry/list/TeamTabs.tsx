@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import TeamTabButton from "@/components/inquiry/list/TeamTabButton";
 import TeamTabsModal from "@/components/inquiry/list/TeamTabsModal";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import { TeamItem } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
