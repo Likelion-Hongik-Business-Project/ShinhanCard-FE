@@ -1,15 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
 import InboxList from "@/components/inbox/InboxList";
 import InboxTabs from "@/components/inbox/InboxTabs";
 import { useOutsideClick } from "@/hooks/common/useOutsideClick";
-import { Tab } from "@/types/inbox";
 import {
-  MOCK_ARCHIVED_INBOX_RESPONSE,
-  MOCK_INBOX_RESPONSE,
-} from "@/mocks/inboxMock";
+  useArchivedNotificationsInfinite,
+  useNotificationsInfinite,
+  useUnreadCount,
+} from "@/hooks/inbox/useInboxApi";
+import { Tab } from "@/types/inbox";
 
 type Props = {
   isSidebarOpen: boolean;
@@ -20,19 +21,73 @@ type Props = {
 
 const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLUListElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   useOutsideClick([ref, ...triggerRefs], onClose);
 
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
+  const isArchiveTab = selectedTab === "보관함";
 
-  const allInquiries = MOCK_INBOX_RESPONSE.teams.flatMap(
-    team => team.inquiries
-  );
-  const archivedInquiries = MOCK_ARCHIVED_INBOX_RESPONSE.teams.flatMap(
-    team => team.inquiries
-  );
+  // 수신함 인피니트
+  const {
+    data: inboxInfinite,
+    fetchNextPage: fetchNextInbox,
+    hasNextPage: hasNextInbox,
+    isFetchingNextPage: fetchingNextInbox,
+  } = useNotificationsInfinite(!isArchiveTab);
 
-  const unreadCount = 3; // TODO: API 연결 이후 동적으로 변경
-  const badgeText = unreadCount > 99 ? "99+" : `${unreadCount}`;
+  // 보관함 인피니트
+  const {
+    data: archiveInfinite,
+    fetchNextPage: fetchNextArchive,
+    hasNextPage: hasNextArchive,
+    isFetchingNextPage: fetchingNextArchive,
+  } = useArchivedNotificationsInfinite(isArchiveTab);
+
+  const items = isArchiveTab
+    ? (archiveInfinite?.items ?? [])
+    : (inboxInfinite?.items ?? []);
+
+  const unread = useUnreadCount();
+  const badgeText = unread > 99 ? "99+" : `${unread}`;
+
+  const hasNextPage = isArchiveTab ? hasNextArchive : hasNextInbox;
+  const isFetchingNextPage = isArchiveTab
+    ? fetchingNextArchive
+    : fetchingNextInbox;
+  const fetchNextPage = isArchiveTab ? fetchNextArchive : fetchNextInbox;
+
+  // IO: 스크롤 컨테이너(ul)를 root로 (sentinel)
+  useEffect(() => {
+    const rootEl = scrollRef.current;
+    const target = loadMoreRef.current;
+    if (!rootEl || !target) return;
+
+    const io = new IntersectionObserver(
+      entries => {
+        if (
+          entries.some(e => e.isIntersecting) &&
+          hasNextPage &&
+          !isFetchingNextPage
+        ) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: rootEl,
+        rootMargin: "0px 0px 200px 0px",
+        threshold: 0.1,
+      }
+    );
+    io.observe(target);
+    return () => io.disconnect();
+  }, [
+    isArchiveTab,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    items.length,
+  ]);
 
   return (
     <aside
@@ -45,18 +100,24 @@ const Inbox = ({ isSidebarOpen, isOpen, onClose, triggerRefs }: Props) => {
           : "opacity-0 -translate-x-2 duration-200 pointer-events-none delay-0"
       )}
     >
+      {/* 헤더 */}
       <div className="flex items-center gap-6">
         <p className="text-heading1 text-gray-80">수신함</p>
         <div className="px-4 py-1 bg-main rounded-[30px] h-[30px] flex justify-center items-center">
           <span className=" text-white text-body1">{badgeText}</span>
         </div>
       </div>
+
+      {/* 탭 */}
       <InboxTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
-      {selectedTab === "보관함" ? (
-        <InboxList inquiries={archivedInquiries} tab="보관함" /> // TODO: API 명세 나오면 거기에 맞게 바꿔야 함
-      ) : (
-        <InboxList inquiries={allInquiries} tab="전체" />
-      )}
+
+      {/* 탭별 데이터 렌더링 */}
+      <InboxList
+        inquiries={items}
+        tab={isArchiveTab ? "보관함" : "전체"}
+        listRef={scrollRef}
+        loadMoreRef={loadMoreRef}
+      />
     </aside>
   );
 };
