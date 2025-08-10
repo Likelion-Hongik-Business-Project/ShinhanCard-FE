@@ -4,6 +4,7 @@ import BluePencil from "@/assets/svgs/common/pencil-blue.svg";
 import SkyPencil from "@/assets/svgs/common/pencil-sky.svg";
 import BlueStar from "@/assets/svgs/common/star-blue.svg";
 import SkyStar from "@/assets/svgs/common/star-sky.svg";
+import { TabKey } from "@/types/userSpace/userSpace.type";
 
 export const USER_SPACE_TABS = [
   {
@@ -25,3 +26,8 @@ export const USER_SPACE_TABS = [
     inactiveIcon: SkyStar,
   },
 ] as const;
+
+export const TAB_KEYS = ["assigned", "scrap", "written"] as const;
+
+export const isTabKey = (k: string): k is TabKey =>
+  (TAB_KEYS as readonly string[]).includes(k);

@@ -1,154 +1,145 @@
 import { useState } from "react";
 
-import Heart from "@/assets/svgs/common/heart.svg";
-import HeartActive from "@/assets/svgs/common/heart-active.svg";
-import Profile from "@/assets/svgs/common/profile.svg";
-import Pencil from "@/assets/svgs/layout/pencil.svg";
-import Button from "@/components/common/Button";
-// import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
-import { USER_SPACE_TABS } from "@/constants/userSpace";
-// import {
-//   AssignedInquiryItem,
-//   MyInquiryItem,
-//   ScrapedInquiryItem,
-// } from "@/types/inquiry";
-// import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
-// import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
-// import { MOCK_SCRAP_RESPONSE } from "@/mocks/scrapMock";
+import { useParams } from "react-router-dom";
+
+import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+import UserSpaceButton from "@/components/userSpace/UserSpaceButton";
+import UserSpaceProfile from "@/components/userSpace/UserSpaceProfile";
+import { useUserProfile } from "@/hooks/userSpace/useUserSpaceApi";
+import {
+  GetInitMyInquiryListResponse,
+  InquiryItem,
+} from "@/types/inquiry/inquiryListApi.type";
 
 const UserSpacePage = () => {
-  const [isHearted, setIsHearted] = useState(false);
-  const [activeTab, setActiveTab] =
-    useState<(typeof USER_SPACE_TABS)[number]["key"]>("written");
+  const { userId } = useParams<{ userId: string }>();
+  const parsed = userId ? Number(userId) : NaN;
+  const userIdNum = Number.isFinite(parsed) ? parsed : null;
+  const invalidId = userIdNum === null;
 
-  const getTabClass = (tabKey: string) =>
-    [
-      activeTab === tabKey
-        ? "bg-state-progress-01 border-[2px] border-main"
-        : "bg-white border border-gray-20",
-      "flex flex-col justify-center items-center gap-4 rounded-[13px] px-10 w-full max-w-[463px] h-[160px]",
-    ].join(" ");
+  const [activeTab, setActiveTab] = useState<"written" | "assigned" | "scrap">(
+    "written"
+  );
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [status, setStatus] = useState("");
+  const [date, setDate] = useState<{ year: number; month: number }[]>([]);
+  const [data, setData] = useState({ total_count: 0 });
+  const totalPages = Math.ceil(data.total_count / pageSize);
+
+  const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<
+    GetInitMyInquiryListResponse["selected_team"] | null
+  >(null);
+
+  const { data: profileRes, isLoading } = useUserProfile(userIdNum);
+  const profile = profileRes?.result;
+
+  const handleSelectTeam = (teamId: number) => {
+    console.log("Selected team:", teamId);
+  };
+
+  const handleExport = () => {
+    console.log("Exporting data...");
+  };
+
+  if (invalidId) {
+    return (
+      <section>
+        <p className="text-center text-gray-50 text-body2">
+          유효한 사용자 ID가 없습니다.
+        </p>
+      </section>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <section>
+        <p className="text-center text-gray-50 text-body2">프로필 로딩 중...</p>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section>
+        <p className="text-center text-gray-50 text-body2">
+          프로필을 찾을 수 없습니다.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section>
-      {/* 상단 프로필 및 버튼 */}
-      <div className="flex flex-wrap items-center w-full">
-        <div className="w-40 h-40 rounded-full overflow-hidden relative shrink-0">
-          <Profile className="w-full h-full object-cover" />
-        </div>
-
-        <div className="pl-10 flex-1 min-w-[180px]">
-          <h1 className="text-heading1 text-black whitespace-nowrap">
-            @@@님의 스페이스
-          </h1>
-
-          <div className="flex items-center gap-2 mt-4">
-            <span className="text-heading3-sb text-main">Core 개발 2부</span>
-            <span className="text-body2 text-gray-60 whitespace-nowrap">
-              경영 기획 그룹 &gt; ICT 본부
-            </span>
-          </div>
-        </div>
-
-        <div className="flex gap-4 ml-auto">
-          <Button
-            buttonType="blue"
-            className="flex items-center gap-2 whitespace-nowrap px-4 py-3"
-          >
-            <Pencil className="w-4 h-4 text-white" />
-            <span className="text-heading3 text-white">
-              @@@님에게 문의 작성
-            </span>
-          </Button>
-
-          <Button
-            buttonType="white"
-            onClick={() => setIsHearted(prev => !prev)}
-          >
-            {isHearted ? (
-              <HeartActive className="w-[24px] h-[24px] aspect-square" />
-            ) : (
-              <Heart className="w-[24px] h-[24px] aspect-square" />
-            )}
-          </Button>
-        </div>
+      <div className="profile-container">
+        <UserSpaceProfile userId={userIdNum!} />
       </div>
 
-      <div className="flex gap-4 pt-20 w-full overflow-x-auto scrollbar-hide">
-        {USER_SPACE_TABS.map(
-          ({
-            key,
-            label,
-            activeIcon: ActiveIcon,
-            inactiveIcon: InactiveIcon,
-          }) => (
-            <Button
-              key={key}
-              buttonType="none"
-              className={getTabClass(key)}
-              onClick={() => setActiveTab(key)}
-            >
-              {activeTab === key ? (
-                <ActiveIcon className="w-10 h-10" />
-              ) : (
-                <InactiveIcon className="w-10 h-10" />
-              )}
-              <span
-                className={`text-heading2-b ${
-                  activeTab === key ? "text-main-dark" : "text-gray-50"
-                }`}
-              >
-                {label}
-              </span>
-            </Button>
-          )
-        )}
-      </div>
+      <UserSpaceButton
+        userId={userIdNum!}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onDataFetched={({
+          inquiries,
+          selectedTeam,
+          pageSize: fetchedPageSize,
+        }) => {
+          setInquiries(inquiries);
+          setSelectedTeam(selectedTeam);
+          setPageSize(fetchedPageSize || 10);
+          setData({ total_count: inquiries.length });
+        }}
+        profile={profile}
+      />
 
       <div className="pt-10">
-        {/* {activeTab === "assigned" && (
-          <InquiryPageLayout<AssignedInquiryItem>
-            title="@@@님의 담당 문의"
-            description="@@@님의 담당 문의가 총"
-            emptyText="@@@님의 담당 문의가 없습니다"
-            inquiries={MOCK_ASSIGNED_INQUIRY_RESPONSE.inquiries}
-            teams={MOCK_ASSIGNED_INQUIRY_RESPONSE.teams}
-            selectedTeamId={
-              MOCK_ASSIGNED_INQUIRY_RESPONSE.selected_team.team_id
+        {inquiries.length === 0 ? (
+          <p className="text-center text-gray-50 text-body2">
+            {activeTab === "assigned"
+              ? `${profile.name}님의 담당 문의가 없습니다`
+              : activeTab === "scrap"
+                ? "스크랩한 문의가 없습니다"
+                : `${profile.name}님이 쓴 문의가 없습니다`}
+          </p>
+        ) : (
+          <InquiryPageLayout
+            title={`${profile.name}님의 ${
+              activeTab === "assigned"
+                ? "담당 문의"
+                : activeTab === "scrap"
+                  ? "스크랩"
+                  : "쓴 문의"
+            }`}
+            description={`${profile.name}님의 ${
+              activeTab === "scrap" ? "스크랩한" : "문의가 총"
+            }`}
+            emptyText={`${profile.name}님의 문의가 없습니다`}
+            inquiries={inquiries}
+            teams={
+              activeTab === "scrap" ? [] : selectedTeam ? [selectedTeam] : []
             }
-            pageSize={MOCK_ASSIGNED_INQUIRY_RESPONSE.pagination.page_size}
+            selectedTeamId={selectedTeam?.team_id || 0}
+            {...(activeTab === "written" && {
+              writer: {
+                id: userIdNum!,
+                name: profile.name,
+                profile_image_url: profile.profile_image_url || "",
+              },
+            })}
+            onSelectTeam={handleSelectTeam}
+            totalCount={data.total_count}
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+            selectedStatus={status}
+            onStatusChange={setStatus}
+            selectedDate={date}
+            onDateChange={setDate}
+            onExport={handleExport}
           />
         )}
-
-        {activeTab === "scrap" && (
-          <InquiryPageLayout<ScrapedInquiryItem>
-            title="스크랩"
-            description="@@@님이 스크랩한 문의가 총"
-            emptyText="스크랩한 문의가 없습니다"
-            inquiries={MOCK_SCRAP_RESPONSE.inquiries}
-            teams={MOCK_SCRAP_RESPONSE.teams}
-            selectedTeamId={MOCK_SCRAP_RESPONSE.selected_team.team_id}
-            pageSize={MOCK_SCRAP_RESPONSE.pagination.page_size}
-          />
-        )}
-
-        {activeTab === "written" && (
-          <InquiryPageLayout<MyInquiryItem>
-            title="@@@님이 쓴 문의"
-            description="@@@님이 쓴 문의가 총"
-            emptyText="@@@님이 쓴 문의가 없습니다"
-            inquiries={MOCK_MY_QUESTIONS_RESPONSE.inquiries}
-            teams={MOCK_MY_QUESTIONS_RESPONSE.teams}
-            selectedTeamId={MOCK_MY_QUESTIONS_RESPONSE.selected_team.team_id}
-            writer={{
-              user_id: MOCK_MY_QUESTIONS_RESPONSE.writer.id,
-              name: MOCK_MY_QUESTIONS_RESPONSE.writer.name,
-              profile_image_url:
-                MOCK_MY_QUESTIONS_RESPONSE.writer.profile_image_url,
-            }}
-            pageSize={MOCK_MY_QUESTIONS_RESPONSE.pagination.page_size}
-          />
-        )} */}
       </div>
     </section>
   );

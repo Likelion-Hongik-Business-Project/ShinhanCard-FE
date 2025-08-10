@@ -25,3 +25,16 @@ export const getAssignedInquiriesByTeam = async (
   });
   return response.data;
 };
+
+// 타인 스페이스 - 담당 문의
+export const getAssignedInquiriesByUserId = async (
+  user_id: number,
+  page = 1,
+  status?: string,
+  date?: string
+): ApiResponse<GetInquiriesResponse> => {
+  const response = await instance.get(`/api/inquiries/${user_id}/assigned`, {
+    params: { page, status, date },
+  });
+  return response.data;
+};

@@ -28,7 +28,7 @@ const App = () => {
             <Route path="/my-questions" element={<MyQuestionsPage />} />
             <Route path="/inquiry/form" element={<InquiryFormPage />} />
             <Route path="/scrap" element={<ScrapPage />} />
-            <Route path="/space/:username" element={<UserSpacePage />} />
+            <Route path="/space/:userId" element={<UserSpacePage />} />
             <Route path="/inquiries/:id" element={<InquiryDetailPage />} />
             <Route path="/result" element={<SearchResultPage />} />
           </Route>

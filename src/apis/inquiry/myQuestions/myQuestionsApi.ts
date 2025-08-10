@@ -28,3 +28,15 @@ export const getMyQuestionsInquiriesByTeam = async (
   });
   return response.data;
 };
+
+export const getMyQuestionsInquiriesByUserId = async (
+  user_id: number,
+  page = 1,
+  status?: string,
+  date?: string
+): ApiResponse<GetInitMyInquiryListResponse> => {
+  const response = await instance.get(`/api/inquiries/${user_id}/submitted`, {
+    params: { page, status, date },
+  });
+  return response.data;
+};

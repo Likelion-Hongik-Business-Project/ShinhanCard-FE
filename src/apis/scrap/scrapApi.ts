@@ -42,3 +42,16 @@ export const getScrapInquiriesByTeam = async (
   });
   return response.data;
 };
+
+// 타인 스페이스 - 스크랩 문의
+export const getScrapInquiriesByUserId = async (
+  user_id: number,
+  page = 1,
+  status?: string,
+  date?: string
+): ApiResponse<GetInquiriesResponse> => {
+  const response = await instance.get(`/api/scrap/${user_id}`, {
+    params: { page, status, date },
+  });
+  return response.data;
+};
