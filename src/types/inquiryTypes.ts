@@ -243,6 +243,7 @@ export interface AnswerSectionProps {
   onEditorSubmit: (content: string) => void;
   onDeleteAnswer: (answerId: number) => void;
   editingComment: Comment | null;
+  isWritingAnswer: boolean;
 }
 
 // NotificationButton Props 타입

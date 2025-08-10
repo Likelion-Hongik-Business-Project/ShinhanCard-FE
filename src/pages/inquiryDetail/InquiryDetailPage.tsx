@@ -22,6 +22,7 @@ const InquiryDetailPage = () => {
     draftContent,
     setDraftContent,
     editingComment,
+    isWritingAnswer,
     notificationSent,
     remainingTime,
     handleStartAnswer,
@@ -149,6 +150,7 @@ const InquiryDetailPage = () => {
           handleSelectTab={handleSelectTab}
           onEditorSubmit={onEditorSubmit}
           editingComment={editingComment}
+          isWritingAnswer={isWritingAnswer}
           onDeleteAnswer={handleDeleteInquiry}
         />
         <AdditionalInquirySection inquiry={mockInquiryResponse} />

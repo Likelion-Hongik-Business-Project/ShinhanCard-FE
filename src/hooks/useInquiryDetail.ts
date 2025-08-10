@@ -50,6 +50,7 @@ export const useInquiryDetail = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [draftContent, setDraftContent] = useState("");
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
+  const [isWritingAnswer, setIsWritingAnswer] = useState(false); // 답변 작성 중인지 추적
   const [notificationSent, setNotificationSent] = useState(false);
   const [remainingTime, setRemainingTime] = useState("");
   const [isAssigneeModalOpen, setIsAssigneeModalOpen] = useState(false);
@@ -69,20 +70,50 @@ export const useInquiryDetail = () => {
     [inquiryData, currentUserId]
   );
 
+  // 탭 목록에 현재 사용자 포함 (답변 작성 중일 때)
   const tabsToDisplay = useMemo(() => {
-    if (!inquiryData) return [];
+    if (!inquiryData || !currentUserId) return [];
+
     const answerers = inquiryData.answers.answers
       .map(c => c.user)
       .filter((user): user is NonNullable<typeof user> => !!user);
+
     const uniqueAnswerers = Array.from(
       new Map(answerers.map(a => [a.user_id, a])).values()
     );
+
+    // 답변 작성 중이거나 작성한 적이 있으면서 내 답변이 없는 경우, 내 정보를 탭에 추가
+    if (
+      (showEditor || isWritingAnswer) &&
+      !myComment &&
+      myProfileResponse?.result
+    ) {
+      const myInfo = {
+        user_id: currentUserId,
+        username: myProfileResponse.result.name,
+        profile_url: myProfileResponse.result.profile_image_url || undefined,
+      };
+
+      // 중복 제거를 위해 기존 답변자 중에 내가 없을 때만 추가
+      const hasMyTab = uniqueAnswerers.some(a => a.user_id === currentUserId);
+      if (!hasMyTab) {
+        uniqueAnswerers.push(myInfo);
+      }
+    }
+
     return uniqueAnswerers.map(a => ({
       user_id: a.user_id,
       username: a.username,
       profile_image_url: a.profile_url,
     }));
-  }, [inquiryData]);
+  }, [
+    inquiryData,
+    currentUserId,
+    showEditor,
+    isWritingAnswer,
+    myComment,
+    myProfileResponse,
+  ]);
 
   const selectedComment = useMemo(() => {
     if (!inquiryData || inquiryData.answers.answers.length === 0) return null;
@@ -174,6 +205,7 @@ export const useInquiryDetail = () => {
         if (currentUserId) setSelectedUserId(currentUserId);
       }
       setShowEditor(false);
+      setIsWritingAnswer(false); // 답변 제출 완료
     } catch (error) {
       console.error("답변 처리 실패:", error);
     }
@@ -251,11 +283,28 @@ export const useInquiryDetail = () => {
       setDraftContent(myComment?.content || "");
     }
     setShowEditor(true);
+    setIsWritingAnswer(true); // 답변 작성 시작
+    // 답변 작성을 시작할 때 내 탭으로 선택
+    if (currentUserId) {
+      setSelectedUserId(currentUserId);
+    }
   };
 
   const handleSelectTab = (userId: number) => {
     setSelectedUserId(userId);
-    setShowEditor(false);
+    // 내 탭을 클릭했을 때만 에디터 표시
+    if (userId === currentUserId && (showEditor || myComment)) {
+      if (!myComment) {
+        // 내 답변이 없고 답변 작성 중인 경우 에디터 표시
+        setShowEditor(true);
+      } else {
+        // 내 답변이 있는 경우 에디터 숨김
+        setShowEditor(false);
+      }
+    } else {
+      // 다른 사람의 탭을 클릭한 경우 에디터 숨김
+      setShowEditor(false);
+    }
   };
 
   const onEditorSubmit = (content: string) => {
@@ -285,6 +334,7 @@ export const useInquiryDetail = () => {
     draftContent,
     setDraftContent,
     editingComment,
+    isWritingAnswer,
     notificationSent,
     remainingTime,
     isAssigneeModalOpen,

@@ -18,6 +18,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
     handleSelectTab,
     onEditorSubmit,
     onDeleteAnswer,
+    isWritingAnswer,
   } = props;
 
   // 답변 섹션의 클래스를 조건부로 설정
@@ -33,6 +34,10 @@ const AnswerSection = (props: AnswerSectionProps) => {
     showEditor ? "border-[3px] border-main" : "border-transparent",
   ].join(" ");
 
+  // 현재 선택된 사용자가 내 자신이고 답변 작성 중인지 확인
+  const isMyTabAndWriting =
+    selectedUserId === currentUserId && (showEditor || isWritingAnswer);
+
   return (
     <div className={answerSectionClasses}>
       {/* 섹션 제목 및 답변 개수 */}
@@ -46,11 +51,9 @@ const AnswerSection = (props: AnswerSectionProps) => {
           </div>
         </div>
       </div>
-
-      {/* [수정] 답변 탭과 내용을 하나의 div로 묶고, 헤더와의 간격을 mt-6으로 설정 */}
       <div className="w-full mt-6">
-        {/* 답변자 탭 목록 */}
-        {tabsToDisplay.length > 0 && !showEditor && (
+        {/* 답변자 탭 목록 - 답변이 있거나 답변 작성 중일 때 표시 */}
+        {tabsToDisplay.length > 0 && (
           <AnswerList
             answerers={tabsToDisplay}
             selectedUserId={selectedUserId}
@@ -59,13 +62,15 @@ const AnswerSection = (props: AnswerSectionProps) => {
         )}
 
         {/* 답변 내용 */}
-        {showEditor ? (
+        {isMyTabAndWriting ? (
+          // 내 탭이 선택되고 답변 작성 중인 경우 에디터 표시
           <AnswerEditor
             initialContent={draftContent}
             onContentChange={setDraftContent}
             onSubmit={onEditorSubmit}
           />
         ) : selectedComment ? (
+          // 선택된 답변이 있는 경우 답변 아이템 표시
           <AnswerItem
             comment={selectedComment}
             isOnlyComment={inquiry.answers.answers.length === 1}
@@ -74,6 +79,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
             onDelete={onDeleteAnswer}
           />
         ) : (
+          // 답변이 없는 경우 빈 상태 메시지 표시
           <div className="w-full h-[90px] flex flex-col justify-center items-start">
             <p className="text-heading2-b text-gray-40">
               {inquiry.answers.count === 0
