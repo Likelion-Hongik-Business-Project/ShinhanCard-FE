@@ -1,39 +1,51 @@
-// src/pages/inquiryDetail/InquiryDetailPage.tsx
-import { useParams } from "react-router-dom";
-
 import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
+import Modal from "@/components/common/Modal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
-import { useGetTeamInquiryDetail } from "@/hooks/inquiry/useInquiryApi";
+import { useInquiryDetail } from "@/hooks/useInquiryDetail";
+import type { UserRole } from "@/types/inquiryTypes";
 import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
-  const { team_id, inquiry_id } = useParams<{
-    team_id: string;
-    inquiry_id: string;
-  }>();
-
+  // 새로 만든 훅을 호출하여 모든 로직과 상태를 가져옴
   const {
-    data: inquiryResponse,
     isLoading,
     isError,
-    error,
-  } = useGetTeamInquiryDetail(Number(team_id), Number(inquiry_id));
+    inquiryData,
+    currentUserId,
+    showEditor,
+    tabsToDisplay,
+    selectedUserId,
+    selectedComment,
+    myComment,
+    draftContent,
+    setDraftContent,
+    editingComment,
+    notificationSent,
+    remainingTime,
+    handleStartAnswer,
+    handleSelectTab,
+    onEditorSubmit,
+    handleConfirm,
+    handleDeleteInquiry,
+    handleNotify,
+    modalProps,
+    closeModal,
+  } = useInquiryDetail();
 
-  // 로딩 및 에러 상태에서 사용할 기본 팀 정보
+  // 조건부 렌더링
   const defaultTeamInfo = {
     group_name: " ",
     division_name: " ",
     team_name: "문의 상세 정보",
   };
 
-  // 로딩 상태
   if (isLoading) {
     return (
       <div className="min-h-screen">
         <div className="mx-auto w-full">
-          <Header teamInfo={defaultTeamInfo} />
+          <Header teamInfo={defaultTeamInfo} onDelete={handleDeleteInquiry} />
           <div className="mt-8 rounded-2xl bg-white p-16 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-main border-t-transparent"></div>
@@ -47,15 +59,11 @@ const InquiryDetailPage = () => {
     );
   }
 
-  // 에러 상태
-  if (isError || !inquiryResponse?.result) {
-    if (isError) {
-      console.error("문의 상세 정보 로딩 실패:", error);
-    }
+  if (isError || !inquiryData) {
     return (
       <div className="min-h-screen">
         <div className="mx-auto w-full">
-          <Header teamInfo={defaultTeamInfo} />
+          <Header teamInfo={defaultTeamInfo} onDelete={handleDeleteInquiry} />
           <div className="mt-8 rounded-2xl bg-white p-16 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="rounded-full bg-red-100 p-4">
@@ -95,47 +103,65 @@ const InquiryDetailPage = () => {
     );
   }
 
-  // 데이터 로딩 성공 후
-  const inquiry = inquiryResponse.result;
-
-  // Header에 전달할 팀 정보 객체 생성
+  // 최종 렌더링
   const teamInfoForHeader = {
-    group_name: inquiry.group.groupName,
-    division_name: inquiry.division.divisionName,
-    team_name: inquiry.team.teamName,
+    group_name: inquiryData.group.group_name,
+    division_name: inquiryData.division.division_name,
+    team_name: inquiryData.team.team_name,
   };
 
-  // 권한 확인 - 기존 mock 데이터 구조 사용
-  const isAdmin = inquiry.test_user_role === "admin";
-  const currentUserId = inquiry.test_current_user_id;
+  const userRole = (inquiryData.role?.toLowerCase() || "default") as UserRole;
+  const isAdmin = userRole === "admin";
 
   return (
     <div className="min-h-screen bg-gray-5">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-14 px-6 py-8">
         <div className="flex flex-col gap-10">
-          {/* 헤더 */}
-          <Header isAdmin={isAdmin} teamInfo={teamInfoForHeader} />
-
-          {/* 문의글 카드 */}
+          <Header
+            isAdmin={isAdmin}
+            teamInfo={teamInfoForHeader}
+            onDelete={handleDeleteInquiry}
+          />
           <InquiryCard
-            inquiry={inquiry}
-            userRole={inquiry.test_user_role}
+            inquiry={inquiryData}
+            userRole={userRole}
             currentUserId={currentUserId}
+            handleStartAnswer={handleStartAnswer}
+            onConfirm={handleConfirm}
+            handleDeleteInquiry={handleDeleteInquiry}
+            handleNotify={handleNotify}
+            notificationSent={notificationSent}
+            remainingTime={remainingTime}
+            showEditor={showEditor}
+            myComment={myComment}
           />
         </div>
-
-        {/* 답변 섹션 */}
         <AnswerSection
-          inquiry_id={inquiry.inquiry_id}
-          team_id={Number(team_id)}
-          comments={inquiry.answers.answers}
+          inquiry={inquiryData}
           currentUserId={currentUserId}
-          canAnswer={inquiry.can_answer || isAdmin}
+          showEditor={showEditor}
+          tabsToDisplay={tabsToDisplay}
+          selectedUserId={selectedUserId}
+          selectedComment={selectedComment}
+          draftContent={draftContent}
+          setDraftContent={setDraftContent}
+          handleStartAnswer={handleStartAnswer}
+          handleSelectTab={handleSelectTab}
+          onEditorSubmit={onEditorSubmit}
+          editingComment={editingComment}
+          onDeleteAnswer={handleDeleteInquiry}
         />
-
-        {/* 추가문의 섹션 */}
         <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>
+      {modalProps && (
+        <Modal
+          isOpen={true}
+          onClose={closeModal}
+          title={modalProps.title}
+          description={modalProps.description}
+          buttons={modalProps.buttons}
+        />
+      )}
     </div>
   );
 };

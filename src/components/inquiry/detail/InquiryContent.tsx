@@ -1,3 +1,5 @@
+import { useNavigate, useParams } from "react-router-dom";
+
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryContentProps } from "@/types/inquiryTypes";
@@ -10,7 +12,19 @@ const InquiryContent = ({
   isWriter,
   isAdmin,
   answersCount,
+  onDelete,
 }: InquiryContentProps) => {
+  const navigate = useNavigate();
+  const { team_id, inquiry_id } = useParams<{
+    team_id: string;
+    inquiry_id: string;
+  }>();
+
+  // 수정 페이지로 이동하는 핸들러
+  const handleEdit = () => {
+    navigate(`/teams/${team_id}/inquiries/${inquiry_id}/edit`);
+  };
+
   return (
     <div className="self-stretch px-[16px] flex flex-col justify-start items-start gap-[32px]">
       {/* 제목 */}
@@ -32,24 +46,33 @@ const InquiryContent = ({
             {author.profile_image_url ? (
               <img
                 src={author.profile_image_url}
-                alt={`${author.username}의 프로필 이미지`}
+                alt={`${author.user_name}의 프로필 이미지`}
                 className="w-[20px] h-[20px] rounded-full"
               />
             ) : (
               <ProfileIcon className="w-[20px] h-[20px] rounded-full text-gray-30" />
             )}
-            <div className="text-gray-80 text-body1-b">{author.username}</div>
+            <div className="text-gray-80 text-body1-b">{author.user_name}</div>
             <div className="text-main text-detail1-b mt-[1px]">
-              {author.teamname}
+              {author.team_name}
             </div>
           </div>
           {/* 문의자 수정/삭제 버튼 */}
           {isWriter && (
             <div className="flex items-center gap-4">
-              <button className="text-gray-50 text-body2">수정</button>
-              {/* 답변이 없거나 관리자가 아닌 경우에만 삭제 버튼 표시 */}
+              <button
+                onClick={handleEdit}
+                className="text-gray-50 text-body2 cursor-pointer"
+              >
+                수정
+              </button>
               {(answersCount === 0 || isAdmin) && (
-                <button className="text-gray-50 text-body2">삭제</button>
+                <button
+                  onClick={onDelete}
+                  className="text-gray-50 text-body2 cursor-pointer"
+                >
+                  삭제
+                </button>
               )}
             </div>
           )}

@@ -1,68 +1,73 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import { formatDateToKorean } from "@/utils/dateUtils";
-import type { Comment } from "@/types/inquiryTypes";
-
-interface AnswerItemProps {
-  comment: Comment;
-  isOnlyComment: boolean;
-  currentUserId?: number;
-}
+import type { AnswerItemProps } from "@/types/inquiryTypes";
 
 const AnswerItem = ({
   comment,
   isOnlyComment,
   currentUserId,
+  onStartEdit,
+  onDelete,
 }: AnswerItemProps) => {
-  const isWriter = comment.author?.user_id === currentUserId;
+  const isWriter = comment.user?.user_id === currentUserId;
+
+  if (!comment.user) return null;
 
   return (
-    <div className="flex flex-col gap-8 pt-8">
-      <div className="whitespace-pre-line px-4 text-body2 text-gray-100">
+    <div className="flex w-full flex-col gap-8">
+      <div className="whitespace-pre-line px-4 py-8 text-body2 text-gray-100">
         {comment.content}
       </div>
-
-      {comment.author && (
-        <div className="flex flex-col gap-4 rounded-[30px] px-4">
-          <div className="flex w-full items-start justify-between">
-            <div className="flex items-center gap-[10px]">
-              <div className="flex items-center gap-2">
-                {comment.author.profile_image_url ? (
-                  <img
-                    src={comment.author.profile_image_url}
-                    alt={`${comment.author.username}의 프로필 이미지`}
-                    className="h-5 w-5 rounded-full"
-                  />
-                ) : (
-                  <ProfileIcon className="h-5 w-5 rounded-full text-gray-30" />
-                )}
-                <span className="text-body1-b text-gray-80">
-                  {comment.author.username}
-                </span>
-              </div>
-              {comment.author.team_name && (
-                <span className="text-detail1-b text-main mt-[1px]">
-                  {comment.author.team_name}
-                </span>
+      {/* 작성자 정보 */}
+      <div className="self-stretch px-4 flex flex-col items-start justify-center gap-4">
+        <div className="flex w-full items-center justify-between">
+          {/* 작성자 프로필 */}
+          <div className="flex items-center gap-[10px]">
+            <div className="flex items-center gap-2">
+              {comment.user.profile_url ? (
+                <img
+                  src={comment.user.profile_url}
+                  alt={`${comment.user.username}의 프로필 이미지`}
+                  className="h-5 w-5 rounded-full"
+                />
+              ) : (
+                <ProfileIcon className="h-5 w-5 rounded-full text-gray-30" />
               )}
+              <span className="text-body1-b text-gray-80">
+                {comment.user.username}
+              </span>
             </div>
-
-            {isWriter && (
-              <div className="flex items-center gap-8">
-                <button className="text-body2 text-gray-50">수정</button>
-                <button
-                  disabled={isOnlyComment}
-                  className="text-body2 text-gray-50 disabled:cursor-not-allowed disabled:text-gray-30"
-                >
-                  삭제
-                </button>
-              </div>
+            {comment.user.team_name && (
+              <span className="text-detail1-b text-main mt-[1px]">
+                {comment.user.team_name}
+              </span>
             )}
           </div>
-          <div className="text-detail1 text-gray-50">
-            {formatDateToKorean(comment.created_at, { showTime: true })}
-          </div>
+
+          {/* 수정/삭제 버튼 */}
+          {isWriter && (
+            <div className="flex items-center gap-8">
+              <button
+                onClick={() => onStartEdit(comment)}
+                className="text-body2 text-gray-50 cursor-pointer"
+              >
+                수정
+              </button>
+              <button
+                disabled={isOnlyComment}
+                className="text-body2 text-gray-50 cursor-pointer"
+                onClick={() => onDelete(comment.comment_id)}
+              >
+                삭제
+              </button>
+            </div>
+          )}
         </div>
-      )}
+        {/* 작성 시간 */}
+        <div className="text-detail1 text-gray-50">
+          {formatDateToKorean(comment.created_at, { showTime: true })}
+        </div>
+      </div>
     </div>
   );
 };

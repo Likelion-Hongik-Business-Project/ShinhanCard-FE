@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { useMyProfile } from "@/hooks/profile/useProfileApi";
+import { GlobalResponse } from "@/types/apiResponse.type";
 import {
   PostAnswerRequest,
   PutAnswerRequest,
 } from "@/types/inquiry/answerApi.type";
+import { InquiryData } from "@/types/inquiryTypes";
 
 import {
   deleteAnswer,
@@ -14,8 +17,9 @@ import {
 
 export const useAnswerApi = (team_id?: number) => {
   const queryClient = useQueryClient();
+  const { data: myProfileResponse } = useMyProfile();
+  const currentUserId = myProfileResponse?.result.id;
 
-  // 답변 작성
   const postAnswerMutation = useMutation({
     mutationFn: ({
       inquiry_id,
@@ -33,7 +37,6 @@ export const useAnswerApi = (team_id?: number) => {
     },
   });
 
-  // 답변 수정
   const putAnswerMutation = useMutation({
     mutationFn: ({
       answer_id,
@@ -43,31 +46,45 @@ export const useAnswerApi = (team_id?: number) => {
       data: PutAnswerRequest;
     }) => putAnswer(answer_id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["teamInquiry"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
     },
   });
 
-  // 답변 삭제
   const deleteAnswerMutation = useMutation({
     mutationFn: ({ answer_id }: { answer_id: number }) =>
       deleteAnswer(answer_id),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["teamInquiry"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
     },
   });
 
-  // 문의 확인 처리
   const postInquiryConfirmMutation = useMutation({
     mutationFn: ({ inquiry_id }: { inquiry_id: number }) =>
       postInquiryConfirm(inquiry_id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["teamInquiry"],
-      });
+    onSuccess: (_, variables) => {
+      const { inquiry_id } = variables;
+      const queryKey = ["teamInquiry", team_id, inquiry_id];
+
+      // 캐시를 직접 수정하여 즉시 UI 업데이트
+      const previousData =
+        queryClient.getQueryData<GlobalResponse<InquiryData>>(queryKey);
+
+      if (previousData) {
+        const newData = {
+          ...previousData,
+          result: {
+            ...previousData.result,
+            assignees: previousData.result.assignees.map(assignee =>
+              assignee.user_id === currentUserId
+                ? { ...assignee, is_checked: true }
+                : assignee
+            ),
+            confirmed_assignees_count:
+              previousData.result.confirmed_assignees_count + 1,
+          },
+        };
+        queryClient.setQueryData(queryKey, newData);
+      }
     },
   });
 

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   INQUIRY_STATE_LABELS,
   INQUIRY_STATE_STYLES,
@@ -14,69 +12,41 @@ export const useInquiryState = (
   userRole: UserRole,
   currentUserId?: number
 ) => {
-  // UI 상태 관리
-  const [isAssigneeEditMode, setIsAssigneeEditMode] = useState(false);
-  const [notificationSent, setNotificationSent] = useState(false);
-
-  // API에서 제공하는 권한 사용 (우선순위)
-  const canEdit = inquiry.can_edit;
-  const canAnswer = inquiry.can_answer;
-  const canSendNotification = inquiry.can_notify;
-
-  // 기본 권한 설정
-  const permissions = USER_ROLE_PERMISSIONS[userRole];
+  const permissions =
+    USER_ROLE_PERMISSIONS[userRole] || USER_ROLE_PERMISSIONS["default"];
   const isWriter = inquiry.author.user_id === currentUserId;
   const isAdmin = userRole === "admin";
 
-  // 상태 매핑 및 계산
-  const mappedState = (STATUS_MAPPING[inquiry.inquiry_state] ||
+  const initialMappedState = (STATUS_MAPPING[inquiry.status] ||
     "BEFORE_CONFIRM") as InquiryState;
-  const stateLabel = INQUIRY_STATE_LABELS[mappedState];
-  const statusConfig = INQUIRY_STATE_STYLES[stateLabel] || {
+
+  const confirmedCount = inquiry.confirmed_assignees_count;
+  const totalAssignees = inquiry.assignees?.length || 0;
+  const answersCount = inquiry.answers.count;
+
+  // 최종 상태 라벨 계산
+  let finalStateLabel = INQUIRY_STATE_LABELS[initialMappedState];
+  if (initialMappedState === "BEFORE_CONFIRM" && totalAssignees > 0) {
+    if (confirmedCount === totalAssignees) {
+      finalStateLabel = answersCount > 0 ? "답변 완료" : "등록 보류";
+    } else if (confirmedCount > 0) {
+      finalStateLabel = "확인 중";
+    }
+  }
+
+  const finalStatusConfig = INQUIRY_STATE_STYLES[finalStateLabel] || {
     bg: "bg-gray-200",
     text: "text-gray-600",
     dot: "bg-gray-400",
   };
 
-  // 등록 보류 상태 확인 - API 데이터 기준으로 단순화
-  const confirmedCount = inquiry.confirmed_assignees_count;
-  const totalAssignees = inquiry.assignees?.length || 0;
-  const answersCount = inquiry.answers.count;
-  const isPendingState =
-    confirmedCount === totalAssignees &&
-    totalAssignees > 0 &&
-    answersCount === 0;
-
-  // 실제 표시될 상태
-  const finalStateLabel = isPendingState ? "등록 보류" : stateLabel;
-  const finalStatusConfig =
-    INQUIRY_STATE_STYLES[finalStateLabel] || statusConfig;
-
-  // 남은 시간 (UI용 더미 데이터)
-  const remainingTime = notificationSent ? "(3:59:59)" : "";
-
   return {
-    // UI 상태
-    isAssigneeEditMode,
-    setIsAssigneeEditMode,
-    notificationSent,
-    setNotificationSent,
-    canSendNotification,
-    remainingTime,
-
-    // API 권한
-    canEdit,
-    canAnswer,
-
-    // 권한
     permissions,
     isWriter,
     isAdmin,
-
-    // 상태 정보
     finalStateLabel,
     finalStatusConfig,
-    isPendingState,
     answersCount,
+    canSendNotification: inquiry.can_notify,
   };
 };

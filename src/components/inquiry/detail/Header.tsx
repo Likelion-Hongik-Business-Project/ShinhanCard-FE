@@ -5,6 +5,7 @@ const Header = ({
   isTeamEnd = false,
   isAdmin = false,
   teamInfo,
+  onDelete,
 }: HeaderProps) => {
   const { group_name, division_name, team_name } = teamInfo;
 
@@ -35,7 +36,10 @@ const Header = ({
       {/* 팀관리자 삭제 버튼 */}
       {isAdmin && (
         <div className="px-[16px] flex justify-center items-center gap-[10px]">
-          <button className="justify-start text-point-red text-body1 cursor-pointer">
+          <button
+            onClick={onDelete}
+            className="justify-start text-point-red text-body1 cursor-pointer"
+          >
             게시물 삭제
           </button>
         </div>

@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { getButtonClass } from "@/utils/modalUtils";
 import { ModalButton } from "@/types/modal";
 
-interface Props {
+export interface Props {
   isOpen: boolean;
   onClose: () => void;
   title: string;

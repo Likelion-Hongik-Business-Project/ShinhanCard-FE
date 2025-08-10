@@ -6,11 +6,11 @@ export type InquiryState =
 
 // 상태 매핑
 export const STATUS_MAPPING: Record<string, InquiryState> = {
-  OPEN: "BEFORE_CONFIRM",
+  UNCHECKED: "BEFORE_CONFIRM", // 서버 데이터 'UNCHECKED' 추가
   IN_PROGRESS: "IN_PROGRESS",
-  RESOLVED: "COMPLETED",
-  CLOSED: "COMPLETED",
-} as const;
+  COMPLETED: "COMPLETED", // 서버 데이터 'COMPLETED'로 변경
+  DEFERRED: "PENDING",
+};
 
 // 한글 상태명
 export const INQUIRY_STATE_LABELS: Record<InquiryState, string> = {

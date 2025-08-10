@@ -13,10 +13,8 @@ import {
 
 import axiosInstance from "@/apis/instance";
 
-/**
- * POST /api/inquiries/{inquiry_id}/answers
- * @description 답변 등록
- */
+//POST /api/inquiries/{inquiry_id}/answers
+//답변 등록
 export const postAnswer = async (
   inquiry_id: number,
   data: PostAnswerRequest
@@ -28,10 +26,8 @@ export const postAnswer = async (
   return response.data;
 };
 
-/**
- * PUT /api/answers/{answer_id}
- * @description 답변 수정
- */
+//PUT /api/answers/{answer_id}
+//@description 답변 수정
 export const putAnswer = async (
   answer_id: number,
   data: PutAnswerRequest
@@ -43,10 +39,8 @@ export const putAnswer = async (
   return response.data;
 };
 
-/**
- * DELETE /api/answers/{answer_id}
- * @description 답변 삭제
- */
+// DELETE /api/answers/{answer_id}
+// @description 답변 삭제
 export const deleteAnswer = async (
   answer_id: number
 ): ApiResponse<DeleteAnswerResponse> => {
@@ -56,10 +50,8 @@ export const deleteAnswer = async (
   return response.data;
 };
 
-/**
- * POST /api/inquiries/{inquiry_id}/confirm
- * @description 문의 확인 처리 (답변 등록 대신)
- */
+// POST /api/inquiries/{inquiry_id}/confirm
+// @description 문의 확인 처리 (답변 등록 대신)
 export const postInquiryConfirm = async (
   inquiry_id: number
 ): ApiResponse<NoResponse> => {
