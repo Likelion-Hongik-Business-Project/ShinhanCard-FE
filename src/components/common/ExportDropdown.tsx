@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import Upload from "@/assets/svgs/common/upload.svg";
 import Button from "@/components/common/Button";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import { ExportOption } from "@/types/excel/excelApi.type";
 
 type Props = {
