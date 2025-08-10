@@ -1,10 +1,10 @@
 export interface AssigneeUser {
-  id: number;
-  name: string;
-  profile_image_url: string;
-  group_name: string;
-  division_name: string;
-  team_name: string;
+  user_id: number;
+  username: string;
+  profile_url: string;
+  group: Group;
+  division: Division;
+  team: Team;
 }
 
 export interface Member {
@@ -19,19 +19,25 @@ export interface Member {
 }
 
 export type Group = {
-  groupId: number;
-  groupName: string;
+  group_id: number;
+  group_name: string;
   active: boolean;
 };
 
 export interface Division {
-  divisionId: number;
-  divisionName: string;
+  division_id: number;
+  division_name: string;
   active: boolean;
 }
 
 export interface Team {
-  teamId: number;
-  teamName: string;
+  team_id: number;
+  team_name: string;
   active: boolean;
+}
+
+export interface MemberSummary {
+  userId: number;
+  userName: string;
+  profileImageUrl: string;
 }

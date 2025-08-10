@@ -25,7 +25,7 @@ export interface TeamItem {
   team_name: string;
 }
 
-export interface InquiryPagination {
+export interface Pagination {
   page: number;
   page_size: number;
   total: number;
@@ -47,7 +47,7 @@ export interface GetInquiriesResponse {
   selected_team: TeamItem;
   teams: TeamItem[];
   inquiries: InquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 export interface InquiryListItem {
@@ -78,7 +78,7 @@ export interface GetInitMyInquiryListResponse {
   selected_team: TeamItem;
   teams: TeamItem[];
   inquiries: MyInquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 export interface GetMyInquiryListByTeamResponse {
@@ -86,7 +86,7 @@ export interface GetMyInquiryListByTeamResponse {
   writer: Profile;
   selected_team: TeamItem;
   inquiries: MyInquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 // scrap
@@ -95,7 +95,7 @@ export interface ScrapedInquiryListResponse {
   selected_team: TeamItem;
   teams: TeamItem[];
   inquiries: InquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 export type TInquiryBase = {
@@ -121,19 +121,19 @@ export interface HomeInitialResponse {
   unchecked_answer_teams: TeamItem[];
   unchecked_inquiries_teams: TeamItem[];
   inquiries: MyInquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 // 미확인 답변 리스트 응답
 export interface UncheckedAnswerListResponse {
   selected_team: TeamItem;
   inquiries: MyInquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }
 
 // 미확인 문의 리스트 응답
 export interface UncheckedInquiryListResponse {
   selected_team: TeamItem;
   inquiries: InquiryItem[];
-  pagination: InquiryPagination;
+  pagination: Pagination;
 }

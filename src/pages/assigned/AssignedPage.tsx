@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import {
   useAssignedByTeamApi,
   useInitAssignedApi,
 } from "@/hooks/inquiry/assigned/useAssignedApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryItem,
   InquiryStatus,
@@ -17,6 +19,21 @@ const AssignedPage = () => {
   const [date, setDate] = useState<{ year: number; month: number }[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+
+  // export
+  const excelExport = useExcelExport();
+
+  const handleExport = (option: ExportOption) => {
+    if (!selectedTeamId) return;
+
+    excelExport.mutate({
+      scope: "assigned",
+      teamId: selectedTeamId,
+      option,
+      status,
+      date,
+    });
+  };
 
   // 최초 요청
   const {
@@ -35,7 +52,7 @@ const AssignedPage = () => {
     isLoading: teamLoading,
     isError: teamError,
   } = useAssignedByTeamApi({
-    teamId: selectedTeamId!,
+    teamId: selectedTeamId as number,
     page: page,
     status: status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date: formatDateParams(date),
@@ -83,6 +100,7 @@ const AssignedPage = () => {
       onStatusChange={setStatus}
       selectedDate={date}
       onDateChange={setDate}
+      onExport={handleExport}
     />
   );
 };

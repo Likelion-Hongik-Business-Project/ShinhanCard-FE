@@ -63,7 +63,7 @@ const AddMemberSidebar = ({ isOpen, onClose, teamName, teamId }: Props) => {
 
   // 현재 팀 정보 (사이드바 초기 상태: props의 팀, 팀 선택 후: 선택된 팀)
   const currentTeamName = selectedTeamId
-    ? selectedTeam?.teamName
+    ? selectedTeam?.team_name
     : teamName || "팀명 없음";
 
   // 검색어 하이라이트 함수

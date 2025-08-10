@@ -87,10 +87,10 @@ export const useTeamSelection = () => {
     },
 
     // 선택된 항목들
-    selectedGroup: groups.find((g: Group) => g.groupId === selectedGroupId),
+    selectedGroup: groups.find((g: Group) => g.group_id === selectedGroupId),
     selectedDivision: divisions.find(
-      (d: Division) => d.divisionId === selectedDivisionId
+      (d: Division) => d.division_id === selectedDivisionId
     ),
-    selectedTeam: teams.find((t: Team) => t.teamId === selectedTeamId),
+    selectedTeam: teams.find((t: Team) => t.team_id === selectedTeamId),
   };
 };

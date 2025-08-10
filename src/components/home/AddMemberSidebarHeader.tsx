@@ -40,9 +40,9 @@ const AddMemberSidebarHeader = ({
   const [clickedOption, setClickedOption] = useState<string | null>(null);
 
   // 드롭다운 옵션들
-  const groupOptions = groups.map(group => group.groupName);
-  const divisionOptions = divisions.map(division => division.divisionName);
-  const teamOptions = teams.map(team => team.teamName);
+  const groupOptions = groups.map(group => group.group_name);
+  const divisionOptions = divisions.map(division => division.division_name);
+  const teamOptions = teams.map(team => team.team_name);
 
   // 팀 선택 완료 시 드롭다운 닫기
   useEffect(() => {
@@ -87,9 +87,9 @@ const AddMemberSidebarHeader = ({
                   onClick={() => {
                     setClickedOption(option);
                     setTimeout(() => {
-                      const group = groups.find(g => g.groupName === option);
+                      const group = groups.find(g => g.group_name === option);
                       if (group) {
-                        setSelectedGroupId(group.groupId);
+                        setSelectedGroupId(group.group_id);
                       }
                       setClickedOption(null);
                     }, 100);
@@ -129,10 +129,10 @@ const AddMemberSidebarHeader = ({
                       setClickedOption(option);
                       setTimeout(() => {
                         const division = divisions.find(
-                          d => d.divisionName === option
+                          d => d.division_name === option
                         );
                         if (division) {
-                          setSelectedDivisionId(division.divisionId);
+                          setSelectedDivisionId(division.division_id);
                         }
                         setClickedOption(null);
                       }, 100);
@@ -169,9 +169,9 @@ const AddMemberSidebarHeader = ({
                   onClick={() => {
                     setClickedOption(option);
                     setTimeout(() => {
-                      const team = teams.find(t => t.teamName === option);
+                      const team = teams.find(t => t.team_name === option);
                       if (team) {
-                        setSelectedTeamId(team.teamId);
+                        setSelectedTeamId(team.team_id);
                       }
                       setClickedOption(null);
                     }, 100);

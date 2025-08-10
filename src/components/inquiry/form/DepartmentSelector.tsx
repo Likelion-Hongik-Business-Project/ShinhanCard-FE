@@ -1,25 +1,28 @@
-import { useOrganizationSelector } from "@/hooks/useOrganizationSelector";
-import { User } from "@/types/user";
+import { useDepartmentSelector } from "@/hooks/team/useDepartmentSelector";
+import { AssigneeUser } from "@/types/team/user.type";
 
 import SelectDropdown from "./SelectDropdown";
 
 interface Props {
-  onSelectUser: (user: User) => void;
+  allUsers: AssigneeUser[];
+  onSelectUser: (user: AssigneeUser) => void;
 }
 
-const DepartmentSelector = ({ onSelectUser }: Props) => {
+const DepartmentSelector = ({ allUsers, onSelectUser }: Props) => {
   const {
-    group,
-    division,
-    team,
+    groupId,
+    divisionId,
+    teamId,
+    selectedUserId,
     groupOptions,
     divisionOptions,
     teamOptions,
-    selectedTeam,
+    userOptions,
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,
-  } = useOrganizationSelector();
+    handleUserChange,
+  } = useDepartmentSelector(allUsers);
 
   return (
     <div className="flex flex-col h-[378px] pt-3 pb-8 px-2.5">
@@ -30,45 +33,37 @@ const DepartmentSelector = ({ onSelectUser }: Props) => {
       <div className="flex gap-2">
         <SelectDropdown
           options={groupOptions}
-          value={group}
+          value={groupId ?? 0}
           onChange={handleGroupChange}
           placeholder="그룹 선택"
           type="group"
         />
         <SelectDropdown
           options={divisionOptions}
-          value={division}
+          value={divisionId ?? 0}
           onChange={handleDivisionChange}
           placeholder="소속본부 선택"
           type="division"
-          disabled={!group}
+          disabled={!groupId}
         />
         <SelectDropdown
           options={teamOptions}
-          value={team}
+          value={teamId ?? 0}
           onChange={handleTeamChange}
           placeholder="팀 선택"
           type="team"
-          disabled={!division}
+          disabled={!divisionId}
         />
         <SelectDropdown
-          options={selectedTeam?.users.map(u => u.user_name) || []}
-          value={""}
-          onChange={name => {
-            const user = selectedTeam?.users.find(u => u.user_name === name);
-            if (user) {
-              onSelectUser({
-                id: user.id,
-                user_name: user.user_name,
-                group_name: group,
-                division_name: division,
-                team_name: team,
-              });
-            }
+          options={userOptions}
+          value={selectedUserId ?? 0}
+          onChange={id => {
+            const picked = handleUserChange(id);
+            if (picked) onSelectUser(picked);
           }}
           placeholder="이름"
           type="user"
-          disabled={!team}
+          disabled={!teamId || userOptions.length === 0}
         />
       </div>
     </div>

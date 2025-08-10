@@ -66,3 +66,7 @@ del {
   display: flex;
   flex-direction: column;
 }
+
+.toastui-editor-contents {
+  min-height: 230px !important;
+}

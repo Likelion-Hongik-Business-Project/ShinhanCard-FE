@@ -1,8 +1,9 @@
-import { ApiResponse } from "@/types/common/api.type";
+import { ApiResponse } from "@/types/apiResponse.type";
 import {
   GetDivisionResponse,
   GetGroupResponse,
   GetMemberResponse,
+  GetMemberSummaryResponse,
   GetTeamResponse,
   GetUsersResponse,
 } from "@/types/team/teamApi.type";
@@ -33,7 +34,13 @@ export const getTeamsByDivisionId = async (
   return response.data;
 };
 
-// 팀원 목록 조회
+export const getMembers = async (
+  teamId: number
+): ApiResponse<GetMemberSummaryResponse[]> => {
+  const response = await instance.get(`/api/teams/${teamId}`);
+  return response.data;
+};
+
 export const getMembersByTeamId = async (
   teamId: number
 ): ApiResponse<GetMemberResponse> => {

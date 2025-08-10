@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import { useInitScrapApi, useScrapByTeamApi } from "@/hooks/scrap/useScrapApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryItem,
   InquiryStatus,
@@ -14,6 +16,21 @@ const ScrapPage = () => {
   const [date, setDate] = useState<{ year: number; month: number }[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+
+  // export
+  const excelExport = useExcelExport();
+
+  const handleExport = (option: ExportOption) => {
+    if (!selectedTeamId) return;
+
+    excelExport.mutate({
+      scope: "scraped",
+      teamId: selectedTeamId,
+      option,
+      status,
+      date,
+    });
+  };
 
   // 최초 요청
   const {
@@ -80,6 +97,7 @@ const ScrapPage = () => {
       onStatusChange={setStatus}
       selectedDate={date}
       onDateChange={setDate}
+      onExport={handleExport}
     />
   );
 };
