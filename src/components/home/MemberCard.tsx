@@ -6,8 +6,8 @@ import FilledHeart from "@/assets/svgs/common/heart-active.svg";
 import User from "@/assets/svgs/home/icon-user.svg";
 import Modal from "@/components/common/Modal";
 import { useRemoveInterestedMember } from "@/hooks/home/useHomeMemberApi";
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
 import { InterestedMember } from "@/types/home/homeApi.type";
-import { getProfileImageUrl } from "@/types/profile/profile.type";
 
 type Props = {
   member: InterestedMember;

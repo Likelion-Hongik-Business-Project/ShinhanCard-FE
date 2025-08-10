@@ -22,19 +22,19 @@ export const useHomeInitial = () => {
 };
 
 // 2. 미확인 답변 조회
-export const useUncheckedAnswer = (teamId: number) => {
+export const useUncheckedAnswer = (teamId: number, page: number = 1) => {
   return useQuery<GlobalResponse<GetUncheckedAnswerResponse>>({
-    queryKey: ["home", "unchecked-answer", teamId],
-    queryFn: () => getUncheckedAnswer(teamId),
+    queryKey: ["home", "unchecked-answer", teamId, page],
+    queryFn: () => getUncheckedAnswer(teamId, page),
     enabled: !!teamId,
   });
 };
 
 // 3. 미확인 문의 조회
-export const useUncheckedInquiries = (teamId: number) => {
+export const useUncheckedInquiries = (teamId: number, page: number = 1) => {
   return useQuery<GlobalResponse<GetUncheckedInquiriesResponse>>({
-    queryKey: ["home", "unchecked-inquiries", teamId],
-    queryFn: () => getUncheckedInquiries(teamId),
+    queryKey: ["home", "unchecked-inquiries", teamId, page],
+    queryFn: () => getUncheckedInquiries(teamId, page),
     enabled: !!teamId,
   });
 };

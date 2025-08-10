@@ -7,7 +7,7 @@ import { Search } from "@/assets/svgs/layout";
 import { useAddInterestedMember } from "@/hooks/home/useHomeMemberApi";
 import { useTeamMembers } from "@/hooks/team/useTeamMembers";
 import { useTeamSelection } from "@/hooks/team/useTeamSelection";
-import { getProfileImageUrl } from "@/types/profile/profile.type";
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 import ProfileModal from "../common/ProfileModal";
 import AddMemberSidebarHeader from "./AddMemberSidebarHeader";

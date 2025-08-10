@@ -1,4 +1,4 @@
-import { HomeButtonProps } from "@/types/home";
+import { HomeButtonProps } from "@/types/home/homeButton.type";
 
 const HomeButton = ({
   type,

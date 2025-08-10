@@ -1,4 +1,4 @@
-import { getProfileImageUrl } from "@/types/profile/profile.type";
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 type Props = {
   name: string;

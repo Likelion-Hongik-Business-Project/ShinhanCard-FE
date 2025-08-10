@@ -51,14 +51,15 @@ const HomeMain = ({
 
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
 
   // 2번, 3번 API 훅
   const { data: uncheckedAnswerData } = useUncheckedAnswer(
-    activeTab === "answer" ? selectedTeamId : 0
+    activeTab === "answer" ? selectedTeamId : 0,
+    activeTab === "answer" ? currentPage : 1
   );
   const { data: uncheckedInquiriesData } = useUncheckedInquiries(
-    activeTab === "inquiry" ? selectedTeamId : 0
+    activeTab === "inquiry" ? selectedTeamId : 0,
+    activeTab === "inquiry" ? currentPage : 1
   );
 
   //관심 팀원 조회 API 훅
@@ -137,16 +138,10 @@ const HomeMain = ({
   const getCurrentRawData = () => {
     if (activeTab === "answer") {
       // 미확인 답변 데이터 사용
-      const data = uncheckedAnswerData?.result?.inquiries || [];
-      const startIndex = (currentPage - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      return data.slice(startIndex, endIndex);
+      return uncheckedAnswerData?.result?.inquiries || [];
     } else if (activeTab === "inquiry") {
       // 미확인 문의 데이터 사용
-      const data = uncheckedInquiriesData?.result?.inquiries || [];
-      const startIndex = (currentPage - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      return data.slice(startIndex, endIndex);
+      return uncheckedInquiriesData?.result?.inquiries || [];
     }
     return [];
   };
@@ -186,8 +181,10 @@ const HomeMain = ({
 
   const rawData = getCurrentRawData();
   const pagination = getCurrentPagination();
-  const totalInquiries = pagination.total;
-  const totalPages = Math.ceil(totalInquiries / pageSize);
+  const totalPages =
+    pagination.total > 0
+      ? Math.ceil(pagination.total / pagination.page_size)
+      : 0;
 
   // 현재 페이지 문의들을 InquiryListItem 형태로 변환
   const currentItems = rawData

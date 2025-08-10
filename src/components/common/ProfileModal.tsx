@@ -8,7 +8,7 @@ import Mail from "@/assets/svgs/profile/mail.svg";
 import Phone from "@/assets/svgs/profile/phone.svg";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useOtherProfile } from "@/hooks/profile/useOtherProfile";
-import { getProfileImageUrl } from "@/types/profile/profile.type";
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 import { useProfileStore } from "@/store/useProfileStore";
 

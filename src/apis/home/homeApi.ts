@@ -16,18 +16,22 @@ export const getHomeInitial = async (): ApiResponse<GetHomeInitialResponse> => {
 
 // 미확인 답변 조회 API
 export const getUncheckedAnswer = async (
-  teamId: number
+  teamId: number,
+  page: number = 1
 ): ApiResponse<GetUncheckedAnswerResponse> => {
-  const response = await instance.get(`/api/home/unchecked/answer/${teamId}`);
+  const response = await instance.get(
+    `/api/home/unchecked/answer/${teamId}?page=${page}`
+  );
   return response.data;
 };
 
 // 미확인 문의 조회 API
 export const getUncheckedInquiries = async (
-  teamId: number
+  teamId: number,
+  page: number = 1
 ): ApiResponse<GetUncheckedInquiriesResponse> => {
   const response = await instance.get(
-    `/api/home/unchecked/inquiries/${teamId}`
+    `/api/home/unchecked/inquiries/${teamId}?page=${page}`
   );
   return response.data;
 };

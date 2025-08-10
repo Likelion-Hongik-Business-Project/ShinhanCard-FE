@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 import Down from "@/assets/svgs/common/down.svg";
 import { Logo, Menu } from "@/assets/svgs/layout";
 import SearchBar from "@/components/searchBar/SearchBar";
-import { getProfileImageUrl } from "@/types/profile/profile.type";
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 import { useProfileStore } from "@/store/useProfileStore";
 
