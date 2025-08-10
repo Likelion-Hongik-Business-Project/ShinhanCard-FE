@@ -32,7 +32,7 @@ jobs:
         id: push
         uses: cpina/github-action-push-to-another-repository@v1.7.2
         env:
-          API_TOKEN_GITHUB: ${{ secrets.VERCEL_GITHUB_KEY }}
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source-directory: 'output'
           destination-github-username: Kuuuuu00
