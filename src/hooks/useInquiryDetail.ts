@@ -192,6 +192,7 @@ export const useInquiryDetail = () => {
   const onDeletePost = async () => {
     try {
       await deleteInquiryMutation.mutateAsync({
+        team_id: Number(team_id),
         inquiry_id: Number(inquiry_id),
       });
       navigate(`/teams/${team_id}`);

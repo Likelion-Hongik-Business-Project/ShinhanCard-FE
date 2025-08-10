@@ -14,7 +14,7 @@ import {
 import axiosInstance from "@/apis/instance";
 
 // PUT /api/teams/{team_id}/inquiries/{inquiry_id}/change-assignee
-// 문의 담당자 수정
+// 문의 담당자 변경
 export const putInquiryAssignee = async (
   team_id: number,
   inquiry_id: number,
@@ -41,11 +41,12 @@ export const postInquiryNotify = async (
 // DELETE /api/inquiries/{inquiry_id}
 // 문의글 삭제
 export const deleteInquiry = async (
+  team_id: number,
   inquiry_id: number
 ): ApiResponse<DeleteInquiryResponse> => {
   const response = await axiosInstance.delete<
     GlobalResponse<DeleteInquiryResponse>
-  >(`/api/inquiries/${inquiry_id}`);
+  >(`/api/teams/${team_id}/inquiries/${inquiry_id}`);
   return response.data;
 };
 

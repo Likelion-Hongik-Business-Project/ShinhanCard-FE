@@ -89,8 +89,13 @@ export const useInquiryManagementApi = () => {
 
   // 문의글 삭제
   const deleteInquiryMutation = useMutation({
-    mutationFn: ({ inquiry_id }: { inquiry_id: number }) =>
-      deleteInquiry(inquiry_id),
+    mutationFn: ({
+      team_id,
+      inquiry_id,
+    }: {
+      team_id: number;
+      inquiry_id: number;
+    }) => deleteInquiry(team_id, inquiry_id),
     onSuccess: () => {
       // 삭제 성공 시, 목록 데이터를 새로고침
       queryClient.invalidateQueries({ queryKey: ["teamInquiryList"] });
