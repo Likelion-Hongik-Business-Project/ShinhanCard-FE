@@ -4,14 +4,9 @@ import { HeaderProps } from "@/types/inquiryTypes";
 const Header = ({
   isTeamEnd = false,
   isAdmin = false,
+  teamInfo,
   onDelete,
 }: HeaderProps) => {
-  const teamInfo = {
-    group_name: "경영기획 그룹",
-    division_name: "ICT 기획본부",
-    team_name: "Core 개발 2부팀",
-  };
-
   const { group_name, division_name, team_name } = teamInfo;
 
   return (

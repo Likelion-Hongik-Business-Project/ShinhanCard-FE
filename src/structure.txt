@@ -1,0 +1,471 @@
+폴더 PATH의 목록입니다.
+볼륨 일련 번호는 1C22-115B입니다.
+C:.
+│  App.tsx
+│  main.tsx
+│  structure.txt
+│  svg.d.ts
+│  vite-env.d.ts
+│  
+├─apis
+│  │  instance.ts
+│  │  
+│  ├─auth
+│  │      authApi.ts
+│  │      
+│  ├─excel
+│  │      excelApi.ts
+│  │      
+│  ├─file
+│  │      fileApi.ts
+│  │      
+│  ├─inbox
+│  │      inboxApi.ts
+│  │      
+│  ├─inquiry
+│  │  │  inquiryApi.ts
+│  │  │  
+│  │  ├─answer
+│  │  │      answerApi.ts
+│  │  │      
+│  │  ├─assigned
+│  │  │      assignedApi.ts
+│  │  │      
+│  │  ├─detail
+│  │  │      inquiryDetailApi.ts
+│  │  │      inquiryManagementApi.ts
+│  │  │      
+│  │  ├─draft
+│  │  │      inquiryDraftApi.ts
+│  │  │      
+│  │  └─myQuestions
+│  │          myQuestionsApi.ts
+│  │          
+│  ├─profile
+│  │      profileApi.ts
+│  │      
+│  ├─scrap
+│  │      scrapApi.ts
+│  │      
+│  ├─search
+│  │      search.ts
+│  │      
+│  └─team
+│          teamApi.ts
+│          
+├─assets
+│  ├─fonts
+│  │      PretendardVariable.woff2
+│  │      
+│  └─svgs
+│      ├─AdditionalInquiry
+│      │      Bubble.svg
+│      │      Enter.svg
+│      │      FilledUnion.svg
+│      │      index.ts
+│      │      Union.svg
+│      │      UserProfile.svg
+│      │      
+│      ├─board
+│      │      clock.svg
+│      │      double-arrow.svg
+│      │      filled-star.svg
+│      │      index.ts
+│      │      loader.svg
+│      │      pen.svg
+│      │      star.svg
+│      │      upload.svg
+│      │      users.svg
+│      │      
+│      ├─common
+│      │  │  down.svg
+│      │  │  heart-active.svg
+│      │  │  heart.svg
+│      │  │  left.svg
+│      │  │  message-blue.svg
+│      │  │  message-sky.svg
+│      │  │  pencil-blue.svg
+│      │  │  pencil-sky.svg
+│      │  │  pencil.svg
+│      │  │  profile.svg
+│      │  │  right.svg
+│      │  │  star-active.svg
+│      │  │  star-blue.svg
+│      │  │  star-sky.svg
+│      │  │  star.svg
+│      │  │  upload.svg
+│      │  │  
+│      │  └─inquiryList
+│      │          clock.svg
+│      │          hash.svg
+│      │          loader.svg
+│      │          user.svg
+│      │          
+│      ├─home
+│      │      icon-user.svg
+│      │      plus.svg
+│      │      
+│      ├─inbox
+│      │      bell.svg
+│      │      check-box.svg
+│      │      check.svg
+│      │      comment.svg
+│      │      inbox-bell.svg
+│      │      inbox-box.svg
+│      │      reset.svg
+│      │      uncheck-box.svg
+│      │      warning.svg
+│      │      
+│      ├─inquiry
+│      │  │  close.svg
+│      │  │  file.svg
+│      │  │  pencil.svg
+│      │  │  profile.svg
+│      │  │  upload.svg
+│      │  │  user-check.svg
+│      │  │  
+│      │  ├─detail
+│      │  │      bell-off.svg
+│      │  │      bell-on.svg
+│      │  │      bell.svg
+│      │  │      check-gray.svg
+│      │  │      check-green.svg
+│      │  │      check.svg
+│      │  │      pencil.svg
+│      │  │      profile.svg
+│      │  │      star-active.svg
+│      │  │      star.svg
+│      │  │      user-check.svg
+│      │  │      users.svg
+│      │  │      
+│      │  └─toolbar
+│      │          bold.svg
+│      │          h1.svg
+│      │          h2.svg
+│      │          h3.svg
+│      │          h4.svg
+│      │          image.svg
+│      │          index.ts
+│      │          italic.svg
+│      │          quotes.svg
+│      │          strike.svg
+│      │          
+│      ├─layout
+│      │      bell-active.svg
+│      │      bell-noti.svg
+│      │      bell.svg
+│      │      grid-active.svg
+│      │      grid.svg
+│      │      home-active.svg
+│      │      home.svg
+│      │      icon-x.svg
+│      │      index.ts
+│      │      logo.svg
+│      │      menu.svg
+│      │      message-active.svg
+│      │      message.svg
+│      │      pencil-active.svg
+│      │      pencil.svg
+│      │      search.svg
+│      │      
+│      ├─login
+│      │      eye-off.svg
+│      │      eye-on.svg
+│      │      logo.svg
+│      │      x-mark-gray.svg
+│      │      x-mark-red.svg
+│      │      x-mark-yellow.svg
+│      │      
+│      └─notFound
+│              404.svg
+│              
+├─components
+│  ├─AdditionalInquiry
+│  │      AdditionalInquiryBody.tsx
+│  │      AdditionalInquiryForm.tsx
+│  │      AdditionalInquiryHeader.tsx
+│  │      AdditionalInquiryReplyForm.tsx
+│  │      AdditionalInquirySection.tsx
+│  │      AdditionalInquiryThread.tsx
+│  │      
+│  ├─common
+│  │      Button.tsx
+│  │      ExportDropdown.tsx
+│  │      MarkdownViewer.tsx
+│  │      Modal.tsx
+│  │      Pagination.tsx
+│  │      
+│  ├─home
+│  │      AddMember.tsx
+│  │      AddMemberSidebar.tsx
+│  │      HomeButton.tsx
+│  │      HomeMain.tsx
+│  │      HomeMember.tsx
+│  │      HomeProfile.tsx
+│  │      MemberCard.tsx
+│  │      
+│  ├─inbox
+│  │      Inbox.tsx
+│  │      InboxEmpty.tsx
+│  │      InboxItem.tsx
+│  │      InboxList.tsx
+│  │      InboxTabs.tsx
+│  │      
+│  ├─inquiry
+│  │  ├─detail
+│  │  │  │  AssigneeActions.tsx
+│  │  │  │  AssigneeSection.tsx
+│  │  │  │  Header.tsx
+│  │  │  │  InquiryCard.tsx
+│  │  │  │  InquiryContent.tsx
+│  │  │  │  InquiryHeader.tsx
+│  │  │  │  NotificationButton.tsx
+│  │  │  │  PendingActions.tsx
+│  │  │  │  
+│  │  │  └─answer
+│  │  │          AnswerEditor.tsx
+│  │  │          AnswerItem.tsx
+│  │  │          AnswerList.tsx
+│  │  │          AnswerSection.tsx
+│  │  │          
+│  │  ├─form
+│  │  │      AssigneeSelector.tsx
+│  │  │      DepartmentSelector.tsx
+│  │  │      EditorToolbar.tsx
+│  │  │      FileUploadBox.tsx
+│  │  │      FileUploadItem.tsx
+│  │  │      InquiryEditor.tsx
+│  │  │      InquiryForm.tsx
+│  │  │      InquiryFormModal.tsx
+│  │  │      ProgressBar.tsx
+│  │  │      SelectDropdown.tsx
+│  │  │      UserMultiSelectInput.tsx
+│  │  │      UserSearchList.tsx
+│  │  │      
+│  │  ├─layout
+│  │  │      InquiryPageLayout.tsx
+│  │  │      
+│  │  └─list
+│  │          DateFilterModal.tsx
+│  │          InquiryList.tsx
+│  │          InquiryListHeader.tsx
+│  │          InquiryListItem.tsx
+│  │          StatusFilterModal.tsx
+│  │          TeamTabButton.tsx
+│  │          TeamTabs.tsx
+│  │          TeamTabsModal.tsx
+│  │          
+│  ├─layout
+│  │  │  Header.tsx
+│  │  │  Layout.tsx
+│  │  │  
+│  │  └─sidebar
+│  │          GroupSelector.tsx
+│  │          SideBar.tsx
+│  │          SideBarDivider.tsx
+│  │          SideBarLargeItem.tsx
+│  │          SideBarSmallItem.tsx
+│  │          TeamSelector.tsx
+│  │          
+│  ├─login
+│  │      IDInputField.tsx
+│  │      PasswordInputField.tsx
+│  │      
+│  ├─router
+│  │      RequireAuth.tsx
+│  │      
+│  ├─searchBar
+│  │      Keyword.tsx
+│  │      RecentSearch.tsx
+│  │      RecommendCard.tsx
+│  │      RecommendSearch.tsx
+│  │      SearchBar.tsx
+│  │      SearchHeader.tsx
+│  │      
+│  └─TeamBoard
+│          FilterBar.tsx
+│          Header.tsx
+│          InquiryItem.tsx
+│          InquiryList.tsx
+│          Pagination.tsx
+│          
+├─constants
+│      inbox.ts
+│      inquiry.ts
+│      inquiryStates.ts
+│      login.ts
+│      toolbarButtons.tsx
+│      userRoles.ts
+│      userSpace.ts
+│      
+├─hooks
+│  │  useInquiryDetail.ts
+│  │  useInquiryModals.ts
+│  │  useInquiryState.ts
+│  │  useSearch.ts
+│  │  
+│  ├─auth
+│  │      useAuth.ts
+│  │      useAuthApi.ts
+│  │      
+│  ├─common
+│  │      useDebounce.ts
+│  │      useOutsideClick.ts
+│  │      
+│  ├─excel
+│  │      useExcelApi.ts
+│  │      
+│  ├─file
+│  │      useDragAndDrop.ts
+│  │      useMultiFileUploader.ts
+│  │      useS3UploadFile.ts
+│  │      
+│  ├─inbox
+│  │      useInboxApi.ts
+│  │      
+│  ├─inquiry
+│  │  │  useAnswerApi.ts
+│  │  │  useEditor.ts
+│  │  │  useInquiryApi.ts
+│  │  │  useInquiryManagementApi.ts
+│  │  │  
+│  │  ├─assigned
+│  │  │      useAssignedApi.ts
+│  │  │      
+│  │  ├─create
+│  │  │      useEditorImageUpload.ts
+│  │  │      useInquiryDraft.ts
+│  │  │      useInquiryDraftApi.ts
+│  │  │      useInquiryFormState.ts
+│  │  │      
+│  │  ├─detail
+│  │  │  │  useInquiryData.ts
+│  │  │  │  useInquiryDetailPageHandler.ts
+│  │  │  │  useInquiryModals.ts
+│  │  │  │  useInquiryState.ts
+│  │  │  │  
+│  │  │  └─answer
+│  │  │          useAnswerHandler.ts
+│  │  │          
+│  │  └─myQuestions
+│  │          useMyQuestionsApi.ts
+│  │          
+│  ├─profile
+│  │      useProfileApi.ts
+│  │      
+│  ├─scrap
+│  │      useScrap.ts
+│  │      useScrapApi.ts
+│  │      
+│  └─team
+│          useDepartmentSelector.ts
+│          useOrganizationSelector.ts
+│          useTeamApi.ts
+│          
+├─mocks
+│      home.ts
+│      inboxMock.ts
+│      mockInquiryDetailResponse.ts
+│      mockInquiryResponse.ts
+│      mockTeamBoardResponse.ts
+│      searchMocks.ts
+│      
+├─pages
+│  ├─assigned
+│  │      AssignedPage.tsx
+│  │      
+│  ├─home
+│  │      HomePage.tsx
+│  │      
+│  ├─inquiry
+│  │      InquiryFormPage.tsx
+│  │      
+│  ├─inquiryDetail
+│  │      InquiryDetailPage.tsx
+│  │      
+│  ├─login
+│  │      LoginPage.tsx
+│  │      
+│  ├─myQuestions
+│  │      MyQuestionsPage.tsx
+│  │      
+│  ├─notFound
+│  │      NotFoundPage.tsx
+│  │      
+│  ├─scrap
+│  │      ScrapPage.tsx
+│  │      
+│  ├─searchResult
+│  │      SearchResultPage.tsx
+│  │      
+│  ├─teamBoard
+│  │      TeamBoardPage.tsx
+│  │      
+│  └─userSpace
+│          UserSpacePage.tsx
+│          
+├─store
+│      getAuthStore.ts
+│      useAuthStore.ts
+│      
+├─styles
+│      editor.css
+│      fonts.css
+│      globals.css
+│      scrollbar.css
+│      
+├─types
+│  │  apiResponse.type.ts
+│  │  home.ts
+│  │  inbox.ts
+│  │  inquiry.ts
+│  │  InquiryResponse.ts
+│  │  inquiryTypes.ts
+│  │  modal.ts
+│  │  search.ts
+│  │  teamBoard.ts
+│  │  toast-ui-editor.d.ts
+│  │  toolbar.ts
+│  │  
+│  ├─excel
+│  │      excelApi.type.ts
+│  │      
+│  ├─file
+│  │      file.type.ts
+│  │      fileApi.type.ts
+│  │      
+│  ├─inbox
+│  │      inboxApi.type.ts
+│  │      
+│  ├─inquiry
+│  │      answerApi.type.ts
+│  │      inquiryApi.type.ts
+│  │      inquiryDetailApi.type.ts
+│  │      inquiryDraft.type.ts
+│  │      inquiryDraftApi.type.ts
+│  │      inquiryListApi.type.ts
+│  │      inquiryManagementApi.type.ts
+│  │      
+│  ├─login
+│  │      loginApi.type.ts
+│  │      
+│  ├─profile
+│  │      profileApi.type.ts
+│  │      
+│  ├─scrap
+│  │      scrapApi.type.ts
+│  │      
+│  └─team
+│          teamApi.type.ts
+│          user.type.ts
+│          
+└─utils
+        commandUtils.ts
+        dateUtils.ts
+        excelDownloadUtils.ts
+        inboxMapping.ts
+        inquiryStatus.ts
+        modalUtils.ts
+        ReactQueryProvider.tsx
+        s3UploadUtils.ts
+        

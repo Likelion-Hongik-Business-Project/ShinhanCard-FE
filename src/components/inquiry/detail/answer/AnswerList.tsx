@@ -11,14 +11,14 @@ const AnswerList = ({
         <button
           key={answerer.user_id}
           onClick={() => onSelectUser(answerer.user_id)}
-          className={`border-b-2 px-6 cursor-pointer py-4 text-heading3-b ${
+          className={`border-b-2 px-6 py-4 text-heading3-b transition-colors ${
             selectedUserId === answerer.user_id
               ? "border-main text-main"
               : "border-transparent text-gray-30"
           }`}
           style={{ marginBottom: "-2px" }}
         >
-          {answerer.name}
+          {answerer.username}
         </button>
       ))}
     </div>

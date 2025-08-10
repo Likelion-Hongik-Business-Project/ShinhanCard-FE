@@ -1,62 +1,109 @@
+import { useMemo } from "react";
+
+import AssigneeActions from "@/components/inquiry/detail/AssigneeActions";
 import AssigneeSection from "@/components/inquiry/detail/AssigneeSection";
 import InquiryContent from "@/components/inquiry/detail/InquiryContent";
 import InquiryHeader from "@/components/inquiry/detail/InquiryHeader";
-import { useInquiryState } from "@/hooks/inquiry/detail/useInquiryState";
+import NotificationButton from "@/components/inquiry/detail/NotificationButton";
+import PendingActions from "@/components/inquiry/detail/PendingActions";
+import { useInquiryState } from "@/hooks/useInquiryState";
 import { InquiryCardProps } from "@/types/inquiryTypes";
 
 const InquiryCard = ({
   inquiry,
   userRole = "default",
   currentUserId,
-  confirmedUsers,
+  handleStartAnswer,
+  onConfirm,
+  handleDeleteInquiry,
+  handleNotify,
+  notificationSent,
+  remainingTime,
+  showEditor,
+  myComment,
 }: InquiryCardProps) => {
   const {
-    isAssigneeEditMode,
     permissions,
     isWriter,
     isAdmin,
     finalStateLabel,
     finalStatusConfig,
-    isPendingState,
     answersCount,
+    canSendNotification,
   } = useInquiryState(inquiry, userRole, currentUserId);
 
+  // 담당자 정렬 로직
+  const sortedAssignees = useMemo(() => {
+    if (!inquiry.assignees) return [];
+    return [...inquiry.assignees].sort((a, b) => {
+      return Number(b.is_checked) - Number(a.is_checked);
+    });
+  }, [inquiry.assignees]);
+
+  // 현재 유저 확인 상태
+  const isCurrentUserConfirmed = !!inquiry.assignees.find(
+    assignee => assignee.user_id === currentUserId && assignee.is_checked
+  );
+
+  const showButtons =
+    permissions.showAssigneeFeatures ||
+    (isWriter && !["답변 완료", "등록 보류"].includes(finalStateLabel));
+
   return (
-    <div className="w-full flex flex-col justify-start items-start gap-[32px]">
-      {/* 헤더 - 상태 및 액션 버튼 */}
+    <div className="relative self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
       <InquiryHeader
         finalStateLabel={finalStateLabel}
         finalStatusConfig={finalStatusConfig}
         isWriter={isWriter}
         isAdmin={isAdmin}
-        canSendNotification={inquiry.can_notify}
-        isScrapped={inquiry.is_scrapped}
+        canSendNotification={canSendNotification}
+        inquiry={inquiry}
       />
-
-      {/* 본문 */}
       <InquiryContent
         title={inquiry.title}
         content={inquiry.content}
-        writer={inquiry.writer}
+        author={inquiry.author}
         createdAt={inquiry.created_at}
         isWriter={isWriter}
         isAdmin={isAdmin}
         answersCount={answersCount}
+        onDelete={handleDeleteInquiry}
       />
-
-      {/* 구분선 */}
       <div className="self-stretch h-0 border-t border-gray-10" />
-
-      {/* 담당자 정보 */}
       <AssigneeSection
-        assignees={inquiry.assignees}
-        references={inquiry.references}
-        confirmedAssignees={inquiry.confirmed_assignees}
-        isPendingState={isPendingState}
-        isAssigneeEditMode={isAssigneeEditMode}
-        showAssigneeFeatures={permissions.showAssigneeFeatures}
-        confirmedUsers={confirmedUsers}
+        assignees={sortedAssignees}
+        observers={inquiry.observers}
+        isPendingState={finalStateLabel === "등록 보류"}
       />
+      {showButtons &&
+        (permissions.showAssigneeFeatures ? (
+          <AssigneeActions
+            showAssigneeFeatures={permissions.showAssigneeFeatures}
+            onStartAnswer={handleStartAnswer}
+            onConfirm={onConfirm}
+            isCurrentUserConfirmed={isCurrentUserConfirmed}
+            showEditor={showEditor}
+            hasMyComment={!!myComment}
+          />
+        ) : (
+          <div className="w-full flex justify-between items-center">
+            <div className="flex justify-start">
+              <NotificationButton
+                isWriter={isWriter}
+                notificationSent={notificationSent}
+                remainingTime={remainingTime}
+                finalStateLabel={finalStateLabel}
+                onSend={handleNotify}
+              />
+            </div>
+            <div className="flex justify-end">
+              <PendingActions
+                isWriter={isWriter}
+                isPendingState={finalStateLabel === "등록 보류"}
+              />
+            </div>
+          </div>
+        ))}
     </div>
   );
 };

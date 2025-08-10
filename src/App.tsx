@@ -29,7 +29,10 @@ const App = () => {
             <Route path="/inquiry/form" element={<InquiryFormPage />} />
             <Route path="/scrap" element={<ScrapPage />} />
             <Route path="/space/:username" element={<UserSpacePage />} />
-            <Route path="/inquiries/:id" element={<InquiryDetailPage />} />
+            <Route
+              path="/teams/:team_id/inquiries/:inquiry_id"
+              element={<InquiryDetailPage />}
+            />
             <Route path="/result" element={<SearchResultPage />} />
           </Route>
         </Route>
