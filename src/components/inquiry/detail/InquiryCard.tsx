@@ -65,6 +65,7 @@ const InquiryCard = ({
         content={inquiry.content}
         author={inquiry.author}
         inquiryId={inquiry.inquiry_id}
+        files={inquiry.files}
         teamId={teamId}
         createdAt={inquiry.created_at}
         isWriter={isWriter}

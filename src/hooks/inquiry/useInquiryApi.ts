@@ -53,16 +53,20 @@ export const useInquiryApi = () => {
   // 문의글 수정
   const putInquiryMutation = useMutation({
     mutationFn: ({
+      team_id,
       inquiry_id,
       data,
     }: {
+      team_id: number;
       inquiry_id: number;
       data: PutInquiryRequest;
-    }) => putInquiry(inquiry_id, data),
-    onSuccess: () => {
+    }) => putInquiry(team_id, inquiry_id, data),
+    onSuccess: (_data, vars) => {
+      const { team_id, inquiry_id } = vars;
       // 수정 성공 시, 해당 문의글 상세 정보 새로고침
       // team_id를 알 수 없으므로, 모든 상세글 쿼리를 무효화
       queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
+      navigate(`/teams/${team_id}/inquiries/${inquiry_id}`, { replace: true });
     },
   });
 

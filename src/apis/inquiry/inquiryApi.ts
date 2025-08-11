@@ -18,11 +18,12 @@ export const postInquiry = async (
 };
 
 export const putInquiry = async (
+  team_id: number,
   inquiry_id: number,
   data: PutInquiryRequest
 ): ApiResponse<PutInquiryResponse> => {
   const response = await instance.put<ApiResponse<PutInquiryResponse>>(
-    `/api/inquiries/${inquiry_id}`,
+    `/api/teams/${team_id}/inquiries/${inquiry_id}`,
     data
   );
   return response.data;

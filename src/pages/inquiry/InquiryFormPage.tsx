@@ -195,7 +195,7 @@ const InquiryFormPage = () => {
 
     if (isEdit && editTeamId && editInquiryId) {
       putInquiryMutation.mutate(
-        { inquiry_id: editInquiryId, data: payload },
+        { team_id: editTeamId, inquiry_id: editInquiryId, data: payload },
         {
           onSuccess: () => {
             setIsConfirmModalOpen(false);

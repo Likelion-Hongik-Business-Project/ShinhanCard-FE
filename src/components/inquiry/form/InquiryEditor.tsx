@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useEditorImageUpload } from "@/hooks/inquiry/create/useEditorImageUpload";
 import { useEditor } from "@/hooks/inquiry/useEditor";
@@ -19,53 +19,27 @@ interface Props {
 const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
-
   const uploadImage = useEditorImageUpload();
 
-  // content 상태 변경 시 반영
+  // 프로그램적 세팅 중인지 구분하는 플래그
+  const applyingRef = useRef(false);
+
+  // content 변경 시 에디터에 반영
   useEffect(() => {
-    const editorInstance = editorRef.current?.getInstance();
-    if (!editorInstance) return;
+    const editor = editorRef.current?.getInstance();
+    if (!editor) return;
 
-    const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+    const current = editor.getMarkdown?.() ?? "";
+    if (current === (content || "")) return;
 
-    // 줄 단위로 split
-    const lines = content.split("\n");
-
+    applyingRef.current = true;
     requestAnimationFrame(() => {
-      editorInstance.setMarkdown(content || "");
-      editorInstance.changeMode("wysiwyg", true);
-
-      lines.forEach((line, index) => {
-        let remaining = line;
-        let match: RegExpExecArray | null;
-
-        while ((match = imageRegex.exec(remaining))) {
-          const [fullMatch, alt, url] = match;
-          const prefix = remaining.slice(0, match.index);
-          if (prefix) {
-            editorInstance.insertText(prefix);
-          }
-
-          editorInstance.exec("addImage", {
-            imageUrl: url,
-            altText: alt || "image",
-          });
-
-          remaining = remaining.slice(match.index + fullMatch.length);
-          imageRegex.lastIndex = 0;
-        }
-
-        if (remaining.trim()) {
-          editorInstance.insertText(remaining);
-        }
-
-        if (index !== 0) {
-          editorInstance.insertText("\n");
-        }
-      });
+      // 필요하면 모드 전환
+      editor.changeMode?.("wysiwyg", true);
+      editor.setMarkdown(content || "");
+      applyingRef.current = false;
     });
-  }, []);
+  }, [content, editorRef]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -95,16 +69,15 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           hooks={{
             addImageBlobHook: async blob => {
               const imageUrl = await uploadImage(blob);
-              const editorInstance = editorRef.current?.getInstance();
-              editorInstance?.exec("addImage", {
+              const editor = editorRef.current?.getInstance();
+              editor?.exec("addImage", {
                 imageUrl,
                 altText: blob instanceof File ? blob.name : "image",
               });
-
               return false;
             },
           }}
-          initialValue=""
+          initialValue={content || ""}
           placeholder="본문의 내용을 입력하세요"
           language="ko"
           height="auto"
@@ -113,11 +86,9 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           previewStyle="tab"
           toolbarItems={[]}
           onChange={() => {
-            const editorInstance = editorRef.current?.getInstance();
-            if (editorInstance) {
-              const current = editorInstance.getMarkdown();
-              setContent(current);
-            }
+            if (applyingRef.current) return; // 프로그램적 세팅 중엔 무시
+            const editor = editorRef.current?.getInstance();
+            if (editor) setContent(editor.getMarkdown() || "");
           }}
         />
       </div>

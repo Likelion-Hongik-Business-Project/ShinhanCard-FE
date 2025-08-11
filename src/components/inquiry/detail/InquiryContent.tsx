@@ -1,9 +1,12 @@
+import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import MarkdownViewer from "@/components/common/MarkdownViewer";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryContentProps } from "@/types/inquiryTypes";
+
+import FileDownloadBox from "./FileDownloadBox";
 
 const InquiryContent = ({
   title,
@@ -16,6 +19,7 @@ const InquiryContent = ({
   inquiryId,
   teamId,
   onDelete,
+  files,
 }: InquiryContentProps) => {
   const navigate = useNavigate();
 
@@ -41,6 +45,31 @@ const InquiryContent = ({
       <div className="self-stretch justify-start text-gray-100 text-body2 whitespace-pre-line">
         <MarkdownViewer content={content} />
       </div>
+
+      {files && files.length > 0 && (
+        <div className="w-full">
+          <div
+            className={clsx(
+              "grid gap-3",
+              "max-1680:grid-cols-1",
+              "1680:grid-cols-[repeat(3,minmax(412px,1fr))]"
+            )}
+          >
+            {files.map(f => (
+              <FileDownloadBox
+                file={{
+                  id: f.file_id,
+                  name: f.file_name,
+                  size: f.file_size ?? 0,
+                  progress: 100,
+                  status: "done",
+                }}
+                onRemove={() => {}}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 작성자 정보 */}
       <div className="self-stretch rounded-[30px] flex flex-col justify-center items-start gap-4">

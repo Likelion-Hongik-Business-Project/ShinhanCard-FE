@@ -51,6 +51,7 @@ export interface InquiryContentProps {
     profile_image_url?: string;
     team_name: string;
   };
+  files?: InquiryFile[];
   createdAt: string;
   isWriter: boolean;
   isAdmin: boolean;
