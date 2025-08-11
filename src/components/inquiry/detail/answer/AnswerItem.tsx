@@ -1,4 +1,5 @@
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
+import MarkdownViewer from "@/components/common/MarkdownViewer";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import type { AnswerItemProps } from "@/types/inquiryTypes";
 
@@ -16,7 +17,7 @@ const AnswerItem = ({
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="whitespace-pre-line px-4 py-8 text-body2 text-gray-100">
-        {comment.content}
+        <MarkdownViewer content={comment.content} />
       </div>
       {/* 작성자 정보 */}
       <div className="self-stretch px-4 flex flex-col items-start justify-center gap-4">

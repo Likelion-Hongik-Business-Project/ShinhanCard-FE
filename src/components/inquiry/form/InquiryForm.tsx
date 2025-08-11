@@ -24,7 +24,6 @@ interface Props {
 }
 
 const InquiryForm = ({
-  teamId,
   title,
   content,
   assigneeIds,
@@ -53,7 +52,6 @@ const InquiryForm = ({
       />
       <div className="w-full h-[1px] bg-gray-10" />
       <FileUploadBox
-        teamId={teamId}
         fileIds={fileIds}
         files={files}
         setFileIds={setFileIds}

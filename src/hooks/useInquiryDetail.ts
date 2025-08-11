@@ -55,6 +55,7 @@ export const useInquiryDetail = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [draftContent, setDraftContent] = useState("");
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
+  const [selectedFileIds, setSelectedFileIds] = useState<number[]>([]);
   const [isWritingAnswer, setIsWritingAnswer] = useState(false); // 답변 작성 중인지 추적
   const [notificationSent, setNotificationSent] = useState(false);
   const [remainingTime, setRemainingTime] = useState("");
@@ -195,22 +196,23 @@ export const useInquiryDetail = () => {
 
   const onSubmitAnswer = async () => {
     if (draftContent.trim().length === 0) return;
+
     try {
       if (editingComment) {
         await putAnswerMutation.mutateAsync({
           answer_id: editingComment.answer_id,
-          data: { content: draftContent, file_ids: null },
+          data: { content: draftContent, file_ids: selectedFileIds },
         });
         setSelectedUserId(editingComment.user.user_id);
       } else {
         await postAnswerMutation.mutateAsync({
           inquiry_id: Number(inquiry_id),
-          data: { content: draftContent, file_ids: null },
+          data: { content: draftContent, file_ids: selectedFileIds },
         });
         if (currentUserId) setSelectedUserId(currentUserId);
       }
       setShowEditor(false);
-      setIsWritingAnswer(false); // 답변 제출 완료
+      setIsWritingAnswer(false);
     } catch (error) {
       console.error("답변 처리 실패:", error);
     }
@@ -321,7 +323,9 @@ export const useInquiryDetail = () => {
   const handleStartAnswer = (commentToEdit?: Comment) => {
     if (commentToEdit) {
       setEditingComment(commentToEdit);
-      setDraftContent(commentToEdit.content);
+      setDraftContent(commentToEdit.content ?? "");
+      const fileIds = (commentToEdit.files ?? []).map(f => f.file_id);
+      setSelectedFileIds(fileIds);
     } else {
       setEditingComment(null);
       setDraftContent(myComment?.content || "");
@@ -403,5 +407,8 @@ export const useInquiryDetail = () => {
     handleDeleteInquiry,
     handleNotify,
     onDeleteAnswer,
+    selectedFileIds,
+    setSelectedFileIds,
+    isEditMode: !!editingComment,
   };
 };

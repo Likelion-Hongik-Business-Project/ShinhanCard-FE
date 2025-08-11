@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Pencil from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
 import EditorToolbar from "@/components/inquiry/form/EditorToolbar";
 import FileUploadBox from "@/components/inquiry/form/FileUploadBox";
 import { useEditor } from "@/hooks/inquiry/useEditor";
-import { UploadFile } from "@/types/file/file.type";
 import { AnswerEditorProps } from "@/types/inquiryTypes";
 
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 
 const AnswerEditor = ({
+  mode,
   initialContent,
   onContentChange,
   onSubmit,
+  fileIds,
+  files,
+  setFileIds,
+  setFiles,
 }: AnswerEditorProps) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
-
-  // FileUploadBox를 위한 상태
-  const [fileIds, setFileIds] = useState<number[]>([]);
-  const [files, setFiles] = useState<UploadFile[]>([]);
 
   // 내용 변경 감지 및 부모 컴포넌트로 전파
   useEffect(() => {
@@ -45,9 +45,11 @@ const AnswerEditor = ({
 
   const handleSubmit = () => {
     const content = editorRef.current?.getInstance().getMarkdown() || "";
-    // 파일 상태는 FileUploadBox가 자체적으로 관리하므로 여기서는 전달하지 않음
-    onSubmit(content);
+    onSubmit(content, fileIds);
   };
+
+  const isEdit = mode === "edit";
+  const buttonLabel = isEdit ? "답변 수정하기" : "답변 등록하기";
 
   return (
     <div className="w-full flex flex-col gap-8">
@@ -73,7 +75,6 @@ const AnswerEditor = ({
         </div>
       </div>
       <FileUploadBox
-        teamId={1}
         fileIds={fileIds}
         files={files}
         setFileIds={setFileIds}
@@ -82,7 +83,7 @@ const AnswerEditor = ({
       <div className="flex justify-end gap-4">
         <Button buttonType="blue" onClick={handleSubmit}>
           <Pencil />
-          <span className="text-heading3 text-white">답변 등록하기</span>
+          <span className="text-heading3 text-white">{buttonLabel}</span>
         </Button>
       </div>
     </div>

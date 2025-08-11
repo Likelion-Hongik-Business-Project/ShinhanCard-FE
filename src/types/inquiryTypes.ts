@@ -1,4 +1,4 @@
-import { InquiryFile } from "./file/file.type";
+import { InquiryFile, UploadFile } from "./file/file.type";
 
 export type UserRole = "default" | "assignee" | "writer" | "admin";
 
@@ -14,6 +14,7 @@ export interface Comment {
   content: string;
   created_at: string;
   can_delete: boolean;
+  files: InquiryFile[];
 }
 
 // 추가문의 타입
@@ -221,9 +222,14 @@ export interface AnswerItemProps {
 
 // AnswerEditorProps 타입
 export interface AnswerEditorProps {
+  mode: "create" | "edit";
   initialContent: string;
   onContentChange: (content: string) => void;
-  onSubmit: (content: string) => void;
+  onSubmit: (content: string, fileIds: number[]) => void;
+  fileIds: number[];
+  files: UploadFile[];
+  setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
 }
 
 // AnswerSectionProps 타입
@@ -242,10 +248,13 @@ export interface AnswerSectionProps {
   setDraftContent: (content: string) => void;
   handleStartAnswer: (commentToEdit?: Comment) => void;
   handleSelectTab: (userId: number) => void;
-  onEditorSubmit: (content: string) => void;
+  onEditorSubmit: (content: string, fileIds: number[]) => void;
   onDeleteAnswer: (answerId: number) => void;
   editingComment: Comment | null;
   isWritingAnswer: boolean;
+  selectedFileIds: number[];
+  setSelectedFileIds: React.Dispatch<React.SetStateAction<number[]>>;
+  isEditMode: boolean;
 }
 
 // NotificationButton Props 타입

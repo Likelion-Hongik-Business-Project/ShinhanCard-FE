@@ -1,3 +1,8 @@
+import { useState } from "react";
+
+import clsx from "clsx";
+
+import { UploadFile } from "@/types/file/file.type";
 import type { AnswerSectionProps } from "@/types/inquiryTypes";
 
 import AnswerEditor from "./AnswerEditor";
@@ -5,6 +10,7 @@ import AnswerItem from "./AnswerItem";
 import AnswerList from "./AnswerList";
 
 const AnswerSection = (props: AnswerSectionProps) => {
+  const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
   const {
     inquiry,
     currentUserId,
@@ -19,20 +25,17 @@ const AnswerSection = (props: AnswerSectionProps) => {
     onEditorSubmit,
     onDeleteAnswer,
     isWritingAnswer,
+    selectedFileIds,
+    setSelectedFileIds,
+    isEditMode,
   } = props;
 
   // 답변 섹션의 클래스를 조건부로 설정
-  const answerSectionClasses = [
-    "flex",
-    "w-full",
-    "flex-col",
-    "justify-start",
-    "items-start",
-    "rounded-[15px]",
-    "bg-white",
-    "p-14",
-    showEditor ? "border-[3px] border-main" : "border-transparent",
-  ].join(" ");
+  const answerSectionClasses = clsx(
+    "flex w-full flex-col justify-start items-start rounded-[15px] bg-white p-14",
+    showEditor && "border-[3px] border-main",
+    !showEditor && "border-transparent"
+  );
 
   // 현재 선택된 사용자가 내 자신이고 답변 작성 중인지 확인
   const isMyTabAndWriting =
@@ -65,9 +68,14 @@ const AnswerSection = (props: AnswerSectionProps) => {
         {isMyTabAndWriting ? (
           // 내 탭이 선택되고 답변 작성 중인 경우 에디터 표시
           <AnswerEditor
+            mode={isEditMode ? "edit" : "create"}
             initialContent={draftContent}
             onContentChange={setDraftContent}
             onSubmit={onEditorSubmit}
+            fileIds={selectedFileIds}
+            files={selectedFiles}
+            setFileIds={setSelectedFileIds}
+            setFiles={setSelectedFiles}
           />
         ) : selectedComment ? (
           // 선택된 답변이 있는 경우 답변 아이템 표시

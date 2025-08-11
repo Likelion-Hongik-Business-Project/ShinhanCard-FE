@@ -40,6 +40,9 @@ const InquiryDetailPage = () => {
     modalProps,
     closeModal,
     onDeleteAnswer,
+    selectedFileIds,
+    setSelectedFileIds,
+    isEditMode,
   } = useInquiryDetail();
 
   // 조건부 렌더링
@@ -160,6 +163,9 @@ const InquiryDetailPage = () => {
           editingComment={editingComment}
           isWritingAnswer={isWritingAnswer}
           onDeleteAnswer={onDeleteAnswer}
+          selectedFileIds={selectedFileIds}
+          setSelectedFileIds={setSelectedFileIds}
+          isEditMode={isEditMode}
         />
         <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>
