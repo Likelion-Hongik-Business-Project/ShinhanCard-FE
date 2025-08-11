@@ -20,18 +20,17 @@ export const useInquiryApi = () => {
   const queryClient = useQueryClient();
 
   // 문의글 등록
-  const postInquiryMutation = useMutation({
-    mutationFn: ({
-      teamId,
-      data,
-    }: {
-      teamId: number;
-      data: PostInquiryRequest;
-    }) => postInquiry(teamId, data),
+  const postInquiryMutation = useMutation<
+    { result: { inquiry_id: number } },
+    unknown, // Error
+    { teamId: number; data: PostInquiryRequest }
+  >({
+    mutationFn: ({ teamId, data }) => postInquiry(teamId, data),
 
-    onSuccess: res => {
-      const { inquiry_id } = res.result;
-      navigate(`/inquiries/${inquiry_id}`);
+    onSuccess: (res, variables) => {
+      const inquiryId = res.result.inquiry_id;
+      const teamId = variables.teamId;
+      navigate(`/teams/${teamId}/inquiries/${inquiryId}`);
     },
   });
 
