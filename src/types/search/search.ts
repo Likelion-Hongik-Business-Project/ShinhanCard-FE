@@ -1,3 +1,5 @@
+import { InquiryServerStatus } from "@/types/inquiry/inquiryListApi.type";
+
 // SearchHeader 컴포넌트 Props
 export interface SearchHeaderProps {
   query: string;
@@ -43,7 +45,7 @@ export interface SearchResultInquiry {
   inquiry_id: number;
   title: string;
   content_preview: string;
-  inquiry_state: string;
+  inquiry_state: InquiryServerStatus;
   created_at: string;
   is_scrapped: boolean;
   group_name: string;
