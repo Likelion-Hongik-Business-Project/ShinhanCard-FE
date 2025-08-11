@@ -32,7 +32,7 @@ export const useInquiryState = (
   const isAssignee = inquiry.assignees.some(a => a.user_id === currentUserId);
 
   const internalState: InquiryState =
-    STATUS_MAPPING[inquiry.inquiry_state] || "PENDING";
+    STATUS_MAPPING[inquiry.status] || "PENDING";
   const finalStateLabel = INQUIRY_STATE_LABELS[internalState];
   const finalStatusConfig = INQUIRY_STATE_STYLES[finalStateLabel];
 
