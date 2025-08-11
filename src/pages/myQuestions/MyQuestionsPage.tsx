@@ -13,11 +13,12 @@ import {
   InquiryStatus,
   MyInquiryItem,
   TInquiryBase,
+  YearMonth,
 } from "@/types/inquiry/inquiryListApi.type";
 
 const MyQuestionsPage = () => {
   const [page, setPage] = useState(1);
-  const [date, setDate] = useState<{ year: number; month: number }[]>([]);
+  const [date, setDate] = useState<YearMonth[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 

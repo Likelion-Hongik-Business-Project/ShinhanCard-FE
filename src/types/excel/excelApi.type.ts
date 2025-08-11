@@ -10,6 +10,6 @@ export type GetAssignedExcelRequest = {
 };
 
 export type ExcelScopedRequest = GetAssignedExcelRequest & {
-  scope: "assigned" | "submitted" | "scraped";
+  scope: "assigned" | "submitted" | "scraped" | "team";
   teamId: number;
 };
