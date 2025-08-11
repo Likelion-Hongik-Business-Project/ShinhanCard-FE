@@ -30,10 +30,10 @@ export interface Inquiry {
   inquiry_id: number;
   writer: Writer;
   title: string;
-  contentPreview: string;
+  content_preview: string;
   status?: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
   group_name?: string;
   division_name?: string;
   team_name?: string;

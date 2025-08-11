@@ -39,7 +39,7 @@ export interface InquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface GetInquiriesResponse {
@@ -57,7 +57,7 @@ export interface InquiryListItem {
   title: string;
   status: InquiryStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export type YearMonth = { year: number; month: number };
@@ -69,7 +69,7 @@ export interface MyInquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface GetInitMyInquiryListResponse {
@@ -90,7 +90,7 @@ export interface GetMyInquiryListByTeamResponse {
 }
 
 // scrap
-export interface ScrapedInquiryListResponse {
+export interface ScrappedInquiryListResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];
@@ -103,7 +103,7 @@ export type TInquiryBase = {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
   writer?: Profile;
 };
 
