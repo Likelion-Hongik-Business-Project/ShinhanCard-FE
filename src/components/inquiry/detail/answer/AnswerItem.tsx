@@ -14,7 +14,7 @@ const AnswerItem = ({
   if (!comment.user) return null;
 
   return (
-    <div className="flex w-full flex-col gap-8">
+    <div className="flex w-full flex-col gap-4">
       <div className="whitespace-pre-line px-4 py-8 text-body2 text-gray-100">
         {comment.content}
       </div>
@@ -53,13 +53,16 @@ const AnswerItem = ({
               >
                 수정
               </button>
-              <button
-                disabled={isOnlyComment}
-                className="text-body2 text-gray-50 cursor-pointer"
-                onClick={() => onDelete(comment.comment_id)}
-              >
-                삭제
-              </button>
+
+              {/* 유일한 댓글이 아닐 때만 삭제 버튼 노출 */}
+              {!isOnlyComment && (
+                <button
+                  className="text-body2 text-gray-50 cursor-pointer"
+                  onClick={() => onDelete(comment.comment_id)}
+                >
+                  삭제
+                </button>
+              )}
             </div>
           )}
         </div>

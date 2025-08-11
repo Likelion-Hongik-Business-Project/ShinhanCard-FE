@@ -114,6 +114,7 @@ export interface AssigneeActionsProps {
   isCurrentUserConfirmed: boolean;
   showEditor: boolean;
   hasMyComment: boolean;
+  InquiryId: number;
 }
 
 // 통합된 문의 타입 (API 스펙에 완전히 맞춤)

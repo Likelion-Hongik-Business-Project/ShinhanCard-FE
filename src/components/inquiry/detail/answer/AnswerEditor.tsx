@@ -51,25 +51,26 @@ const AnswerEditor = ({
 
   return (
     <div className="w-full flex flex-col gap-8">
-      <div className="flex flex-col gap-2 px-4">
+      <div className="flex flex-col gap-2 px-4 py-8">
         <EditorToolbar
           activeSet={activeSet}
           execCommand={execCommand}
           fileInputRef={fileInputRef}
           handleFileChange={handleFileChange}
         />
-        <Editor
-          ref={editorRef}
-          initialValue={initialContent}
-          placeholder="답변 내용을 입력하세요."
-          previewStyle="vertical"
-          height="auto"
-          minHeight="300px"
-          initialEditType="wysiwyg"
-          hideModeSwitch={true}
-          toolbarItems={[]}
-          language="ko-KR"
-        />
+        <div className="min-h-[230px]">
+          <Editor
+            ref={editorRef}
+            initialValue={initialContent}
+            placeholder="답변 내용을 입력하세요."
+            previewStyle="vertical"
+            height="auto"
+            initialEditType="wysiwyg"
+            hideModeSwitch={true}
+            toolbarItems={[]}
+            language="ko-KR"
+          />
+        </div>
       </div>
       <FileUploadBox
         teamId={1}

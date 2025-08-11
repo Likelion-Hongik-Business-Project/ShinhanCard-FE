@@ -84,6 +84,7 @@ const InquiryCard = ({
             isCurrentUserConfirmed={isCurrentUserConfirmed}
             showEditor={showEditor}
             hasMyComment={!!myComment}
+            InquiryId={inquiry.inquiry_id}
           />
         ) : (
           <div className="w-full flex justify-between items-center">

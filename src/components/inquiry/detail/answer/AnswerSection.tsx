@@ -51,7 +51,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
           </div>
         </div>
       </div>
-      <div className="w-full mt-6">
+      <div className="w-full mt-8">
         {/* 답변자 탭 목록 - 답변이 있거나 답변 작성 중일 때 표시 */}
         {tabsToDisplay.length > 0 && (
           <AnswerList
