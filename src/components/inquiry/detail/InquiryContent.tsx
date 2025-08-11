@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
+import MarkdownViewer from "@/components/common/MarkdownViewer";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryContentProps } from "@/types/inquiryTypes";
 
@@ -36,7 +37,7 @@ const InquiryContent = ({
 
       {/* 내용 */}
       <div className="self-stretch justify-start text-gray-100 text-body2 whitespace-pre-line">
-        {content}
+        <MarkdownViewer content={content} />
       </div>
 
       {/* 작성자 정보 */}
