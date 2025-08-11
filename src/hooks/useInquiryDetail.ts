@@ -230,6 +230,35 @@ export const useInquiryDetail = () => {
   const onDeleteAnswer = async (answerId: number) => {
     try {
       await deleteAnswerMutation.mutateAsync({ answer_id: answerId });
+
+      // 답변 삭제 성공 후 처리
+      // 현재 선택된 사용자의 답변이 삭제된 경우, 다른 사용자 탭으로 전환
+      if (selectedComment?.answer_id === answerId) {
+        // 삭제된 답변이 현재 선택된 답변인 경우
+        // 남아있는 다른 답변 중 첫 번째로 전환
+        setTimeout(() => {
+          // API 응답 후 데이터가 업데이트되기를 기다림
+          const remainingAnswers = inquiryData?.answers.answers.filter(
+            answer => answer.answer_id !== answerId
+          );
+
+          if (remainingAnswers && remainingAnswers.length > 0) {
+            // 첫 번째 남은 답변의 사용자로 전환
+            setSelectedUserId(remainingAnswers[0].user.user_id);
+          } else {
+            // 모든 답변이 삭제된 경우
+            setSelectedUserId(null);
+          }
+        }, 100);
+      }
+
+      // 내 답변이 삭제된 경우 답변 작성 상태 초기화
+      if (selectedComment?.user.user_id === currentUserId) {
+        setShowEditor(false);
+        setIsWritingAnswer(false);
+        setEditingComment(null);
+        setDraftContent("");
+      }
     } catch (error) {
       console.error("답변 삭제 실패:", error);
     }
