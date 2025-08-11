@@ -43,8 +43,11 @@ const AnswerEditor = ({
     };
   }, [initialContent, onContentChange, editorRef]);
 
+  const unescapeMarkdown = (md: string) => md.replace(/\\([!()[\]{}])/g, "$1");
+
   const handleSubmit = () => {
-    const content = editorRef.current?.getInstance().getMarkdown() || "";
+    const raw = editorRef.current?.getInstance().getMarkdown() || "";
+    const content = unescapeMarkdown(raw);
     onSubmit(content, fileIds);
   };
 

@@ -51,25 +51,33 @@ export const formatDateParams = (
 
 export const formatDateToKorean = (
   dateString: string | Date,
-  // options 객체를 받되, 기본값은 빈 객체로 설정
-  options: FormatDateOptions = {}
+  options: FormatDateOptions
 ): string => {
-  const date = new Date(dateString);
+  if (!dateString) return "";
 
-  // 옵션에서 showTime이 true일 경우에만 => 시간까지 포함된 형식으로 반환
+  let date: Date;
+
+  if (typeof dateString === "string") {
+    const normalized = dateString.split(".")[0] + "Z";
+    date = new Date(normalized);
+  } else {
+    date = dateString;
+  }
+
   if (options.showTime) {
     return date.toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // 24시간 형식
+      hour12: false,
     });
   }
 
-  // 옵션이 없거나 showTime이 true가 아닌 경우 => 기존과 동일하게 날짜만 반환
   return date.toLocaleDateString("ko-KR", {
+    timeZone: "Asia/Seoul",
     year: "numeric",
     month: "long",
     day: "numeric",
