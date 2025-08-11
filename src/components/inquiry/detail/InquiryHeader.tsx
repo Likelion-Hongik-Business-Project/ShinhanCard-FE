@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import BellOff from "@/assets/svgs/inquiry/detail/bell-off.svg";
 import BellOn from "@/assets/svgs/inquiry/detail/bell-on.svg";
 import Star from "@/assets/svgs/inquiry/detail/star.svg";
@@ -13,20 +15,25 @@ const InquiryHeader = ({
   canSendNotification,
   inquiry,
 }: InquiryHeaderProps) => {
-  const { postScrapMutation, deleteScrapMutation } = useScrapApi();
+  const { addScrap, removeScrap } = useScrapApi();
 
-  // 스크랩 토글 핸들러
+  const [scraped, setScraped] = useState(!!inquiry.is_scraped);
+  useEffect(() => setScraped(!!inquiry.is_scraped), [inquiry.is_scraped]);
+
+  const toggling = addScrap.isPending || removeScrap.isPending;
+
   const handleToggleScrap = async () => {
+    const next = !scraped;
+    setScraped(next);
     try {
-      if (inquiry.is_scraped || false) {
-        await deleteScrapMutation.mutateAsync({
-          inquiry_id: inquiry.inquiry_id,
-        });
+      if (next) {
+        await addScrap.mutateAsync(inquiry.inquiry_id);
       } else {
-        await postScrapMutation.mutateAsync({ inquiry_id: inquiry.inquiry_id });
+        await removeScrap.mutateAsync(inquiry.inquiry_id);
       }
-    } catch (error) {
-      console.error("스크랩 처리 실패:", error);
+    } catch (e) {
+      setScraped(!next);
+      console.error(e);
     }
   };
 
@@ -70,14 +77,11 @@ const InquiryHeader = ({
         {!isAdmin && (
           <button
             onClick={handleToggleScrap}
+            disabled={toggling}
             className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
             aria-label={inquiry.is_scraped || false ? "스크랩 취소" : "스크랩"}
           >
-            {inquiry.is_scraped || false ? (
-              <StarActive />
-            ) : (
-              <Star className="text-gray-50" />
-            )}
+            {scraped ? <StarActive /> : <Star className="text-gray-50" />}
           </button>
         )}
       </div>
