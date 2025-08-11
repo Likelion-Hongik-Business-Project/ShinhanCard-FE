@@ -83,7 +83,7 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
         title: item.title,
         status: statusLabel,
         created_at: item.created_at,
-        is_scraped: item.is_scraped,
+        is_scrapped: item.is_scrapped,
       };
     })
     .filter((item): item is InquiryListItem => item !== null);

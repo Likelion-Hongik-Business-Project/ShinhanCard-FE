@@ -39,7 +39,7 @@ export interface InquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface GetInquiriesResponse {
@@ -57,7 +57,7 @@ export interface InquiryListItem {
   title: string;
   status: InquiryStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export type YearMonth = { year: number; month: number };
@@ -69,7 +69,7 @@ export interface MyInquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface GetInitMyInquiryListResponse {
@@ -90,7 +90,7 @@ export interface GetMyInquiryListByTeamResponse {
 }
 
 // scrap
-export interface ScrapedInquiryListResponse {
+export interface ScrappedInquiryListResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];
@@ -103,6 +103,37 @@ export type TInquiryBase = {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
   writer?: Profile;
 };
+
+// 홈페이지 초기 진입 응답
+export interface HomeInitialResponse {
+  total_unchecked_answer_count: number;
+  total_unchecked_inquiries_count: number;
+  interest_count: number;
+  writer: {
+    id: number;
+    name: string;
+    profile_image_url: string;
+  };
+  selected_team: TeamItem;
+  unchecked_answer_teams: TeamItem[];
+  unchecked_inquiries_teams: TeamItem[];
+  inquiries: MyInquiryItem[];
+  pagination: Pagination;
+}
+
+// 미확인 답변 리스트 응답
+export interface UncheckedAnswerListResponse {
+  selected_team: TeamItem;
+  inquiries: MyInquiryItem[];
+  pagination: Pagination;
+}
+
+// 미확인 문의 리스트 응답
+export interface UncheckedInquiryListResponse {
+  selected_team: TeamItem;
+  inquiries: InquiryItem[];
+  pagination: Pagination;
+}

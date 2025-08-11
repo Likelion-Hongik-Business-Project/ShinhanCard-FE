@@ -2,7 +2,8 @@ import { Pagination } from "@/types/inquiry/inquiryListApi.type";
 
 export type NotificationItem = {
   notification_id: number;
-  inquiry_id: number | null;
+  inquiry_id: number;
+  team_id: number;
   notification_type: string;
   notification_title: string;
   notification_body: string;

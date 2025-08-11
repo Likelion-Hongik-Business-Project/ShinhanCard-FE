@@ -1,18 +1,26 @@
-import { Pen, Upload, Users } from "@/assets/svgs/board";
+import { Pen, Users } from "@/assets/svgs/board";
+import ExportDropdown from "@/components/common/ExportDropdown";
+import { ExportOption } from "@/types/excel/excelApi.type";
 
-interface HeaderProps {
+interface Props {
   group_name: string;
   division_name: string;
   team_name: string;
-  isTeamEnd: boolean;
+  isActive: boolean;
+  hasInquiry: boolean;
+  onExport: (option: ExportOption) => void;
+  onClickWrite: () => void;
 }
 
 const Header = ({
   group_name,
   division_name,
   team_name,
-  isTeamEnd,
-}: HeaderProps) => {
+  isActive,
+  hasInquiry,
+  onExport,
+  onClickWrite,
+}: Props) => {
   return (
     <div className="flex justify-between items-end">
       <div className="flex flex-col gap-4">
@@ -26,7 +34,7 @@ const Header = ({
         <div className="flex items-center gap-4">
           <h1
             className={`text-heading1 ${
-              isTeamEnd ? "text-gray-50" : "text-gray-80"
+              isActive ? "text-gray-80" : "text-gray-50"
             }`}
           >
             {team_name}
@@ -35,16 +43,11 @@ const Header = ({
         </div>
       </div>
       <div className="flex gap-4">
-        <button
-          type="button"
-          className="h-16 px-6 rounded-[15px] border border-gray-20 cursor-pointer flex items-center gap-4 bg-white text-heading3 text-gray-80"
-        >
-          <Upload className="w-4 h-4 text-gray-60" />
-          Export
-        </button>
-        {!isTeamEnd && (
+        {hasInquiry && <ExportDropdown onExport={onExport} />}
+        {isActive && (
           <button
             type="button"
+            onClick={onClickWrite}
             className="h-16 px-6 rounded-[15px] bg-main flex items-center cursor-pointer gap-4 text-heading3 text-white"
           >
             <Pen className="w-4 h-4 text-white" />

@@ -1,13 +1,15 @@
+import { getProfileImageUrl } from "@/utils/profileImgUtils";
+
 type Props = {
   name: string;
-  profileImage: string;
+  profileImage: string | null;
 };
 
 const HomeProfile = ({ name, profileImage }: Props) => {
   return (
     <div className="flex flex-col items-center pb-20">
       <img
-        src={profileImage}
+        src={getProfileImageUrl(profileImage)}
         alt="프로필 이미지"
         className="w-[120px] h-[120px] rounded-full object-cover mb-[24px]"
       />

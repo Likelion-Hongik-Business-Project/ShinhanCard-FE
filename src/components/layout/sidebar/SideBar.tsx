@@ -25,6 +25,8 @@ import SideBarSmallItem from "@/components/layout/sidebar/SideBarSmallItem";
 import TeamSelector from "@/components/layout/sidebar/TeamSelector";
 import { useUnreadCount } from "@/hooks/inbox/useInboxApi";
 
+import { useProfileStore } from "@/store/useProfileStore";
+
 type Props = {
   isOpen: boolean;
   isGroupSelectorOpen: boolean;
@@ -48,7 +50,8 @@ const SideBar = ({
   inboxLargeRef,
   inboxSmallRef,
 }: Props) => {
-  const id = "2";
+  const myTeamId = useProfileStore(s => s.profile?.team_id);
+  const myTeamName = useProfileStore(s => s.profile?.team_name);
 
   const [hovered, setHovered] = useState({
     group: false,
@@ -168,8 +171,8 @@ const SideBar = ({
           <p className="text-heading3-b text-gray-80 m-2">게시판</p>
           <SideBarLargeItem
             icon={Grid}
-            label="Core 개발 2부"
-            path={`/team/${id}`}
+            label={myTeamName}
+            path={`/team/${myTeamId}`}
           />
           <SideBarLargeItem
             icon={Grid}
@@ -214,7 +217,7 @@ const SideBar = ({
           <SideBarSmallItem
             icon={Grid}
             activeIcon={GridActive}
-            path={`/team/${id}`}
+            path={`/team/${myTeamId}`}
           />
           <SideBarSmallItem
             icon={Grid}

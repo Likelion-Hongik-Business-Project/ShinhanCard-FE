@@ -10,7 +10,8 @@ export const getExcelByScope = async (requestParams: ExcelScopedRequest) => {
   const pathMap = {
     assigned: `/api/inquiries/assigned/${teamId}/export`,
     submitted: `/api/inquiries/submitted/${teamId}/export`,
-    scraped: `/api/scrap/${teamId}/export`,
+    scrapped: `/api/scrap/${teamId}/export`,
+    team: `/api/teams/${teamId}/inquiries/export`,
   } as const;
 
   return instance.get(pathMap[scope], {

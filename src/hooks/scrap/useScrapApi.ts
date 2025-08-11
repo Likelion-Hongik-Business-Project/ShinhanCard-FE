@@ -34,8 +34,8 @@ export const useScrapApi = () => {
     return data?.inquiries.find(i => i.inquiry_id === inquiryId);
   };
 
-  // 모든 "inquiries" 관련 캐시에서 특정 inquiry의 is_scraped 필드 값을 수정
-  const updateScrapField = (inquiryId: number, isScraped: boolean) => {
+  // 모든 "inquiries" 관련 캐시에서 특정 inquiry의 is_scrapped 필드 값을 수정
+  const updateScrapField = (inquiryId: number, isScrapped: boolean) => {
     const queries = queryClient
       .getQueryCache()
       .findAll({ queryKey: ["inquiries"] }); // "inquiries"로 시작하는 모든 쿼리 키 (ex. 내 담당 문의, 스크랩 내역, 내가 쓴 문의)
@@ -46,12 +46,12 @@ export const useScrapApi = () => {
       );
       if (!data?.inquiries) return;
 
-      // 해당 inquiry_id와 일치하는 항목의 is_scraped 값을 변경
+      // 해당 inquiry_id와 일치하는 항목의 is_scrapped 값을 변경
       const updated: InquiriesResponseWithBase = {
         ...data,
         inquiries: data.inquiries.map(item =>
           item.inquiry_id === inquiryId
-            ? { ...item, is_scraped: isScraped }
+            ? { ...item, is_scrapped: isScrapped }
             : item
         ),
       };
@@ -73,7 +73,7 @@ export const useScrapApi = () => {
       // 모든 inquiries 관련 쿼리 중단 (데이터 무결성 보호 - 충돌 방지)
       await queryClient.cancelQueries({ queryKey: ["inquiries"] });
 
-      // 해당 항목의 is_scraped = true 로 변경
+      // 해당 항목의 is_scrapped = true 로 변경
       updateScrapField(inquiryId, true);
 
       // 스크랩 목록(init)에 추가
@@ -111,7 +111,7 @@ export const useScrapApi = () => {
       // 모든 inquiries 관련 쿼리 중단 (데이터 무결성 보호 - 충돌 방지)
       await queryClient.cancelQueries({ queryKey: ["inquiries"] });
 
-      // 해당 항목의 is_scraped = false 로 변경
+      // 해당 항목의 is_scrapped = false 로 변경
       updateScrapField(inquiryId, false);
 
       // 스크랩 목록(init)에서 제거

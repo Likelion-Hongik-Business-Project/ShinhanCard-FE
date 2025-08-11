@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { SearchRequest } from "@/types/search/search";
+
 import {
   deleteRecentSearchKeyword,
   getRecentSearchKeywords,
   getRecommendSearchKeywords,
   getSearchResults,
-} from "@/apis/search/search";
+} from "@/apis/search/searchApi";
 
 // 최근 검색어 조회 훅
 export const useRecentSearchKeywords = () => {
@@ -46,10 +48,21 @@ export const useRecommendSearchKeywords = (query: string) => {
 };
 
 // 검색 결과 조회 훅
-export const useSearchResults = (query: string, page: number = 1) => {
+export const useSearchResults = (
+  query: string,
+  page: number = 1,
+  pageSize: number = 6
+) => {
   return useQuery({
-    queryKey: ["searchResults", query, page],
-    queryFn: () => getSearchResults(query, page),
+    queryKey: ["searchResults", query, page, pageSize],
+    queryFn: async () => {
+      const request: SearchRequest = {
+        query,
+        page,
+        pageSize,
+      };
+      return getSearchResults(request);
+    },
     enabled: query.length > 0,
     staleTime: 1 * 60 * 1000, // 1분
     refetchOnWindowFocus: false,

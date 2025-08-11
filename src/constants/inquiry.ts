@@ -1,4 +1,4 @@
-import { InquiryStatus } from "@/types/inquiry/inquiryListApi.type";
+import { InquiryStatus } from "@/types/inquiry";
 
 export const INQUIRY_STATUSES: InquiryStatus[] = [
   "확인 전",
@@ -31,3 +31,5 @@ export const INQUIRY_STATUS_STYLES: Record<
     dot: "bg-state-done-02",
   },
 };
+
+export const MAX_PREVIEW_LENGTH = 500;

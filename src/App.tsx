@@ -24,12 +24,15 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="/assigned" element={<AssignedPage />} />
-            <Route path="/team/:id" element={<TeamBoardPage />} />
+            <Route path="/team/:team_id" element={<TeamBoardPage />} />
             <Route path="/my-questions" element={<MyQuestionsPage />} />
             <Route path="/inquiry/form" element={<InquiryFormPage />} />
             <Route path="/scrap" element={<ScrapPage />} />
-            <Route path="/space/:userId" element={<UserSpacePage />} />
-            <Route path="/inquiries/:id" element={<InquiryDetailPage />} />
+            <Route path="/space/:id" element={<UserSpacePage />} />
+            <Route
+              path="/teams/:team_id/inquiries/:inquiry_id"
+              element={<InquiryDetailPage />}
+            />
             <Route path="/result" element={<SearchResultPage />} />
           </Route>
         </Route>

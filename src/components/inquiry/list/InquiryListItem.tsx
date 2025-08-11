@@ -12,22 +12,22 @@ import { InquiryListItem as InquiryListItemType } from "@/types/inquiry/inquiryL
 
 type Props = {
   item: InquiryListItemType;
-  isScraped: boolean;
+  isScrapped: boolean;
 };
 
-const InquiryListItem = ({ item, isScraped }: Props) => {
+const InquiryListItem = ({ item, isScrapped }: Props) => {
   const navigate = useNavigate();
   const { scrapInquiry, unscrapInquiry, isScrapLoading } = useScrap();
-  const [scraped, setScraped] = useState(isScraped);
+  const [scrapped, setScrapped] = useState(isScrapped);
 
   const handleScrapClick = () => {
-    if (scraped) {
+    if (scrapped) {
       unscrapInquiry(item.id);
     } else {
       scrapInquiry(item.id);
     }
     // 낙관적 업데이트
-    setScraped(prev => !prev);
+    setScrapped(prev => !prev);
   };
   return (
     <li className="h-16 border-t-[1px] border-y-gray-10 rounded-b-[15px] bg-white flex w-full">
@@ -36,7 +36,7 @@ const InquiryListItem = ({ item, isScraped }: Props) => {
         onClick={handleScrapClick}
         disabled={isScrapLoading}
       >
-        {scraped ? (
+        {scrapped ? (
           <StarActive className="w-5 h-5" />
         ) : (
           <Star className="text-gray-30 w-5 h-5" />
@@ -45,7 +45,7 @@ const InquiryListItem = ({ item, isScraped }: Props) => {
 
       <div
         className="flex flex-1 cursor-pointer"
-        onClick={() => navigate(`/inquiries/${item.id}`)}
+        onClick={() => navigate(`/teams/${item.team_id}/inquiries/${item.id}`)}
       >
         <div className="px-4 w-40 flex items-center gap-2">
           {item.leftProfiles.length > 0 ? (

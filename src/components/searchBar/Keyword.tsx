@@ -1,5 +1,5 @@
 import { Xmark } from "@/assets/svgs/layout";
-import { KeywordProps } from "@/types/search";
+import { KeywordProps } from "@/types/search/search";
 
 const Keyword = ({
   keyword,
