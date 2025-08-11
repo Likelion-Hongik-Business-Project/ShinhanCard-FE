@@ -38,11 +38,12 @@ const AssigneeActions = ({
       <div className="flex justify-between items-center w-full">
         <div className="flex gap-8 items-center">
           {shouldShowAnswerButton && (
-            <Button buttonType="blue" onClick={() => onStartAnswer}>
+            <Button buttonType="blue" onClick={() => onStartAnswer()}>
               <Pencil />
               답변 작성
             </Button>
           )}
+
           <Button
             buttonType="default"
             className="text-gray-80"
