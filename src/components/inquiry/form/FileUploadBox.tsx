@@ -4,16 +4,15 @@ import Upload from "@/assets/svgs/inquiry/upload.svg";
 import Modal from "@/components/common/Modal";
 import { useDragAndDrop } from "@/hooks/file/useDragAndDrop";
 import { useMultiFileUploader } from "@/hooks/file/useMultiFileUploader";
-import { UploadFile } from "@/types/file/file.type";
+import type { UploadingFile } from "@/types/file/file.type";
 
 import FileUploadItem from "./FileUploadItem";
 
 interface Props {
-  teamId: number;
   fileIds: number[];
-  files: UploadFile[];
+  files: UploadingFile[];
   setFileIds: React.Dispatch<React.SetStateAction<number[]>>;
-  setFiles: React.Dispatch<React.SetStateAction<UploadFile[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<UploadingFile[]>>;
 }
 
 const FileUploadBox = ({ setFileIds, files, setFiles }: Props) => {

@@ -50,6 +50,7 @@ del {
 
 .toastui-editor-contents img {
   max-width: 50% !important;
+  max-height: 400px !important;
 }
 
 .toastui-editor-defaultUI {

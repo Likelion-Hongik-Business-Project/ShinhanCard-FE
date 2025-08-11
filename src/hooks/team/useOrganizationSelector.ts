@@ -50,6 +50,24 @@ export const useOrganizationSelector = () => {
     setTeamId(value);
   };
 
+  // ✅ 추가: 편집 모드 등에서 한 번에 값 주입
+  const setFromIds = (
+    gId?: number | null,
+    dId?: number | null,
+    tId?: number | null
+  ) => {
+    if (gId !== undefined) setGroupId(gId);
+    if (dId !== undefined) setDivisionId(dId);
+    if (tId !== undefined) setTeamId(tId);
+  };
+
+  // (옵션) 전부 리셋하고 싶을 때
+  const resetOrg = () => {
+    setGroupId(null);
+    setDivisionId(null);
+    setTeamId(null);
+  };
+
   const group = groupOptions.find(g => g.value === groupId)?.label || "";
   const division =
     divisionOptions.find(d => d.value === divisionId)?.label || "";
@@ -68,5 +86,7 @@ export const useOrganizationSelector = () => {
     handleGroupChange,
     handleDivisionChange,
     handleTeamChange,
+    setFromIds,
+    resetOrg,
   };
 };

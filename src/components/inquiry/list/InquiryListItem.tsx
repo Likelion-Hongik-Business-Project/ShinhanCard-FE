@@ -45,7 +45,7 @@ const InquiryListItem = ({ item, isScrapped }: Props) => {
 
       <div
         className="flex flex-1 cursor-pointer"
-        onClick={() => navigate(`/inquiries/${item.id}`)}
+        onClick={() => navigate(`/teams/${item.team_id}/inquiries/${item.id}`)}
       >
         <div className="px-4 w-40 flex items-center gap-2">
           {item.leftProfiles.length > 0 ? (

@@ -1,6 +1,7 @@
 import { ApiResponse } from "@/types/apiResponse.type";
 import {
   DeleteFileResponse,
+  GetFileDownloadUrlResponse,
   GetImageFileRequest,
   GetImageFileResponse,
   PostFileRequest,
@@ -32,5 +33,12 @@ export const getImageFile = async (
       contentType: data.contentType,
     },
   });
+  return response.data;
+};
+
+export const getFileDownloadUrl = async (
+  fileId: number
+): ApiResponse<GetFileDownloadUrlResponse> => {
+  const response = await instance.get(`/api/files/${fileId}/download-url`);
   return response.data;
 };

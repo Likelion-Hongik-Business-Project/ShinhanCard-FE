@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { getProfile } from "@/apis/profile/profileApi";
+import { getMyProfile } from "@/apis/profile/profileApi";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useProfileStore } from "@/store/useProfileStore";
 
@@ -16,7 +16,7 @@ export const useProfile = () => {
     queryFn: async () => {
       setLoading(true);
       try {
-        const response = await getProfile();
+        const response = await getMyProfile();
         if (response.is_success) {
           setProfile(response.result);
           return response.result;
