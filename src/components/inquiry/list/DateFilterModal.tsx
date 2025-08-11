@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import Left from "@/assets/svgs/common/left.svg";
 import Right from "@/assets/svgs/common/right.svg";
-import { YearMonth } from "@/types/inquiry";
+import { YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 type Props = {
   selectedItems: YearMonth[];

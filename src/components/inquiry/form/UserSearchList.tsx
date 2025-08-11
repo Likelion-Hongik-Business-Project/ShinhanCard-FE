@@ -1,9 +1,9 @@
 import ProfileIcon from "@/assets/svgs/inquiry/profile.svg";
-import { User } from "@/types/user";
+import { AssigneeUser } from "@/types/team/user.type";
 
 interface Props {
-  users: User[];
-  onSelectUser: (user: User) => void;
+  users: AssigneeUser[];
+  onSelectUser: (user: AssigneeUser) => void;
 }
 
 const UserSearchList = ({ users, onSelectUser }: Props) => (
@@ -12,14 +12,23 @@ const UserSearchList = ({ users, onSelectUser }: Props) => (
     <div className="flex flex-col max-h-50 overflow-y-auto scrollbar-hide">
       {users.map(user => (
         <div
-          key={user.id}
+          key={user.user_id}
           className="flex items-center gap-2 px-1 py-2 hover:bg-gray-10 cursor-pointer h-fit"
           onClick={() => onSelectUser(user)}
         >
-          <ProfileIcon />
-          <span className="text-body2 text-gray-100">{user.user_name}</span>
+          {user.profile_url ? (
+            <img
+              src={user.profile_url}
+              alt="프로필 이미지"
+              className="w-5 h-5 rounded-full object-cover"
+            />
+          ) : (
+            <ProfileIcon />
+          )}
+          <span className="text-body2 text-gray-100">{user.username}</span>
           <span className="text-detail1 text-gray-60">
-            {user.group_name} / {user.division_name} / {user.team_name}
+            {user.group.group_name} / {user.division.division_name} /{" "}
+            {user.team.team_name}
           </span>
         </div>
       ))}

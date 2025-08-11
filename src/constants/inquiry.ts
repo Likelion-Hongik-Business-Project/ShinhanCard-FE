@@ -1,4 +1,4 @@
-import { InquiryStatus } from "@/types/inquiry";
+import { InquiryStatus } from "@/types/inquiry/inquiryListApi.type";
 
 export const INQUIRY_STATUSES: InquiryStatus[] = [
   "확인 전",
