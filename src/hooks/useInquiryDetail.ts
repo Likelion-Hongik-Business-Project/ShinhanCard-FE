@@ -339,24 +339,23 @@ export const useInquiryDetail = () => {
 
   const handleSelectTab = (userId: number) => {
     setSelectedUserId(userId);
+
     if (userId === currentUserId) {
       // 내 탭을 클릭한 경우
-      if (myComment) {
-        // 내 답변이 있는 경우 - 에디터 숨김
-        setShowEditor(false);
-        setIsWritingAnswer(false);
-      } else if (isWritingAnswer) {
-        // 내 답변이 없고 답변 작성 중인 경우 - 에디터 표시
+      if (isWritingAnswer || editingComment) {
+        // 답변 작성 중이거나 수정 중인 경우 - 에디터 표시
         setShowEditor(true);
-      } else {
-        // 내 답변이 없고 답변 작성 중이 아닌 경우 - 에디터 숨김
+      } else if (myComment) {
+        // 답변 작성/수정 중이 아니고 내 답변이 있는 경우 - 답변 내용 표시
         setShowEditor(false);
-        setIsWritingAnswer(false);
+      } else {
+        // 답변 작성/수정 중이 아니고 내 답변이 없는 경우 - 답변 내용 표시
+        setShowEditor(false);
       }
     } else {
       // 다른 사람의 탭을 클릭한 경우 - 에디터 숨김
       setShowEditor(false);
-      // isWritingAnswer는 유지 (다시 내 탭으로 돌아올 때를 위해)
+      // isWritingAnswer와 editingComment는 유지 (다시 내 탭으로 돌아올 때를 위해)
     }
   };
 
