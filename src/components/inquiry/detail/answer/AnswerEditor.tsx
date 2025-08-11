@@ -80,9 +80,6 @@ const AnswerEditor = ({
         setFiles={setFiles}
       />
       <div className="flex justify-end gap-4">
-        <Button buttonType="default" className="text-gray-80">
-          임시저장
-        </Button>
         <Button buttonType="blue" onClick={handleSubmit}>
           <Pencil />
           <span className="text-heading3 text-white">답변 등록하기</span>
