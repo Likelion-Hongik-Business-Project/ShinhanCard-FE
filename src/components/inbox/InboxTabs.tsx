@@ -1,7 +1,7 @@
 import clsx from "clsx";
 
 import { INBOX_TABS } from "@/constants/inbox";
-import { Tab } from "@/types/inbox";
+import { Tab } from "@/types/inbox/inbox.type";
 
 type Props = {
   selectedTab: Tab;

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { GlobalResponse } from "@/types/common/api.type";
+import { GlobalResponse } from "@/types/common/apiResponse.type";
 import { GetInterestedMembersResponse } from "@/types/home/homeApi.type";
 
 import {

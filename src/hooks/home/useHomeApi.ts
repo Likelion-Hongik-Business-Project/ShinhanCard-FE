@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { GlobalResponse } from "@/types/common/api.type";
+import { GlobalResponse } from "@/types/common/apiResponse.type";
 import {
   GetHomeInitialResponse,
   GetUncheckedAnswerResponse,

@@ -1,4 +1,4 @@
-import { ApiResponse, NoResponse } from "@/types/apiResponse.type";
+import { ApiResponse, NoResponse } from "@/types/common/apiResponse.type";
 import {
   DeleteAnswerResponse,
   PostAnswerRequest,
