@@ -5,14 +5,14 @@ export const mockInquiryResponse = {
   status: "DRAFT",
   role: "AUTHOR",
   author: {
-    username: "kimseunghan",
+    user_name: "kimseunghan",
     teamname: "개발팀",
     user_id: 101,
     profile_image_url: "/assets/images/profile.png",
   },
   assignees: [
     {
-      username: "박지영",
+      user_name: "박지영",
       is_checked: true,
       user_id: 102,
       profile_image_url: "/assets/images/profile.png",
