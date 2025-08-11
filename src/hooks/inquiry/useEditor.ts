@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { isHeadingCommand, isInlineCommand } from "@/utils/commandUtils";
-import { EditorCommand } from "@/types/toolbar";
+import { EditorCommand } from "@/types/inquiry/toolbar.type";
 
 import { useEditorImageUpload } from "./create/useEditorImageUpload";
 

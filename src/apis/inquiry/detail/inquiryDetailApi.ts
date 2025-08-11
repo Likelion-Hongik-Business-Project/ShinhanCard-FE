@@ -1,4 +1,4 @@
-import { ApiResponse, GlobalResponse } from "@/types/apiResponse.type";
+import { ApiResponse, GlobalResponse } from "@/types/common/apiResponse.type";
 import { GetInquiryDetailResponse } from "@/types/inquiry/inquiryDetailApi.type";
 
 import axiosInstance from "@/apis/instance";

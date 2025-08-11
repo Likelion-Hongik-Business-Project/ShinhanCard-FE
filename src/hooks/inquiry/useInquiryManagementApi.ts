@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { GlobalResponse } from "@/types/apiResponse.type";
+import { GlobalResponse } from "@/types/common/apiResponse.type";
 import {
   GetLastSentMailTimeResponse,
   PutInquiryAssigneeRequest,

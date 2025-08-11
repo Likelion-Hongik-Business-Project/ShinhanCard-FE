@@ -1,7 +1,7 @@
 import InboxEmpty from "@/components/inbox/InboxEmpty";
 import InboxItem from "@/components/inbox/InboxItem";
 import { formatDateGroupLabel } from "@/utils/dateUtils";
-import { Tab } from "@/types/inbox";
+import { Tab } from "@/types/inbox/inbox.type";
 import { NotificationItem } from "@/types/inbox/inboxApi.type";
 
 import "@/styles/scrollbar.css";

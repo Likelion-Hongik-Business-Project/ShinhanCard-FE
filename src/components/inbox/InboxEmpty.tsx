@@ -1,6 +1,6 @@
 import Bell from "@/assets/svgs/inbox/inbox-bell.svg";
 import Box from "@/assets/svgs/inbox/inbox-box.svg";
-import { Tab } from "@/types/inbox";
+import { Tab } from "@/types/inbox/inbox.type";
 
 type Props = {
   tab: Tab;

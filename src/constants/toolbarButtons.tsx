@@ -9,7 +9,7 @@ import {
   QuotesIcon,
   StrikeIcon,
 } from "@/assets/svgs/inquiry/toolbar";
-import { ToolbarButton } from "@/types/toolbar";
+import { ToolbarButton } from "@/types/inquiry/toolbar.type";
 
 export const toolbarButtons: ToolbarButton[] = [
   { command: "heading", level: 1, icon: () => <H1Icon />, key: "h1" },
