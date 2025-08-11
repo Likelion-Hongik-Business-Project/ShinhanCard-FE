@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
 import Arrow from "@/assets/svgs/common/down.svg";
 import { MAX_PREVIEW_LENGTH } from "@/constants/inquiry";
+import { useScrap } from "@/hooks/scrap/useScrap";
 import { truncateText } from "@/utils/truncateText";
 import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
@@ -17,7 +18,6 @@ interface InquiryItemProps {
   isOpen: boolean;
   onToggleOpen: (id: number) => void;
   isScraped: boolean;
-  onToggleScrap: (id: number) => void;
 }
 
 const InquiryItem = ({
@@ -28,9 +28,10 @@ const InquiryItem = ({
   isOpen,
   onToggleOpen,
   isScraped,
-  onToggleScrap,
 }: InquiryItemProps) => {
   const navigate = useNavigate();
+  const { scrapInquiry, unscrapInquiry } = useScrap();
+  const [scraped, setScraped] = useState(isScraped);
 
   const preview = truncateText(inquiry.contentPreview, MAX_PREVIEW_LENGTH);
 
@@ -44,6 +45,32 @@ const InquiryItem = ({
       setHeight(`${contentRef.current.scrollHeight}px`);
     }
   }, [isOpen]);
+
+  // props 변경 시 동기화
+  useEffect(() => {
+    setScraped(isScraped);
+  }, [isScraped]);
+
+  useLayoutEffect(() => {
+    if (isOpen && contentRef.current) {
+      setHeight(`${contentRef.current.scrollHeight}px`);
+    }
+  }, [isOpen]);
+
+  const handleScrapClick = async (id: number) => {
+    const next = !scraped;
+    setScraped(next); // 낙관적 업데이트
+
+    try {
+      if (next) {
+        await scrapInquiry(id);
+      } else {
+        await unscrapInquiry(id);
+      }
+    } catch {
+      setScraped(!next); // 실패 시 롤백
+    }
+  };
 
   const handleDetailClick = () => {
     navigate(`/inquiries/${inquiry.inquiry_id}`);
@@ -59,11 +86,11 @@ const InquiryItem = ({
           type="button"
           onClick={e => {
             e.stopPropagation(); // 스크랩시 토글 방지
-            onToggleScrap(inquiry.inquiry_id);
+            handleScrapClick(inquiry.inquiry_id);
           }}
           className="mr-10 cursor-pointer"
         >
-          {isScraped ? (
+          {scraped ? (
             <FilledStar className="w-5 h-5 fill-current text-main" />
           ) : (
             <Star className="w-5 h-5 text-gray-30" />

@@ -2,21 +2,22 @@ import { useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
+import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import SearchHeader from "@/components/searchBar/SearchHeader";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import { useSearchResults } from "@/hooks/search/useSearch";
+import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 import { SearchResultInquiry } from "@/types/search/search";
 import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 const SearchResultPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
-  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
-  const [selectedDate, setSelectedDate] = useState<
-    { year: number; month: number }[]
-  >([]);
+  const [selectedStatus, setSelectedStatus] = useState<InquiryStatus | "전체">(
+    "전체"
+  );
+  const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
 
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,7 +114,7 @@ const SearchResultPage = () => {
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
           <div className="flex justify-end border-b border-gray-10 z-10 ">
-            <FilterBar
+            <InquiryListHeader
               selectedStatus={selectedStatus}
               setSelectedStatus={setSelectedStatus}
               selectedDate={selectedDate}
@@ -124,6 +125,8 @@ const SearchResultPage = () => {
               setIsDateModalOpen={setIsDateModalOpen}
               toggleStatusModal={toggleStatusModal}
               toggleDateModal={toggleDateModal}
+              showAuthor={false}
+              showTitle={false}
             />
           </div>
           <InquiryList inquiries={currentItems} />
