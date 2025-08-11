@@ -17,7 +17,7 @@ export const putInquiryAssignee = async (
   inquiry_id: number,
   data: PutInquiryAssigneeRequest
 ): ApiResponse<NoResponse> => {
-  const response = await instance.put<GlobalResponse<NoResponse>>(
+  const response = await instance.patch<GlobalResponse<NoResponse>>( // PUT → PATCH
     `/api/teams/${team_id}/inquiries/${inquiry_id}/change-assignee`,
     data
   );
