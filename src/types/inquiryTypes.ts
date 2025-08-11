@@ -71,6 +71,7 @@ export interface InquiryHeaderProps {
     border?: string;
   };
   inquiry: InquiryData;
+  onToggleNotification: () => void;
 }
 
 // NotificationButton Props 타입
@@ -127,6 +128,7 @@ export interface InquiryData {
   content: string;
   created_at: string;
   status: string;
+  is_notification_enabled: boolean;
   author: {
     user_id: number;
     user_name: string;
@@ -197,6 +199,7 @@ export interface InquiryCardProps {
   notificationSent: boolean;
   showEditor: boolean;
   myComment?: Comment;
+  onToggleNotification: () => void;
 }
 
 // AnswerListProps 타입

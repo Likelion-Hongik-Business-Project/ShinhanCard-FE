@@ -11,18 +11,19 @@ const InquiryHeader = ({
   finalStateLabel,
   finalStatusConfig,
   inquiry,
+  onToggleNotification,
 }: InquiryHeaderProps) => {
   const { addScrap, removeScrap } = useScrapApi();
 
   const [scraped, setScraped] = useState(!!inquiry.is_scraped);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(
+    !!inquiry.is_notification_enabled
+  );
 
   useEffect(() => {
     setScraped(!!inquiry.is_scraped);
-    // TODO: 실제 API에서 notification_enabled 값을 가져와서 설정
-    // setIsNotificationEnabled(!!inquiry.notification_enabled);
-    setIsNotificationEnabled(true); // 임시로 기본값 true 설정
-  }, [inquiry.is_scraped]);
+    setIsNotificationEnabled(!!inquiry.is_notification_enabled);
+  }, [inquiry.is_scraped, inquiry.is_notification_enabled]);
 
   const scrapToggling = addScrap.isPending || removeScrap.isPending;
 
@@ -41,19 +42,17 @@ const InquiryHeader = ({
     }
   };
 
-  // 알림 수신 설정 토글 핸들러
+  // 알림 수신 설정 토글 핸들러 - 실제 API 호출
   const handleToggleNotification = async () => {
     const newState = !isNotificationEnabled;
-    setIsNotificationEnabled(newState);
+    setIsNotificationEnabled(newState); // 즉시 UI 업데이트
 
     try {
-      // TODO: 실제 알림 설정 API 호출
-      console.log(
-        `알림 수신 ${newState ? "활성화" : "비활성화"} - 문의 ID: ${inquiry.inquiry_id}`
-      );
-    } catch {
+      await onToggleNotification(); // 부모에서 전달받은 함수 호출
+    } catch (error) {
       // 실패 시 상태 롤백
       setIsNotificationEnabled(!newState);
+      console.error("알림 설정 변경 실패:", error);
     }
   };
 

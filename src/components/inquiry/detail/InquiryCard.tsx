@@ -18,6 +18,7 @@ const InquiryCard = ({
   onConfirm,
   handleDeleteInquiry,
   handleNotify,
+  onToggleNotification,
   notificationSent,
   remainingTime,
   showEditor,
@@ -55,6 +56,7 @@ const InquiryCard = ({
         finalStateLabel={finalStateLabel}
         finalStatusConfig={finalStatusConfig}
         inquiry={inquiry}
+        onToggleNotification={onToggleNotification}
       />
       <InquiryContent
         title={inquiry.title}

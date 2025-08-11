@@ -5,11 +5,13 @@ import {
   GetLastSentMailTimeResponse,
   PutInquiryAssigneeRequest,
 } from "@/types/inquiry/inquiryManagementApi.type";
+import { InquiryData } from "@/types/inquiryTypes";
 
 import {
   getLastSentMailTime,
   postInquiryNotify,
   putInquiryAssignee,
+  putInquiryNotificationSetting,
 } from "@/apis/inquiry/detail/inquiryManagementApi";
 
 // 마지막 메일 전송 시간을 가져오는 훅 - 404 에러를 정상으로 처리
@@ -84,8 +86,44 @@ export const useInquiryManagementApi = () => {
     },
   });
 
+  // 개인 알림 설정 변경
+  const putInquiryNotificationMutation = useMutation({
+    mutationFn: ({
+      team_id,
+      inquiry_id,
+      is_notification_enabled,
+    }: {
+      team_id: number;
+      inquiry_id: number;
+      is_notification_enabled: boolean;
+    }) =>
+      putInquiryNotificationSetting(team_id, inquiry_id, {
+        is_notification_enabled,
+      }),
+    onSuccess: (_, variables) => {
+      // 문의 상세 정보의 캐시를 직접 업데이트
+      const queryKey = ["teamInquiry", variables.team_id, variables.inquiry_id];
+
+      queryClient.setQueryData<GlobalResponse<InquiryData>>(
+        queryKey,
+        oldData => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            result: {
+              ...oldData.result,
+              is_notification_enabled: variables.is_notification_enabled,
+            },
+          };
+        }
+      );
+    },
+  });
+
   return {
     putInquiryAssigneeMutation,
     postInquiryNotifyMutation,
+    putInquiryNotificationMutation,
   };
 };

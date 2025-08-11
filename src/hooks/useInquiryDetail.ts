@@ -42,8 +42,11 @@ export const useInquiryDetail = () => {
     deleteAnswerMutation,
   } = useAnswerApi(Number(team_id));
   const { deleteInquiryMutation } = useInquiryApi();
-  const { postInquiryNotifyMutation, putInquiryAssigneeMutation } =
-    useInquiryManagementApi();
+  const {
+    postInquiryNotifyMutation,
+    putInquiryAssigneeMutation,
+    putInquiryNotificationMutation,
+  } = useInquiryManagementApi();
   const {
     data: lastSentTimeResponse,
     isError: isMailTimeError,
@@ -370,6 +373,23 @@ export const useInquiryDetail = () => {
   const handleDeleteInquiry = () => modals.openDeletePostModal();
   const handleNotify = () => modals.openSendNotificationModal();
 
+  // 개인 알림 설정 토글 함수
+  const onToggleNotification = async () => {
+    if (!inquiryData) return;
+
+    try {
+      const newNotificationState = !inquiryData.is_notification_enabled;
+
+      await putInquiryNotificationMutation.mutateAsync({
+        team_id: Number(team_id),
+        inquiry_id: Number(inquiry_id),
+        is_notification_enabled: newNotificationState,
+      });
+    } catch (error) {
+      console.error("알림 설정 변경 실패:", error);
+    }
+  };
+
   return {
     isLoading,
     isError,
@@ -403,5 +423,6 @@ export const useInquiryDetail = () => {
     handleDeleteInquiry,
     handleNotify,
     onDeleteAnswer,
+    onToggleNotification,
   };
 };
