@@ -27,7 +27,7 @@ export const useInquiryState = (
     };
   }
 
-  const isWriter = inquiry.writer.user_id === currentUserId;
+  const isWriter = inquiry.author.user_id === currentUserId;
   const isAdmin = userRole === "admin";
   const isAssignee = inquiry.assignees.some(a => a.user_id === currentUserId);
 
@@ -49,7 +49,7 @@ export const useInquiryState = (
     finalStateLabel,
     finalStatusConfig,
     isPendingState: finalStateLabel === "등록 보류",
-    answersCount: inquiry.comment_count,
+    answersCount: inquiry.answers.count,
     canAnswer: inquiry.can_answer,
     notificationSent: false,
     remainingTime: "4:00",

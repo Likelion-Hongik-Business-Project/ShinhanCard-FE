@@ -120,7 +120,7 @@ export interface AssigneeActionsProps {
   teamId: number;
 }
 
-// 통합된 문의 타입 (API 스펙에 완전히 맞춤)
+// 통합된 문의 타입
 export interface InquiryData {
   inquiry_id: number;
   title: string;
