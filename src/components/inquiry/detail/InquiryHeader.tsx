@@ -10,17 +10,21 @@ import { InquiryHeaderProps } from "@/types/inquiryTypes";
 const InquiryHeader = ({
   finalStateLabel,
   finalStatusConfig,
-  isWriter,
-  isAdmin,
-  canSendNotification,
   inquiry,
 }: InquiryHeaderProps) => {
   const { addScrap, removeScrap } = useScrapApi();
 
   const [scraped, setScraped] = useState(!!inquiry.is_scraped);
-  useEffect(() => setScraped(!!inquiry.is_scraped), [inquiry.is_scraped]);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
 
-  const toggling = addScrap.isPending || removeScrap.isPending;
+  useEffect(() => {
+    setScraped(!!inquiry.is_scraped);
+    // TODO: 실제 API에서 notification_enabled 값을 가져와서 설정
+    // setIsNotificationEnabled(!!inquiry.notification_enabled);
+    setIsNotificationEnabled(true); // 임시로 기본값 true 설정
+  }, [inquiry.is_scraped]);
+
+  const scrapToggling = addScrap.isPending || removeScrap.isPending;
 
   const handleToggleScrap = async () => {
     const next = !scraped;
@@ -34,6 +38,22 @@ const InquiryHeader = ({
     } catch (e) {
       setScraped(!next);
       console.error(e);
+    }
+  };
+
+  // 알림 수신 설정 토글 핸들러
+  const handleToggleNotification = async () => {
+    const newState = !isNotificationEnabled;
+    setIsNotificationEnabled(newState);
+
+    try {
+      // TODO: 실제 알림 설정 API 호출
+      console.log(
+        `알림 수신 ${newState ? "활성화" : "비활성화"} - 문의 ID: ${inquiry.inquiry_id}`
+      );
+    } catch {
+      // 실패 시 상태 롤백
+      setIsNotificationEnabled(!newState);
     }
   };
 
@@ -52,38 +72,27 @@ const InquiryHeader = ({
       </div>
 
       <div className="flex justify-end items-center gap-[16px]">
-        {/* 기본 알림 버튼 (문의자가 아닌 경우에만) */}
-        {!isWriter && !isAdmin && (
-          <button className="w-[20px] h-[20px] relative cursor-pointer">
+        {/* 알림 수신 설정 토글 버튼 */}
+        <button
+          onClick={handleToggleNotification}
+          className="w-[20px] h-[20px] relative cursor-pointer"
+        >
+          {isNotificationEnabled ? (
+            <BellOn className="text-main" />
+          ) : (
             <BellOff className="text-gray-30" />
-          </button>
-        )}
+          )}
+        </button>
 
-        {/* 문의자 알림 발송 버튼 */}
-        {isWriter && (
-          <button
-            disabled={!canSendNotification}
-            className="w-[20px] h-[20px] relative cursor-pointer disabled:opacity-50"
-          >
-            {canSendNotification ? (
-              <BellOn className="text-main" />
-            ) : (
-              <BellOff className="text-gray-30" />
-            )}
-          </button>
-        )}
-
-        {/* 스크랩 버튼 (팀관리자가 아닌 경우에만) */}
-        {!isAdmin && (
-          <button
-            onClick={handleToggleScrap}
-            disabled={toggling}
-            className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
-            aria-label={inquiry.is_scraped || false ? "스크랩 취소" : "스크랩"}
-          >
-            {scraped ? <StarActive /> : <Star className="text-gray-50" />}
-          </button>
-        )}
+        {/* 스크랩 버튼 */}
+        <button
+          onClick={handleToggleScrap}
+          disabled={scrapToggling}
+          className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
+          aria-label={inquiry.is_scraped || false ? "스크랩 취소" : "스크랩"}
+        >
+          {scraped ? <StarActive /> : <Star className="text-gray-50" />}
+        </button>
       </div>
     </div>
   );
