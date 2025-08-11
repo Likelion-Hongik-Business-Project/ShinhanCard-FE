@@ -6,21 +6,24 @@ import Pagination from "@/components/common/Pagination";
 import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
-import { InquiryStatus } from "@/types/inquiry/inquiryListApi.type";
+import {
+  InquiryStatus,
+  Pagination as PaginationType,
+  YearMonth,
+} from "@/types/inquiry/inquiryListApi.type";
 import {
   Inquiry,
   SelectedTeam,
-  TPagination,
 } from "@/types/teamInquires/teamInquiresApi.type";
 
 type Props = {
   selected_team: SelectedTeam;
   inquiries: Inquiry[];
-  pagination: TPagination;
+  pagination: PaginationType;
   selectedStatus: string;
   setSelectedStatus: (status: InquiryStatus | "전체") => void;
-  selectedDate: { year: number; month: number }[];
-  setSelectedDate: Dispatch<SetStateAction<{ year: number; month: number }[]>>;
+  selectedDate: YearMonth[];
+  setSelectedDate: Dispatch<SetStateAction<YearMonth[]>>;
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
 };

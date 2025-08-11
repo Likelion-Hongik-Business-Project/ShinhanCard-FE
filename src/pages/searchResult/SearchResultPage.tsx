@@ -7,15 +7,16 @@ import Pagination from "@/components/common/Pagination";
 import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import SearchHeader from "@/components/searchBar/SearchHeader";
 import InquiryList from "@/components/TeamBoard/InquiryList";
+import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 import { searchResultsMockData } from "@/mocks/searchMocks";
 
 const SearchResultPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
-  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
-  const [selectedDate, setSelectedDate] = useState<
-    { year: number; month: number }[]
-  >([]);
+  const [selectedStatus, setSelectedStatus] = useState<InquiryStatus | "전체">(
+    "전체"
+  );
+  const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
 
   // TODO: 백엔드 API 완료 시 React Query 훅으로 변경
   // const { data: searchData, isLoading, error } = useSearchResults(query, 1);

@@ -1,3 +1,8 @@
+import {
+  InquiryServerStatus,
+  Pagination,
+} from "@/types/inquiry/inquiryListApi.type";
+
 export interface GetTeamInquiresRequest {
   team_id?: number;
   page?: number;
@@ -8,10 +13,9 @@ export interface GetTeamInquiresRequest {
 export interface GetTeamInquiresResponse {
   selected_team: SelectedTeam;
   inquiries: Inquiry[];
-  pagination: TPagination;
+  pagination: Pagination;
 }
 
-// 아래 전부 공용으로 빼고 싶어요...
 // 선택된 팀 타입
 export interface SelectedTeam {
   team_id: number;
@@ -21,22 +25,15 @@ export interface SelectedTeam {
   active: boolean;
 }
 
-// 날짜 필터
-export interface DateFilter {
-  year: number;
-  month: number;
-}
-
 // 팀 게시판과 검색 결과에 사용되는 문의 타입
 export interface Inquiry {
   inquiry_id: number;
   writer: Writer;
   title: string;
   contentPreview: string;
-  status?: InquiryStatus;
+  status?: InquiryServerStatus;
   created_at: string;
   is_scraped: boolean;
-
   group_name?: string;
   division_name?: string;
   team_name?: string;
@@ -47,15 +44,4 @@ export interface Writer {
   user_id: number;
   name: string;
   profile_image_url: string;
-}
-
-// 상태 Enum
-export type InquiryStatus = string;
-
-// 페이지네이션
-export interface TPagination {
-  page: number;
-  page_size: number;
-  total: number;
-  has_next: boolean;
 }
