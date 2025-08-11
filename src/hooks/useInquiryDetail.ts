@@ -202,18 +202,24 @@ export const useInquiryDetail = () => {
 
     try {
       if (editingComment) {
+        // 답변 수정 모드
         await putAnswerMutation.mutateAsync({
           answer_id: editingComment.answer_id,
-          data: { content: draftContent, file_ids: selectedFileIds },
+          data: { content: draftContent, file_ids: null },
         });
         setSelectedUserId(editingComment.user.user_id);
       } else {
+        // 새 답변 등록 모드
         await postAnswerMutation.mutateAsync({
           inquiry_id: Number(inquiry_id),
-          data: { content: draftContent, file_ids: selectedFileIds },
+          data: { content: draftContent, file_ids: null },
         });
         if (currentUserId) setSelectedUserId(currentUserId);
       }
+
+      // 수정/등록 완료 후 모든 편집 상태 초기화
+      setEditingComment(null);
+      setDraftContent("");
       setShowEditor(false);
       setIsWritingAnswer(false);
     } catch (error) {
@@ -359,7 +365,6 @@ export const useInquiryDetail = () => {
     } else {
       // 다른 사람의 탭을 클릭한 경우 - 에디터 숨김
       setShowEditor(false);
-      // isWritingAnswer와 editingComment는 유지 (다시 내 탭으로 돌아올 때를 위해)
     }
   };
 
