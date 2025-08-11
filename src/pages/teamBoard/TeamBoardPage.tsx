@@ -11,7 +11,7 @@ import { ExportOption } from "@/types/excel/excelApi.type";
 import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 const TeamBoardPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { team_id } = useParams<{ team_id: string }>();
   const [page, setPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState<InquiryStatus | "전체">(
     "전체"
@@ -34,7 +34,7 @@ const TeamBoardPage = () => {
 
   // 팀별 게시판 GET
   const { data, isLoading, error } = useTeamInquires({
-    team_id: id ? parseInt(id) : undefined,
+    team_id: team_id ? parseInt(team_id) : undefined,
     page,
     status:
       selectedStatus === "전체"
