@@ -4,7 +4,7 @@ export type UserRole = "default" | "assignee" | "writer" | "admin";
 
 // 답변 타입
 export interface Comment {
-  comment_id: number;
+  answer_id: number;
   user: {
     user_id: number;
     username: string;
@@ -70,9 +70,6 @@ export interface InquiryHeaderProps {
     dot: string;
     border?: string;
   };
-  isWriter: boolean;
-  isAdmin: boolean;
-  canSendNotification: boolean;
   inquiry: InquiryData;
 }
 

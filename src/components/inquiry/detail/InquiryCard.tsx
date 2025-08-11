@@ -30,7 +30,6 @@ const InquiryCard = ({
     finalStateLabel,
     finalStatusConfig,
     answersCount,
-    canSendNotification,
   } = useInquiryState(inquiry, userRole, currentUserId);
 
   // 담당자 정렬 로직
@@ -55,9 +54,6 @@ const InquiryCard = ({
       <InquiryHeader
         finalStateLabel={finalStateLabel}
         finalStatusConfig={finalStatusConfig}
-        isWriter={isWriter}
-        isAdmin={isAdmin}
-        canSendNotification={canSendNotification}
         inquiry={inquiry}
       />
       <InquiryContent

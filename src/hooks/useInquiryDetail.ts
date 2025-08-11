@@ -4,7 +4,10 @@ import { AxiosError } from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useAnswerApi } from "@/hooks/inquiry/useAnswerApi";
-import { useGetTeamInquiryDetail } from "@/hooks/inquiry/useInquiryApi";
+import {
+  useGetTeamInquiryDetail,
+  useInquiryApi,
+} from "@/hooks/inquiry/useInquiryApi";
 import {
   useGetLastSentMailTime,
   useInquiryManagementApi,
@@ -32,13 +35,15 @@ export const useInquiryDetail = () => {
     error,
   } = useGetTeamInquiryDetail(Number(team_id), Number(inquiry_id));
   const { data: myProfileResponse } = useMyProfile();
-  const { postAnswerMutation, putAnswerMutation, postInquiryConfirmMutation } =
-    useAnswerApi(Number(team_id));
   const {
-    deleteInquiryMutation,
-    postInquiryNotifyMutation,
-    putInquiryAssigneeMutation,
-  } = useInquiryManagementApi();
+    postAnswerMutation,
+    putAnswerMutation,
+    postInquiryConfirmMutation,
+    deleteAnswerMutation,
+  } = useAnswerApi(Number(team_id));
+  const { deleteInquiryMutation } = useInquiryApi();
+  const { postInquiryNotifyMutation, putInquiryAssigneeMutation } =
+    useInquiryManagementApi();
   const {
     data: lastSentTimeResponse,
     isError: isMailTimeError,
@@ -193,7 +198,7 @@ export const useInquiryDetail = () => {
     try {
       if (editingComment) {
         await putAnswerMutation.mutateAsync({
-          answer_id: editingComment.comment_id,
+          answer_id: editingComment.answer_id,
           data: { content: draftContent, file_ids: null },
         });
         setSelectedUserId(editingComment.user.user_id);
@@ -221,6 +226,16 @@ export const useInquiryDetail = () => {
     }
   };
 
+  // 답변 삭제 함수
+  const onDeleteAnswer = async (answerId: number) => {
+    try {
+      await deleteAnswerMutation.mutateAsync({ answer_id: answerId });
+    } catch (error) {
+      console.error("답변 삭제 실패:", error);
+    }
+  };
+
+  // 문의글 삭제 함수
   const onDeletePost = async () => {
     try {
       await deleteInquiryMutation.mutateAsync({
@@ -352,5 +367,6 @@ export const useInquiryDetail = () => {
     handleConfirm,
     handleDeleteInquiry,
     handleNotify,
+    onDeleteAnswer,
   };
 };

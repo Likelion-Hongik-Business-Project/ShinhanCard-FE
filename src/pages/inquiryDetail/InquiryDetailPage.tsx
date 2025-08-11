@@ -39,6 +39,7 @@ const InquiryDetailPage = () => {
     handleNotify,
     modalProps,
     closeModal,
+    onDeleteAnswer,
   } = useInquiryDetail();
 
   // 조건부 렌더링
@@ -158,7 +159,7 @@ const InquiryDetailPage = () => {
           onEditorSubmit={onEditorSubmit}
           editingComment={editingComment}
           isWritingAnswer={isWritingAnswer}
-          onDeleteAnswer={handleDeleteInquiry}
+          onDeleteAnswer={onDeleteAnswer}
         />
         <AdditionalInquirySection inquiry={mockInquiryResponse} />
       </div>

@@ -58,7 +58,9 @@ const AnswerItem = ({
               {!isOnlyComment && (
                 <button
                   className="text-body2 text-gray-50 cursor-pointer"
-                  onClick={() => onDelete(comment.comment_id)}
+                  onClick={() => {
+                    onDelete(comment.answer_id);
+                  }}
                 >
                   삭제
                 </button>
