@@ -60,7 +60,7 @@ const InboxItem = ({ inquiry, isArchived }: Props) => {
       });
     } finally {
       if (inquiry.inquiry_id != null) {
-        navigate(`/inquiries/${inquiry.inquiry_id}`);
+        navigate(`/teams/${inquiry.team_id}/inquiries/${inquiry.inquiry_id}`);
       }
     }
   };
