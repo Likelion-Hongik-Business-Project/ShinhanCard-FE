@@ -13,7 +13,7 @@ export type UploadingFile = UploadFile & {
   controller?: AbortController;
 };
 
-export interface InquiryDraftFile {
+export interface InquiryFile {
   file_id: number;
   file_key: string;
   file_name: string;

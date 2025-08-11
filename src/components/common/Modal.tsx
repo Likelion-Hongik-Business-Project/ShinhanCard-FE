@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { getButtonClass } from "@/utils/modalUtils";
 import { ModalButton } from "@/types/modal";
 
-interface Props {
+export interface Props {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -47,7 +47,6 @@ const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
           <h2 className="text-heading2-b text-gray-80 break-words whitespace-pre-line">
             {title}
           </h2>
-
           {description && (
             <div className="mt-4 h-12 flex items-center max-w-[400px]">
               <p className="text-body2 text-gray-60 mx-auto whitespace-pre-line">
