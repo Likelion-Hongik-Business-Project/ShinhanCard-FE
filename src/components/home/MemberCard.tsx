@@ -28,7 +28,7 @@ const MemberCard = ({ member }: Props) => {
 
   // 스페이스 방문하기 버튼 클릭 핸들러
   const handleVisitSpace = () => {
-    navigate(`/space/${encodeURIComponent(member.name)}`);
+    navigate(`/space/${encodeURIComponent(member.member_id)}`);
   };
 
   return (
