@@ -3,8 +3,8 @@ import { useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
+import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import SearchHeader from "@/components/searchBar/SearchHeader";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import { searchResultsMockData } from "@/mocks/searchMocks";
@@ -73,7 +73,7 @@ const SearchResultPage = () => {
       ) : (
         <div className="bg-white rounded-[15px] flex flex-col">
           <div className="flex justify-end border-b border-gray-10 z-10 ">
-            <FilterBar
+            <InquiryListHeader
               selectedStatus={selectedStatus}
               setSelectedStatus={setSelectedStatus}
               selectedDate={selectedDate}
@@ -84,6 +84,8 @@ const SearchResultPage = () => {
               setIsDateModalOpen={setIsDateModalOpen}
               toggleStatusModal={toggleStatusModal}
               toggleDateModal={toggleDateModal}
+              showAuthor={false}
+              showTitle={false}
             />
           </div>
           <InquiryList inquiries={currentItems} />

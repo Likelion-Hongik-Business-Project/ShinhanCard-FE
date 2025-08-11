@@ -23,6 +23,8 @@ type Props = {
   setIsDateModalOpen: (open: boolean) => void;
   toggleStatusModal: () => void;
   toggleDateModal: () => void;
+  showAuthor?: boolean;
+  showTitle?: boolean;
 };
 
 const InquiryListHeader = ({
@@ -36,6 +38,8 @@ const InquiryListHeader = ({
   setIsDateModalOpen,
   toggleStatusModal,
   toggleDateModal,
+  showAuthor = true,
+  showTitle = true,
 }: Props) => {
   const statusButtonRef = useRef<HTMLButtonElement>(null);
   const dateButtonRef = useRef<HTMLButtonElement>(null);
@@ -44,15 +48,21 @@ const InquiryListHeader = ({
   return (
     <div className="h-16 flex text-gray-60 items-center">
       <div className="flex w-full">
-        <div className="ml-20 px-4 flex items-center gap-2 w-40 whitespace-nowrap">
-          <User />
-          <span className="text-body1">작성자</span>
-        </div>
+        {/* 작성자 컬럼 */}
+        {showAuthor && (
+          <div className="ml-20 px-4 flex items-center gap-2 w-40 whitespace-nowrap">
+            <User />
+            <span className="text-body1">작성자</span>
+          </div>
+        )}
 
-        <div className="px-4 flex flex-1 items-center gap-2 min-w-[468px] whitespace-nowrap">
-          <Hash />
-          <span className="text-body1">문의 제목</span>
-        </div>
+        {/* 문의 제목 컬럼 */}
+        {showTitle && (
+          <div className="px-4 flex flex-1 items-center gap-2 min-w-[468px] whitespace-nowrap">
+            <Hash />
+            <span className="text-body1">문의 제목</span>
+          </div>
+        )}
 
         {/* 문의 상태 필터링 버튼 */}
         <div className="relative">

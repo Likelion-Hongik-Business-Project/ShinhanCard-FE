@@ -2,10 +2,11 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import FilterBar from "@/components/common/FilterBar";
 import Pagination from "@/components/common/Pagination";
+import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
+import { InquiryStatus } from "@/types/inquiry/inquiryListApi.type";
 import {
   Inquiry,
   SelectedTeam,
@@ -17,7 +18,7 @@ type Props = {
   inquiries: Inquiry[];
   pagination: TPagination;
   selectedStatus: string;
-  setSelectedStatus: (status: string) => void;
+  setSelectedStatus: (status: InquiryStatus | "전체") => void;
   selectedDate: { year: number; month: number }[];
   setSelectedDate: Dispatch<SetStateAction<{ year: number; month: number }[]>>;
   currentPage: number;
@@ -84,7 +85,7 @@ const TeamBoardLayout = ({
         <>
           <div className="bg-white rounded-[15px] flex flex-col">
             <div className="flex justify-end border-b border-gray-10 z-10">
-              <FilterBar
+              <InquiryListHeader
                 selectedStatus={selectedStatus}
                 setSelectedStatus={setSelectedStatus}
                 selectedDate={selectedDate}
@@ -95,6 +96,8 @@ const TeamBoardLayout = ({
                 setIsDateModalOpen={setIsDateModalOpen}
                 toggleStatusModal={toggleStatusModal}
                 toggleDateModal={toggleDateModal}
+                showAuthor={false}
+                showTitle={false}
               />
             </div>
             <InquiryList

@@ -2,7 +2,7 @@ export interface GetTeamInquiresRequest {
   team_id?: number;
   page?: number;
   status?: string;
-  date?: DateFilter[];
+  date?: string;
 }
 
 export interface GetTeamInquiresResponse {

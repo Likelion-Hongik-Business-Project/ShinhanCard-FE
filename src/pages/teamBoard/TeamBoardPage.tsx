@@ -4,20 +4,26 @@ import { useParams } from "react-router-dom";
 
 import TeamBoardLayout from "@/components/TeamBoard/layout/TeamBoardLayout";
 import { useTeamInquires } from "@/hooks/teamInquires/useTeamInquiresApi";
+import { formatDateParams } from "@/utils/dateUtils";
+import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 const TeamBoardPage = () => {
   const { id } = useParams<{ id: string }>();
   const [page, setPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState<string>("전체");
-  const [selectedDate, setSelectedDate] = useState<
-    { year: number; month: number }[]
-  >([]);
+  const [selectedStatus, setSelectedStatus] = useState<InquiryStatus | "전체">(
+    "전체"
+  );
+  const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
 
   const { data, isLoading, error } = useTeamInquires({
     team_id: id ? parseInt(id) : undefined,
     page,
-    status: selectedStatus,
-    date: selectedDate,
+    status:
+      selectedStatus === "전체"
+        ? undefined
+        : INQUIRY_STATUS_VALUE[selectedStatus],
+    date: formatDateParams(selectedDate),
   });
 
   if (isLoading) {

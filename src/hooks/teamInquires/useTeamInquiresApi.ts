@@ -16,14 +16,11 @@ export const useTeamInquires = ({
   return useQuery<GetTeamInquiresResponse>({
     queryKey: ["teamInquires", team_id, page, status, date],
     queryFn: async () => {
-      const response = await getTeamInquires({
-        team_id: team_id,
-        page,
-        status,
-        date,
-      });
+      if (!team_id) throw new Error("team_id 가 필요합니다");
+      const response = await getTeamInquires(team_id, page, status, date);
       return response.result;
     },
     enabled: !!team_id,
+    staleTime: 1000 * 60,
   });
 };
