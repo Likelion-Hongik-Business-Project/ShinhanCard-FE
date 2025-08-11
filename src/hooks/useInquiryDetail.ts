@@ -13,6 +13,7 @@ import {
   useInquiryManagementApi,
 } from "@/hooks/inquiry/useInquiryManagementApi";
 import { useMyProfile } from "@/hooks/profile/useProfileApi";
+import { formatRemain, parseUtc } from "@/utils/dateUtils";
 import type { Comment, User } from "@/types/inquiryTypes";
 import type { ModalProps } from "@/types/modal";
 
@@ -143,47 +144,51 @@ export const useInquiryDetail = () => {
   }, [inquiryData, selectedUserId]);
 
   useEffect(() => {
+    // 404면 쿨다운 없음
     if (
       isMailTimeError &&
       mailTimeError instanceof AxiosError &&
       mailTimeError.response?.status === 404
     ) {
       setNotificationSent(false);
+      setRemainingTime("");
       return;
     }
-    const lastSentTimeData = lastSentTimeResponse?.result.lastSentTime;
-    if (!lastSentTimeData) {
-      setNotificationSent(false);
-      return;
-    }
-    const lastNotifiedTime = new Date(lastSentTimeData).getTime();
-    const intervalId = setInterval(() => {
-      const now = new Date().getTime();
-      const timeDiff = now - lastNotifiedTime;
-      if (timeDiff >= NOTIFICATION_COOLDOWN) {
-        clearInterval(intervalId);
-        // 0.5초(500ms) 지연 후 버튼을 활성화합니다.
-        setTimeout(() => {
-          setNotificationSent(false);
-          setRemainingTime("");
-        }, 500);
+
+    const lastSent = lastSentTimeResponse?.result?.lastSentTime ?? null;
+    const base = parseUtc(lastSent);
+
+    const tick = () => {
+      if (!base) {
+        setNotificationSent(false);
+        setRemainingTime("");
+        return;
+      }
+      const diff = Date.now() - +base; // 경과
+      const remain = NOTIFICATION_COOLDOWN - diff;
+      if (remain <= 0) {
+        setNotificationSent(false);
+        setRemainingTime("");
       } else {
         setNotificationSent(true);
-        const remaining = NOTIFICATION_COOLDOWN - timeDiff;
-        const hours = String(Math.floor(remaining / (1000 * 60 * 60))).padStart(
-          2,
-          "0"
-        );
-        const minutes = String(
-          Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60))
-        ).padStart(2, "0");
-        const seconds = String(
-          Math.floor((remaining % (1000 * 60)) / 1000)
-        ).padStart(2, "0");
-        setRemainingTime(`${hours}:${minutes}:${seconds}`);
+        setRemainingTime(formatRemain(remain));
       }
-    }, 1000);
-    return () => clearInterval(intervalId);
+    };
+
+    tick();
+
+    const id = window.setInterval(tick, 1000);
+
+    // 탭 복귀 시 보정
+    const onVis = () => {
+      if (document.visibilityState === "visible") tick();
+    };
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, [lastSentTimeResponse, isMailTimeError, mailTimeError]);
 
   // 실제 API를 호출하는 콜백 함수들
@@ -222,6 +227,10 @@ export const useInquiryDetail = () => {
   };
 
   const onSendNotification = async () => {
+    // UX 즉시 반응: 4시간 쿨다운 시작
+    setNotificationSent(true);
+    setRemainingTime(formatRemain(NOTIFICATION_COOLDOWN));
+
     try {
       await postInquiryNotifyMutation.mutateAsync({
         inquiry_id: Number(inquiry_id),
@@ -230,7 +239,6 @@ export const useInquiryDetail = () => {
       console.error("알림 발송 실패:", error);
     }
   };
-
   // 답변 삭제 함수
   const onDeleteAnswer = async (answerId: number) => {
     try {
