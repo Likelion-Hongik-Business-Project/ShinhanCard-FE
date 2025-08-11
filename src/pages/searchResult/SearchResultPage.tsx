@@ -38,7 +38,7 @@ const SearchResultPage = () => {
   const convertToInquiry = (searchInquiry: SearchResultInquiry): Inquiry => ({
     inquiry_id: searchInquiry.inquiry_id,
     title: searchInquiry.title,
-    contentPreview: searchInquiry.content_preview,
+    content_preview: searchInquiry.content_preview,
     status: searchInquiry.inquiry_state,
     created_at: searchInquiry.created_at,
     writer: {
@@ -46,7 +46,7 @@ const SearchResultPage = () => {
       name: "작성자", // 기본값 설정
       profile_image_url: "",
     },
-    is_scraped: searchInquiry.is_scrapped,
+    is_scrapped: searchInquiry.is_scrapped,
     group_name: searchInquiry.group_name,
     division_name: searchInquiry.division_name,
     team_name: searchInquiry.team_name,
