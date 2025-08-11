@@ -1,0 +1,8 @@
+.prose.markdown-custom img {
+  max-width: 50% !important;
+  max-height: 400px !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  object-fit: contain;
+}

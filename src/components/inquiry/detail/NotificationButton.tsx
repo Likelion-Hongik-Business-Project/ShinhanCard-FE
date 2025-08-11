@@ -17,13 +17,11 @@ const NotificationButton = ({
   return (
     <div className="flex justify-start items-start">
       {notificationSent ? (
-        // 알림 보낸 후
         <Button buttonType="done" className="border-gray-20 text-gray-60">
           <Bell className="w-[20px] h-[20px] text-gray-60" />
           <span>담당자 알림 발송 ({remainingTime || "대기중"})</span>
         </Button>
       ) : (
-        // 알림 보내기 전
         <Button
           onClick={onSend}
           buttonType="default"

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useEditorImageUpload } from "@/hooks/inquiry/create/useEditorImageUpload";
 import { useEditor } from "@/hooks/inquiry/useEditor";
@@ -16,56 +16,49 @@ interface Props {
   setContent: (value: string) => void;
 }
 
+const encodeMarkdownImageUrls = (md: string) =>
+  (md ?? "").replace(/!\[(.*?)\]\((.*?)\)/g, (_, alt, url) => {
+    try {
+      return `![${alt}](${encodeURI(decodeURI(url))})`;
+    } catch {
+      return `![${alt}](${encodeURI(url)})`;
+    }
+  });
+
 const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
-
   const uploadImage = useEditorImageUpload();
 
-  // content 상태 변경 시 반영
+  // 프로그램적 세팅 중 플래그
+  const applyingRef = useRef(false);
+
+  const fixedContent = useMemo(
+    () => encodeMarkdownImageUrls(content),
+    [content]
+  );
+
+  // content 변경 시 에디터에 반영 (WYSIWYG로 이미지 즉시 렌더)
   useEffect(() => {
-    const editorInstance = editorRef.current?.getInstance();
-    if (!editorInstance) return;
+    const inst = editorRef.current?.getInstance();
+    if (!inst) return;
 
-    const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+    const current = inst.getMarkdown?.() ?? "";
+    if (current === (fixedContent || "")) return;
 
-    // 줄 단위로 split
-    const lines = content.split("\n");
+    applyingRef.current = true;
 
+    // WYSIWYG 모드로 전환 후 setMarkdown
+    inst.changeMode?.("wysiwyg", true);
+    inst.setMarkdown(fixedContent || "");
+
+    // 일부 버전/상황에서 파서가 안 도는 경우가 있어 모드 토글로 강제 리렌더
     requestAnimationFrame(() => {
-      editorInstance.setMarkdown(content || "");
-      editorInstance.changeMode("wysiwyg", true);
-
-      lines.forEach((line, index) => {
-        let remaining = line;
-        let match: RegExpExecArray | null;
-
-        while ((match = imageRegex.exec(remaining))) {
-          const [fullMatch, alt, url] = match;
-          const prefix = remaining.slice(0, match.index);
-          if (prefix) {
-            editorInstance.insertText(prefix);
-          }
-
-          editorInstance.exec("addImage", {
-            imageUrl: url,
-            altText: alt || "image",
-          });
-
-          remaining = remaining.slice(match.index + fullMatch.length);
-          imageRegex.lastIndex = 0;
-        }
-
-        if (remaining.trim()) {
-          editorInstance.insertText(remaining);
-        }
-
-        if (index !== 0) {
-          editorInstance.insertText("\n");
-        }
-      });
+      inst.changeMode?.("markdown", true);
+      inst.changeMode?.("wysiwyg", true);
+      applyingRef.current = false;
     });
-  }, []);
+  }, [fixedContent, editorRef]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -95,16 +88,15 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           hooks={{
             addImageBlobHook: async blob => {
               const imageUrl = await uploadImage(blob);
-              const editorInstance = editorRef.current?.getInstance();
-              editorInstance?.exec("addImage", {
+              const inst = editorRef.current?.getInstance();
+              inst?.exec("addImage", {
                 imageUrl,
                 altText: blob instanceof File ? blob.name : "image",
               });
-
               return false;
             },
           }}
-          initialValue=""
+          initialValue={fixedContent || ""}
           placeholder="본문의 내용을 입력하세요"
           language="ko"
           height="auto"
@@ -113,12 +105,11 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           previewStyle="tab"
           toolbarItems={[]}
           onChange={() => {
-            const editorInstance = editorRef.current?.getInstance();
-            if (editorInstance) {
-              const current = editorInstance.getMarkdown();
-              setContent(current);
-            }
+            if (applyingRef.current) return;
+            const inst = editorRef.current?.getInstance();
+            if (inst) setContent(inst.getMarkdown() || "");
           }}
+          usageStatistics={false}
         />
       </div>
     </div>

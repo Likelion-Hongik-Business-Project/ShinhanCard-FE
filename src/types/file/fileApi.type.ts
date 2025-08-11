@@ -32,3 +32,12 @@ export interface GetImageFileResponse {
   file_type: string;
   preview_url: string;
 }
+
+export interface GetFileDownloadUrlResponse {
+  file_id: number;
+  download_url: string;
+  file_key: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+}
