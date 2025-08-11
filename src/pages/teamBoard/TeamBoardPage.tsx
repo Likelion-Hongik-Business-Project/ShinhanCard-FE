@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import TeamBoardLayout from "@/components/TeamBoard/layout/TeamBoardLayout";
+import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import { useTeamInquires } from "@/hooks/teamInquires/useTeamInquiresApi";
 import { formatDateParams } from "@/utils/dateUtils";
 import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 const TeamBoardPage = () => {
@@ -16,6 +18,21 @@ const TeamBoardPage = () => {
   );
   const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
 
+  // export
+  const excelExport = useExcelExport();
+
+  const handleExport = (option: ExportOption) => {
+    if (!selected_team?.team_id) return;
+    excelExport.mutate({
+      scope: "team",
+      teamId: selected_team.team_id,
+      option,
+      status: selectedStatus,
+      date: selectedDate,
+    });
+  };
+
+  // 팀별 게시판 GET
   const { data, isLoading, error } = useTeamInquires({
     team_id: id ? parseInt(id) : undefined,
     page,
@@ -27,12 +44,10 @@ const TeamBoardPage = () => {
   });
 
   if (isLoading) {
-    // Todo: 로딩 시 UI?
     return <div>로딩 중...</div>;
   }
 
   if (error || !data) {
-    //Todo: 에러 뜰 경우 로직 (재시도?)
     return;
   }
 
@@ -55,6 +70,7 @@ const TeamBoardPage = () => {
         setSelectedDate={setSelectedDate}
         currentPage={page}
         setCurrentPage={setPage}
+        onExport={handleExport}
       />
     </section>
   );

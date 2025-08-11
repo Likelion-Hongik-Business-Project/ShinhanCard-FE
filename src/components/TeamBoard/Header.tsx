@@ -1,4 +1,6 @@
-import { Pen, Upload, Users } from "@/assets/svgs/board";
+import { Pen, Users } from "@/assets/svgs/board";
+import ExportDropdown from "@/components/common/ExportDropdown";
+import { ExportOption } from "@/types/excel/excelApi.type";
 
 interface Props {
   group_name: string;
@@ -6,7 +8,7 @@ interface Props {
   team_name: string;
   isActive: boolean;
   hasInquiry: boolean;
-  onClickExport: () => void;
+  onExport: (option: ExportOption) => void;
   onClickWrite: () => void;
 }
 
@@ -16,7 +18,7 @@ const Header = ({
   team_name,
   isActive,
   hasInquiry,
-  onClickExport,
+  onExport,
   onClickWrite,
 }: Props) => {
   return (
@@ -41,16 +43,7 @@ const Header = ({
         </div>
       </div>
       <div className="flex gap-4">
-        {hasInquiry && (
-          <button
-            type="button"
-            onClick={onClickExport}
-            className="h-16 px-6 rounded-[15px] border border-gray-20 cursor-pointer flex items-center gap-4 bg-white text-heading3 text-gray-80"
-          >
-            <Upload className="w-4 h-4 text-gray-60" />
-            Export
-          </button>
-        )}
+        {hasInquiry && <ExportDropdown onExport={onExport} />}
         {isActive && (
           <button
             type="button"

@@ -6,6 +6,7 @@ import Pagination from "@/components/common/Pagination";
 import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import Header from "@/components/TeamBoard/Header";
 import InquiryList from "@/components/TeamBoard/InquiryList";
+import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryStatus,
   Pagination as PaginationType,
@@ -26,6 +27,7 @@ type Props = {
   setSelectedDate: Dispatch<SetStateAction<YearMonth[]>>;
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
+  onExport: (option: ExportOption) => void;
 };
 
 const TeamBoardLayout = ({
@@ -38,6 +40,7 @@ const TeamBoardLayout = ({
   setSelectedDate,
   currentPage,
   setCurrentPage,
+  onExport,
 }: Props) => {
   const navigate = useNavigate();
 
@@ -62,14 +65,8 @@ const TeamBoardLayout = ({
     setIsStatusModalOpen(false);
   };
 
-  // 엑셀 다운로드 함수
-  const handleExport = () => {
-    alert("엑셀 다운로드 기능");
-  };
-
   // 문의 작성 함수
   const handleWrite = () => {
-    // 팀 아이디를 안 넘겨도 될까요???
     navigate("/inquiry/form");
   };
 
@@ -81,7 +78,7 @@ const TeamBoardLayout = ({
         team_name={selected_team.team_name}
         isActive={selected_team.active}
         hasInquiry={hasInquiry}
-        onClickExport={() => handleExport()}
+        onExport={onExport}
         onClickWrite={() => handleWrite()}
       />
       {hasInquiry ? (
