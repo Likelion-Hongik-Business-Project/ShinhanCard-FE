@@ -1,10 +1,14 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 import { DoubleArrow, FilledStar, Star } from "@/assets/svgs/board";
 import Arrow from "@/assets/svgs/common/down.svg";
-import { Inquiry } from "@/types/teamBoard";
+import { MAX_PREVIEW_LENGTH } from "@/constants/inquiry";
+import { useScrap } from "@/hooks/scrap/useScrap";
+import { truncateText } from "@/utils/truncateText";
+import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface InquiryItemProps {
   group_name: string;
@@ -14,14 +18,7 @@ interface InquiryItemProps {
   isOpen: boolean;
   onToggleOpen: (id: number) => void;
   isScraped: boolean;
-  onToggleScrap: (id: number) => void;
 }
-
-const MAX_PREVIEW_LENGTH = 500;
-
-const truncateText = (text: string, maxLength: number): string => {
-  return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-};
 
 const InquiryItem = ({
   group_name,
@@ -31,8 +28,11 @@ const InquiryItem = ({
   isOpen,
   onToggleOpen,
   isScraped,
-  onToggleScrap,
 }: InquiryItemProps) => {
+  const navigate = useNavigate();
+  const { scrapInquiry, unscrapInquiry } = useScrap();
+  const [scraped, setScraped] = useState(isScraped);
+
   const preview = truncateText(inquiry.content_preview, MAX_PREVIEW_LENGTH);
 
   // 아코디언 애니매이션을 위해 높이 측정
@@ -46,6 +46,36 @@ const InquiryItem = ({
     }
   }, [isOpen]);
 
+  // props 변경 시 동기화
+  useEffect(() => {
+    setScraped(isScraped);
+  }, [isScraped]);
+
+  useLayoutEffect(() => {
+    if (isOpen && contentRef.current) {
+      setHeight(`${contentRef.current.scrollHeight}px`);
+    }
+  }, [isOpen]);
+
+  const handleScrapClick = async (id: number) => {
+    const next = !scraped;
+    setScraped(next); // 낙관적 업데이트
+
+    try {
+      if (next) {
+        await scrapInquiry(id);
+      } else {
+        await unscrapInquiry(id);
+      }
+    } catch {
+      setScraped(!next); // 실패 시 롤백
+    }
+  };
+
+  const handleDetailClick = () => {
+    navigate(`/inquiries/${inquiry.inquiry_id}`);
+  };
+
   return (
     <li className="flex flex-col">
       <div
@@ -56,11 +86,11 @@ const InquiryItem = ({
           type="button"
           onClick={e => {
             e.stopPropagation(); // 스크랩시 토글 방지
-            onToggleScrap(inquiry.inquiry_id);
+            handleScrapClick(inquiry.inquiry_id);
           }}
           className="mr-10 cursor-pointer"
         >
-          {isScraped ? (
+          {scraped ? (
             <FilledStar className="w-5 h-5 fill-current text-main" />
           ) : (
             <Star className="w-5 h-5 text-gray-30" />
@@ -91,7 +121,10 @@ const InquiryItem = ({
         <div className="px-10 py-6 w-full border-t border-gray-10">
           <div className="pl-9 pr-10 py-8 bg-gray-10 rounded-[15px] text-gray-80 text-body2 flex flex-col gap-6">
             <p>{preview}</p>
-            <button className="mx-auto text-body2-b px-6 py-2 cursor-pointer text-gray-60 flex gap-4 items-center">
+            <button
+              onClick={handleDetailClick}
+              className="mx-auto text-body2-b px-6 py-2 cursor-pointer text-gray-60 flex gap-4 items-center"
+            >
               자세히
               <DoubleArrow className="w-[14px] h-[12px] text-gray-40" />
             </button>
