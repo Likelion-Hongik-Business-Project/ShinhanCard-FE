@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useEditorImageUpload } from "@/hooks/inquiry/create/useEditorImageUpload";
 import { useEditor } from "@/hooks/inquiry/useEditor";
@@ -16,30 +16,49 @@ interface Props {
   setContent: (value: string) => void;
 }
 
+const encodeMarkdownImageUrls = (md: string) =>
+  (md ?? "").replace(/!\[(.*?)\]\((.*?)\)/g, (_, alt, url) => {
+    try {
+      return `![${alt}](${encodeURI(decodeURI(url))})`;
+    } catch {
+      return `![${alt}](${encodeURI(url)})`;
+    }
+  });
+
 const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
   const uploadImage = useEditorImageUpload();
 
-  // 프로그램적 세팅 중인지 구분하는 플래그
+  // 프로그램적 세팅 중 플래그
   const applyingRef = useRef(false);
 
-  // content 변경 시 에디터에 반영
-  useEffect(() => {
-    const editor = editorRef.current?.getInstance();
-    if (!editor) return;
+  const fixedContent = useMemo(
+    () => encodeMarkdownImageUrls(content),
+    [content]
+  );
 
-    const current = editor.getMarkdown?.() ?? "";
-    if (current === (content || "")) return;
+  // content 변경 시 에디터에 반영 (WYSIWYG로 이미지 즉시 렌더)
+  useEffect(() => {
+    const inst = editorRef.current?.getInstance();
+    if (!inst) return;
+
+    const current = inst.getMarkdown?.() ?? "";
+    if (current === (fixedContent || "")) return;
 
     applyingRef.current = true;
+
+    // WYSIWYG 모드로 전환 후 setMarkdown
+    inst.changeMode?.("wysiwyg", true);
+    inst.setMarkdown(fixedContent || "");
+
+    // 일부 버전/상황에서 파서가 안 도는 경우가 있어 모드 토글로 강제 리렌더
     requestAnimationFrame(() => {
-      // 필요하면 모드 전환
-      editor.changeMode?.("wysiwyg", true);
-      editor.setMarkdown(content || "");
+      inst.changeMode?.("markdown", true);
+      inst.changeMode?.("wysiwyg", true);
       applyingRef.current = false;
     });
-  }, [content, editorRef]);
+  }, [fixedContent, editorRef]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -69,15 +88,15 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           hooks={{
             addImageBlobHook: async blob => {
               const imageUrl = await uploadImage(blob);
-              const editor = editorRef.current?.getInstance();
-              editor?.exec("addImage", {
+              const inst = editorRef.current?.getInstance();
+              inst?.exec("addImage", {
                 imageUrl,
                 altText: blob instanceof File ? blob.name : "image",
               });
               return false;
             },
           }}
-          initialValue={content || ""}
+          initialValue={fixedContent || ""}
           placeholder="본문의 내용을 입력하세요"
           language="ko"
           height="auto"
@@ -86,10 +105,11 @@ const InquiryEditor = ({ title, setTitle, content, setContent }: Props) => {
           previewStyle="tab"
           toolbarItems={[]}
           onChange={() => {
-            if (applyingRef.current) return; // 프로그램적 세팅 중엔 무시
-            const editor = editorRef.current?.getInstance();
-            if (editor) setContent(editor.getMarkdown() || "");
+            if (applyingRef.current) return;
+            const inst = editorRef.current?.getInstance();
+            if (inst) setContent(inst.getMarkdown() || "");
           }}
+          usageStatistics={false}
         />
       </div>
     </div>
