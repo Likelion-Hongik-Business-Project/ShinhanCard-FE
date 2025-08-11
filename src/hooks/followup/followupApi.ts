@@ -19,7 +19,7 @@ export const useFollowupApi = (inquiryId: number) => {
     }: {
       followupId: number;
       data: PutFollowupsRequest;
-    }) => putFollowups(inquiryId, followupId, data),
+    }) => putFollowups(followupId, data),
   });
 
   return {

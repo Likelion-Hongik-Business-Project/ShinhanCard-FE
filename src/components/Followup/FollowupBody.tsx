@@ -1,6 +1,6 @@
 import { Bubble, UserProfile } from "@/assets/svgs/followup";
 import { formatDateToKorean } from "@/utils/dateUtils";
-import { FollowUpAuthor, TaggedUser } from "@/types/InquiryResponse";
+import { FollowUpAuthor, TaggedUser } from "@/types/inquiryTypes";
 
 export interface UserInfo {
   name: string;

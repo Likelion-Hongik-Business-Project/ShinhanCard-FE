@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import Pencil from "@/assets/svgs/common/pencil.svg";
 import { useCommentApi } from "@/hooks/comment/commentApi";
-import { TaggedUser } from "@/types/InquiryResponse";
+import { TaggedUser } from "@/types/inquiryTypes";
 
 import Button from "../common/Button";
 
@@ -23,6 +23,8 @@ const FollowupCommentForm = ({
 }: Props) => {
   const { postCommentsMutation, putCommentsMutation } =
     useCommentApi(followUpId);
+  const isMutating =
+    postCommentsMutation.isPending || putCommentsMutation.isPending;
   const [content, setContent] = useState(initialContent);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,7 +39,7 @@ const FollowupCommentForm = ({
   }, [initialContent]);
 
   const handleComplete = () => {
-    if (!isCompleteEnabled) return;
+    if (!isCompleteEnabled || isMutating) return;
     const trimmed = content.trim();
     if (commentId) {
       putCommentsMutation.mutate(
@@ -96,10 +98,10 @@ const FollowupCommentForm = ({
 
       <Button
         type="button"
-        buttonType={isCompleteEnabled ? "blue" : "done"}
-        disabled={!isCompleteEnabled}
+        buttonType={isCompleteEnabled && !isMutating ? "blue" : "done"}
+        disabled={!isCompleteEnabled || isMutating}
         onClick={handleComplete}
-        className={isCompleteEnabled ? "border-main border" : ""}
+        className={isCompleteEnabled && !isMutating ? "border-main border" : ""}
       >
         <Pencil className="w-4 h-4" />
         <span>완료</span>

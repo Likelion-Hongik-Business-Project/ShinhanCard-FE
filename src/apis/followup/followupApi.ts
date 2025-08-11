@@ -20,13 +20,9 @@ export const postFollowups = async (
 };
 
 export const putFollowups = async (
-  inquiryId: number,
   followupId: number,
   data: PutFollowupsRequest
 ): ApiResponse<PutFollowupsResponse> => {
-  const response = await instance.put(
-    `/api/inquiries/${inquiryId}/followups/${followupId}`,
-    data
-  );
+  const response = await instance.put(`/api/followups/${followupId}`, data);
   return response.data;
 };

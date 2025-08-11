@@ -3,10 +3,11 @@ import { useState } from "react";
 import FollowupForm from "@/components/Followup/FollowupForm";
 import FollowupHeader from "@/components/Followup/FollowupHeader";
 import FollowupThread from "@/components/Followup/FollowupThread";
-import { InquiryResponse } from "@/types/InquiryResponse";
+
+import { InquiryData } from "@/type/inquiryTypes";
 
 type Props = {
-  inquiry: InquiryResponse;
+  inquiry: InquiryData;
 };
 
 const FollowupSection = ({ inquiry }: Props) => {

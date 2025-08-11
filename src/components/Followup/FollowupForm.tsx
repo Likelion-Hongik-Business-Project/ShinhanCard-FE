@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Pencil from "@/assets/svgs/common/pencil.svg";
 import { FilledUnion, Union } from "@/assets/svgs/followup";
 import { useFollowupApi } from "@/hooks/followup/followupApi";
-import { Assignee } from "@/types/InquiryResponse";
+import { Assignee } from "@/types/inquiryTypes";
 
 import Button from "../common/Button";
 
@@ -27,6 +27,8 @@ const FollowupForm = ({
 }: Props) => {
   const { postFollowupsMutation, putFollowupsMutation } =
     useFollowupApi(inquiryId);
+  const isMutating =
+    postFollowupsMutation.isPending || putFollowupsMutation.isPending;
   const [selectedId, setSelectedId] = useState<number | null>(
     initialAssigneeId ?? null
   );
@@ -43,28 +45,24 @@ const FollowupForm = ({
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
     }
-  }, [initialContent, selectedId]);
+  }, [content, selectedId]);
 
   const handleToggleAssignee = (id: number) => {
     setSelectedId(prev => (prev === id ? null : id));
   };
 
-  const handleComplete = () => {
-    if (!isCompleteEnabled) return;
+  const handleComplete = async () => {
+    if (!isCompleteEnabled || isMutating) return;
     const payload = { content: content.trim(), assigneeId: selectedId! };
-    if (followupId != null) {
-      putFollowupsMutation.mutate(
-        { followupId, data: payload },
-        {
-          onSuccess: () => onClose(),
-          onError: error => console.error("Failed to update followup", error),
-        }
-      );
-    } else {
-      postFollowupsMutation.mutate(payload, {
-        onSuccess: () => onClose(),
-        onError: error => console.error("Failed to post followup", error),
-      });
+    try {
+      if (followupId != null) {
+        await putFollowupsMutation.mutateAsync({ followupId, data: payload });
+      } else {
+        await postFollowupsMutation.mutateAsync(payload);
+      }
+      onClose();
+    } catch (error) {
+      console.error("Failed to submit followup", error);
     }
   };
 
@@ -109,20 +107,22 @@ const FollowupForm = ({
               focus:outline-none   
               resize-none
               text-body2
+              disabled:opacity-60
             "
             placeholder=""
             value={content}
             onChange={handleChange}
+            disabled={isMutating}
           />
         </div>
       </div>
 
       <Button
         type="button"
-        buttonType={isCompleteEnabled ? "blue" : "done"}
-        disabled={!isCompleteEnabled}
+        buttonType={isCompleteEnabled && !isMutating ? "blue" : "done"}
+        disabled={!isCompleteEnabled || isMutating}
         onClick={handleComplete}
-        className={isCompleteEnabled ? "border-main border" : ""}
+        className={isCompleteEnabled && !isMutating ? "border-main border" : ""}
       >
         <Pencil className="w-4 h-4" />
         <span>완료</span>

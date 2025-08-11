@@ -18,6 +18,14 @@ export interface Comment {
   files: InquiryFile[];
 }
 
+export interface FollowUpComment {
+  comment_id: number;
+  author: FollowUpAuthor;
+  content: string;
+  created_at: string;
+  tagged_user: TaggedUser;
+}
+
 // 추가문의 타입
 export interface FollowUp {
   follow_up_id: number;
@@ -28,7 +36,7 @@ export interface FollowUp {
     user_name: string;
     profile_image_url?: string;
   };
-  comments: Comment[];
+  comments: FollowUpComment[];
 }
 
 export interface FollowUpList {
@@ -184,7 +192,7 @@ export interface InquiryData {
     count: number;
     answers: Comment[];
   };
-  follow_ups: FollowUp[];
+  follow_ups: FollowUpList;
 
   // 테스트용 필드들 (mock 데이터에서만 사용, 컴포넌트에서는 옵셔널)
   test_scenario?: string;
@@ -280,4 +288,24 @@ export interface User {
   id: number;
   user_name: string;
   profile_image_url?: string;
+}
+
+//
+export interface Assignee {
+  user_id: number;
+  user_name: string;
+  profile_image_url?: string;
+  is_checked: boolean;
+}
+
+export interface FollowUpAuthor {
+  username: string;
+  profile_url: string;
+  role: string;
+  user_id: number;
+}
+
+export interface TaggedUser {
+  username: string;
+  user_id: number;
 }

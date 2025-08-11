@@ -4,8 +4,7 @@ import { Enter } from "@/assets/svgs/followup";
 import FollowUpBody from "@/components/Followup/FollowupBody";
 import FollowupCommentForm from "@/components/Followup/FollowupCommentForm";
 import FollowUpForm from "@/components/Followup/FollowupForm";
-import { Assignee } from "@/types/InquiryResponse";
-import { FollowUp } from "@/types/inquiryTypes";
+import { Assignee, FollowUp } from "@/types/inquiryTypes";
 
 type Props = {
   inquiryId: number;
@@ -14,31 +13,36 @@ type Props = {
 };
 
 const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
-  const [commentId, setCommentId] = useState<number | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{
+    kind: "followup" | "comment";
+    id: number;
+  } | null>(null);
   const [editFollowUpId, setEditFollowUpId] = useState<number | null>(null);
   const [editCommentId, setEditCommentId] = useState<number | null>(null);
 
-  const handleAnswerOpen = (commentId: number) => {
-    setCommentId(prev => (prev === commentId ? null : commentId));
+  const handleAnswerOpen = (kind: "followup" | "comment", id: number) => {
+    setReplyTarget(prev =>
+      prev && prev.kind === kind && prev.id === id ? null : { kind, id }
+    );
     setEditFollowUpId(null);
     setEditCommentId(null);
   };
 
   const handleFormClose = () => {
-    setCommentId(null);
+    setReplyTarget(null);
     setEditFollowUpId(null);
     setEditCommentId(null);
   };
 
   const handleEditFollowUp = (followUpId: number) => {
     setEditFollowUpId(prev => (prev === followUpId ? null : followUpId));
-    setCommentId(null);
+    setReplyTarget(null);
     setEditCommentId(null);
   };
 
   const handleEditComment = (commentId: number) => {
     setEditCommentId(prev => (prev === commentId ? null : commentId));
-    setCommentId(null);
+    setReplyTarget(null);
     setEditFollowUpId(null);
   };
 
@@ -66,23 +70,25 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
               created_at={fu.created_at}
               content={fu.content}
               canEdit={true} // 수정 여부 fu.author.user_id === 로그인한 사용자 ID
-              onAnswer={() => handleAnswerOpen(fu.follow_up_id)}
+              onAnswer={() => handleAnswerOpen("followup", fu.follow_up_id)}
               onEdit={() => handleEditFollowUp(fu.follow_up_id)}
             />
           )}
 
           {/* 추가문의 댓글 입력 */}
-          {commentId === fu.follow_up_id && (
-            <FollowupCommentForm
-              taggedUser={fu.author}
-              followUpId={fu.follow_up_id}
-              onClose={handleFormClose}
-            />
-          )}
+          {replyTarget?.kind === "followup" &&
+            replyTarget.id === fu.follow_up_id && (
+              <FollowupCommentForm
+                taggedUser={fu.author}
+                followUpId={fu.follow_up_id}
+                onClose={handleFormClose}
+              />
+            )}
 
           {/* 추가문의 댓글(하위) */}
-          <div className="py-8 px-6 rounded-[15px] bg-gray-10 flex flex-col gap-8 ">
-            {fu.comments.map(c => (
+          {fu.comments &&
+            fu.comments.length > 0 &&
+            fu.comments.map(c => (
               <div className="flex flex-col gap-8" key={c.comment_id}>
                 {editCommentId === c.comment_id ? (
                   /* 추가문의 댓글(하위) 수정 */
@@ -103,7 +109,9 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
                         created_at={c.created_at}
                         content={c.content}
                         canEdit={true} // 수정 여부 c.author.user_id === 로그인한 사용자 ID
-                        onAnswer={() => handleAnswerOpen(c.comment_id)}
+                        onAnswer={() =>
+                          handleAnswerOpen("comment", c.comment_id)
+                        }
                         onEdit={() => handleEditComment(c.comment_id)}
                       />
                     </div>
@@ -111,16 +119,16 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
                 )}
 
                 {/* 추가문의 댓글(하위) 입력 폼*/}
-                {commentId === c.comment_id && (
-                  <FollowupCommentForm
-                    taggedUser={c.author}
-                    followUpId={fu.follow_up_id}
-                    onClose={handleFormClose}
-                  />
-                )}
+                {replyTarget?.kind === "comment" &&
+                  replyTarget.id === c.comment_id && (
+                    <FollowupCommentForm
+                      taggedUser={c.author}
+                      followUpId={fu.follow_up_id}
+                      onClose={handleFormClose}
+                    />
+                  )}
               </div>
             ))}
-          </div>
         </div>
       ))}
     </div>

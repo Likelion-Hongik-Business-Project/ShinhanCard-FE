@@ -20,13 +20,9 @@ export const postComments = async (
 };
 
 export const putComments = async (
-  followupId: number,
   commentId: number,
   data: PutCommentRequest
 ): ApiResponse<PutCommentResponse> => {
-  const response = await instance.put(
-    `/api/inquiries/${followupId}/comments/${commentId}`,
-    data
-  );
+  const response = await instance.put(`/api/comments/${commentId}`, data);
   return response.data;
 };
