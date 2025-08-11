@@ -74,7 +74,7 @@ const UserSpacePage = () => {
   return (
     <section>
       <div className="profile-container">
-        <UserSpaceProfile userId={userIdNum!} />
+        <UserSpaceProfile userId={userIdNum!} profile={profile} />
       </div>
 
       <UserSpaceButton

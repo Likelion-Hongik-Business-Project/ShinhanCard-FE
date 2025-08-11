@@ -12,11 +12,11 @@ export const useUserProfile = (userId: number | null) =>
     enabled: userId !== null,
   });
 
-export const useSubmittedInquiries = (teamId: number, userId: number) =>
+export const useSubmittedInquiries = (userId: number) =>
   useQuery({
-    queryKey: ["writtenInquiries", teamId, userId],
+    queryKey: ["writtenInquiries", userId],
     queryFn: () => getMyQuestionsInquiriesByUserId(userId),
-    enabled: !!teamId,
+    enabled: !!userId,
   });
 
 export const useAssignedInquiries = (userId: number) =>

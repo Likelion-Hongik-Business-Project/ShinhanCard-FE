@@ -10,6 +10,8 @@ export type Normalized = {
   inquiries: InquiryItem[];
   selectedTeam: GetInitMyInquiryListResponse["selected_team"] | null;
   pageSize: number;
+  totalCount: number;
+  teams: GetInitMyInquiryListResponse["teams"];
 };
 
 export type ProfilePick = Pick<

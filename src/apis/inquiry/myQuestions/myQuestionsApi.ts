@@ -29,6 +29,7 @@ export const getMyQuestionsInquiriesByTeam = async (
   return response.data;
 };
 
+// 타인의 스페이스 - 작성한 문의 내역 조회
 export const getMyQuestionsInquiriesByUserId = async (
   user_id: number,
   page = 1,

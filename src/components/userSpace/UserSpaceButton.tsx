@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import Button from "@/components/common/Button";
 import { USER_SPACE_TABS } from "@/constants/userSpace";
 import {
@@ -13,7 +15,12 @@ interface Props {
   activeTab: TabKey;
   onTabChange: (key: TabKey) => void;
   onDataFetched: (data: Normalized) => void;
-  profile: { name: string; team_id: number; profile_image_url: string | null };
+  profile: {
+    id: number;
+    name: string;
+    team_id: number;
+    profile_image_url: string | null;
+  };
 }
 
 type MyInquiryItem = Omit<InquiryItem, "writer"> & {
@@ -29,9 +36,9 @@ const UserSpaceButton = ({
   onDataFetched,
   profile,
 }: Props) => {
-  const { data: assignedQuery } = useAssignedInquiries(profile.team_id);
-  const { data: scrapQuery } = useScrapInquiries(userId);
-  const { data: writtenQuery } = useSubmittedInquiries(profile.team_id, userId);
+  const { data: assignedQuery } = useAssignedInquiries(profile.id);
+  const { data: scrapQuery } = useScrapInquiries(profile.id);
+  const { data: writtenQuery } = useSubmittedInquiries(profile.id);
 
   const assignedData = assignedQuery?.result;
   const scrapData = scrapQuery?.result;
@@ -63,18 +70,25 @@ const UserSpaceButton = ({
 
     let normalized: Normalized | null = null;
     if (key === "assigned" && assignedData) {
+      // assigned 탭: 각 inquiry의 writer 사용 (HomeMain의 inquiry 타입과 동일)
       normalized = {
-        inquiries: mapWithWriter(assignedData.inquiries as MyInquiryItem[]),
+        inquiries: assignedData.inquiries as InquiryItem[],
         selectedTeam: assignedData.selected_team ?? null,
         pageSize: assignedData.pagination?.page_size ?? 0,
+        totalCount: assignedData.total_count ?? 0,
+        teams: assignedData.teams ?? [],
       };
     } else if (key === "scrap" && scrapData) {
+      // scrap 탭: 각 inquiry의 writer 사용 (HomeMain의 inquiry 타입과 동일)
       normalized = {
-        inquiries: mapWithWriter(scrapData.inquiries as MyInquiryItem[]),
-        selectedTeam: null,
+        inquiries: scrapData.inquiries as InquiryItem[],
+        selectedTeam: scrapData.selected_team ?? null,
         pageSize: scrapData.pagination?.page_size ?? 0,
+        totalCount: scrapData.total_count ?? 0,
+        teams: scrapData.teams ?? [],
       };
     } else if (key === "written" && writtenData) {
+      // written 탭: profile 정보를 writer로 사용 (HomeMain의 answer 타입과 동일)
       normalized = {
         inquiries: mapWithWriter(writtenData.inquiries as MyInquiryItem[], {
           id: userId,
@@ -83,11 +97,32 @@ const UserSpaceButton = ({
         }),
         selectedTeam: writtenData.selected_team ?? null,
         pageSize: writtenData.pagination?.page_size ?? 0,
+        totalCount: writtenData.total_count ?? 0,
+        teams: writtenData.teams ?? [],
       };
     }
 
     if (normalized) onDataFetched(normalized);
   };
+
+  // 초기 데이터 로드 (written 탭이 기본) - 한 번만 실행
+  useEffect(() => {
+    if (writtenData && activeTab === "written") {
+      // written 탭: profile 정보를 writer로 사용 (HomeMain의 answer 타입과 동일)
+      const normalized: Normalized = {
+        inquiries: mapWithWriter(writtenData.inquiries as MyInquiryItem[], {
+          id: userId,
+          name: profile.name,
+          profile_image_url: profile.profile_image_url ?? "",
+        }),
+        selectedTeam: writtenData.selected_team ?? null,
+        pageSize: writtenData.pagination?.page_size ?? 0,
+        totalCount: writtenData.total_count ?? 0,
+        teams: writtenData.teams ?? [],
+      };
+      onDataFetched(normalized);
+    }
+  }, [writtenData]); // writtenData만 의존성으로 설정
 
   return (
     <div className="flex gap-4 pt-20 w-full overflow-x-auto scrollbar-hide">
