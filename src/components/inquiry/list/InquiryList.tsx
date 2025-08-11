@@ -76,7 +76,7 @@ const InquiryList = ({
           <InquiryListItem
             key={item.id}
             item={item}
-            isScraped={item.is_scraped}
+            isScrapped={item.is_scrapped}
           />
         ))}
       </div>
