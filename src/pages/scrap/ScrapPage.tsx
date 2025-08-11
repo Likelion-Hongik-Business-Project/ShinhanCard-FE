@@ -25,7 +25,7 @@ const ScrapPage = () => {
     if (!selectedTeamId) return;
 
     excelExport.mutate({
-      scope: "scraped",
+      scope: "scrapped",
       teamId: selectedTeamId,
       option,
       status,
