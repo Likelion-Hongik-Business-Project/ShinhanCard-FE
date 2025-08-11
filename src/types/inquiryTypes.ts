@@ -27,6 +27,11 @@ export interface FollowUp {
   comments: Comment[];
 }
 
+export interface FollowUpList {
+  count: number;
+  follow_ups: FollowUp[];
+}
+
 // Header Props 타입
 export interface HeaderProps {
   isTeamEnd?: boolean;
@@ -181,7 +186,7 @@ export interface InquiryData {
   }>;
   comment_count: number;
   comments: Comment[];
-  follow_ups: FollowUp[];
+  follow_ups: FollowUpList;
 
   // 테스트용 필드들 (mock 데이터에서만 사용, 컴포넌트에서는 옵셔널)
   test_scenario?: string;

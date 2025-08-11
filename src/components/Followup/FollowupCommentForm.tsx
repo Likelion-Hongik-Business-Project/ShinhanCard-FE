@@ -14,7 +14,7 @@ export type Props = {
   initialContent?: string;
 };
 
-const AdditionalInquiryReplyForm = ({
+const FollowupCommentForm = ({
   taggedUser,
   followUpId,
   onClose,
@@ -108,4 +108,4 @@ const AdditionalInquiryReplyForm = ({
   );
 };
 
-export default AdditionalInquiryReplyForm;
+export default FollowupCommentForm;

@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
-import { FilledUnion, Union } from "@/assets/svgs/AdditionalInquiry";
 import Pencil from "@/assets/svgs/common/pencil.svg";
+import { FilledUnion, Union } from "@/assets/svgs/followup";
 import { useFollowupApi } from "@/hooks/followup/followupApi";
 import { Assignee } from "@/types/InquiryResponse";
 
@@ -17,7 +17,7 @@ type Props = {
   onClose: () => void;
 };
 
-const AdditionalInquiryForm = ({
+const FollowupForm = ({
   inquiryId,
   assignees,
   followupId,
@@ -33,7 +33,7 @@ const AdditionalInquiryForm = ({
   const [content, setContent] = useState(initialContent ?? "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const selectedName = assignees.find(a => a.user_id === selectedId)?.username;
+  const selectedName = assignees.find(a => a.user_id === selectedId)?.user_name;
 
   const isCompleteEnabled = selectedId !== null && content.trim().length > 0;
 
@@ -92,7 +92,7 @@ const AdditionalInquiryForm = ({
                 className="flex gap-2 items-center"
               >
                 {a.user_id === selectedId ? <FilledUnion /> : <Union />}
-                {a.username}
+                {a.user_name}
               </button>
             ))}
           </div>
@@ -131,4 +131,4 @@ const AdditionalInquiryForm = ({
   );
 };
 
-export default AdditionalInquiryForm;
+export default FollowupForm;

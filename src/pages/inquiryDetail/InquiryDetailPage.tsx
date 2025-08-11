@@ -1,5 +1,5 @@
-import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
 import Modal from "@/components/common/Modal";
+import FollowupSection from "@/components/Followup/FollowupSection";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import AssigneeActions from "@/components/inquiry/detail/AssigneeActions";
 import Header from "@/components/inquiry/detail/Header";
@@ -97,7 +97,7 @@ const InquiryDetailPage = () => {
           onEditorSubmit={handleEditorSubmit}
         />
 
-        <AdditionalInquirySection inquiry={mockInquiryResponse} />
+        <FollowupSection inquiry={mockInquiryResponse} />
       </div>
 
       {modalProps && (

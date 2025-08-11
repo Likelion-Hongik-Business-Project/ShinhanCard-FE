@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { Enter } from "@/assets/svgs/AdditionalInquiry";
-import AdditionalInquiryBody from "@/components/AdditionalInquiry/AdditionalInquiryBody";
-import { Assignee, FollowUp } from "@/types/InquiryResponse";
-
-import AdditionalInquiryForm from "./AdditionalInquiryForm";
-import AdditionalInquiryReplyForm from "./AdditionalInquiryReplyForm";
+import { Enter } from "@/assets/svgs/followup";
+import FollowUpBody from "@/components/Followup/FollowupBody";
+import FollowupCommentForm from "@/components/Followup/FollowupCommentForm";
+import FollowUpForm from "@/components/Followup/FollowupForm";
+import { Assignee } from "@/types/InquiryResponse";
+import { FollowUp } from "@/types/inquiryTypes";
 
 type Props = {
   inquiryId: number;
@@ -13,49 +13,45 @@ type Props = {
   follow_ups: FollowUp[];
 };
 
-const AdditionalInquiryThread = ({
-  inquiryId,
-  assignees,
-  follow_ups,
-}: Props) => {
-  const [replyToId, setReplyToId] = useState<number | null>(null);
+const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
+  const [commentId, setCommentId] = useState<number | null>(null);
   const [editFollowUpId, setEditFollowUpId] = useState<number | null>(null);
   const [editCommentId, setEditCommentId] = useState<number | null>(null);
 
   const handleAnswerOpen = (commentId: number) => {
-    setReplyToId(prev => (prev === commentId ? null : commentId));
+    setCommentId(prev => (prev === commentId ? null : commentId));
     setEditFollowUpId(null);
     setEditCommentId(null);
   };
 
   const handleFormClose = () => {
-    setReplyToId(null);
+    setCommentId(null);
     setEditFollowUpId(null);
     setEditCommentId(null);
   };
 
   const handleEditFollowUp = (followUpId: number) => {
     setEditFollowUpId(prev => (prev === followUpId ? null : followUpId));
-    setReplyToId(null);
+    setCommentId(null);
     setEditCommentId(null);
   };
 
   const handleEditComment = (commentId: number) => {
     setEditCommentId(prev => (prev === commentId ? null : commentId));
-    setReplyToId(null);
+    setCommentId(null);
     setEditFollowUpId(null);
   };
 
   return (
     <div className="flex flex-col gap-8">
-      {follow_ups.map(fu => (
+      {follow_ups?.map(fu => (
         <div
           key={fu.follow_up_id}
           className="flex flex-col border-t border-gray-20 gap-8 pt-8 "
         >
           {/* 추가문의(부모) */}
           {editFollowUpId === fu.follow_up_id ? (
-            <AdditionalInquiryForm
+            <FollowUpForm
               inquiryId={inquiryId}
               followupId={fu.follow_up_id}
               assignees={assignees}
@@ -64,7 +60,7 @@ const AdditionalInquiryThread = ({
               initialAssigneeId={fu.tagged_user.user_id}
             />
           ) : (
-            <AdditionalInquiryBody
+            <FollowUpBody
               taggedUser={fu.tagged_user}
               author={fu.author}
               created_at={fu.created_at}
@@ -76,8 +72,8 @@ const AdditionalInquiryThread = ({
           )}
 
           {/* 추가문의 댓글 입력 */}
-          {replyToId === fu.follow_up_id && (
-            <AdditionalInquiryReplyForm
+          {commentId === fu.follow_up_id && (
+            <FollowupCommentForm
               taggedUser={fu.author}
               followUpId={fu.follow_up_id}
               onClose={handleFormClose}
@@ -90,7 +86,7 @@ const AdditionalInquiryThread = ({
               <div className="flex flex-col gap-8" key={c.comment_id}>
                 {editCommentId === c.comment_id ? (
                   /* 추가문의 댓글(하위) 수정 */
-                  <AdditionalInquiryReplyForm
+                  <FollowupCommentForm
                     taggedUser={c.tagged_user}
                     followUpId={fu.follow_up_id}
                     commentId={c.comment_id}
@@ -101,7 +97,7 @@ const AdditionalInquiryThread = ({
                   <div className="flex gap-4">
                     <Enter />
                     <div className="flex-1">
-                      <AdditionalInquiryBody
+                      <FollowUpBody
                         taggedUser={c.tagged_user}
                         author={c.author}
                         created_at={c.created_at}
@@ -115,8 +111,8 @@ const AdditionalInquiryThread = ({
                 )}
 
                 {/* 추가문의 댓글(하위) 입력 폼*/}
-                {replyToId === c.comment_id && (
-                  <AdditionalInquiryReplyForm
+                {commentId === c.comment_id && (
+                  <FollowupCommentForm
                     taggedUser={c.author}
                     followUpId={fu.follow_up_id}
                     onClose={handleFormClose}
@@ -131,4 +127,4 @@ const AdditionalInquiryThread = ({
   );
 };
 
-export default AdditionalInquiryThread;
+export default FollowupThread;

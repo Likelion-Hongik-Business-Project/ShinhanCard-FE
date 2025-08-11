@@ -1,4 +1,4 @@
-import { Bubble, UserProfile } from "@/assets/svgs/AdditionalInquiry";
+import { Bubble, UserProfile } from "@/assets/svgs/followup";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { FollowUpAuthor, TaggedUser } from "@/types/InquiryResponse";
 
@@ -17,7 +17,7 @@ export type Props = {
   onEdit: () => void;
 };
 
-export const AdditionalInquiryBody = ({
+export const FollowupBody = ({
   taggedUser,
   author,
   created_at,
@@ -74,4 +74,4 @@ export const AdditionalInquiryBody = ({
   );
 };
 
-export default AdditionalInquiryBody;
+export default FollowupBody;

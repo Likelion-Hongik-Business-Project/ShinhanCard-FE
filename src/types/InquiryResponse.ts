@@ -25,7 +25,7 @@ export interface Author {
 }
 
 export interface Assignee {
-  username: string;
+  user_name: string;
   is_checked: boolean;
   user_id: number;
   profile_image_url: string;

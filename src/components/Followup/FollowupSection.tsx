@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-import AdditionalInquiryHeader from "@/components/AdditionalInquiry//AdditionalInquiryHeader";
-import AdditionalInquiryForm from "@/components/AdditionalInquiry/AdditionalInquiryForm";
-import AdditionalInquiryThread from "@/components/AdditionalInquiry/AdditionalInquiryThread";
+import FollowupForm from "@/components/Followup/FollowupForm";
+import FollowupHeader from "@/components/Followup/FollowupHeader";
+import FollowupThread from "@/components/Followup/FollowupThread";
 import { InquiryResponse } from "@/types/InquiryResponse";
 
 type Props = {
   inquiry: InquiryResponse;
 };
 
-const AdditionalInquirySection = ({ inquiry }: Props) => {
+const FollowupSection = ({ inquiry }: Props) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleToggleChat = () => {
@@ -19,7 +19,7 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
   return (
     <div className="w-full max-w-[1420px] rounded-[15px] py-14 px-16 bg-white flex flex-col gap-8">
       {/* 헤더에 onClickNew prop으로 토글 함수 전달 */}
-      <AdditionalInquiryHeader
+      <FollowupHeader
         follow_ups_cnt={inquiry.follow_ups.count}
         isChatOpen={isChatOpen}
         onClick={handleToggleChat}
@@ -27,14 +27,14 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
 
       {/* isChatOpen이 true일 때만 InquiryForm 렌더 */}
       {isChatOpen && (
-        <AdditionalInquiryForm
+        <FollowupForm
           inquiryId={inquiry.inquiry_id}
           assignees={inquiry.assignees}
           onClose={handleToggleChat}
         />
       )}
 
-      <AdditionalInquiryThread
+      <FollowupThread
         inquiryId={inquiry.inquiry_id}
         assignees={inquiry.assignees}
         follow_ups={inquiry.follow_ups.follow_ups}
@@ -43,4 +43,4 @@ const AdditionalInquirySection = ({ inquiry }: Props) => {
   );
 };
 
-export default AdditionalInquirySection;
+export default FollowupSection;
