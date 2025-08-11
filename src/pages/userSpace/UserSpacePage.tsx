@@ -10,7 +10,7 @@ import { USER_SPACE_TABS } from "@/constants/userSpace";
 // import {
 //   AssignedInquiryItem,
 //   MyInquiryItem,
-//   ScrapedInquiryItem,
+//   ScrappedInquiryItem,
 // } from "@/types/inquiry";
 // import { MOCK_ASSIGNED_INQUIRY_RESPONSE } from "@/mocks/inquiryMock";
 // import { MOCK_MY_QUESTIONS_RESPONSE } from "@/mocks/myQuestionsMock";
@@ -121,7 +121,7 @@ const UserSpacePage = () => {
         )}
 
         {activeTab === "scrap" && (
-          <InquiryPageLayout<ScrapedInquiryItem>
+          <InquiryPageLayout<ScrappedInquiryItem>
             title="스크랩"
             description="@@@님이 스크랩한 문의가 총"
             emptyText="스크랩한 문의가 없습니다"

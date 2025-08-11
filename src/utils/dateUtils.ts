@@ -83,3 +83,19 @@ export const formatDateToKorean = (
     day: "numeric",
   });
 };
+
+export const formatRemain = (ms: number) => {
+  const r = Math.max(0, ms);
+  const h = String(Math.floor(r / 3600000)).padStart(2, "0");
+  const m = String(Math.floor((r % 3600000) / 60000)).padStart(2, "0");
+  const s = String(Math.floor((r % 60000) / 1000)).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+};
+
+export const parseUtc = (s?: string | null) => {
+  if (!s) return null;
+  const hasTZ = /Z|[+-]\d\d:?\d\d$/.test(s);
+  const norm = hasTZ ? s : s.split(".")[0] + "Z";
+  const d = new Date(norm);
+  return isNaN(+d) ? null : d;
+};

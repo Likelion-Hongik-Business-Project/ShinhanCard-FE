@@ -17,7 +17,7 @@ interface InquiryItemProps {
   inquiry: Inquiry;
   isOpen: boolean;
   onToggleOpen: (id: number) => void;
-  isScraped: boolean;
+  isScrapped: boolean;
 }
 
 const InquiryItem = ({
@@ -27,11 +27,11 @@ const InquiryItem = ({
   inquiry,
   isOpen,
   onToggleOpen,
-  isScraped,
+  isScrapped,
 }: InquiryItemProps) => {
   const navigate = useNavigate();
   const { scrapInquiry, unscrapInquiry } = useScrap();
-  const [scraped, setScraped] = useState(isScraped);
+  const [scrapped, setScrapped] = useState(isScrapped);
 
   const preview = truncateText(inquiry.content_preview, MAX_PREVIEW_LENGTH);
 
@@ -48,8 +48,8 @@ const InquiryItem = ({
 
   // props 변경 시 동기화
   useEffect(() => {
-    setScraped(isScraped);
-  }, [isScraped]);
+    setScrapped(isScrapped);
+  }, [isScrapped]);
 
   useLayoutEffect(() => {
     if (isOpen && contentRef.current) {
@@ -58,8 +58,8 @@ const InquiryItem = ({
   }, [isOpen]);
 
   const handleScrapClick = async (id: number) => {
-    const next = !scraped;
-    setScraped(next); // 낙관적 업데이트
+    const next = !scrapped;
+    setScrapped(next); // 낙관적 업데이트
 
     try {
       if (next) {
@@ -68,7 +68,7 @@ const InquiryItem = ({
         await unscrapInquiry(id);
       }
     } catch {
-      setScraped(!next); // 실패 시 롤백
+      setScrapped(!next); // 실패 시 롤백
     }
   };
 
@@ -90,7 +90,7 @@ const InquiryItem = ({
           }}
           className="mr-10 cursor-pointer"
         >
-          {scraped ? (
+          {scrapped ? (
             <FilledStar className="w-5 h-5 fill-current text-main" />
           ) : (
             <Star className="w-5 h-5 text-gray-30" />
