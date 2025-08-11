@@ -37,7 +37,7 @@ const InquiryList = ({
           inquiry={inq}
           isOpen={openId === inq.inquiry_id}
           onToggleOpen={handleToggleOpen}
-          isScraped={inq.is_scraped}
+          isScraped={inq.is_scrapped}
         />
       ))}
     </ul>
