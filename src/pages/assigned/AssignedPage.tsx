@@ -12,11 +12,12 @@ import { ExportOption } from "@/types/excel/excelApi.type";
 import {
   InquiryItem,
   InquiryStatus,
+  YearMonth,
 } from "@/types/inquiry/inquiryListApi.type";
 
 const AssignedPage = () => {
   const [page, setPage] = useState(1);
-  const [date, setDate] = useState<{ year: number; month: number }[]>([]);
+  const [date, setDate] = useState<YearMonth[]>([]);
   const [status, setStatus] = useState<InquiryStatus | "전체">("전체");
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
