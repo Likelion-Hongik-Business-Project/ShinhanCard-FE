@@ -1,3 +1,5 @@
+import { InquiryFile } from "./file/file.type";
+
 export type UserRole = "default" | "assignee" | "writer" | "admin";
 
 // 답변 타입
@@ -53,6 +55,8 @@ export interface InquiryContentProps {
   isWriter: boolean;
   isAdmin: boolean;
   answersCount: number;
+  inquiryId: number;
+  teamId: number;
   onDelete: () => void;
 }
 
@@ -142,17 +146,14 @@ export interface InquiryData {
     userName: string;
     profileImageUrl?: string;
   }>;
-  files: Array<{
-    file_name: string;
-    file_url: string;
-  }>;
+  files: InquiryFile[];
   group: {
     group_id: number;
     group_name: string;
     active: boolean;
   };
   division: {
-    division_d: number;
+    division_id: number;
     division_name: string;
     active: boolean;
   };

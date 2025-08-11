@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import MarkdownViewer from "@/components/common/MarkdownViewer";
@@ -13,17 +13,19 @@ const InquiryContent = ({
   isWriter,
   isAdmin,
   answersCount,
+  inquiryId,
+  teamId,
   onDelete,
 }: InquiryContentProps) => {
   const navigate = useNavigate();
-  const { team_id, inquiry_id } = useParams<{
-    team_id: string;
-    inquiry_id: string;
-  }>();
 
-  // 수정 페이지로 이동하는 핸들러
   const handleEdit = () => {
-    navigate(`/teams/${team_id}/inquiries/${inquiry_id}/edit`);
+    navigate("/inquiry/form?mode=edit", {
+      state: {
+        teamId: Number(teamId),
+        inquiryId: Number(inquiryId),
+      },
+    });
   };
 
   return (

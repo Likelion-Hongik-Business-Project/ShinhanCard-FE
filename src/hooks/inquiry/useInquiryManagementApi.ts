@@ -4,14 +4,11 @@ import { GlobalResponse } from "@/types/apiResponse.type";
 import {
   GetLastSentMailTimeResponse,
   PutInquiryAssigneeRequest,
-  PutInquiryRequest,
 } from "@/types/inquiry/inquiryManagementApi.type";
 
 import {
-  deleteInquiry,
   getLastSentMailTime,
   postInquiryNotify,
-  putInquiry,
   putInquiryAssignee,
 } from "@/apis/inquiry/detail/inquiryManagementApi";
 
@@ -87,41 +84,8 @@ export const useInquiryManagementApi = () => {
     },
   });
 
-  // 문의글 삭제
-  const deleteInquiryMutation = useMutation({
-    mutationFn: ({
-      team_id,
-      inquiry_id,
-    }: {
-      team_id: number;
-      inquiry_id: number;
-    }) => deleteInquiry(team_id, inquiry_id),
-    onSuccess: () => {
-      // 삭제 성공 시, 목록 데이터를 새로고침
-      queryClient.invalidateQueries({ queryKey: ["teamInquiryList"] });
-    },
-  });
-
-  // 문의글 수정
-  const putInquiryMutation = useMutation({
-    mutationFn: ({
-      inquiry_id,
-      data,
-    }: {
-      inquiry_id: number;
-      data: PutInquiryRequest;
-    }) => putInquiry(inquiry_id, data),
-    onSuccess: () => {
-      // 수정 성공 시, 해당 문의글 상세 정보 새로고침
-      // team_id를 알 수 없으므로, 모든 상세글 쿼리를 무효화
-      queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
-    },
-  });
-
   return {
     putInquiryAssigneeMutation,
     postInquiryNotifyMutation,
-    deleteInquiryMutation,
-    putInquiryMutation,
   };
 };
