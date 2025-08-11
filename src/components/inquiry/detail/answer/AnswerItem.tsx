@@ -71,7 +71,10 @@ const AnswerItem = ({
         </div>
         {/* 작성 시간 */}
         <div className="text-detail1 text-gray-50">
-          {formatDateToKorean(comment.created_at, { showTime: true })}
+          {formatDateToKorean(comment.updated_at ?? comment.created_at, {
+            showTime: true,
+          })}
+          {comment.updated_at && <> 수정됨</>}
         </div>
       </div>
     </div>
