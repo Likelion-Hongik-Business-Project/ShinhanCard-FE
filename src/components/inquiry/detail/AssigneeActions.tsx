@@ -16,7 +16,8 @@ const AssigneeActions = ({
   isCurrentUserConfirmed,
   showEditor,
   hasMyComment,
-  InquiryId,
+  inquiryId,
+  teamId,
 }: AssigneeActionsProps) => {
   const navigate = useNavigate();
   const [isAssigneeModalOpen, setIsAssigneeModalOpen] = useState(false);
@@ -29,28 +30,29 @@ const AssigneeActions = ({
   const closeAssigneeModal = () => setIsAssigneeModalOpen(false);
   const handleEditClick = () => {
     closeAssigneeModal();
-    navigate(`/inquiry/form?mode=edit&inquiryId=${InquiryId}`);
+    navigate(`/teams/${teamId}/inquiries/${inquiryId}?mode=edit`);
   };
 
   return (
     <>
       <div className="flex justify-between items-center w-full">
-        <Button
-          buttonType="default"
-          className="text-gray-80"
-          onClick={openAssigneeModal}
-        >
-          <Users className="text-gray-80" />
-          담당자 수정하기
-        </Button>
-
-        <div className="flex items-center gap-[16px]">
+        <div className="flex gap-8 items-center">
           {shouldShowAnswerButton && (
             <Button buttonType="blue" onClick={() => onStartAnswer}>
               <Pencil />
               답변 작성
             </Button>
           )}
+          <Button
+            buttonType="default"
+            className="text-gray-80"
+            onClick={openAssigneeModal}
+          >
+            <Users className="text-gray-80" />
+            담당자 수정하기
+          </Button>
+        </div>
+        <div className="flex items-center gap-[16px]">
           {!isCurrentUserConfirmed && !hasMyComment && (
             <Button buttonType="default" onClick={onConfirm}>
               <Check className="text-gray-60" />

@@ -114,7 +114,8 @@ export interface AssigneeActionsProps {
   isCurrentUserConfirmed: boolean;
   showEditor: boolean;
   hasMyComment: boolean;
-  InquiryId: number;
+  inquiryId: number;
+  teamId: number;
 }
 
 // 통합된 문의 타입 (API 스펙에 완전히 맞춤)
@@ -186,6 +187,7 @@ export interface InquiryData {
 // InquiryCard 컴포넌트 Props
 export interface InquiryCardProps {
   inquiry: InquiryData;
+  teamId: number;
   userRole?: UserRole;
   currentUserId?: number;
   handleStartAnswer: (commentToEdit?: Comment) => void;

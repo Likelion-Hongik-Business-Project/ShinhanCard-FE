@@ -11,6 +11,7 @@ import { InquiryCardProps } from "@/types/inquiryTypes";
 
 const InquiryCard = ({
   inquiry,
+  teamId,
   userRole = "default",
   currentUserId,
   handleStartAnswer,
@@ -84,7 +85,8 @@ const InquiryCard = ({
             isCurrentUserConfirmed={isCurrentUserConfirmed}
             showEditor={showEditor}
             hasMyComment={!!myComment}
-            InquiryId={inquiry.inquiry_id}
+            inquiryId={inquiry.inquiry_id}
+            teamId={teamId}
           />
         ) : (
           <div className="w-full flex justify-between items-center">

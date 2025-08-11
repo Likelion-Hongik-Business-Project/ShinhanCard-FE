@@ -1,3 +1,5 @@
+import { useParams } from "react-router-dom";
+
 import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
 import Modal from "@/components/common/Modal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
@@ -8,6 +10,10 @@ import type { UserRole } from "@/types/inquiryTypes";
 import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
+  const { team_id } = useParams<{
+    team_id: string;
+  }>();
+
   // 새로 만든 훅을 호출하여 모든 로직과 상태를 가져옴
   const {
     isLoading,
@@ -125,6 +131,7 @@ const InquiryDetailPage = () => {
           />
           <InquiryCard
             inquiry={inquiryData}
+            teamId={Number(team_id)}
             userRole={userRole}
             currentUserId={currentUserId}
             handleStartAnswer={handleStartAnswer}
