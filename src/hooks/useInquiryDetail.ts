@@ -42,8 +42,11 @@ export const useInquiryDetail = () => {
     deleteAnswerMutation,
   } = useAnswerApi(Number(team_id));
   const { deleteInquiryMutation } = useInquiryApi();
-  const { postInquiryNotifyMutation, putInquiryAssigneeMutation } =
-    useInquiryManagementApi();
+  const {
+    postInquiryNotifyMutation,
+    putInquiryAssigneeMutation,
+    putInquiryNotificationMutation,
+  } = useInquiryManagementApi();
   const {
     data: lastSentTimeResponse,
     isError: isMailTimeError,
@@ -340,24 +343,23 @@ export const useInquiryDetail = () => {
 
   const handleSelectTab = (userId: number) => {
     setSelectedUserId(userId);
+
     if (userId === currentUserId) {
       // 내 탭을 클릭한 경우
-      if (myComment) {
-        // 내 답변이 있는 경우 - 에디터 숨김
-        setShowEditor(false);
-        setIsWritingAnswer(false);
-      } else if (isWritingAnswer) {
-        // 내 답변이 없고 답변 작성 중인 경우 - 에디터 표시
+      if (isWritingAnswer || editingComment) {
+        // 답변 작성 중이거나 수정 중인 경우 - 에디터 표시
         setShowEditor(true);
-      } else {
-        // 내 답변이 없고 답변 작성 중이 아닌 경우 - 에디터 숨김
+      } else if (myComment) {
+        // 답변 작성/수정 중이 아니고 내 답변이 있는 경우 - 답변 내용 표시
         setShowEditor(false);
-        setIsWritingAnswer(false);
+      } else {
+        // 답변 작성/수정 중이 아니고 내 답변이 없는 경우 - 답변 내용 표시
+        setShowEditor(false);
       }
     } else {
       // 다른 사람의 탭을 클릭한 경우 - 에디터 숨김
       setShowEditor(false);
-      // isWritingAnswer는 유지 (다시 내 탭으로 돌아올 때를 위해)
+      // isWritingAnswer와 editingComment는 유지 (다시 내 탭으로 돌아올 때를 위해)
     }
   };
 
@@ -373,6 +375,23 @@ export const useInquiryDetail = () => {
   const handleConfirm = () => modals.openConfirmInquiryModal();
   const handleDeleteInquiry = () => modals.openDeletePostModal();
   const handleNotify = () => modals.openSendNotificationModal();
+
+  // 개인 알림 설정 토글 함수
+  const onToggleNotification = async () => {
+    if (!inquiryData) return;
+
+    try {
+      const newNotificationState = !inquiryData.is_notification_enabled;
+
+      await putInquiryNotificationMutation.mutateAsync({
+        team_id: Number(team_id),
+        inquiry_id: Number(inquiry_id),
+        is_notification_enabled: newNotificationState,
+      });
+    } catch (error) {
+      console.error("알림 설정 변경 실패:", error);
+    }
+  };
 
   return {
     isLoading,
@@ -410,5 +429,6 @@ export const useInquiryDetail = () => {
     selectedFileIds,
     setSelectedFileIds,
     isEditMode: !!editingComment,
+    onToggleNotification,
   };
 };

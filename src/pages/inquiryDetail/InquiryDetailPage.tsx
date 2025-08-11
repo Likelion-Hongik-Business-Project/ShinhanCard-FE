@@ -43,6 +43,7 @@ const InquiryDetailPage = () => {
     selectedFileIds,
     setSelectedFileIds,
     isEditMode,
+    onToggleNotification,
   } = useInquiryDetail();
 
   // 조건부 렌더링
@@ -146,6 +147,7 @@ const InquiryDetailPage = () => {
             remainingTime={remainingTime}
             showEditor={showEditor}
             myComment={myComment}
+            onToggleNotification={onToggleNotification}
           />
         </div>
         <AnswerSection

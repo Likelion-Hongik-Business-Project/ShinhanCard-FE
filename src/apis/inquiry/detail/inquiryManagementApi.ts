@@ -45,3 +45,17 @@ export const getLastSentMailTime = async (
   >(`/api/inquiries/${inquiry_id}/mails/last-sent-time`);
   return response.data;
 };
+
+// PUT /api/teams/{team_id}/inquiries/{inquiry_id}/notification
+// 개인 알림 설정 변경
+export const putInquiryNotificationSetting = async (
+  team_id: number,
+  inquiry_id: number,
+  data: { is_notification_enabled: boolean }
+): ApiResponse<NoResponse> => {
+  const response = await instance.put<GlobalResponse<NoResponse>>(
+    `/api/teams/${team_id}/inquiries/${inquiry_id}/notification`,
+    data
+  );
+  return response.data;
+};
