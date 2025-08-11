@@ -41,16 +41,22 @@ export const useInquiryModals = ({
   };
 
   const openSubmitAnswerModal = (isEditing: boolean) => {
+    if (isEditing) {
+      // 수정이면 모달 없이 바로 제출
+      callbacks.onSubmitAnswer();
+      return;
+    }
+
+    // 신규 등록일 때만 모달
     setModalProps({
-      title: isEditing ? "답변을 수정할까요?" : "답변을 등록할까요?",
-      description: isEditing
-        ? undefined
-        : "답변 등록 시 해당 문의는 자동으로 확인 처리되며,\n마지막 답변은 삭제되지 않습니다.",
+      title: "답변을 등록할까요?",
+      description:
+        "답변 등록 시 해당 문의는 자동으로 확인 처리되며,\n마지막 답변은 삭제되지 않습니다.",
       buttons: [
         { type: "white", label: "취소", onClick: closeModal },
         {
           type: "blue",
-          label: isEditing ? "수정하기" : "답변 등록",
+          label: "답변 등록",
           onClick: () => {
             callbacks.onSubmitAnswer();
             closeModal();
