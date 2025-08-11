@@ -51,7 +51,7 @@ export const formatDateParams = (
 
 export const formatDateToKorean = (
   dateString: string | Date,
-  options: FormatDateOptions
+  options: FormatDateOptions = {}
 ): string => {
   if (!dateString) return "";
 
