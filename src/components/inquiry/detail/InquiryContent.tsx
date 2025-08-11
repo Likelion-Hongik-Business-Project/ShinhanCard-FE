@@ -57,6 +57,7 @@ const InquiryContent = ({
           >
             {files.map(f => (
               <FileDownloadBox
+                key={f.file_id}
                 file={{
                   id: f.file_id,
                   name: f.file_name,
