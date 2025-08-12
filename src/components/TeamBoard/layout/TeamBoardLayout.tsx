@@ -69,7 +69,14 @@ const TeamBoardLayout = ({
 
   // 문의 작성 함수
   const handleWrite = () => {
-    navigate("/inquiry/form");
+    navigate("/inquiry/form", {
+      state: {
+        groupName: selected_team.group_name,
+        divisionName: selected_team.division_name,
+        teamName: selected_team.team_name,
+        teamId: selected_team.team_id,
+      },
+    });
   };
 
   return (

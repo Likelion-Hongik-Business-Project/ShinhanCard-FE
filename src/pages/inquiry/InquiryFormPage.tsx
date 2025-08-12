@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import clsx from "clsx";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -18,6 +18,24 @@ import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
 import { InquiryFile } from "@/types/file/file.type";
 import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
 
+type FormLocationState = {
+  teamId?: number;
+  inquiryId?: number;
+  toUserId?: number;
+  groupName?: string;
+  divisionName?: string;
+  teamName?: string;
+  group_name?: string;
+  division_name?: string;
+  team_name?: string;
+};
+
+const firstDefined = <T,>(...vals: Array<T | undefined>) =>
+  vals.find(v => v !== undefined);
+
+const norm = (s?: string) =>
+  (s ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -26,9 +44,7 @@ const InquiryFormPage = () => {
   >(null);
 
   const [searchParams] = useSearchParams();
-  const location = useLocation() as {
-    state?: { teamId?: number; inquiryId?: number; toUserId?: number };
-  };
+  const location = useLocation() as { state?: FormLocationState };
 
   const mode = searchParams.get("mode");
   const isEdit = mode === "edit";
@@ -47,6 +63,19 @@ const InquiryFormPage = () => {
     inquiryIdFromState ??
     (Number.isFinite(inquiryIdFromQS) ? inquiryIdFromQS : undefined);
 
+  const groupNameFromState = firstDefined(
+    location.state?.groupName,
+    location.state?.group_name
+  );
+  const divisionNameFromState = firstDefined(
+    location.state?.divisionName,
+    location.state?.division_name
+  );
+  const teamNameFromState = firstDefined(
+    location.state?.teamName,
+    location.state?.team_name
+  );
+
   const toUserId = location.state?.toUserId; // 전달받은 담당자 ID
 
   const {
@@ -63,7 +92,7 @@ const InquiryFormPage = () => {
     files,
     setFiles,
   } = useInquiryFormState();
-
+  const didInit = useRef(false);
   const {
     groupId,
     divisionId,
@@ -77,14 +106,95 @@ const InquiryFormPage = () => {
     setFromIds,
   } = useOrganizationSelector();
 
+  // 담당자 프리셋
   useEffect(() => {
     if (isEdit) return;
-    if (!toUserId && toUserId !== 0) return;
+    if (toUserId == null) return;
     const id = Number(toUserId);
     if (!Number.isFinite(id) || id <= 0) return;
-
     setAssigneeIds(prev => (prev.includes(id) ? prev : [...prev, id]));
   }, [toUserId, isEdit, setAssigneeIds]);
+
+  // 초기 teamId (state 우선, 없으면 쿼리)
+  const initialTeamId = useMemo(() => {
+    return (
+      teamIdFromState ??
+      (Number.isFinite(teamIdFromQS) ? teamIdFromQS : undefined)
+    );
+  }, [teamIdFromState, teamIdFromQS]);
+
+  useEffect(() => {
+    if (isEdit) return;
+    if (didInit.current) return;
+
+    // group 선택
+    if (!groupId && groupNameFromState && groupOptions?.length) {
+      const g = groupOptions.find(
+        o => norm(o.label) === norm(groupNameFromState)
+      );
+      if (g) {
+        handleGroupChange(g.value);
+        return;
+      } // 다음 렌더에서 divisionOptions 채워짐
+    }
+
+    // division 선택 (group 선택된 뒤에만 시도)
+    if (
+      groupId &&
+      !divisionId &&
+      divisionNameFromState &&
+      divisionOptions?.length
+    ) {
+      const d = divisionOptions.find(
+        o => norm(o.label) === norm(divisionNameFromState)
+      );
+      if (d) {
+        handleDivisionChange(d.value);
+        return;
+      } // 다음 렌더에서 teamOptions 채워짐
+    }
+
+    // team 선택 (division 선택된 뒤에만 시도)
+    if (divisionId && !teamId && teamOptions?.length) {
+      // 팀 이름 우선
+      if (teamNameFromState) {
+        const tByName = teamOptions.find(
+          o => norm(o.label) === norm(teamNameFromState)
+        );
+        if (tByName) {
+          handleTeamChange(tByName.value);
+          didInit.current = true;
+          return;
+        }
+      }
+      // 이름 없으면 teamId fallback
+      if (initialTeamId && teamOptions.some(o => o.value === initialTeamId)) {
+        handleTeamChange(initialTeamId);
+        didInit.current = true;
+        return;
+      }
+    }
+
+    // 세 값이 이미 모두 잡혀 있으면 초기화 끝
+    if (groupId && divisionId && teamId) {
+      didInit.current = true;
+    }
+  }, [
+    isEdit,
+    groupId,
+    divisionId,
+    teamId,
+    groupOptions,
+    divisionOptions,
+    teamOptions,
+    groupNameFromState,
+    divisionNameFromState,
+    teamNameFromState,
+    initialTeamId,
+    handleGroupChange,
+    handleDivisionChange,
+    handleTeamChange,
+  ]);
 
   // 필드 유효성 검사
   const validateFields = (): typeof missingField => {
@@ -99,10 +209,10 @@ const InquiryFormPage = () => {
     isDraftSaved,
     isDraftModalOpen,
     setIsDraftModalOpen,
-    handleClickTempSave, // 임시저장 버튼에 연결
-    restoreDraft, // 모달 불러오기
-    resetDraft, // 모달 새로 작성
-    deleteDraftBeforeSubmit, // 최종 등록 전에 임시저장 삭제
+    handleClickTempSave,
+    restoreDraft,
+    resetDraft,
+    deleteDraftBeforeSubmit,
     clearDraftState,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
@@ -140,13 +250,13 @@ const InquiryFormPage = () => {
   const getUserId = (u?: { user_id?: number; userId?: number } | null) =>
     (u?.user_id ?? u?.userId ?? 0) as number;
 
+  // 편집 모드: 상세 불러와서 상태 주입
   useEffect(() => {
     if (!isEdit || !editDetail) return;
 
     setTitle(editDetail.title ?? "");
     setContent(editDetail.content ?? "");
 
-    // ID 정규화 + 0 제거 + 중복 제거
     const assignees = (editDetail.assignees ?? [])
       .map(getUserId)
       .filter(id => id > 0);
@@ -159,7 +269,6 @@ const InquiryFormPage = () => {
 
     const detailFiles = (editDetail.files as InquiryFile[] | undefined) ?? [];
     setFileIds(detailFiles.map(f => f.file_id));
-
     setFiles(
       detailFiles.map(f => ({
         id: f.file_id,
@@ -185,7 +294,20 @@ const InquiryFormPage = () => {
     }
 
     clearDraftState();
-  }, [isEdit, editDetail]);
+  }, [
+    isEdit,
+    editDetail,
+    editTeamId,
+    setTitle,
+    setContent,
+    setAssigneeIds,
+    setReferenceIds,
+    setFileIds,
+    setFiles,
+    setFromIds,
+    handleTeamChange,
+    clearDraftState,
+  ]);
 
   const handleSubmit = () => {
     const missing = validateFields();
@@ -210,7 +332,6 @@ const InquiryFormPage = () => {
     };
 
     if (isEdit && editTeamId && editInquiryId) {
-      // 수정은 그대로 PUT
       putInquiryMutation.mutate(
         { team_id: editTeamId, inquiry_id: editInquiryId, data: payload },
         {
@@ -223,7 +344,6 @@ const InquiryFormPage = () => {
       return;
     }
 
-    // 신규 등록: draft 먼저 삭제 → 그 다음 post
     if (!teamId) return;
 
     deleteDraftBeforeSubmit(() => {
@@ -239,7 +359,6 @@ const InquiryFormPage = () => {
     });
   };
 
-  // 로딩 처리 (편집 모드일 때 상세 로딩 포함)
   const pageLoading = isLoadingEdit;
 
   return (
