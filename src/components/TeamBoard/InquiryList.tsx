@@ -5,6 +5,7 @@ import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface Props {
   //부모로부터 받는 팀 정보 props를 옵셔널로 변경
+  team_id?: number;
   group_name?: string;
   division_name?: string;
   team_name?: string;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const InquiryList = ({
+  team_id,
   group_name,
   division_name,
   team_name,
@@ -31,6 +33,7 @@ const InquiryList = ({
         <InquiryItem
           key={inq.inquiry_id}
           // 2. 각 inquiry 객체의 팀 정보를 우선 사용하고, 없으면 부모 prop 사용
+          teamId={inq.team_id || team_id || 0}
           group_name={inq.group_name || group_name || ""}
           division_name={inq.division_name || division_name || ""}
           team_name={inq.team_name || team_name || ""}
