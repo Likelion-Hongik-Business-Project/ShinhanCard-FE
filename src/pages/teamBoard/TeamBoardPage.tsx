@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useParams } from "react-router-dom";
 
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import TeamBoardLayout from "@/components/TeamBoard/layout/TeamBoardLayout";
 import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import { useTeamInquires } from "@/hooks/teamInquires/useTeamInquiresApi";
@@ -44,7 +45,7 @@ const TeamBoardPage = () => {
   });
 
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return <LoadingSpinner fullscreen={true} />;
   }
 
   if (error || !data) {

@@ -10,6 +10,7 @@ interface Props {
   isConfirmOpen: boolean;
   onCloseConfirm: () => void;
   onConfirmSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
 const InquiryFormModal = ({
@@ -22,13 +23,14 @@ const InquiryFormModal = ({
   isConfirmOpen,
   onCloseConfirm,
   onConfirmSubmit,
+  isSubmitting,
 }: Props) => {
   return (
     <>
       {/* 임시저장 감지 모달 */}
       <Modal
         isOpen={isDraftOpen}
-        onClose={onCloseDraft}
+        onClose={isSubmitting ? () => {} : onCloseDraft}
         title={"임시저장된 글이 있습니다.\n불러오시겠습니까?"}
         description="새로 작성하면 기존 임시저장된 글은 사라집니다."
         buttons={[
@@ -79,12 +81,12 @@ const InquiryFormModal = ({
           {
             label: "취소",
             type: "white",
-            onClick: onCloseConfirm,
+            onClick: isSubmitting ? () => {} : onCloseConfirm,
           },
           {
-            label: "문의 등록하기",
+            label: isSubmitting ? "등록 중…" : "문의 등록하기",
             type: "blue",
-            onClick: onConfirmSubmit,
+            onClick: isSubmitting ? () => {} : onConfirmSubmit,
           },
         ]}
       />

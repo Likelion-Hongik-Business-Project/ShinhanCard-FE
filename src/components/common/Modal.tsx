@@ -29,7 +29,15 @@ const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
   if (!isOpen) return null;
 
   const isSingle = buttons.length === 1;
-  const modalHeight = isSingle ? "h-[240px]" : "h-[298px]";
+  const hasDescription = !!description && description.trim().length > 0;
+
+  const modalHeight = isSingle
+    ? hasDescription
+      ? "h-[240px]"
+      : "h-[200px]"
+    : hasDescription
+      ? "h-[298px]"
+      : "h-[240px]";
 
   return ReactDOM.createPortal(
     <>

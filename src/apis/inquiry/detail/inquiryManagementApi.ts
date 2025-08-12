@@ -6,19 +6,34 @@ import {
 import {
   GetLastSentMailTimeResponse,
   PutInquiryAssigneeRequest,
+  PutInquiryObserverRequest,
 } from "@/types/inquiry/inquiryManagementApi.type";
 
 import instance from "@/apis/instance";
 
-// PUT /api/teams/{team_id}/inquiries/{inquiry_id}/change-assignee
+// PATCH /api/teams/{team_id}/inquiries/{inquiry_id}/change-assignee
 // 문의 담당자 변경
 export const putInquiryAssignee = async (
   team_id: number,
   inquiry_id: number,
   data: PutInquiryAssigneeRequest
 ): ApiResponse<NoResponse> => {
-  const response = await instance.put<GlobalResponse<NoResponse>>(
+  const response = await instance.patch<GlobalResponse<NoResponse>>( // PUT → PATCH
     `/api/teams/${team_id}/inquiries/${inquiry_id}/change-assignee`,
+    data
+  );
+  return response.data;
+};
+
+// PATCH /api/teams/{team_id}/inquiries/{inquiry_id}/change-observer
+// 문의 참조자 변경
+export const putInquiryObserver = async (
+  team_id: number,
+  inquiry_id: number,
+  data: PutInquiryObserverRequest
+): ApiResponse<NoResponse> => {
+  const response = await instance.patch<GlobalResponse<NoResponse>>(
+    `/api/teams/${team_id}/inquiries/${inquiry_id}/change-observer`,
     data
   );
   return response.data;

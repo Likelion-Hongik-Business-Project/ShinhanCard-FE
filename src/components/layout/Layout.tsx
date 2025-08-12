@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 import ProfileModal from "@/components/common/ProfileModal";
 import AddMemberSidebar from "@/components/home/AddMemberSidebar";
@@ -19,6 +19,17 @@ const Layout = () => {
   const inboxSmallRef = useRef<HTMLLIElement>(null);
   const [isGroupSelectorOpen, setIsGroupSelectorOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+  const location = useLocation();
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  // 라우트 변경 시 스크롤 맨 위로
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo({ top: 0, behavior: "auto" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, [location.pathname]);
 
   // 프로필 모달 상태
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -96,6 +107,7 @@ const Layout = () => {
           />
         )}
         <main
+          ref={mainRef}
           className={clsx(
             "bg-gray-10 flex flex-1 justify-start overflow-auto pt-16 transition-all duration-300",
             isSidebarOpen

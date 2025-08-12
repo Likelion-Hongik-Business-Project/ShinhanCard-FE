@@ -119,6 +119,13 @@ export interface AssigneeSectionProps {
     profile_image_url?: string;
   }>;
   isPendingState: boolean;
+  isEditingAssignees?: boolean;
+  allUsers?: import("@/types/team/user.type").AssigneeUser[];
+  onAssigneeChange?: (newAssigneeIds: number[]) => void;
+  onObserverChange?: (newObserverIds: number[]) => void;
+  tempAssigneeIds?: number[];
+  tempObserverIds?: number[];
+  currentUserId?: number;
 }
 
 // AssigneeActionsProps 타입
@@ -131,6 +138,9 @@ export interface AssigneeActionsProps {
   hasMyComment: boolean;
   inquiryId: number;
   teamId: number;
+  isEditingAssignees?: boolean;
+  onStartEditAssignees?: () => void;
+  onCompleteEditAssignees?: () => void;
 }
 
 // 통합된 문의 타입
@@ -175,6 +185,7 @@ export interface InquiryData {
     active: boolean;
   };
   role: string;
+  team_role: string;
   can_edit: boolean;
   can_answer: boolean;
   can_notify: boolean;

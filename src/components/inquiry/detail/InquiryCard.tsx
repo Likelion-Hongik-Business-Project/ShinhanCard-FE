@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import AssigneeActions from "@/components/inquiry/detail/AssigneeActions";
 import AssigneeSection from "@/components/inquiry/detail/AssigneeSection";
@@ -6,8 +6,15 @@ import InquiryContent from "@/components/inquiry/detail/InquiryContent";
 import InquiryHeader from "@/components/inquiry/detail/InquiryHeader";
 import NotificationButton from "@/components/inquiry/detail/NotificationButton";
 import PendingActions from "@/components/inquiry/detail/PendingActions";
+import { useTeamApi } from "@/hooks/team/useTeamApi";
 import { useInquiryState } from "@/hooks/useInquiryState";
 import { InquiryCardProps } from "@/types/inquiryTypes";
+import { AssigneeUser } from "@/types/team/user.type";
+
+import {
+  putInquiryAssignee,
+  putInquiryObserver,
+} from "@/apis/inquiry/detail/inquiryManagementApi";
 
 const InquiryCard = ({
   inquiry,
@@ -24,6 +31,14 @@ const InquiryCard = ({
   showEditor,
   myComment,
 }: InquiryCardProps) => {
+  const [isEditingAssignees, setIsEditingAssignees] = useState(false);
+  const [tempAssigneeIds, setTempAssigneeIds] = useState<number[]>([]);
+  const [tempObserverIds, setTempObserverIds] = useState<number[]>([]);
+
+  const { useUsersQuery } = useTeamApi();
+  const { data: usersData } = useUsersQuery();
+  const allUsers: AssigneeUser[] = usersData?.result ?? [];
+
   const {
     permissions,
     isWriter,
@@ -49,6 +64,63 @@ const InquiryCard = ({
   const showButtons =
     permissions.showAssigneeFeatures ||
     (isWriter && !["답변 완료", "등록 보류"].includes(finalStateLabel));
+
+  // 담당자 수정 모드 시작 (모달에서 수정하기 클릭 시)
+  const handleStartEditAssignees = () => {
+    // 현재 값들로 임시 상태 초기화
+    setTempAssigneeIds(inquiry.assignees.map(a => a.user_id));
+    setTempObserverIds(inquiry.observers.map(o => o.userId));
+    setIsEditingAssignees(true);
+  };
+
+  // 담당자/참조자 수정 완료 처리
+  const handleCompleteEditAssignees = async () => {
+    try {
+      const originalAssigneeIds = inquiry.assignees.map(a => a.user_id);
+      const originalObserverIds = inquiry.observers.map(o => o.userId);
+
+      // 변경된 것만 API 호출
+      const promises = [];
+
+      // 담당자가 변경된 경우
+      if (
+        JSON.stringify(originalAssigneeIds.sort()) !==
+        JSON.stringify(tempAssigneeIds.sort())
+      ) {
+        promises.push(
+          putInquiryAssignee(teamId, inquiry.inquiry_id, {
+            newAssignee_ids: tempAssigneeIds,
+          })
+        );
+      }
+
+      // 참조자가 변경된 경우
+      if (
+        JSON.stringify(originalObserverIds.sort()) !==
+        JSON.stringify(tempObserverIds.sort())
+      ) {
+        promises.push(
+          putInquiryObserver(teamId, inquiry.inquiry_id, {
+            newObserver_ids: tempObserverIds,
+          })
+        );
+      }
+
+      if (promises.length > 0) {
+        await Promise.all(promises);
+      }
+
+      // 성공 시 편집 모드 종료
+      setIsEditingAssignees(false);
+      setTempAssigneeIds([]);
+      setTempObserverIds([]);
+
+      // 페이지 새로고침
+      window.location.reload();
+    } catch (error) {
+      console.error("담당자/참조자 수정 실패:", error);
+    }
+  };
 
   return (
     <div className="relative self-stretch p-[64px] bg-white rounded-[15px] flex flex-col justify-start items-start gap-[32px]">
@@ -76,6 +148,13 @@ const InquiryCard = ({
         assignees={sortedAssignees}
         observers={inquiry.observers}
         isPendingState={finalStateLabel === "등록 보류"}
+        isEditingAssignees={isEditingAssignees}
+        allUsers={allUsers}
+        onAssigneeChange={setTempAssigneeIds}
+        onObserverChange={setTempObserverIds}
+        tempAssigneeIds={tempAssigneeIds}
+        tempObserverIds={tempObserverIds}
+        currentUserId={currentUserId}
       />
       {showButtons &&
         (permissions.showAssigneeFeatures ? (
@@ -88,6 +167,9 @@ const InquiryCard = ({
             hasMyComment={!!myComment}
             inquiryId={inquiry.inquiry_id}
             teamId={teamId}
+            isEditingAssignees={isEditingAssignees}
+            onStartEditAssignees={handleStartEditAssignees}
+            onCompleteEditAssignees={handleCompleteEditAssignees}
           />
         ) : (
           <div className="w-full flex justify-between items-center">
