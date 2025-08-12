@@ -6,6 +6,8 @@ import FollowupCommentForm from "@/components/Followup/FollowupCommentForm";
 import FollowUpForm from "@/components/Followup/FollowupForm";
 import { Assignee, FollowUp } from "@/types/inquiryTypes";
 
+import { useProfileStore } from "@/store/useProfileStore";
+
 type Props = {
   inquiryId: number;
   assignees: Assignee[];
@@ -19,6 +21,8 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
   } | null>(null);
   const [editFollowUpId, setEditFollowUpId] = useState<number | null>(null);
   const [editCommentId, setEditCommentId] = useState<number | null>(null);
+
+  const currentUserId = useProfileStore(state => state.profile?.id);
 
   const handleAnswerOpen = (kind: "followup" | "comment", id: number) => {
     setReplyTarget(prev =>
@@ -69,7 +73,7 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
               author={fu.author}
               created_at={fu.created_at}
               content={fu.content}
-              canEdit={true} // 수정 여부 fu.author.user_id === 로그인한 사용자 ID
+              canEdit={fu.author.user_id === currentUserId} // 로그인 사용자만 수정 가능
               onAnswer={() => handleAnswerOpen("followup", fu.follow_up_id)}
               onEdit={() => handleEditFollowUp(fu.follow_up_id)}
             />
@@ -108,7 +112,7 @@ const FollowupThread = ({ inquiryId, assignees, follow_ups }: Props) => {
                         author={c.author}
                         created_at={c.created_at}
                         content={c.content}
-                        canEdit={true} // 수정 여부 c.author.user_id === 로그인한 사용자 ID
+                        canEdit={c.author.user_id === currentUserId} // 로그인 사용자만 수정 가능
                         onAnswer={() =>
                           handleAnswerOpen("comment", c.comment_id)
                         }
