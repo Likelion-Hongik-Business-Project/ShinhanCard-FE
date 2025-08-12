@@ -5,6 +5,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 
 import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import InquiryFormModal from "@/components/inquiry/form/InquiryFormModal";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
@@ -349,6 +350,10 @@ const InquiryFormPage = () => {
   ]);
 
   const pageLoading = isLoadingEdit;
+
+  if (pageLoading) {
+    return <LoadingSpinner fullscreen={true} />;
+  }
 
   return (
     <section

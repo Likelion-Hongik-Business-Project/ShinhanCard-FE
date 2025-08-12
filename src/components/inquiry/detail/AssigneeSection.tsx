@@ -8,6 +8,7 @@ import CheckGreen from "@/assets/svgs/inquiry/detail/check-green.svg";
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import UserCheck from "@/assets/svgs/inquiry/detail/user-check.svg";
 import Modal from "@/components/common/Modal";
+import ProfileModal from "@/components/common/ProfileModal";
 import DepartmentSelector from "@/components/inquiry/form/DepartmentSelector";
 import UserSearchList from "@/components/inquiry/form/UserSearchList";
 import { useDebounce } from "@/hooks/common/useDebounce";
@@ -59,12 +60,49 @@ const AssigneeSection = ({
     isSelf: false,
     type: "assignee",
   });
+
+  // 프로필 모달 상태
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileModalOffset, setProfileModalOffset] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<HTMLDivElement>(null);
 
   // 각각 독립적인 디바운스 처리
   const debouncedAssigneeInput = useDebounce(assigneeInputValue, 300);
   const debouncedObserverInput = useDebounce(observerInputValue, 300);
+
+  // 프로필 호버 핸들러
+  const handleProfileHover = (
+    event: React.MouseEvent<HTMLDivElement>,
+    userId: number
+  ) => {
+    const target = event.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const modalHeight = 242; // ProfileModal의 대략적인 높이
+
+    let top = rect.bottom + 8;
+
+    // 모달이 화면 아래로 넘어가면 위로 붙이기
+    if (top + modalHeight > window.innerHeight) {
+      top = rect.top - modalHeight - 8;
+    }
+
+    setProfileModalOffset({
+      left: rect.left,
+      top: Math.max(top, 0),
+    });
+    setHoveredUserId(userId);
+    setIsProfileModalOpen(true);
+  };
+
+  const handleProfileLeave = () => {
+    // ProfileModal 내부에서 호버 상태를 관리하므로 즉시 닫지 않음
+  };
 
   // 외부 클릭 시 드롭다운 닫기
   useOutsideClick(containerRef, () => {
@@ -311,7 +349,11 @@ const AssigneeSection = ({
                     key={user.user_id}
                     className="flex items-center gap-1.5 bg-gray-10 rounded"
                   >
-                    <div className="flex gap-2 items-center">
+                    <div
+                      className="flex gap-2 items-center cursor-pointer"
+                      onMouseEnter={e => handleProfileHover(e, user.user_id)}
+                      onMouseLeave={handleProfileLeave}
+                    >
                       {user.profile_url ? (
                         <img
                           src={user.profile_url}
@@ -366,7 +408,13 @@ const AssigneeSection = ({
                         key={originalAssignee.user_id}
                         className="flex justify-start items-center gap-[4px]"
                       >
-                        <div className="flex justify-start items-center gap-[8px]">
+                        <div
+                          className="flex justify-start items-center gap-[8px] cursor-pointer"
+                          onMouseEnter={e =>
+                            handleProfileHover(e, originalAssignee.user_id)
+                          }
+                          onMouseLeave={handleProfileLeave}
+                        >
                           {originalAssignee.profile_image_url ? (
                             <img
                               src={originalAssignee.profile_image_url}
@@ -433,7 +481,11 @@ const AssigneeSection = ({
                     key={user.user_id}
                     className="flex items-center gap-1.5 bg-gray-10 rounded"
                   >
-                    <div className="flex gap-2 items-center">
+                    <div
+                      className="flex gap-2 items-center cursor-pointer"
+                      onMouseEnter={e => handleProfileHover(e, user.user_id)}
+                      onMouseLeave={handleProfileLeave}
+                    >
                       {user.profile_url ? (
                         <img
                           src={user.profile_url}
@@ -480,7 +532,13 @@ const AssigneeSection = ({
                           key={user.user_id}
                           className="flex justify-start items-center gap-[6px]"
                         >
-                          <div className="flex justify-start items-center gap-[8px]">
+                          <div
+                            className="flex justify-start items-center gap-[8px] cursor-pointer"
+                            onMouseEnter={e =>
+                              handleProfileHover(e, user.user_id)
+                            }
+                            onMouseLeave={handleProfileLeave}
+                          >
                             {user.profile_url ? (
                               <img
                                 src={user.profile_url}
@@ -509,7 +567,13 @@ const AssigneeSection = ({
                           key={originalObserver.userId}
                           className="flex justify-start items-center gap-[6px]"
                         >
-                          <div className="flex justify-start items-center gap-[8px]">
+                          <div
+                            className="flex justify-start items-center gap-[8px] cursor-pointer"
+                            onMouseEnter={e =>
+                              handleProfileHover(e, originalObserver.userId)
+                            }
+                            onMouseLeave={handleProfileLeave}
+                          >
                             {originalObserver.profileImageUrl ? (
                               <img
                                 src={originalObserver.profileImageUrl}
@@ -598,6 +662,27 @@ const AssigneeSection = ({
             },
           ]}
         />
+      )}
+
+      {/* 프로필 모달 */}
+      {isProfileModalOpen && profileModalOffset && hoveredUserId && (
+        <div
+          className="fixed z-2000 transition-all duration-200 ease-in-out"
+          style={{
+            left: profileModalOffset.left,
+            top: profileModalOffset.top,
+          }}
+        >
+          <ProfileModal
+            id={hoveredUserId}
+            isOpen={true}
+            onClose={() => {
+              setIsProfileModalOpen(false);
+              setProfileModalOffset(null);
+              setHoveredUserId(null);
+            }}
+          />
+        </div>
       )}
     </div>
   );

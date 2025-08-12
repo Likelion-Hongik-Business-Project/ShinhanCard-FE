@@ -18,7 +18,7 @@ export interface RecommendSearchProps {
   isOpen: boolean;
   onClose: () => void;
   query: string;
-  onCardClick?: (inquiry_id: number, title: string) => void;
+  onCardClick?: (inquiry_id: number, team_id: number, title: string) => void;
 }
 
 // RecommendCard 컴포넌트 Props
@@ -43,6 +43,7 @@ export interface KeywordProps {
 // 검색 결과 문의 아이템 타입
 export interface SearchResultInquiry {
   inquiry_id: number;
+  team_id: number;
   title: string;
   content_preview: string;
   inquiry_state: InquiryServerStatus;
@@ -70,11 +71,14 @@ export interface SearchRequest {
   query: string;
   page: number;
   pageSize: number;
+  status?: InquiryServerStatus;
+  date?: string[];
 }
 
 // 추천 검색 결과 아이템 타입
 export interface RecommendSearchInquiry {
   inquiry_id: number;
+  team_id: number;
   title: string;
   group_name: string;
   division_name: string;

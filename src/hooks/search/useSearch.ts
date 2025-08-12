@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import {
+  InquiryServerStatus,
+  YearMonth,
+} from "@/types/inquiry/inquiryListApi.type";
 import { SearchRequest } from "@/types/search/search";
 
 import {
@@ -14,7 +18,8 @@ export const useRecentSearchKeywords = () => {
   return useQuery({
     queryKey: ["recentSearchKeywords"],
     queryFn: getRecentSearchKeywords,
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0, // 캐싱 비활성화 - SearchBar focus 시마다 항상 새로운 API 요청
+    refetchOnWindowFocus: true, // SearchBar focus 시 최근 검색어 새로 가져오기
   });
 };
 
@@ -51,15 +56,29 @@ export const useRecommendSearchKeywords = (query: string) => {
 export const useSearchResults = (
   query: string,
   page: number = 1,
-  pageSize: number = 6
+  pageSize: number = 6,
+  status?: InquiryServerStatus,
+  date?: YearMonth[]
 ) => {
   return useQuery({
-    queryKey: ["inquiries", "searchResults", query, page, pageSize],
+    queryKey: [
+      "inquiries",
+      "searchResults",
+      query,
+      page,
+      pageSize,
+      status,
+      date,
+    ],
     queryFn: async () => {
       const request: SearchRequest = {
         query,
         page,
         pageSize,
+        status,
+        date: date?.map(
+          d => `${d.year}-${d.month.toString().padStart(2, "0")}`
+        ),
       };
       return getSearchResults(request);
     },

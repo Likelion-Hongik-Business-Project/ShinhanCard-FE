@@ -39,8 +39,23 @@ export const getRecommendSearchKeywords = async (
 export const getSearchResults = async (
   request: SearchRequest
 ): ApiResponse<SearchResultData> => {
+  const params = new URLSearchParams();
+  params.append("query", request.query);
+  params.append("page", request.page.toString());
+  params.append("pageSize", request.pageSize.toString());
+
+  if (request.status) {
+    params.append("status", request.status);
+  }
+
+  if (request.date && request.date.length > 0) {
+    request.date.forEach(date => {
+      params.append("date", date);
+    });
+  }
+
   const response = await instance.get(
-    `/api/search/inquiries/results?query=${encodeURIComponent(request.query)}&page=${request.page}&pageSize=${request.pageSize}`
+    `/api/search/inquiries/results?${params.toString()}`
   );
   return response.data;
 };

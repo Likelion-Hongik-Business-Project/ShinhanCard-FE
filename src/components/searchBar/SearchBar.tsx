@@ -20,7 +20,7 @@ const SearchBar = ({ onSearchActiveChange }: Props) => {
     // 검색 결과 페이지가 아닌 다른 페이지로 이동했을 때 검색창 초기화
     if (
       !location.pathname.includes("/result") &&
-      !location.pathname.includes("/inquiries/")
+      !location.pathname.includes("/teams/")
     ) {
       setSearchInput("");
       setIsSearchActive(false);
@@ -52,14 +52,18 @@ const SearchBar = ({ onSearchActiveChange }: Props) => {
     setIsSearchActive(false);
   };
 
-  const handleRecommendCardClick = (inquiry_id: number, title: string) => {
-    console.log("추천 카드 클릭:", inquiry_id, title);
+  const handleRecommendCardClick = (
+    inquiry_id: number,
+    team_id: number,
+    title: string
+  ) => {
+    console.log("추천 카드 클릭:", inquiry_id, team_id, title);
 
     // 검색창에 제목 입력
     setSearchInput(title);
 
     // 문의글 상세 페이지로 이동
-    navigate(`/inquiries/${inquiry_id}`);
+    navigate(`/teams/${team_id}/inquiries/${inquiry_id}`);
 
     // 검색 모달 닫기
     setIsSearchActive(false);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useRecommendSearchKeywords } from "@/hooks/search/useSearch";
 import { RecommendSearchProps } from "@/types/search/search";
 
@@ -40,11 +41,15 @@ const RecommendSearch = ({
     };
   }, [isOpen, query]);
 
-  const handleCardClick = (inquiry_id: number, title: string) => {
+  const handleCardClick = (
+    inquiry_id: number,
+    team_id: number,
+    title: string
+  ) => {
     setSelectedCardId(inquiry_id);
 
     setTimeout(() => {
-      onCardClick?.(inquiry_id, title);
+      onCardClick?.(inquiry_id, team_id, title);
     }, 100);
   };
 
@@ -71,10 +76,7 @@ const RecommendSearch = ({
 
           {isLoading && (
             <div className="flex justify-center py-8">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-gray-30 border-t-main rounded-full animate-spin"></div>
-                <p className="text-gray-60">검색 중...</p>
-              </div>
+              <LoadingSpinner size={16} label="검색 중" />
             </div>
           )}
 
@@ -104,7 +106,11 @@ const RecommendSearch = ({
                   query={query}
                   isSelected={selectedCardId === result.inquiry_id}
                   onClick={() =>
-                    handleCardClick(result.inquiry_id, result.title)
+                    handleCardClick(
+                      result.inquiry_id,
+                      result.team_id,
+                      result.title
+                    )
                   }
                 />
               ))}

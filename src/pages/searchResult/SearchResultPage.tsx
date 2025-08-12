@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Pagination from "@/components/common/Pagination";
 import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import SearchHeader from "@/components/searchBar/SearchHeader";
 import InquiryList from "@/components/TeamBoard/InquiryList";
 import { useSearchResults } from "@/hooks/search/useSearch";
+import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
 import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 import { SearchResultInquiry } from "@/types/search/search";
 import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
@@ -27,16 +29,37 @@ const SearchResultPage = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
 
+  // 필터링 상태가 변경될 때 페이지를 1로 리셋
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatus, selectedDate]);
+
+  // 검색어가 변경될 때 필터링 상태 초기화
+  useEffect(() => {
+    setSelectedStatus("전체");
+    setSelectedDate([]);
+    setCurrentPage(1);
+  }, [query]);
+
   // 검색 결과 조회
   const {
     data: searchData,
     isLoading,
     error,
-  } = useSearchResults(query, currentPage, ITEMS_PER_PAGE);
+  } = useSearchResults(
+    query,
+    currentPage,
+    ITEMS_PER_PAGE,
+    selectedStatus === "전체"
+      ? undefined
+      : INQUIRY_STATUS_VALUE[selectedStatus],
+    selectedDate.length > 0 ? selectedDate : undefined
+  );
 
   // SearchResultInquiry를 Inquiry로 변환하는 함수
   const convertToInquiry = (searchInquiry: SearchResultInquiry): Inquiry => ({
     inquiry_id: searchInquiry.inquiry_id,
+    team_id: searchInquiry.team_id,
     title: searchInquiry.title,
     content_preview: searchInquiry.content_preview,
     status: searchInquiry.inquiry_state,
@@ -59,6 +82,13 @@ const SearchResultPage = () => {
     convertToInquiry
   );
 
+  // 필터링 여부
+  const isFiltering =
+    selectedStatus !== "전체" || (selectedDate && selectedDate.length > 0);
+
+  // 데이터 여부
+  const hasInquiry = (searchData?.result?.total_count || 0) > 0;
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -79,12 +109,7 @@ const SearchResultPage = () => {
   if (isLoading) {
     return (
       <section className="w-full h-[835px] bg-gray-10">
-        <div className="flex justify-center items-center h-full">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 border-2 border-gray-30 border-t-main rounded-full animate-spin"></div>
-            <p className="text-gray-60">검색 중...</p>
-          </div>
-        </div>
+        <LoadingSpinner fullscreen={true} label="검색 중" />
       </section>
     );
   }
@@ -106,8 +131,8 @@ const SearchResultPage = () => {
         total_count={searchData?.result?.total_count || 0}
       />
 
-      {!searchData?.result?.total_count ||
-      searchData.result.total_count === 0 ? (
+      {/* 검색 결과가 없을 때 (필터링이 아닌 경우) */}
+      {!hasInquiry && !isFiltering ? (
         <div className="flex justify-center items-center h-163">
           <p className="text-gray-40 text-heading2-b">검색 결과가 없습니다</p>
         </div>
@@ -129,11 +154,18 @@ const SearchResultPage = () => {
               showTitle={false}
             />
           </div>
-          <InquiryList inquiries={currentItems} />
+
+          {hasInquiry ? (
+            <InquiryList inquiries={currentItems} />
+          ) : (
+            <div className="flex items-center justify-center">
+              {/* 필터링 결과가 없을 때는 메시지를 표시하지 않음 */}
+            </div>
+          )}
         </div>
       )}
 
-      {searchData?.result?.total_count && searchData.result.total_count > 0 && (
+      {totalPages > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
