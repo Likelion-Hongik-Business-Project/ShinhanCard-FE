@@ -248,9 +248,7 @@ const AddMemberSidebar = ({ isOpen, onClose, teamName, teamId }: Props) => {
               className="flex-1 overflow-y-auto custom-scrollbar"
             >
               {membersLoading || teamSelectionLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-50">로딩 중...</div>
-                </div>
+                <div className="flex items-center justify-center h-32"></div>
               ) : members.length === 0 ? (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-gray-50">

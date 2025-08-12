@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import HomeMain from "@/components/home/HomeMain";
 import HomeProfile from "@/components/home/HomeProfile";
 import { useHomeInitial } from "@/hooks/home/useHomeApi";
@@ -26,8 +27,11 @@ const HomePage = () => {
     queryClient.invalidateQueries({ queryKey: ["home"] });
   }, [queryClient]);
 
-  // 로딩 중이거나 에러가 있거나 데이터가 없으면 null 반환
-  if (isLoading || error || !homeInitialData?.result) return null;
+  // 로딩 중이거나 에러가 있거나 데이터가 없으면 로딩 스피너 또는 null 반환
+  if (isLoading) {
+    return <LoadingSpinner fullscreen={true} />;
+  }
+  if (error || !homeInitialData?.result) return null;
 
   const homeData = homeInitialData.result;
 

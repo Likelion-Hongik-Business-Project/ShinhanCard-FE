@@ -77,9 +77,7 @@ const ProfileModal = ({ id, isOpen, onClose, onSidebarClose }: Props) => {
       onMouseLeave={handleModalMouseLeave}
     >
       {!isOwnProfile && isLoading ? (
-        <div className="flex items-center justify-center h-32">
-          <div className="text-gray-50">로딩 중...</div>
-        </div>
+        <div className="flex items-center justify-center h-32"></div>
       ) : !isOwnProfile && error ? (
         <div className="flex items-center justify-center h-32">
           <div className="text-gray-50">프로필을 불러올 수 없습니다.</div>

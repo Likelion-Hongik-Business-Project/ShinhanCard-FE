@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Pagination from "@/components/common/Pagination";
 import InquiryListHeader from "@/components/inquiry/list/InquiryListHeader";
 import SearchHeader from "@/components/searchBar/SearchHeader";
@@ -108,12 +109,7 @@ const SearchResultPage = () => {
   if (isLoading) {
     return (
       <section className="w-full h-[835px] bg-gray-10">
-        <div className="flex justify-center items-center h-full">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 border-2 border-gray-30 border-t-main rounded-full animate-spin"></div>
-            <p className="text-gray-60">검색 중...</p>
-          </div>
-        </div>
+        <LoadingSpinner fullscreen={true} label="검색 중" />
       </section>
     );
   }

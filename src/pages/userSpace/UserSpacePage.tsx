@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import ExportDropdown from "@/components/common/ExportDropdown";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import InquiryList from "@/components/inquiry/list/InquiryList";
 import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import UserSpaceButton from "@/components/userSpace/UserSpaceButton";
@@ -263,7 +264,7 @@ const UserSpacePage = () => {
   if (isLoading) {
     return (
       <section>
-        <p className="text-center text-gray-50 text-body2">로딩 중...</p>
+        <LoadingSpinner fullscreen={true} />
       </section>
     );
   }

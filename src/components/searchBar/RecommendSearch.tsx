@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Xmark } from "@/assets/svgs/layout";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useRecommendSearchKeywords } from "@/hooks/search/useSearch";
 import { RecommendSearchProps } from "@/types/search/search";
 
@@ -75,10 +76,7 @@ const RecommendSearch = ({
 
           {isLoading && (
             <div className="flex justify-center py-8">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-gray-30 border-t-main rounded-full animate-spin"></div>
-                <p className="text-gray-60">검색 중...</p>
-              </div>
+              <LoadingSpinner size={16} label="검색 중" />
             </div>
           )}
 
