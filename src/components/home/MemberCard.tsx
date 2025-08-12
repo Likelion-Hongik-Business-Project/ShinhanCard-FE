@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import FilledHeart from "@/assets/svgs/common/heart-active.svg";
+import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
 import User from "@/assets/svgs/home/icon-user.svg";
 import Modal from "@/components/common/Modal";
 import { useRemoveInterestedMember } from "@/hooks/home/useHomeMemberApi";
-import { getProfileImageUrl } from "@/utils/profileImgUtils";
 import { InterestedMember } from "@/types/home/homeApi.type";
 
 type Props = {
@@ -31,6 +31,10 @@ const MemberCard = ({ member }: Props) => {
     navigate(`/space/${encodeURIComponent(member.member_id)}`);
   };
 
+  const profileSrc = member.profile_image_url?.trim()
+    ? member.profile_image_url.trim()
+    : profileFallbackUrl;
+
   return (
     <>
       <div className="w-full h-full flex flex-col bg-white rounded-[15px] shadow-[0_4px_4px_0_rgba(0,0,0,0.10)] p-6">
@@ -42,9 +46,13 @@ const MemberCard = ({ member }: Props) => {
         </div>
         <div className="flex justify-center w-full mb-6">
           <img
-            src={getProfileImageUrl(member.profile_image_url)}
+            src={profileSrc}
             alt={member.name}
             className="w-20 h-20 rounded-full object-cover"
+            onError={e => {
+              const target = e.target as HTMLImageElement;
+              target.src = profileFallbackUrl;
+            }}
           />
         </div>
         <div className="flex flex-col items-center mb-6">
