@@ -8,11 +8,7 @@ type Props = {
   onClick: () => void;
 };
 
-const AdditionalInquiryHeader = ({
-  follow_ups_cnt,
-  isChatOpen,
-  onClick,
-}: Props) => {
+const FollowupHeader = ({ follow_ups_cnt, isChatOpen, onClick }: Props) => {
   return (
     <div className="w-full  h-16 flex justify-between items-center">
       <div className="flex gap-2 items-center">
@@ -34,4 +30,4 @@ const AdditionalInquiryHeader = ({
   );
 };
 
-export default AdditionalInquiryHeader;
+export default FollowupHeader;
