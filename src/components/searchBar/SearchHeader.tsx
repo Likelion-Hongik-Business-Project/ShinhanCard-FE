@@ -1,15 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import { Pencil } from "@/assets/svgs/layout";
 import Button from "@/components/common/Button";
-import ExportDropdown from "@/components/common/ExportDropdown";
 import { SearchHeaderProps } from "@/types/search/search";
 
-const SearchHeader = ({ query, total_count }: SearchHeaderProps) => {
-  // 엑셀 다운로드 함수
-  const handleExport = async (option: "filtered" | "all") => {
-    console.log(option);
-    // TODO: API 각각 연결
-  };
-
+const SearchHeader = ({ query }: SearchHeaderProps) => {
+  const navigate = useNavigate();
   return (
     <div className="flex items-center justify-between mb-10">
       <div>
@@ -18,18 +14,10 @@ const SearchHeader = ({ query, total_count }: SearchHeaderProps) => {
         </h1>
       </div>
 
-      <div className="flex gap-4">
-        {total_count > 0 && (
-          <div className="self-end">
-            <ExportDropdown onExport={handleExport} />
-          </div>
-        )}
-
-        <Button buttonType="blue">
-          <Pencil className="w-4 h-4 text-white hover:text-gray-30" />
-          문의 작성
-        </Button>
-      </div>
+      <Button buttonType="blue" onClick={() => navigate("/inquiry/form")}>
+        <Pencil className="w-4 h-4 text-white hover:text-gray-30" />
+        문의 작성
+      </Button>
     </div>
   );
 };
