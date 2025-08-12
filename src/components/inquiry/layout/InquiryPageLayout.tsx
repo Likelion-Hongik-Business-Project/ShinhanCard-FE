@@ -94,6 +94,13 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
       ? currentItems
       : currentItems.filter(item => item.status === selectedStatus);
 
+  const isFiltering =
+    selectedStatus !== "전체" || (selectedDate && selectedDate.length > 0);
+
+  const hasFilteredResult = filteredInquiries.length > 0;
+
+  const showExport = totalCount !== 0 && (!isFiltering || hasFilteredResult);
+
   // 모달 토글 함수: 상태 모달과 일시 모달 둘 중 하나만 열리게
   const toggleStatusModal = () => {
     setIsStatusModalOpen(prev => !prev);
@@ -115,7 +122,7 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
             <span className="text-body1-b"> {totalCount}</span>건 있습니다.
           </p>
         </div>
-        {totalCount !== 0 && (
+        {showExport && (
           <div className="self-end">
             <ExportDropdown onExport={onExport} />
           </div>
