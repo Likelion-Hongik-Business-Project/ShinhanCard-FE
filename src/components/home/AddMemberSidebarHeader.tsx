@@ -69,7 +69,7 @@ const AddMemberSidebarHeader = ({
         </div>
         <DownIcon
           className={clsx(
-            "w-5 h-5 text-gray-30 transition-transform",
+            "w-5 h-5 text-gray-30",
             isTeamSelectionOpen && "rotate-180 text-gray-80"
           )}
         />

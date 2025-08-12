@@ -51,13 +51,6 @@ const AssigneeActions = ({
     <>
       <div className="flex justify-between items-center w-full">
         <div className="flex gap-8 items-center">
-          {shouldShowAnswerButton && (
-            <Button buttonType="blue" onClick={() => onStartAnswer()}>
-              <Pencil />
-              답변 작성
-            </Button>
-          )}
-
           <Button
             buttonType={isEditingAssignees ? "blue" : "default"}
             className={isEditingAssignees ? "text-white" : "text-gray-80"}
@@ -68,15 +61,25 @@ const AssigneeActions = ({
             <Users
               className={isEditingAssignees ? "text-white" : "text-gray-80"}
             />
-            {isEditingAssignees ? "담당자 수정 완료" : "담당자 수정하기"}
+            {isEditingAssignees ? "담당자 수정 완료" : "담당자 수정"}
           </Button>
         </div>
 
         <div className="flex items-center gap-[16px]">
+          {shouldShowAnswerButton && (
+            <Button buttonType="blue" onClick={() => onStartAnswer()}>
+              <Pencil />
+              답변 작성
+            </Button>
+          )}
           {!isCurrentUserConfirmed && !hasMyComment && !isEditingAssignees && (
-            <Button buttonType="default" onClick={onConfirm}>
-              <Check className="text-gray-60" />
-              확인 처리하기
+            <Button
+              buttonType="green"
+              onClick={onConfirm}
+              className="hover:text-gray-30 group"
+            >
+              <Check className="text-white group-hover:text-gray-30" />
+              확인
             </Button>
           )}
         </div>
