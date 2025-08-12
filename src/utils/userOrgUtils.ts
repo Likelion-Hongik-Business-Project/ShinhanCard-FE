@@ -1,7 +1,6 @@
 import type { AssigneeUser } from "@/types/team/user.type";
 
 type ActiveFlag = { active?: boolean; is_active?: boolean };
-type MaybeActive<T> = T & Partial<{ active: boolean }>;
 
 const isActiveFlag = (v?: ActiveFlag) =>
   Boolean(v?.active ?? v?.is_active ?? true);
@@ -9,8 +8,7 @@ const isActiveFlag = (v?: ActiveFlag) =>
 export const isOrgActive = (u: AssigneeUser) =>
   isActiveFlag(u?.group) && isActiveFlag(u?.division) && isActiveFlag(u?.team);
 
-export const isUserActive = (u: MaybeActive<AssigneeUser>) =>
-  Boolean(u.active ?? true) && isOrgActive(u);
+export const isUserActive = (u: AssigneeUser) => isOrgActive(u);
 
 export const koCompare = (
   a?: string,
