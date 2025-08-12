@@ -418,6 +418,7 @@ export const useInquiryDetail = () => {
     error,
     inquiryData,
     currentUserId,
+    myProfile: myProfileResponse?.result,
     showEditor,
     tabsToDisplay,
     selectedUserId,

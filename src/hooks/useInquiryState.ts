@@ -6,16 +6,19 @@ import {
 } from "@/constants/inquiryStates";
 import { USER_ROLE_PERMISSIONS } from "@/constants/userRoles";
 import { InquiryData, UserRole } from "@/types/inquiryTypes";
+import { ProfileData } from "@/types/profile/profile.type";
 
 export const useInquiryState = (
   inquiry: InquiryData,
   userRole: UserRole,
-  currentUserId?: number
+  currentUserId?: ProfileData | null
 ) => {
   const permissions =
     USER_ROLE_PERMISSIONS[userRole] || USER_ROLE_PERMISSIONS["default"];
-  const isWriter = inquiry.author.user_id === currentUserId;
-  const isAdmin = inquiry.team_role === "TEAM_LEADER";
+  const isWriter = inquiry.author.user_id === currentUserId?.id;
+  const isAdmin =
+    inquiry.team_role === "TEAM_LEADER" &&
+    inquiry.team.team_id === currentUserId?.team_id;
 
   const initialMappedState = (STATUS_MAPPING[inquiry.status] ||
     "BEFORE_CONFIRM") as InquiryState;

@@ -5,6 +5,7 @@ import {
 } from "@/types/common/apiResponse.type";
 import {
   GetLastSentMailTimeResponse,
+  PatchInquiryReassignRequest,
   PutInquiryAssigneeRequest,
   PutInquiryObserverRequest,
 } from "@/types/inquiry/inquiryManagementApi.type";
@@ -35,6 +36,32 @@ export const putInquiryObserver = async (
   const response = await instance.patch<GlobalResponse<NoResponse>>(
     `/api/teams/${team_id}/inquiries/${inquiry_id}/change-observer`,
     data
+  );
+  return response.data;
+};
+
+// PATCH /api/teams/{team_id}/inquiries/{inquiry_id}/reassign
+// 등록 보류된 문의글 담당자 재할당
+export const patchInquiryReassign = async (
+  team_id: number,
+  inquiry_id: number,
+  data: PatchInquiryReassignRequest
+): ApiResponse<NoResponse> => {
+  const response = await instance.patch<GlobalResponse<NoResponse>>(
+    `/api/teams/${team_id}/inquiries/${inquiry_id}/reassign`,
+    data
+  );
+  return response.data;
+};
+
+// PATCH /api/teams/{team_id}/inquiries/{inquiry_id}/re-register
+// 등록 보류된 문의글 재등록
+export const patchInquiryReRegister = async (
+  team_id: number,
+  inquiry_id: number
+): ApiResponse<NoResponse> => {
+  const response = await instance.patch<GlobalResponse<NoResponse>>(
+    `/api/teams/${team_id}/inquiries/${inquiry_id}/re-register`
   );
   return response.data;
 };

@@ -20,6 +20,7 @@ const InquiryDetailPage = () => {
     isError,
     inquiryData,
     currentUserId,
+    myProfile,
     showEditor,
     tabsToDisplay,
     selectedUserId,
@@ -135,7 +136,7 @@ const InquiryDetailPage = () => {
             inquiry={inquiryData}
             teamId={Number(team_id)}
             userRole={userRole}
-            currentUserId={currentUserId}
+            currentUserId={myProfile}
             handleStartAnswer={handleStartAnswer}
             onConfirm={handleConfirm}
             handleDeleteInquiry={handleDeleteInquiry}

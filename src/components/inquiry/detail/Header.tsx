@@ -52,7 +52,7 @@ const Header = ({
             onClick={onDelete}
             className="justify-start text-point-red text-body1 cursor-pointer"
           >
-            게시물 삭제
+            게시글 삭제
           </button>
         </div>
       )}
