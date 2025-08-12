@@ -113,7 +113,7 @@ const InquiryDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-5">
-      <div className=" flex w-full max-w-[1440px] min-w-[1120px] flex-col gap-14 py-8">
+      <div className=" flex w-full max-w-[1440px] min-w-[1120px] flex-col gap-14">
         <div className="flex flex-col gap-10">
           <Header
             isAdmin={isAdmin}

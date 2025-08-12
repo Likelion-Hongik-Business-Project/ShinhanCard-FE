@@ -149,7 +149,7 @@ const InquiryContent = ({
         isOpen={isWriterDeleteModalOpen}
         onClose={() => setIsWriterDeleteModalOpen(false)}
         title="글을 삭제하시겠습니까?"
-        description="게시글을 삭제 할 시 복구 할 수 없습니다."
+        description="게시글을 삭제할 시 복구할 수 없습니다."
         buttons={[
           {
             label: "취소",

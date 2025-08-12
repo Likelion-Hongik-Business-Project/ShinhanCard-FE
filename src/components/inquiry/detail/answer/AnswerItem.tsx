@@ -122,10 +122,11 @@ const AnswerItem = ({
       <Modal
         isOpen={isDeleteOpen}
         title="답변을 삭제하시겠습니까?"
+        description="딥변을 삭제할 시 복구할 수 없습니다."
         onClose={closeDeleteModal}
         buttons={[
-          { type: "white", label: "취소", onClick: closeDeleteModal },
-          { type: "blue", label: "확인", onClick: confirmDelete },
+          { type: "gray", label: "취소", onClick: closeDeleteModal },
+          { type: "red", label: "확인", onClick: confirmDelete },
         ]}
       />
     </div>
