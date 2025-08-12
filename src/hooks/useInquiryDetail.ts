@@ -219,7 +219,13 @@ export const useInquiryDetail = () => {
           inquiry_id: Number(inquiry_id),
           data: { content: draftContent, file_ids: null },
         });
-        if (currentUserId) setSelectedUserId(currentUserId);
+
+        // 답변 작성 후 데이터 업데이트 대기 후 selectedUserId 설정
+        if (currentUserId) {
+          setTimeout(() => {
+            setSelectedUserId(currentUserId);
+          }, 200); // 쿼리 무효화 후 데이터 업데이트 대기
+        }
       }
 
       // 수정/등록 완료 후 모든 편집 상태 초기화
