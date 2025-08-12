@@ -252,7 +252,7 @@ const HomeMain = ({
           title: item.title,
           status: statusLabel,
           created_at: item.created_at,
-          is_scrapped: item.is_scraped,
+          is_scrapped: item.is_scrapped,
         };
       }
     )

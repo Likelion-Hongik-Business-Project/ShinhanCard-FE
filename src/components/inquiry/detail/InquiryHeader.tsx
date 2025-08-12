@@ -15,15 +15,15 @@ const InquiryHeader = ({
 }: InquiryHeaderProps) => {
   const { addScrap, removeScrap } = useScrapApi();
 
-  const [scraped, setScraped] = useState(!!inquiry.is_scraped);
+  const [scraped, setScraped] = useState(!!inquiry.is_scrapped);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(
     !!inquiry.is_notification_enabled
   );
 
   useEffect(() => {
-    setScraped(!!inquiry.is_scraped);
+    setScraped(!!inquiry.is_scrapped);
     setIsNotificationEnabled(!!inquiry.is_notification_enabled);
-  }, [inquiry.is_scraped, inquiry.is_notification_enabled]);
+  }, [inquiry.is_scrapped, inquiry.is_notification_enabled]);
 
   const scrapToggling = addScrap.isPending || removeScrap.isPending;
 
@@ -88,7 +88,7 @@ const InquiryHeader = ({
           onClick={handleToggleScrap}
           disabled={scrapToggling}
           className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
-          aria-label={inquiry.is_scraped || false ? "스크랩 취소" : "스크랩"}
+          aria-label={inquiry.is_scrapped || false ? "스크랩 취소" : "스크랩"}
         >
           {scraped ? <StarActive /> : <Star className="text-gray-50" />}
         </button>
