@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
 import { useExcelExport } from "@/hooks/excel/useExcelApi";
 import {
@@ -71,7 +72,9 @@ const MyQuestionsPage = () => {
   const isError = selectedTeamId ? teamError : initError;
   const data = selectedTeamId ? teamData : initData;
 
-  if (isLoading) return <div>로딩 중...</div>;
+  if (isLoading) {
+    return <LoadingSpinner fullscreen={true} />;
+  }
   if (isError || !data) return <div>에러 발생</div>;
 
   const writer = data.writer;

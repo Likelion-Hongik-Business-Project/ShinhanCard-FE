@@ -62,4 +62,23 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .loader {
+    width: 48px;
+    aspect-ratio: 1;
+    color: var(--color-main);
+    --c: no-repeat radial-gradient(farthest-side, currentColor 92%, #0000);
+    background:
+      var(--c) top,
+      var(--c) right,
+      var(--c) bottom,
+      var(--c) left;
+    background-size: 12px 12px;
+    animation: spinDots 1s linear infinite;
+  }
+  @keyframes spinDots {
+    to {
+      transform: rotate(0.5turn);
+    }
+  }
 }

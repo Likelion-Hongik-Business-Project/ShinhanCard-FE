@@ -113,7 +113,8 @@ const InquiryFormPage = () => {
     setMissingField,
   });
 
-  const { postInquiryMutation, putInquiryMutation } = useInquiryApi();
+  const { postInquiryMutation, putInquiryMutation, isBlocking } =
+    useInquiryApi();
 
   const hasEditIds =
     isEdit && editTeamId !== undefined && editInquiryId !== undefined;
@@ -314,6 +315,7 @@ const InquiryFormPage = () => {
         isConfirmOpen={isConfirmModalOpen}
         onCloseConfirm={() => setIsConfirmModalOpen(false)}
         onConfirmSubmit={confirmSubmit}
+        isSubmitting={isBlocking}
       />
     </section>
   );

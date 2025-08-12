@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +26,8 @@ const retryDelay = (attempt: number) => Math.min(300 * 2 ** attempt, 3000); // 0
 export const useInquiryApi = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // 문의글 등록
   const postInquiryMutation = useMutation<
     { result: { inquiry_id: number } },
     unknown,
@@ -36,15 +38,18 @@ export const useInquiryApi = () => {
       const inquiryId = res.result.inquiry_id;
       const teamId = variables.teamId;
 
-      await queryClient.prefetchQuery({
-        queryKey: ["inquiryDetail", teamId, inquiryId],
-        queryFn: () => getInquiryDetail(teamId, inquiryId),
-        retry: retryIf404,
-        retryDelay,
-      });
-
-      // 준비되면 이동
-      navigate(`/teams/${teamId}/inquiries/${inquiryId}`);
+      setIsRedirecting(true);
+      try {
+        await queryClient.prefetchQuery({
+          queryKey: ["teamInquiry", teamId, inquiryId],
+          queryFn: () => getInquiryDetail(teamId, inquiryId),
+          retry: retryIf404,
+          retryDelay,
+        });
+        navigate(`/teams/${teamId}/inquiries/${inquiryId}`);
+      } finally {
+        setIsRedirecting(false);
+      }
     },
   });
 
@@ -83,7 +88,13 @@ export const useInquiryApi = () => {
     },
   });
 
-  return { postInquiryMutation, deleteInquiryMutation, putInquiryMutation };
+  const isBlocking = postInquiryMutation.isPending || isRedirecting;
+  return {
+    postInquiryMutation,
+    deleteInquiryMutation,
+    putInquiryMutation,
+    isBlocking,
+  };
 };
 
 /**
