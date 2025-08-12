@@ -40,13 +40,16 @@ const Header = ({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <h1
-            className={`text-heading1 ${
-              isActive ? "text-gray-80" : "text-gray-50"
-            }`}
-          >
-            {team_name}
-          </h1>
+          {" "}
+          <div className="px-[4px] flex justify-start items-center cursor-pointer">
+            <h1
+              className={`text-heading1 ${
+                isActive ? "text-gray-80" : "text-gray-50"
+              }`}
+            >
+              {team_name}
+            </h1>
+          </div>
           <Users
             className="w-8 h-8 cursor-pointer text-gray-40 hover:text-gray-60 transition-colors"
             onClick={handleUsersClick}

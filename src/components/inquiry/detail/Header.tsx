@@ -8,9 +8,14 @@ const Header = ({
   isAdmin = false,
   teamInfo,
   onDelete,
+  openAddMemberSidebar,
 }: HeaderProps) => {
-  const { group_name, division_name, team_name } = teamInfo;
+  const { group_name, division_name, team_name, team_id } = teamInfo;
   const navigate = useNavigate();
+  const handleUsersClick = () => {
+    openAddMemberSidebar(team_name, team_id);
+  };
+
   return (
     <div className="self-stretch flex justify-between items-end">
       <div className="flex flex-col justify-start items-start gap-[16px]">
@@ -20,7 +25,7 @@ const Header = ({
           </div>
         </div>
         <div className="flex justify-start items-center gap-[16px]">
-          <button onClick={() => navigate(`/team/${teamInfo.team_id}`)}>
+          <button onClick={() => navigate(`/team/${team_id}`)}>
             <div className="px-[4px] flex justify-start items-center cursor-pointer">
               <div
                 className={`text-heading1 ${
@@ -32,7 +37,10 @@ const Header = ({
             </div>
           </button>
           <div className="w-[32px] h-[32px] relative overflow-hidden">
-            <Users className="w-[32px] h-[32px] text-gray-40" />
+            <Users
+              className="w-[32px] h-[32px] text-gray-40 cursor-pointer"
+              onClick={handleUsersClick}
+            />
           </div>
         </div>
       </div>

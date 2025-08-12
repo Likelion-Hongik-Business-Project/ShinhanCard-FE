@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Modal from "@/components/common/Modal";
@@ -46,6 +46,10 @@ const InquiryDetailPage = () => {
     onToggleNotification,
   } = useInquiryDetail();
 
+  const { openAddMemberSidebar } = useOutletContext<{
+    openAddMemberSidebar: (teamName: string, teamId: number) => void;
+  }>();
+
   // 조건부 렌더링
   const defaultTeamInfo = {
     group_name: " ",
@@ -62,7 +66,11 @@ const InquiryDetailPage = () => {
     return (
       <div className="min-h-screen">
         <div className="mx-auto w-full">
-          <Header teamInfo={defaultTeamInfo} onDelete={handleDeleteInquiry} />
+          <Header
+            teamInfo={defaultTeamInfo}
+            onDelete={handleDeleteInquiry}
+            openAddMemberSidebar={openAddMemberSidebar}
+          />
           <div className="mt-8 rounded-2xl bg-white p-16 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="rounded-full bg-red-100 p-4">
@@ -121,6 +129,7 @@ const InquiryDetailPage = () => {
             isAdmin={isAdmin}
             teamInfo={teamInfoForHeader}
             onDelete={handleDeleteInquiry}
+            openAddMemberSidebar={openAddMemberSidebar}
           />
           <InquiryCard
             inquiry={inquiryData}
