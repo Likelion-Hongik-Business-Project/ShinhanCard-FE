@@ -55,7 +55,6 @@ const UserMultiSelectInput = ({
     "active" in v &&
     typeof (v as { active?: unknown }).active === "boolean";
 
-  // 교체 코드
   const isUserActive = (u: AssigneeUser) =>
     (hasActive(u) ? u.active : true) && isOrgActive(u);
 
