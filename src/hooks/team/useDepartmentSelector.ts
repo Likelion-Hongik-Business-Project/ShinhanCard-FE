@@ -54,10 +54,17 @@ export const useDepartmentSelector = (
     return m;
   }, [activeUsers]);
 
+  const sortByLabel = <T extends Option>(options: T[]) =>
+    [...options].sort((a, b) =>
+      (a.label ?? "").localeCompare(b.label ?? "", "ko")
+    );
+
   const groupOptions = useMemo<Option[]>(() => {
     const m = new Map<number, string>();
     activeUsers.forEach(u => m.set(u.group.group_id, u.group.group_name));
-    return [...m.entries()].map(([value, label]) => ({ value, label }));
+    return sortByLabel(
+      [...m.entries()].map(([value, label]) => ({ value, label }))
+    );
   }, [activeUsers]);
 
   const divisionOptions = useMemo<Option[]>(() => {
@@ -66,7 +73,9 @@ export const useDepartmentSelector = (
     activeUsers
       .filter(u => u.group.group_id === groupId)
       .forEach(u => m.set(u.division.division_id, u.division.division_name));
-    return [...m.entries()].map(([value, label]) => ({ value, label }));
+    return sortByLabel(
+      [...m.entries()].map(([value, label]) => ({ value, label }))
+    );
   }, [activeUsers, groupId]);
 
   const teamOptions = useMemo<Option[]>(() => {
@@ -75,18 +84,22 @@ export const useDepartmentSelector = (
     activeUsers
       .filter(u => u.division.division_id === divisionId)
       .forEach(u => m.set(u.team.team_id, u.team.team_name));
-    return [...m.entries()].map(([value, label]) => ({ value, label }));
+    return sortByLabel(
+      [...m.entries()].map(([value, label]) => ({ value, label }))
+    );
   }, [activeUsers, divisionId]);
 
   const userOptions = useMemo<Option[]>(() => {
     if (!teamId) return [];
-    return activeUsers
-      .filter(u => u.team.team_id === teamId)
-      .map(u => ({
-        label: u.username,
-        value: u.user_id,
-        profileImageUrl: u.profile_url,
-      }));
+    return sortByLabel(
+      activeUsers
+        .filter(u => u.team.team_id === teamId)
+        .map(u => ({
+          label: u.username,
+          value: u.user_id,
+          profileImageUrl: u.profile_url,
+        }))
+    );
   }, [activeUsers, teamId]);
 
   const handleGroupChange = (id: number) => {
