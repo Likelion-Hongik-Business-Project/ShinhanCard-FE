@@ -3,12 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GlobalResponse } from "@/types/common/apiResponse.type";
 import {
   GetLastSentMailTimeResponse,
+  PatchInquiryReassignRequest,
   PutInquiryAssigneeRequest,
 } from "@/types/inquiry/inquiryManagementApi.type";
 import { InquiryData } from "@/types/inquiryTypes";
 
 import {
   getLastSentMailTime,
+  patchInquiryReassign,
+  patchInquiryReRegister,
   postInquiryNotify,
   putInquiryAssignee,
   putInquiryNotificationSetting,
@@ -60,6 +63,45 @@ export const useInquiryManagementApi = () => {
       queryClient.invalidateQueries({
         queryKey: ["teamInquiry", variables.team_id, variables.inquiry_id],
       });
+    },
+  });
+
+  // 등록 보류된 문의글 담당자 재할당
+  const patchInquiryReassignMutation = useMutation({
+    mutationFn: ({
+      team_id,
+      inquiry_id,
+      data,
+    }: {
+      team_id: number;
+      inquiry_id: number;
+      data: PatchInquiryReassignRequest;
+    }) => patchInquiryReassign(team_id, inquiry_id, data),
+    onSuccess: (_, variables) => {
+      // 문의 상세 정보 다시 불러오기
+      queryClient.invalidateQueries({
+        queryKey: ["teamInquiry", variables.team_id, variables.inquiry_id],
+      });
+    },
+  });
+
+  // 등록 보류된 문의글 재등록
+  const patchInquiryReRegisterMutation = useMutation({
+    mutationFn: ({
+      team_id,
+      inquiry_id,
+    }: {
+      team_id: number;
+      inquiry_id: number;
+    }) => patchInquiryReRegister(team_id, inquiry_id),
+    onSuccess: () => {
+      // 성공 시 페이지 새로고침
+      window.location.reload();
+    },
+    onError: error => {
+      console.error("문의 재등록 실패:", error);
+      // 에러 메시지 표시 (토스트, 알럿 등)
+      alert("문의 재등록에 실패했습니다. 다시 시도해주세요.");
     },
   });
 
@@ -123,6 +165,8 @@ export const useInquiryManagementApi = () => {
 
   return {
     putInquiryAssigneeMutation,
+    patchInquiryReassignMutation,
+    patchInquiryReRegisterMutation,
     postInquiryNotifyMutation,
     putInquiryNotificationMutation,
   };

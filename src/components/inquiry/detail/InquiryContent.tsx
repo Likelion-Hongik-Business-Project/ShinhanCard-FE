@@ -25,6 +25,7 @@ const InquiryContent = ({
   inquiryId,
   teamId,
   files,
+  isPendingState, // 추가: 등록 보류 상태 여부
 }: InquiryContentProps) => {
   const navigate = useNavigate();
   const [isWriterDeleteModalOpen, setIsWriterDeleteModalOpen] = useState(false);
@@ -147,8 +148,8 @@ const InquiryContent = ({
                 {author.team_name}
               </div>
             </div>
-            {/* 문의자 수정/삭제 버튼 */}
-            {isWriter && (
+            {/* 문의자 수정/삭제 버튼 - 등록 보류 상태에서는 숨김 */}
+            {isWriter && !isPendingState && (
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleEdit}

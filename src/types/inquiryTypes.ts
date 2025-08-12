@@ -1,5 +1,6 @@
-import { InquiryFile, UploadFile } from "./file/file.type";
+import { ProfileData } from "@/types/profile/profile.type";
 
+import { InquiryFile, UploadFile } from "./file/file.type";
 export type UserRole = "default" | "assignee" | "writer" | "admin";
 
 // 답변 타입
@@ -73,6 +74,7 @@ export interface InquiryContentProps {
   inquiryId: number;
   teamId: number;
   onDelete: () => void;
+  isPendingState?: boolean; // 추가: 등록 보류 상태 여부
 }
 
 // InquiryHeader Props 타입
@@ -102,6 +104,15 @@ export interface PendingActionsProps {
   isPendingState: boolean;
 }
 
+// 등록 보류 상태 문의자 액션 Props 타입 (새로 추가)
+export interface PendingWriterActionsProps {
+  isWriter: boolean;
+  isPendingState: boolean;
+  isAssigneeChanged: boolean; // 담당자가 변경되었는지 여부
+  onCancelRegistration: () => void; // 등록 취소
+  onSubmitInquiry: () => void; // 문의 등록하기
+}
+
 // AssigneeSection Props 타입
 export interface AssigneeSectionProps {
   assignees?: Array<{
@@ -128,6 +139,7 @@ export interface AssigneeSectionProps {
   tempAssigneeIds?: number[];
   tempObserverIds?: number[];
   currentUserId?: number;
+  isWriter?: boolean; // 추가: 문의자 여부
 }
 
 // AssigneeActionsProps 타입
@@ -143,6 +155,12 @@ export interface AssigneeActionsProps {
   isEditingAssignees?: boolean;
   onStartEditAssignees?: () => void;
   onCompleteEditAssignees?: () => void;
+  // 등록 보류 상태 관련 props 추가
+  isPendingState?: boolean;
+  isWriter?: boolean;
+  isAssigneeChanged?: boolean;
+  onCancelRegistration?: () => void;
+  onSubmitInquiry?: () => void;
 }
 
 // 통합된 문의 타입
@@ -215,7 +233,7 @@ export interface InquiryCardProps {
   inquiry: InquiryData;
   teamId: number;
   userRole?: UserRole;
-  currentUserId?: number;
+  currentUserId?: ProfileData | null;
   handleStartAnswer: (commentToEdit?: Comment) => void;
   onConfirm: () => void;
   handleDeleteInquiry: () => void;

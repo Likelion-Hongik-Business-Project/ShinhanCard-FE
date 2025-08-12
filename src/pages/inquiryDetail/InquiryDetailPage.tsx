@@ -20,6 +20,7 @@ const InquiryDetailPage = () => {
     isError,
     inquiryData,
     currentUserId,
+    myProfile,
     showEditor,
     tabsToDisplay,
     selectedUserId,
@@ -119,7 +120,10 @@ const InquiryDetailPage = () => {
   };
 
   const userRole = (inquiryData.role?.toLowerCase() || "default") as UserRole;
-  const isAdmin = inquiryData.team_role === "TEAM_LEADER";
+  // 수정된 isAdmin 로직: 팀 리더이면서 "같은 팀"인 경우에만 true
+  const isAdmin =
+    inquiryData.team_role === "TEAM_LEADER" &&
+    myProfile?.team_id === inquiryData.team.team_id;
 
   return (
     <div className="min-h-screen bg-gray-5">
@@ -135,7 +139,7 @@ const InquiryDetailPage = () => {
             inquiry={inquiryData}
             teamId={Number(team_id)}
             userRole={userRole}
-            currentUserId={currentUserId}
+            currentUserId={myProfile}
             handleStartAnswer={handleStartAnswer}
             onConfirm={handleConfirm}
             handleDeleteInquiry={handleDeleteInquiry}

@@ -13,10 +13,6 @@ import DepartmentSelector from "@/components/inquiry/form/DepartmentSelector";
 import UserSearchList from "@/components/inquiry/form/UserSearchList";
 import { useDebounce } from "@/hooks/common/useDebounce";
 import { useOutsideClick } from "@/hooks/common/useOutsideClick";
-import {
-  filterAndSortCandidates,
-  pickActiveUsersSorted,
-} from "@/utils/userOrgUtils";
 import { AssigneeSectionProps } from "@/types/inquiryTypes";
 import { AssigneeUser } from "@/types/team/user.type";
 
@@ -114,33 +110,42 @@ const AssigneeSection = ({
   });
 
   // 선택된 담당자 목록
-  const selectedUsers = useMemo(
-    () => pickActiveUsersSorted(allUsers, tempAssigneeIds),
-    [allUsers, tempAssigneeIds]
-  );
-  const selectedObservers = useMemo(
-    () => pickActiveUsersSorted(allUsers, tempObserverIds),
-    [allUsers, tempObserverIds]
-  );
+  const selectedUsers = useMemo(() => {
+    if (!tempAssigneeIds) return [];
+    return allUsers.filter(user => tempAssigneeIds.includes(user.user_id));
+  }, [allUsers, tempAssigneeIds]);
 
-  // 드롭다운 후보
-  const filteredAssigneeUsers = useMemo(
-    () =>
-      filterAndSortCandidates(allUsers, {
-        excludeIds: [...tempAssigneeIds, ...tempObserverIds],
-        term: debouncedAssigneeInput,
-      }),
-    [allUsers, tempAssigneeIds, tempObserverIds, debouncedAssigneeInput]
-  );
+  // 선택된 참조자 목록
+  const selectedObservers = useMemo(() => {
+    if (!tempObserverIds) return [];
+    return allUsers.filter(user => tempObserverIds.includes(user.user_id));
+  }, [allUsers, tempObserverIds]);
 
-  const filteredObserverUsers = useMemo(
-    () =>
-      filterAndSortCandidates(allUsers, {
-        excludeIds: [...tempAssigneeIds, ...tempObserverIds],
-        term: debouncedObserverInput,
-      }),
-    [allUsers, tempAssigneeIds, tempObserverIds, debouncedObserverInput]
-  );
+  // 담당자용 필터링된 사용자 목록
+  const filteredAssigneeUsers = allUsers
+    .filter(u =>
+      u.username
+        ?.toLowerCase()
+        .includes(debouncedAssigneeInput.trim().toLowerCase())
+    )
+    .filter(
+      u =>
+        !tempAssigneeIds?.includes(u.user_id) &&
+        !tempObserverIds?.includes(u.user_id)
+    );
+
+  // 참조자용 필터링된 사용자 목록
+  const filteredObserverUsers = allUsers
+    .filter(u =>
+      u.username
+        ?.toLowerCase()
+        .includes(debouncedObserverInput.trim().toLowerCase())
+    )
+    .filter(
+      u =>
+        !tempAssigneeIds?.includes(u.user_id) &&
+        !tempObserverIds?.includes(u.user_id)
+    );
 
   // 담당자 선택 처리
   const handleSelectUser = (user: AssigneeUser) => {
