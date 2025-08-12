@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 
 import Down from "@/assets/svgs/common/down.svg";
-import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
+import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import { Logo, Menu } from "@/assets/svgs/layout";
 import SearchBar from "@/components/searchBar/SearchBar";
 
@@ -43,10 +43,6 @@ const Header = ({
     onProfileHoverChange?.(false);
   }, [onProfileHoverChange]);
 
-  const profileSrc = profile?.profile_image_url?.trim()
-    ? profile.profile_image_url.trim()
-    : profileFallbackUrl;
-
   return (
     <header className="fixed h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
       <div className="flex items-center">
@@ -61,15 +57,15 @@ const Header = ({
         onMouseLeave={handleProfileMouseLeave}
       >
         <div className="flex items-center space-x-4">
-          <img
-            src={profileSrc}
-            alt={profile?.name}
-            className="w-8 h-8 rounded-full object-cover"
-            onError={e => {
-              const target = e.target as HTMLImageElement;
-              target.src = profileFallbackUrl;
-            }}
-          />
+          {profile?.profile_image_url?.trim() ? (
+            <img
+              src={profile.profile_image_url.trim()}
+              alt={profile?.name}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <ProfileIcon className="w-8 h-8 rounded-full" />
+          )}
           <span className="text-gray-80 text-heading2 whitespace-nowrap">
             {profile?.name || "이름"}
           </span>
