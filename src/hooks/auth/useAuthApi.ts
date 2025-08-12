@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { postLogin, postLogout } from "@/apis/auth/authApi";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 export const useAuthApi = () => {
   const login = useAuthStore(state => state.setLogin);
   const logout = useAuthStore(state => state.setLogout);
+  const queryClient = useQueryClient();
 
   const postLoginMutation = useMutation({
     mutationFn: postLogin,
@@ -18,7 +19,7 @@ export const useAuthApi = () => {
   const postLogoutMutation = useMutation({
     mutationFn: postLogout,
     onSuccess: () => {
-      // 클라이언트 측 로그아웃 처리
+      queryClient.clear();
       logout();
     },
   });

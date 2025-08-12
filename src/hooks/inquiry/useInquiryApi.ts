@@ -65,6 +65,8 @@ export const useInquiryApi = () => {
     onSuccess: () => {
       // 삭제 성공 시, 목록 데이터를 새로고침
       queryClient.invalidateQueries({ queryKey: ["teamInquiryList"] });
+      // 홈페이지 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 
