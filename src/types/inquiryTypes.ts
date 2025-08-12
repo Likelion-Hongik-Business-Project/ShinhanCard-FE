@@ -29,13 +29,10 @@ export interface FollowUpComment {
 // 추가문의 타입
 export interface FollowUp {
   follow_up_id: number;
+  tagged_user: TaggedUser;
   content: string;
   created_at: string;
-  author: {
-    user_id: number;
-    user_name: string;
-    profile_image_url?: string;
-  };
+  author: FollowUpAuthor;
   comments: FollowUpComment[];
 }
 

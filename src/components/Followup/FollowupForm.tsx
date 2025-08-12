@@ -87,7 +87,7 @@ const FollowupForm = ({
                 key={a.user_id}
                 type="button"
                 onClick={() => handleToggleAssignee(a.user_id)}
-                className="flex gap-2 items-center"
+                className="flex gap-2 items-center cursor-pointer"
               >
                 {a.user_id === selectedId ? <FilledUnion /> : <Union />}
                 {a.user_name}
