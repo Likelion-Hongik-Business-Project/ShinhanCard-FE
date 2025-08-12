@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useOutletContext, useParams } from "react-router-dom";
 
@@ -13,6 +13,7 @@ import { InquiryStatus, YearMonth } from "@/types/inquiry/inquiryListApi.type";
 
 const TeamBoardPage = () => {
   const { team_id } = useParams<{ team_id: string }>();
+  const numericTeamId = team_id ? parseInt(team_id) : undefined;
   const [page, setPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState<InquiryStatus | "전체">(
     "전체"
@@ -23,6 +24,12 @@ const TeamBoardPage = () => {
   const { openAddMemberSidebar } = useOutletContext<{
     openAddMemberSidebar: (teamName: string, teamId: number) => void;
   }>();
+
+  useEffect(() => {
+    setSelectedStatus("전체");
+    setSelectedDate([]);
+    setPage(1);
+  }, [numericTeamId]);
 
   // export
   const excelExport = useExcelExport();

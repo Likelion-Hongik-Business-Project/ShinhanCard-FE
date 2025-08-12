@@ -56,9 +56,6 @@ const TeamBoardLayout = ({
   // 데이터 여부
   const hasInquiry = pagination.total > 0;
 
-  // Export 노출 조건: 필터링 전 + 데이터 있음
-  const showExport = !isFiltering && hasInquiry;
-
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
@@ -86,7 +83,7 @@ const TeamBoardLayout = ({
     });
   };
 
-  if (showExport) {
+  if (!isFiltering && !hasInquiry) {
     return (
       <div className="w-full mx-auto flex flex-col gap-10">
         <Header
