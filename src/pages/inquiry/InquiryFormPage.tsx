@@ -191,7 +191,6 @@ const InquiryFormPage = () => {
   const { data: editData, isLoading: isLoadingEdit } = useGetTeamInquiryDetail(
     editTeamId ?? 0,
     editInquiryId ?? 0
-    // 가능하면 훅에 enabled 옵션 추가 권장: { enabled: !!hasEditIds }
   );
 
   const editDetail = hasEditIds ? editData?.result : undefined;
