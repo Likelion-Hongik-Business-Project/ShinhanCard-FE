@@ -7,11 +7,11 @@ interface Props {
 
   // 임시저장 관련
   isDraftOpen: boolean;
-  draftModalMode: "detect" | "conflict"; // ✅ 추가: 감지 / 충돌 모드
+  draftModalMode: "detect" | "conflict"; // 추가: 감지 / 충돌 모드
   onCloseDraft: () => void;
   onRestoreDraft: () => void; // 불러오기
   onResetDraft: () => void; // 현재 글 유지(닫기만)
-  onOverwriteDraft: () => void; // ✅ 추가: 현재 글로 임시저장 (덮어쓰기)
+  onOverwriteDraft: () => void; // 추가: 현재 글로 임시저장 (덮어쓰기)
 
   // 등록 확인
   isConfirmOpen: boolean;

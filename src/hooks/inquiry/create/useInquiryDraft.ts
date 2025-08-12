@@ -167,7 +167,13 @@ export const useInquiryDraft = ({
     autoOpenSuppressedRef.current = false;
 
     // 변경 감지 기준을 새 팀 기준으로 재설정
-    prevRef.current = { title, content, assigneeIds, referenceIds, fileIds };
+    prevRef.current = {
+      title,
+      content,
+      assigneeIds,
+      referenceIds,
+      fileIds: getValidFileIds(),
+    };
   }, [teamId]);
 
   // 저장됨 표시 이후 변경 감지
@@ -179,7 +185,7 @@ export const useInquiryDraft = ({
       prevRef.current.content !== content ||
       !arrEq(prevRef.current.assigneeIds, assigneeIds) ||
       !arrEq(prevRef.current.referenceIds, referenceIds) ||
-      !arrEq(prevRef.current.fileIds, fileIds);
+      !arrEq(prevRef.current.fileIds, getValidFileIds());
 
     if (changed) setIsDraftSaved(false);
   }, [title, content, assigneeIds, referenceIds, fileIds, isDraftSaved]);

@@ -8,9 +8,10 @@ export const sanitizeUrl = (raw: string) => {
   try {
     s = decodeURI(s);
   } catch {
-    // ignore decode errors
+    /* ignore */
   }
 
+  // 공백 포함 전체를 퍼센트 인코딩
   s = encodeURI(s);
 
   // encodeURI가 안 해주는 문제문자 수동 인코딩
@@ -26,7 +27,7 @@ export const sanitizeUrl = (raw: string) => {
  * 코드블록(``` ```)은 건너뛰고, 마크다운 이미지 문법만 안전하게 변환
  * - ![alt](url "title")
  * - ![alt](<url>)
- * - 연속 이미지, 특수문자 포함 URL 대응
+ * - 공백/한글/특수문자 포함 URL 대응
  */
 export const transformImagesSafely = (md: string) => {
   const parts = (md ?? "").split(/(```[\s\S]*?```)/g); // 코드블록 보존
@@ -34,8 +35,9 @@ export const transformImagesSafely = (md: string) => {
     .map(part => {
       if (part.startsWith("```")) return part;
 
+      // 핵심 수정: urlB를 공백 허용 + lookahead로 타이틀/닫는 괄호 직전까지 캡처
       return part.replace(
-        /!\[([^\]]*)\]\(\s*(?:<([^>]+)>|([^)\s]+))(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)/g,
+        /!\[([^\]]*)\]\(\s*(?:<([^>]+)>|([^)]*?))(?=\s*(?:"[^"]*"|'[^']*'|\([^)]*\))?\s*\))/g,
         (_, alt: string, urlA?: string, urlB?: string) => {
           const url = sanitizeUrl(urlA || urlB || "");
           return `![${alt}](${url})`;
