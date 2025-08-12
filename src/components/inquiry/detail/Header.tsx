@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import { Users } from "@/assets/svgs/board";
 import { HeaderProps } from "@/types/inquiryTypes";
 
@@ -8,7 +10,7 @@ const Header = ({
   onDelete,
 }: HeaderProps) => {
   const { group_name, division_name, team_name } = teamInfo;
-
+  const navigate = useNavigate();
   return (
     <div className="self-stretch flex justify-between items-end">
       <div className="flex flex-col justify-start items-start gap-[16px]">
@@ -18,15 +20,17 @@ const Header = ({
           </div>
         </div>
         <div className="flex justify-start items-center gap-[16px]">
-          <div className="px-[4px] flex justify-start items-center">
-            <div
-              className={`text-heading1 ${
-                isTeamEnd ? "text-gray-50" : "text-gray-80"
-              }`}
-            >
-              {team_name}
+          <button onClick={() => navigate(`/team/${teamInfo.team_id}`)}>
+            <div className="px-[4px] flex justify-start items-center cursor-pointer">
+              <div
+                className={`text-heading1 ${
+                  isTeamEnd ? "text-gray-50" : "text-gray-80"
+                }`}
+              >
+                {team_name}
+              </div>
             </div>
-          </div>
+          </button>
           <div className="w-[32px] h-[32px] relative overflow-hidden">
             <Users className="w-[32px] h-[32px] text-gray-40" />
           </div>

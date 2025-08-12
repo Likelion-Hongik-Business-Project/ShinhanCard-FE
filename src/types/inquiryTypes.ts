@@ -49,6 +49,7 @@ export interface HeaderProps {
     group_name: string;
     division_name: string;
     team_name: string;
+    team_id: number;
   };
   onDelete: () => void;
 }

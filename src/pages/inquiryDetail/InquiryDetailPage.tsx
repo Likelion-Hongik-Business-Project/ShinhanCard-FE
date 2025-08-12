@@ -51,6 +51,7 @@ const InquiryDetailPage = () => {
     group_name: " ",
     division_name: " ",
     team_name: "문의 상세 정보",
+    team_id: 0,
   };
 
   if (isLoading) {
@@ -106,6 +107,7 @@ const InquiryDetailPage = () => {
     group_name: inquiryData.group.group_name,
     division_name: inquiryData.division.division_name,
     team_name: inquiryData.team.team_name,
+    team_id: inquiryData.team.team_id,
   };
 
   const userRole = (inquiryData.role?.toLowerCase() || "default") as UserRole;
