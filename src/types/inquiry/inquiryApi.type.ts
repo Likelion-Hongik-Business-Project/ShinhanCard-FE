@@ -16,6 +16,7 @@ export interface PutInquiryRequest {
   content: string;
   assignee_ids: number[];
   observer_ids: number[];
+  file_ids: number[];
 }
 
 export interface PutInquiryResponse {

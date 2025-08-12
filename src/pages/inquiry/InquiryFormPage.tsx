@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import clsx from "clsx";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -46,6 +46,7 @@ const InquiryFormPage = () => {
 
   const mode = searchParams.get("mode");
   const isEdit = mode === "edit";
+  const appliedEditRef = useRef(false);
 
   const teamIdQS = searchParams.get("teamId");
   const inquiryIdQS = searchParams.get("inquiryId");
@@ -162,6 +163,10 @@ const InquiryFormPage = () => {
     resetDraft,
     deleteDraftBeforeSubmit,
     clearDraftState,
+    setFilesSync,
+    hasUploadingFiles,
+    draftModalMode,
+    saveCurrentAsDraftReplacingExisting,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
     title,
@@ -198,9 +203,23 @@ const InquiryFormPage = () => {
   const getUserId = (u?: { user_id?: number; userId?: number } | null) =>
     (u?.user_id ?? u?.userId ?? 0) as number;
 
+  const fileIdsForSubmit = useMemo(
+    () =>
+      (files ?? [])
+        .filter(
+          f =>
+            f.status === "done" &&
+            typeof f.file_id === "number" &&
+            f.file_id! > 0
+        )
+        .map(f => f.file_id!),
+    [files]
+  );
+
   // 편집 모드 데이터 주입
   useEffect(() => {
     if (!isEdit || !editDetail) return;
+    if (appliedEditRef.current) return;
 
     setTitle(editDetail.title ?? "");
     setContent(editDetail.content ?? "");
@@ -217,16 +236,17 @@ const InquiryFormPage = () => {
 
     const detailFiles = (editDetail.files as InquiryFile[] | undefined) ?? [];
     setFileIds(detailFiles.map(f => f.file_id));
-    setFiles(
+
+    setFilesSync(
       detailFiles.map(f => ({
         id: f.file_id,
+        file_id: f.file_id,
         file_name: f.file_name,
         file_size: f.file_size ?? 0,
         progress: 100,
         status: "done" as const,
       }))
     );
-
     if (
       editDetail.group?.group_id &&
       editDetail.division?.division_id &&
@@ -242,6 +262,7 @@ const InquiryFormPage = () => {
     }
 
     clearDraftState();
+    appliedEditRef.current = true;
   }, [
     isEdit,
     editDetail,
@@ -263,12 +284,17 @@ const InquiryFormPage = () => {
       setMissingField(missing);
       return;
     }
+    if (hasUploadingFiles()) {
+      setMissingField(null);
+      setIsConfirmModalOpen(false);
+      return;
+    }
     if (isEdit && editTeamId && editInquiryId) {
       confirmSubmit();
       return;
     }
     setIsConfirmModalOpen(true);
-  }, [validateFields, isEdit, editTeamId, editInquiryId]);
+  }, [validateFields, isEdit, editTeamId, editInquiryId, hasUploadingFiles]);
 
   const confirmSubmit = useCallback(() => {
     const payload: PostInquiryRequest = {
@@ -276,7 +302,7 @@ const InquiryFormPage = () => {
       content,
       assignee_ids: assigneeIds,
       observer_ids: referenceIds,
-      file_ids: fileIds,
+      file_ids: fileIdsForSubmit,
     };
 
     if (isEdit && editTeamId && editInquiryId) {
@@ -314,6 +340,7 @@ const InquiryFormPage = () => {
     content,
     assigneeIds,
     referenceIds,
+    fileIdsForSubmit,
     fileIds,
     putInquiryMutation,
     postInquiryMutation,
@@ -403,6 +430,8 @@ const InquiryFormPage = () => {
         onCloseConfirm={() => setIsConfirmModalOpen(false)}
         onConfirmSubmit={confirmSubmit}
         isSubmitting={isBlocking}
+        draftModalMode={draftModalMode}
+        onOverwriteDraft={saveCurrentAsDraftReplacingExisting}
       />
     </section>
   );
