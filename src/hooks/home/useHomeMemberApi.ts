@@ -25,8 +25,7 @@ export const useAddInterestedMember = () => {
 
   return useMutation({
     mutationFn: (userId: number) => postAddInterestedMember(userId),
-    onSuccess: data => {
-      console.log("관심 팀원 추가 성공:", data);
+    onSuccess: () => {
       //요청 성공시 새로고침
       queryClient.invalidateQueries({ queryKey: ["home", "initial"] });
       queryClient.invalidateQueries({
@@ -45,8 +44,7 @@ export const useRemoveInterestedMember = () => {
 
   return useMutation({
     mutationFn: (userId: number) => deleteRemoveInterestedMember(userId),
-    onSuccess: data => {
-      console.log("관심 팀원 삭제 성공:", data);
+    onSuccess: () => {
       // 요청 성공시 새로고침
       queryClient.invalidateQueries({ queryKey: ["home", "initial"] });
       queryClient.invalidateQueries({

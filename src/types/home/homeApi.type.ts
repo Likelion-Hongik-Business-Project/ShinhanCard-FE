@@ -27,7 +27,7 @@ export interface InquiryItem {
   title: string;
   status: "DRAFT" | "UNCHECKED" | "IN_PROGRESS" | "COMPLETED";
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 // 미확인 답변용 InquiryItem (writer 정보 없음)
@@ -36,7 +36,7 @@ export interface InquiryItemWithoutWriter {
   title: string;
   status: "DRAFT" | "UNCHECKED" | "IN_PROGRESS" | "COMPLETED";
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface Pagination {

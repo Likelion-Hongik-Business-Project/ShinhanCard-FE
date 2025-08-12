@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 import clsx from "clsx";
 
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import MarkdownViewer from "@/components/common/MarkdownViewer";
+import Modal from "@/components/common/Modal";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import type { AnswerItemProps } from "@/types/inquiryTypes";
 
@@ -15,12 +18,20 @@ const AnswerItem = ({
   onDelete,
 }: AnswerItemProps) => {
   const isWriter = comment.user?.user_id === currentUserId;
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (!comment.user) return null;
 
+  const openDeleteModal = () => setIsDeleteOpen(true);
+  const closeDeleteModal = () => setIsDeleteOpen(false);
+  const confirmDelete = () => {
+    onDelete(comment.answer_id);
+    closeDeleteModal();
+  };
+
   return (
     <div className="flex w-full flex-col gap-8">
-      <div className="whitespace-pre-line px-4 pt-8 text-body2 text-gray-100 max-h-[232px]">
+      <div className="whitespace-pre-line px-4 pt-8 text-body2 text-gray-100 ">
         <MarkdownViewer content={comment.content} />
       </div>
 
@@ -90,9 +101,7 @@ const AnswerItem = ({
               {!isOnlyComment && (
                 <button
                   className="text-body2 text-gray-50 cursor-pointer"
-                  onClick={() => {
-                    onDelete(comment.answer_id);
-                  }}
+                  onClick={openDeleteModal}
                 >
                   삭제
                 </button>
@@ -100,6 +109,7 @@ const AnswerItem = ({
             </div>
           )}
         </div>
+
         {/* 작성 시간 */}
         <div className="text-detail1 text-gray-50">
           {formatDateToKorean(comment.updated_at ?? comment.created_at, {
@@ -108,6 +118,16 @@ const AnswerItem = ({
           {comment.updated_at && <> 수정됨</>}
         </div>
       </div>
+
+      <Modal
+        isOpen={isDeleteOpen}
+        title="답변을 삭제하시겠습니까?"
+        onClose={closeDeleteModal}
+        buttons={[
+          { type: "white", label: "취소", onClick: closeDeleteModal },
+          { type: "blue", label: "확인", onClick: confirmDelete },
+        ]}
+      />
     </div>
   );
 };

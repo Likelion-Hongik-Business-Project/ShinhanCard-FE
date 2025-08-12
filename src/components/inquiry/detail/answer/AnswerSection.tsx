@@ -37,9 +37,14 @@ const AnswerSection = (props: AnswerSectionProps) => {
     !showEditor && "border-transparent"
   );
 
-  // 현재 선택된 사용자가 내 자신이고 답변 작성 중인지 확인
+  const meId = currentUserId == null ? null : Number(currentUserId);
+  const selId = selectedUserId == null ? null : Number(selectedUserId);
+
   const isMyTabAndWriting =
-    selectedUserId === currentUserId && (showEditor || isWritingAnswer);
+    meId != null &&
+    selId != null &&
+    selId === meId &&
+    (showEditor || isWritingAnswer);
 
   return (
     <div className={answerSectionClasses}>

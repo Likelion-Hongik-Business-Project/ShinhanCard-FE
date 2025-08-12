@@ -41,7 +41,6 @@ export const patchArchiveNotification = async ({
   const { data } = await instance.patch<
     ApiResponse<PatchArchiveNotificationResponse>
   >(`/api/notifications/${notification_id}/archive`, { is_archived });
-  console.log("변경", data);
   return data;
 };
 

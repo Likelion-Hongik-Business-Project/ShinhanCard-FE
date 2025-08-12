@@ -33,7 +33,7 @@ export interface AssignedInquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface AssignedInquiryListResponse {
@@ -51,7 +51,7 @@ export interface InquiryListItem {
   title: string;
   status: InquiryStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export type YearMonth = { year: number; month: number };
@@ -69,7 +69,7 @@ export interface MyInquiryItem {
   inquiry_assignees: InquiryAssignee[];
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface MyInquiryListResponse {
@@ -92,7 +92,7 @@ export interface ScrapedInquiryItem {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
 }
 
 export interface ScrapedInquiryListResponse {
@@ -108,6 +108,6 @@ export type TInquiryBase = {
   title: string;
   status: InquiryServerStatus;
   created_at: string;
-  is_scraped: boolean;
+  is_scrapped: boolean;
   writer?: Profile;
 };
