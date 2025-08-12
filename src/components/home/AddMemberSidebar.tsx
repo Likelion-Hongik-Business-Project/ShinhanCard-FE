@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import clsx from "clsx";
 
-import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
+import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import CloseIcon from "@/assets/svgs/inquiry/close.svg";
 import { Search } from "@/assets/svgs/layout";
 import { useAddInterestedMember } from "@/hooks/home/useHomeMemberApi";
@@ -269,19 +269,15 @@ const AddMemberSidebar = ({ isOpen, onClose, teamName, teamId }: Props) => {
                       onMouseLeave={handleMemberMouseLeave}
                     >
                       <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center">
-                        <img
-                          src={
-                            member.profile_image_url?.trim()
-                              ? member.profile_image_url.trim()
-                              : profileFallbackUrl
-                          }
-                          alt={member.name}
-                          className="w-full h-full object-cover"
-                          onError={e => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = profileFallbackUrl;
-                          }}
-                        />
+                        {member.profile_image_url?.trim() ? (
+                          <img
+                            src={member.profile_image_url.trim()}
+                            alt={member.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <ProfileIcon className="w-full h-full" />
+                        )}
                       </div>
                       <div className="flex-1">
                         <div className=" text-body2 text-gray-80 truncate">

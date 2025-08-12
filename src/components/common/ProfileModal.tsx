@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
+import ProfileIcon from "@/assets/svgs/common/profile.svg";
 import User from "@/assets/svgs/home/icon-user.svg";
 import Logout from "@/assets/svgs/profile/logout.svg";
 import Mail from "@/assets/svgs/profile/mail.svg";
@@ -33,6 +33,13 @@ const ProfileModal = ({
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  console.log(
+    "ProfileModal - isOwnProfile:",
+    isOwnProfile,
+    "profile:",
+    profile
+  );
+
   // 모달 호버 상태 관리
   const hideModalTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -59,10 +66,6 @@ const ProfileModal = ({
 
   if (!isOpen) return null;
 
-  const profileSrc = profile?.profile_image_url?.trim()
-    ? profile.profile_image_url.trim()
-    : profileFallbackUrl;
-
   return (
     <div
       className="bg-white rounded-[8px] shadow-lg border border-gray-20 w-[345px]"
@@ -84,15 +87,15 @@ const ProfileModal = ({
           <div className="flex gap-4 px-6 py-4">
             {/* 프로필 이미지 */}
             <div className="w-20 h-20 rounded-[8px] overflow-hidden flex-shrink-0 aspect-square">
-              <img
-                src={profileSrc}
-                alt={profile.name}
-                className="w-full h-full object-cover"
-                onError={e => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = profileFallbackUrl;
-                }}
-              />
+              {profile.profile_image_url?.trim() ? (
+                <img
+                  src={profile.profile_image_url.trim()}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <ProfileIcon className="w-full h-full" />
+              )}
             </div>
 
             {/* 이름 및 직책 정보 */}
