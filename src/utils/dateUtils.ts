@@ -58,15 +58,21 @@ export const formatDateToKorean = (
   let date: Date;
 
   if (typeof dateString === "string") {
-    const normalized = dateString.split(".")[0] + "Z";
-    date = new Date(normalized);
+    // formatTime과 동일한 방식으로 단순하게 파싱
+    // 브라우저가 자동으로 로컬 시간대 처리
+    date = new Date(dateString);
   } else {
     date = dateString;
   }
 
+  // 유효하지 않은 날짜 체크
+  if (isNaN(date.getTime())) {
+    console.warn("Invalid date:", dateString);
+    return "";
+  }
+
   if (options.showTime) {
     return date.toLocaleString("ko-KR", {
-      timeZone: "Asia/Seoul",
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -77,7 +83,6 @@ export const formatDateToKorean = (
   }
 
   return date.toLocaleDateString("ko-KR", {
-    timeZone: "Asia/Seoul",
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -94,8 +99,15 @@ export const formatRemain = (ms: number) => {
 
 export const parseUtc = (s?: string | null) => {
   if (!s) return null;
-  const hasTZ = /Z|[+-]\d\d:?\d\d$/.test(s);
-  const norm = hasTZ ? s : s.split(".")[0] + "Z";
-  const d = new Date(norm);
-  return isNaN(+d) ? null : d;
+
+  // formatTime, formatDateToKorean과 동일한 방식으로 단순 파싱
+  // 브라우저가 자동으로 로컬 시간대 처리하도록 함
+  const d = new Date(s);
+
+  if (isNaN(+d)) {
+    console.warn("Failed to parse date:", s);
+    return null;
+  }
+
+  return d;
 };
