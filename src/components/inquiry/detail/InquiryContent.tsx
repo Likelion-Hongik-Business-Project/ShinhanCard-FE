@@ -84,8 +84,8 @@ const InquiryContent = ({
                   key={f.file_id}
                   file={{
                     id: f.file_id,
-                    name: f.file_name,
-                    size: f.file_size ?? 0,
+                    file_name: f.file_name,
+                    file_size: f.file_size ?? 0,
                     progress: 100,
                     status: "done",
                   }}

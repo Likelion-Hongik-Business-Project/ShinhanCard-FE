@@ -14,7 +14,7 @@ interface Props {
 const formatSize = (size: number) => `${Math.round(size / 1024)} KB`;
 
 const FileUploadItem = ({ file, onRemove }: Props) => {
-  const { name, size, progress, status } = file;
+  const { file_name, file_size, progress, status } = file;
 
   const isUploading = status === "uploading";
   const isDone = status === "done";
@@ -31,7 +31,7 @@ const FileUploadItem = ({ file, onRemove }: Props) => {
                 isUploading ? "max-w-[184px]" : "max-w-[166px]"
               )}
             >
-              {name}
+              {file_name}
             </span>
 
             {isUploading ? (
@@ -43,7 +43,7 @@ const FileUploadItem = ({ file, onRemove }: Props) => {
               </div>
             ) : (
               <span className="text-body3 text-gray-50">
-                {formatSize(size)}
+                {formatSize(file_size)}
               </span>
             )}
           </div>
