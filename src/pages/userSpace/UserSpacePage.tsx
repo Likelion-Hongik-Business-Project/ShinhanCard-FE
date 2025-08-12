@@ -329,7 +329,7 @@ const UserSpacePage = () => {
           | GetUserSpaceInitialResult
           | GetUserSpaceTeamResult;
         return {
-          title: `${profile.name}님이 쓴 문의`,
+          title: `${profile.name}님이 쓴 문의 (${totalCount})`,
           description: `${profile.name}님이 쓴 문의가 총`,
           emptyText: `${profile.name}님이 쓴 문의가 없습니다`,
           writer: writtenData?.writer
@@ -343,14 +343,14 @@ const UserSpacePage = () => {
       }
       case "assigned":
         return {
-          title: `${profile.name}님의 담당 문의`,
+          title: `${profile.name}님의 담당 문의 (${totalCount})`,
           description: `${profile.name}님의 담당 문의가 총`,
           emptyText: `${profile.name}님의 담당 문의가 없습니다`,
           writer: undefined, // assigned에서는 각 inquiry의 writer 사용
         };
       case "scrap":
         return {
-          title: `${profile.name}님의 스크랩`,
+          title: `${profile.name}님의 스크랩 (${totalCount})`,
           description: `${profile.name}님이 스크랩한 문의가 총`,
           emptyText: `${profile.name}님이 스크랩한 문의가 없습니다`,
           writer: undefined, // scrap에서는 각 inquiry의 writer 사용
