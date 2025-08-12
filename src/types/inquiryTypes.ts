@@ -1,5 +1,6 @@
+import { ProfileData } from "@/types/profile/profile.type";
+
 import { InquiryFile, UploadFile } from "./file/file.type";
-import { ProfileData } from "./profile/profile.type";
 export type UserRole = "default" | "assignee" | "writer" | "admin";
 
 // 답변 타입
