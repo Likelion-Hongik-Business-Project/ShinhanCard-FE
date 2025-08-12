@@ -34,7 +34,10 @@ const AssigneeSection = ({
   tempObserverIds = [],
   currentUserId,
 }: AssigneeSectionProps) => {
-  const [inputValue, setInputValue] = useState("");
+  // 각각 독립적인 입력 state
+  const [assigneeInputValue, setAssigneeInputValue] = useState("");
+  const [observerInputValue, setObserverInputValue] = useState("");
+
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showObserverLimitModal, setShowObserverLimitModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -55,7 +58,9 @@ const AssigneeSection = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<HTMLDivElement>(null);
 
-  const debouncedInput = useDebounce(inputValue, 300);
+  // 각각 독립적인 디바운스 처리
+  const debouncedAssigneeInput = useDebounce(assigneeInputValue, 300);
+  const debouncedObserverInput = useDebounce(observerInputValue, 300);
 
   // 외부 클릭 시 드롭다운 닫기
   useOutsideClick(containerRef, () => {
@@ -78,6 +83,32 @@ const AssigneeSection = ({
     return allUsers.filter(user => tempObserverIds.includes(user.user_id));
   }, [allUsers, tempObserverIds]);
 
+  // 담당자용 필터링된 사용자 목록
+  const filteredAssigneeUsers = allUsers
+    .filter(u =>
+      u.username
+        ?.toLowerCase()
+        .includes(debouncedAssigneeInput.trim().toLowerCase())
+    )
+    .filter(
+      u =>
+        !tempAssigneeIds?.includes(u.user_id) &&
+        !tempObserverIds?.includes(u.user_id)
+    );
+
+  // 참조자용 필터링된 사용자 목록
+  const filteredObserverUsers = allUsers
+    .filter(u =>
+      u.username
+        ?.toLowerCase()
+        .includes(debouncedObserverInput.trim().toLowerCase())
+    )
+    .filter(
+      u =>
+        !tempAssigneeIds?.includes(u.user_id) &&
+        !tempObserverIds?.includes(u.user_id)
+    );
+
   // 담당자 선택 처리
   const handleSelectUser = (user: AssigneeUser) => {
     if (user.user_id === undefined) return;
@@ -91,7 +122,7 @@ const AssigneeSection = ({
     }
 
     onAssigneeChange([...tempAssigneeIds, user.user_id]);
-    setInputValue("");
+    setAssigneeInputValue("");
     setIsOpen(false);
   };
 
@@ -101,33 +132,22 @@ const AssigneeSection = ({
     if (!onObserverChange) return;
 
     if (tempObserverIds.includes(user.user_id)) return;
-
-    if (tempObserverIds.length >= 3) {
+    // 참조자는 최대 5명까지 가능
+    if (tempObserverIds.length >= 5) {
       setShowObserverLimitModal(true);
       return;
     }
 
     onObserverChange([...tempObserverIds, user.user_id]);
-    setInputValue("");
+    setObserverInputValue("");
     setObserverOpen(false);
   };
 
-  // 검색된 사용자 목록 (이미 선택된 사용자 제외)
-  const filteredUsers = allUsers
-    .filter(u =>
-      u.username?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
-    )
-    .filter(
-      u =>
-        !tempAssigneeIds?.includes(u.user_id) &&
-        !tempObserverIds?.includes(u.user_id)
-    );
-
   useEffect(() => {
-    if (tempAssigneeIds?.length >= 3 && inputValue !== "") {
-      setInputValue("");
+    if (tempAssigneeIds?.length >= 3 && assigneeInputValue !== "") {
+      setAssigneeInputValue("");
     }
-  }, [tempAssigneeIds, inputValue]);
+  }, [tempAssigneeIds, assigneeInputValue]);
 
   // 표시할 담당자 목록 결정
   const getDisplayAssignees = () => {
@@ -212,12 +232,12 @@ const AssigneeSection = ({
 
     return (
       <div className="absolute top-full mt-1 w-full bg-white rounded-[5px] shadow-02 flex flex-col z-50">
-        {inputValue.trim() === "" ? (
+        {assigneeInputValue.trim() === "" ? (
           <DepartmentSelector
             allUsers={allUsers}
             onSelectUser={handleSelectUser}
           />
-        ) : filteredUsers.length === 0 ? (
+        ) : filteredAssigneeUsers.length === 0 ? (
           <div className="flex flex-col gap-4 p-2">
             <span className="text-detail1 text-gray-50">
               사용자를 선택하세요
@@ -228,7 +248,7 @@ const AssigneeSection = ({
           </div>
         ) : (
           <UserSearchList
-            users={filteredUsers}
+            users={filteredAssigneeUsers}
             onSelectUser={handleSelectUser}
           />
         )}
@@ -242,12 +262,12 @@ const AssigneeSection = ({
 
     return (
       <div className="absolute top-full mt-1 w-full bg-white rounded-[5px] shadow-02 flex flex-col z-50">
-        {inputValue.trim() === "" ? (
+        {observerInputValue.trim() === "" ? (
           <DepartmentSelector
             allUsers={allUsers}
             onSelectUser={handleObserverSelect}
           />
-        ) : filteredUsers.length === 0 ? (
+        ) : filteredObserverUsers.length === 0 ? (
           <div className="flex flex-col gap-4 p-2">
             <span className="text-detail1 text-gray-50">
               사용자를 선택하세요
@@ -258,7 +278,7 @@ const AssigneeSection = ({
           </div>
         ) : (
           <UserSearchList
-            users={filteredUsers}
+            users={filteredObserverUsers}
             onSelectUser={handleObserverSelect}
           />
         )}
@@ -320,8 +340,8 @@ const AssigneeSection = ({
                   </div>
                 ))}
                 <input
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
+                  value={assigneeInputValue}
+                  onChange={e => setAssigneeInputValue(e.target.value)}
                   className="flex-1 min-w-0 cursor-pointer outline-none text-gray-100 placeholder:text-gray-30 bg-transparent"
                   placeholder={tempAssigneeIds?.length === 0 ? "필수입력" : ""}
                 />
@@ -442,8 +462,8 @@ const AssigneeSection = ({
                   </div>
                 ))}
                 <input
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
+                  value={observerInputValue}
+                  onChange={e => setObserverInputValue(e.target.value)}
                   className="flex-1 min-w-0 cursor-pointer outline-none text-gray-100 placeholder:text-gray-30 bg-transparent"
                   placeholder={tempObserverIds?.length === 0 ? "선택입력" : ""}
                 />
@@ -574,7 +594,7 @@ const AssigneeSection = ({
         <Modal
           isOpen={showObserverLimitModal}
           onClose={() => setShowObserverLimitModal(false)}
-          title="참조자는 최대 3명까지 가능합니다"
+          title="참조자는 최대 5명까지 가능합니다"
           buttons={[
             {
               label: "확인",
