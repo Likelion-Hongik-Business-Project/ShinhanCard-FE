@@ -329,7 +329,7 @@ export const useInquiryDetail = () => {
       await putInquiryAssigneeMutation.mutateAsync({
         team_id: Number(team_id),
         inquiry_id: Number(inquiry_id),
-        data: { assignee_ids: assigneeIds },
+        data: { newAssignee_ids: assigneeIds },
       });
       handleCloseAssigneeModal();
     } catch (error) {
