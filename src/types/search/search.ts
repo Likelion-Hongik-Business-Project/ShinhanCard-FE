@@ -71,6 +71,8 @@ export interface SearchRequest {
   query: string;
   page: number;
   pageSize: number;
+  status?: InquiryServerStatus;
+  date?: string[];
 }
 
 // 추천 검색 결과 아이템 타입

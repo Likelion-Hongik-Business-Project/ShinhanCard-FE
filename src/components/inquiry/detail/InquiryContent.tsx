@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ProfileIcon from "@/assets/svgs/inquiry/detail/profile.svg";
 import MarkdownViewer from "@/components/common/MarkdownViewer";
 import Modal from "@/components/common/Modal";
+import ProfileModal from "@/components/common/ProfileModal";
 import { formatDateToKorean } from "@/utils/dateUtils";
 import { InquiryContentProps } from "@/types/inquiryTypes";
 
@@ -27,6 +28,13 @@ const InquiryContent = ({
 }: InquiryContentProps) => {
   const navigate = useNavigate();
   const [isWriterDeleteModalOpen, setIsWriterDeleteModalOpen] = useState(false);
+
+  // 프로필 모달 상태
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileModalOffset, setProfileModalOffset] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
 
   const handleEdit = () => {
     navigate("/inquiry/form?mode=edit", {
@@ -53,6 +61,26 @@ const InquiryContent = ({
   const handleDeleteClick = () => {
     // 문의자, 관리자 둘다 모달의 버튼은 파란색
     setIsWriterDeleteModalOpen(true);
+  };
+
+  // 프로필 호버 핸들러
+  const handleProfileHover = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const modalHeight = 242; // ProfileModal의 대략적인 높이
+
+    let top = rect.bottom + 8;
+
+    // 모달이 화면 아래로 넘어가면 위로 붙이기
+    if (top + modalHeight > window.innerHeight) {
+      top = rect.top - modalHeight - 8;
+    }
+
+    setProfileModalOffset({
+      left: rect.left,
+      top: Math.max(top, 0),
+    });
+    setIsProfileModalOpen(true);
   };
 
   return (
@@ -99,7 +127,10 @@ const InquiryContent = ({
         {/* 작성자 정보 */}
         <div className="self-stretch rounded-[30px] flex flex-col justify-center items-start gap-4">
           <div className="flex justify-between items-center w-full">
-            <div className="flex items-center gap-2">
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onMouseEnter={handleProfileHover}
+            >
               {author.profile_image_url ? (
                 <img
                   src={author.profile_image_url}
@@ -162,6 +193,26 @@ const InquiryContent = ({
           },
         ]}
       />
+
+      {/* 프로필 모달 */}
+      {isProfileModalOpen && profileModalOffset && (
+        <div
+          className="fixed z-2000 transition-all duration-200 ease-in-out"
+          style={{
+            left: profileModalOffset.left,
+            top: profileModalOffset.top,
+          }}
+        >
+          <ProfileModal
+            id={author.user_id}
+            isOpen={true}
+            onClose={() => {
+              setIsProfileModalOpen(false);
+              setProfileModalOffset(null);
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };

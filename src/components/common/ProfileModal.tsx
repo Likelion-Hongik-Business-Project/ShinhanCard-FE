@@ -8,6 +8,7 @@ import Logout from "@/assets/svgs/profile/logout.svg";
 import Mail from "@/assets/svgs/profile/mail.svg";
 import Phone from "@/assets/svgs/profile/phone.svg";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useOutsideClick } from "@/hooks/common/useOutsideClick";
 import { useOtherProfile } from "@/hooks/profile/useOtherProfile";
 
 import { useProfileStore } from "@/store/useProfileStore";
@@ -17,31 +18,29 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSidebarClose?: () => void;
-  isOwnProfile?: boolean;
 };
 
-const ProfileModal = ({
-  id,
-  isOpen,
-  onClose,
-  onSidebarClose,
-  isOwnProfile = false,
-}: Props) => {
+const ProfileModal = ({ id, isOpen, onClose, onSidebarClose }: Props) => {
   const { data: profileResponse, isLoading, error } = useOtherProfile(id);
   const { profile: ownProfile } = useProfileStore();
+
+  // 현재 사용자의 프로필인지 자동으로 판단
+  const isOwnProfile = ownProfile?.id === id;
   const profile = isOwnProfile ? ownProfile : profileResponse?.result;
+
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  console.log(
-    "ProfileModal - isOwnProfile:",
-    isOwnProfile,
-    "profile:",
-    profile
-  );
+  // 모달 ref
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // 모달 호버 상태 관리
   const hideModalTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 외부 클릭 시 모달 닫기
+  useOutsideClick(modalRef, () => {
+    onClose();
+  });
 
   // 모달 호버 핸들러
   const handleModalMouseEnter = () => {
@@ -52,7 +51,10 @@ const ProfileModal = ({
   };
 
   const handleModalMouseLeave = () => {
-    onClose();
+    // 모달에서 마우스가 벗어날 때 약간의 지연 후 닫기
+    hideModalTimerRef.current = setTimeout(() => {
+      onClose();
+    }, 100);
   };
 
   // 컴포넌트 언마운트 시 타이머 정리
@@ -68,6 +70,7 @@ const ProfileModal = ({
 
   return (
     <div
+      ref={modalRef}
       className="bg-white rounded-[8px] shadow-lg border border-gray-20 w-[345px]"
       onClick={e => e.stopPropagation()}
       onMouseEnter={handleModalMouseEnter}

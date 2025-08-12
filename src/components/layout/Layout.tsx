@@ -145,7 +145,6 @@ const Layout = () => {
               setIsProfileModalOpen(false);
               setProfileModalOffset(null);
             }}
-            isOwnProfile={true}
           />
         </div>
       )}

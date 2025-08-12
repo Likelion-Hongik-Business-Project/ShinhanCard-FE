@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import {
+  InquiryServerStatus,
+  YearMonth,
+} from "@/types/inquiry/inquiryListApi.type";
 import { SearchRequest } from "@/types/search/search";
 
 import {
@@ -52,15 +56,29 @@ export const useRecommendSearchKeywords = (query: string) => {
 export const useSearchResults = (
   query: string,
   page: number = 1,
-  pageSize: number = 6
+  pageSize: number = 6,
+  status?: InquiryServerStatus,
+  date?: YearMonth[]
 ) => {
   return useQuery({
-    queryKey: ["inquiries", "searchResults", query, page, pageSize],
+    queryKey: [
+      "inquiries",
+      "searchResults",
+      query,
+      page,
+      pageSize,
+      status,
+      date,
+    ],
     queryFn: async () => {
       const request: SearchRequest = {
         query,
         page,
         pageSize,
+        status,
+        date: date?.map(
+          d => `${d.year}-${d.month.toString().padStart(2, "0")}`
+        ),
       };
       return getSearchResults(request);
     },
