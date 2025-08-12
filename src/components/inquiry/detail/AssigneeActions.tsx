@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 import Check from "@/assets/svgs/inquiry/detail/check.svg";
 import Pencil from "@/assets/svgs/inquiry/detail/pencil.svg";
 import Users from "@/assets/svgs/inquiry/detail/users.svg";
@@ -16,21 +14,37 @@ const AssigneeActions = ({
   isCurrentUserConfirmed,
   showEditor,
   hasMyComment,
-  inquiryId,
-  teamId,
+  isEditingAssignees,
+  onStartEditAssignees,
+  onCompleteEditAssignees,
 }: AssigneeActionsProps) => {
-  const navigate = useNavigate();
   const [isAssigneeModalOpen, setIsAssigneeModalOpen] = useState(false);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
   if (!showAssigneeFeatures) return null;
 
-  const shouldShowAnswerButton = !showEditor && !hasMyComment;
+  const shouldShowAnswerButton =
+    !showEditor && !hasMyComment && !isEditingAssignees;
 
   const openAssigneeModal = () => setIsAssigneeModalOpen(true);
   const closeAssigneeModal = () => setIsAssigneeModalOpen(false);
-  const handleEditClick = () => {
+
+  const handleModalEditClick = () => {
     closeAssigneeModal();
-    navigate(`/teams/${teamId}/inquiries/${inquiryId}?mode=edit`);
+    onStartEditAssignees?.(); // 옵셔널 체이닝 사용
+  };
+
+  const handleCompleteEditClick = () => {
+    setIsCompleteModalOpen(true);
+  };
+
+  const confirmCompleteEdit = () => {
+    setIsCompleteModalOpen(false);
+    onCompleteEditAssignees?.();
+  };
+
+  const cancelCompleteEdit = () => {
+    setIsCompleteModalOpen(false);
   };
 
   return (
@@ -45,16 +59,21 @@ const AssigneeActions = ({
           )}
 
           <Button
-            buttonType="default"
-            className="text-gray-80"
-            onClick={openAssigneeModal}
+            buttonType={isEditingAssignees ? "blue" : "default"}
+            className={isEditingAssignees ? "text-white" : "text-gray-80"}
+            onClick={
+              isEditingAssignees ? handleCompleteEditClick : openAssigneeModal
+            }
           >
-            <Users className="text-gray-80" />
-            담당자 수정하기
+            <Users
+              className={isEditingAssignees ? "text-white" : "text-gray-80"}
+            />
+            {isEditingAssignees ? "담당자 수정 완료" : "담당자 수정하기"}
           </Button>
         </div>
+
         <div className="flex items-center gap-[16px]">
-          {!isCurrentUserConfirmed && !hasMyComment && (
+          {!isCurrentUserConfirmed && !hasMyComment && !isEditingAssignees && (
             <Button buttonType="default" onClick={onConfirm}>
               <Check className="text-gray-60" />
               확인 처리하기
@@ -63,6 +82,7 @@ const AssigneeActions = ({
         </div>
       </div>
 
+      {/* 수정 완료 확인 모달 */}
       <Modal
         isOpen={isAssigneeModalOpen}
         onClose={closeAssigneeModal}
@@ -70,7 +90,18 @@ const AssigneeActions = ({
         description={`담당자/참조자를 수정 시 권한을 부여하거나\n삭제할 수 있습니다.`}
         buttons={[
           { label: "뒤로가기", type: "gray", onClick: closeAssigneeModal },
-          { label: "수정하기", type: "blue", onClick: handleEditClick },
+          { label: "수정하기", type: "blue", onClick: handleModalEditClick },
+        ]}
+      />
+      {/* 수정 완료 확인 모달 */}
+      <Modal
+        isOpen={isCompleteModalOpen}
+        onClose={cancelCompleteEdit}
+        title={`해당 내용으로 담당자/참조자 변경을\n완료하시겠습니까?`}
+        description={`해당 내용으로 담당자/참조자를 수정 시 권한을 부여하거나\n삭제할 수 있습니다.`}
+        buttons={[
+          { label: "뒤로가기", type: "gray", onClick: cancelCompleteEdit },
+          { label: "완료하기", type: "blue", onClick: confirmCompleteEdit },
         ]}
       />
     </>
