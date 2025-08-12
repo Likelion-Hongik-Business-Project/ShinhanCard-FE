@@ -49,8 +49,10 @@ export interface HeaderProps {
     group_name: string;
     division_name: string;
     team_name: string;
+    team_id: number;
   };
   onDelete: () => void;
+  openAddMemberSidebar: (teamName: string, teamId: number) => void;
 }
 
 // InquiryContent Props 타입

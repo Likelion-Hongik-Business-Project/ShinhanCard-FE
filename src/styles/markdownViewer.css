@@ -6,3 +6,11 @@
   margin: 0 auto !important;
   object-fit: contain;
 }
+
+.prose.markdown-custom,
+.prose.markdown-custom :where(*) {
+  color: #191919 !important;
+}
+.prose.markdown-custom :where(a) {
+  text-decoration-color: currentColor;
+}

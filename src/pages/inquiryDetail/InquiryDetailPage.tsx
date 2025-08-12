@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Modal from "@/components/common/Modal";
@@ -46,11 +46,16 @@ const InquiryDetailPage = () => {
     onToggleNotification,
   } = useInquiryDetail();
 
+  const { openAddMemberSidebar } = useOutletContext<{
+    openAddMemberSidebar: (teamName: string, teamId: number) => void;
+  }>();
+
   // 조건부 렌더링
   const defaultTeamInfo = {
     group_name: " ",
     division_name: " ",
     team_name: "문의 상세 정보",
+    team_id: 0,
   };
 
   if (isLoading) {
@@ -61,7 +66,11 @@ const InquiryDetailPage = () => {
     return (
       <div className="min-h-screen">
         <div className="mx-auto w-full">
-          <Header teamInfo={defaultTeamInfo} onDelete={handleDeleteInquiry} />
+          <Header
+            teamInfo={defaultTeamInfo}
+            onDelete={handleDeleteInquiry}
+            openAddMemberSidebar={openAddMemberSidebar}
+          />
           <div className="mt-8 rounded-2xl bg-white p-16 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="rounded-full bg-red-100 p-4">
@@ -106,6 +115,7 @@ const InquiryDetailPage = () => {
     group_name: inquiryData.group.group_name,
     division_name: inquiryData.division.division_name,
     team_name: inquiryData.team.team_name,
+    team_id: inquiryData.team.team_id,
   };
 
   const userRole = (inquiryData.role?.toLowerCase() || "default") as UserRole;
@@ -119,6 +129,7 @@ const InquiryDetailPage = () => {
             isAdmin={isAdmin}
             teamInfo={teamInfoForHeader}
             onDelete={handleDeleteInquiry}
+            openAddMemberSidebar={openAddMemberSidebar}
           />
           <InquiryCard
             inquiry={inquiryData}

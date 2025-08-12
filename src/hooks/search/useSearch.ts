@@ -55,7 +55,7 @@ export const useSearchResults = (
   pageSize: number = 6
 ) => {
   return useQuery({
-    queryKey: ["searchResults", query, page, pageSize],
+    queryKey: ["inquiries", "searchResults", query, page, pageSize],
     queryFn: async () => {
       const request: SearchRequest = {
         query,

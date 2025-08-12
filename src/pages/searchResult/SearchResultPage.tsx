@@ -21,7 +21,7 @@ const SearchResultPage = () => {
 
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 6; // 페이지당 6개 아이템
+  const ITEMS_PER_PAGE = 10; // 페이지당 10개 아이템
 
   // 모달 상태
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -101,7 +101,7 @@ const SearchResultPage = () => {
   }
 
   return (
-    <section className="w-full h-[835px] bg-gray-10">
+    <section className="w-full bg-gray-10">
       <SearchHeader
         query={query}
         total_count={searchData?.result?.total_count || 0}
@@ -113,8 +113,8 @@ const SearchResultPage = () => {
           <p className="text-gray-40 text-heading2-b">검색 결과가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white rounded-[15px] flex flex-col max-h-[652px] overflow-auto">
-          <div className="flex justify-end border-b border-gray-10 z-10 ">
+        <div className="bg-white rounded-[15px] flex flex-col">
+          <div className="flex justify-end border-b border-gray-10 z-10">
             <InquiryListHeader
               selectedStatus={selectedStatus}
               setSelectedStatus={setSelectedStatus}

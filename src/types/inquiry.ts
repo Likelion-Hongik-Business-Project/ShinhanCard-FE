@@ -86,7 +86,7 @@ export interface MyInquiryListResponse {
 }
 
 // scrap
-export interface ScrapedInquiryItem {
+export interface ScrappedInquiryItem {
   inquiry_id: number;
   writer: Profile;
   title: string;
@@ -95,11 +95,11 @@ export interface ScrapedInquiryItem {
   is_scrapped: boolean;
 }
 
-export interface ScrapedInquiryListResponse {
+export interface ScrappedInquiryListResponse {
   total_count: number;
   selected_team: TeamItem;
   teams: TeamItem[];
-  inquiries: ScrapedInquiryItem[];
+  inquiries: ScrappedInquiryItem[];
   pagination: InquiryPagination;
 }
 
