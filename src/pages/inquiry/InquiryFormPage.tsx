@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import clsx from "clsx";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -46,6 +46,7 @@ const InquiryFormPage = () => {
 
   const mode = searchParams.get("mode");
   const isEdit = mode === "edit";
+  const appliedEditRef = useRef(false);
 
   const teamIdQS = searchParams.get("teamId");
   const inquiryIdQS = searchParams.get("inquiryId");
@@ -201,6 +202,7 @@ const InquiryFormPage = () => {
   // 편집 모드 데이터 주입
   useEffect(() => {
     if (!isEdit || !editDetail) return;
+    if (appliedEditRef.current) return;
 
     setTitle(editDetail.title ?? "");
     setContent(editDetail.content ?? "");
@@ -242,6 +244,7 @@ const InquiryFormPage = () => {
     }
 
     clearDraftState();
+    appliedEditRef.current = true;
   }, [
     isEdit,
     editDetail,
