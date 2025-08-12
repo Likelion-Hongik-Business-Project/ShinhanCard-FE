@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
 
-import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Modal from "@/components/common/Modal";
+import FollowUpSection from "@/components/Followup/FollowupSection";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
 import { useInquiryDetail } from "@/hooks/useInquiryDetail";
 import type { UserRole } from "@/types/inquiryTypes";
-import { mockInquiryResponse } from "@/mocks/mockInquiryResponse";
 
 const InquiryDetailPage = () => {
   const { team_id } = useParams<{
@@ -156,7 +155,7 @@ const InquiryDetailPage = () => {
           setSelectedFileIds={setSelectedFileIds}
           isEditMode={isEditMode}
         />
-        <AdditionalInquirySection inquiry={mockInquiryResponse} />
+        <FollowUpSection inquiry={inquiryData} />
       </div>
       {modalProps && (
         <Modal

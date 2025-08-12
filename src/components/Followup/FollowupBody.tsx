@@ -1,5 +1,6 @@
-import { Bubble, UserProfile } from "@/assets/svgs/AdditionalInquiry";
+import { Bubble, UserProfile } from "@/assets/svgs/followup";
 import { formatDateToKorean } from "@/utils/dateUtils";
+import { FollowUpAuthor, TaggedUser } from "@/types/inquiryTypes";
 
 export interface UserInfo {
   name: string;
@@ -7,8 +8,8 @@ export interface UserInfo {
 }
 
 export type Props = {
-  recipient: string;
-  writer: UserInfo;
+  taggedUser: TaggedUser;
+  author: FollowUpAuthor;
   created_at: string; // ISO 포맷 문자열
   content: string; // Markdown / 개행 포함 텍스트
   canEdit: boolean; // “수정” 버튼 노출 여부
@@ -16,9 +17,9 @@ export type Props = {
   onEdit: () => void;
 };
 
-export const AdditionalInquiryBody = ({
-  recipient,
-  writer,
+export const FollowupBody = ({
+  taggedUser,
+  author,
   created_at,
   content,
   canEdit,
@@ -30,16 +31,16 @@ export const AdditionalInquiryBody = ({
       {/* 헤더: 프로필 · 이름 · 날짜 */}
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2">
-          {writer.profile_image_url ? (
+          {author.profile_url ? (
             <img
-              src={writer.profile_image_url}
-              alt={writer.name}
+              src={author.profile_url}
+              alt={author.username}
               className="w-5 h-5 rounded-full"
             />
           ) : (
             <UserProfile className="w-5 h-5 rounded-full" />
           )}
-          <span className="text-body1-b text-gray-100">{writer.name}</span>
+          <span className="text-body1-b text-gray-100">{author.username}</span>
         </div>
         <span className="text-detail2 text-gray-50">
           {formatDateToKorean(created_at, { showTime: true })}
@@ -48,8 +49,8 @@ export const AdditionalInquiryBody = ({
 
       {/* 본문 */}
       <div className="text-body2 text-gray-800 whitespace-pre-wrap">
-        <span className="text-body2-b text-state-progress-02 ">
-          {recipient + " "}
+        <span className="text-body2-b text-state-progress-02">
+          {taggedUser.username + " "}
         </span>
         {content}
       </div>
@@ -73,4 +74,4 @@ export const AdditionalInquiryBody = ({
   );
 };
 
-export default AdditionalInquiryBody;
+export default FollowupBody;
