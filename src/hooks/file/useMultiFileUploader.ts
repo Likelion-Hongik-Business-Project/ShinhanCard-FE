@@ -39,9 +39,9 @@ export const useMultiFileUploader = (
       const id = Date.now() + Math.random();
       localIds.push(id);
       return {
-        id,
-        name: file.name,
-        size: file.size,
+        id: id,
+        file_name: file.name,
+        file_size: file.size,
         progress: 0,
         status: "uploading",
         controller: undefined,

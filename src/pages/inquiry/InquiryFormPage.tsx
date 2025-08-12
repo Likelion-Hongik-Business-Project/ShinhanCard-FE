@@ -79,10 +79,11 @@ const InquiryFormPage = () => {
 
   useEffect(() => {
     if (isEdit) return;
-    if (!toUserId) return;
-    setAssigneeIds(prev =>
-      prev.includes(toUserId) ? prev : [...prev, toUserId]
-    );
+    if (!toUserId && toUserId !== 0) return;
+    const id = Number(toUserId);
+    if (!Number.isFinite(id) || id <= 0) return;
+
+    setAssigneeIds(prev => (prev.includes(id) ? prev : [...prev, id]));
   }, [toUserId, isEdit, setAssigneeIds]);
 
   // 필드 유효성 검사
@@ -98,12 +99,11 @@ const InquiryFormPage = () => {
     isDraftSaved,
     isDraftModalOpen,
     setIsDraftModalOpen,
-    saveDraft,
-    restoreDraft,
-    resetDraft,
+    handleClickTempSave, // 임시저장 버튼에 연결
+    restoreDraft, // 모달 불러오기
+    resetDraft, // 모달 새로 작성
+    deleteDraftBeforeSubmit, // 최종 등록 전에 임시저장 삭제
     clearDraftState,
-    draftId,
-    deleteDraft,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
     title,
@@ -137,22 +137,25 @@ const InquiryFormPage = () => {
 
   const editDetail = hasEditIds ? editData?.result : undefined;
 
+  const getUserId = (u?: { user_id?: number; userId?: number } | null) =>
+    (u?.user_id ?? u?.userId ?? 0) as number;
+
   useEffect(() => {
     if (!isEdit || !editDetail) return;
 
     setTitle(editDetail.title ?? "");
     setContent(editDetail.content ?? "");
 
-    setAssigneeIds(
-      (editDetail.assignees ?? []).map(
-        (u: { user_id?: number; userId?: number }) => u.user_id ?? u.userId ?? 0
-      )
-    );
-    setReferenceIds(
-      (editDetail.observers ?? []).map(
-        (u: { user_id?: number; userId?: number }) => u.user_id ?? u.userId ?? 0
-      )
-    );
+    // ID 정규화 + 0 제거 + 중복 제거
+    const assignees = (editDetail.assignees ?? [])
+      .map(getUserId)
+      .filter(id => id > 0);
+    setAssigneeIds([...new Set(assignees)]);
+
+    const observers = (editDetail.observers ?? [])
+      .map(getUserId)
+      .filter(id => id > 0);
+    setReferenceIds([...new Set(observers)]);
 
     const detailFiles = (editDetail.files as InquiryFile[] | undefined) ?? [];
     setFileIds(detailFiles.map(f => f.file_id));
@@ -160,8 +163,8 @@ const InquiryFormPage = () => {
     setFiles(
       detailFiles.map(f => ({
         id: f.file_id,
-        name: f.file_name,
-        size: f.file_size ?? 0,
+        file_name: f.file_name,
+        file_size: f.file_size ?? 0,
         progress: 100,
         status: "done" as const,
       }))
@@ -207,6 +210,7 @@ const InquiryFormPage = () => {
     };
 
     if (isEdit && editTeamId && editInquiryId) {
+      // 수정은 그대로 PUT
       putInquiryMutation.mutate(
         { team_id: editTeamId, inquiry_id: editInquiryId, data: payload },
         {
@@ -216,34 +220,24 @@ const InquiryFormPage = () => {
           },
         }
       );
-    } else {
-      if (!teamId) return;
+      return;
+    }
 
+    // 신규 등록: draft 먼저 삭제 → 그 다음 post
+    if (!teamId) return;
+
+    deleteDraftBeforeSubmit(() => {
       postInquiryMutation.mutate(
         { teamId, data: payload },
         {
           onSuccess: () => {
             setIsConfirmModalOpen(false);
-            if (draftId) {
-              deleteDraft(
-                { inquiryId: draftId, teamId },
-                { onSuccess: () => clearDraftState() }
-              );
-            } else {
-              clearDraftState();
-            }
+            clearDraftState();
           },
         }
       );
-    }
+    });
   };
-
-  // 임시저장 완료 시 드래프트 클리어
-  useEffect(() => {
-    if (isDraftSaved) {
-      clearDraftState();
-    }
-  }, [title, content, assigneeIds, referenceIds, fileIds]);
 
   // 로딩 처리 (편집 모드일 때 상세 로딩 포함)
   const pageLoading = isLoadingEdit;
@@ -303,7 +297,7 @@ const InquiryFormPage = () => {
         {!isEdit && (
           <Button
             buttonType={isDraftSaved ? "done" : "white"}
-            onClick={saveDraft}
+            onClick={handleClickTempSave}
             disabled={isDraftSaved}
           >
             {isDraftSaved ? "임시저장완료" : "임시저장"}

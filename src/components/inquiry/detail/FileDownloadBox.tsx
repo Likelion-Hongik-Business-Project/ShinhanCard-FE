@@ -11,10 +11,10 @@ interface Props {
 const formatSize = (size: number) => `${Math.round(size / 1024)} KB`;
 
 const FileDownloadBox = ({ file }: Props) => {
-  const { id, name, size } = file;
+  const { id, file_name, file_size } = file;
   const { downloading, download } = useFileDownload();
 
-  const handleDownload = () => download(id as number, name);
+  const handleDownload = () => download(id as number, file_name);
 
   return (
     <div className="flex w-full 1680:w-103 px-6 py-4 border rounded-lg border-gray-40 gap-4 justify-between h-fit">
@@ -24,11 +24,13 @@ const FileDownloadBox = ({ file }: Props) => {
         <div className="flex flex-col gap-1 min-w-0">
           <span
             className="text-body2-b text-gray-80 truncate block"
-            title={name}
+            title={file_name}
           >
-            {name}
+            {file_name}
           </span>
-          <span className="text-body3 text-gray-50">{formatSize(size)}</span>
+          <span className="text-body3 text-gray-50">
+            {formatSize(file_size)}
+          </span>
         </div>
       </div>
 

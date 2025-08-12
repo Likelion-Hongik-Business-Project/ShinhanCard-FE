@@ -84,8 +84,8 @@ const InquiryContent = ({
                   key={f.file_id}
                   file={{
                     id: f.file_id,
-                    name: f.file_name,
-                    size: f.file_size ?? 0,
+                    file_name: f.file_name,
+                    file_size: f.file_size ?? 0,
                     progress: 100,
                     status: "done",
                   }}
@@ -149,7 +149,6 @@ const InquiryContent = ({
         isOpen={isWriterDeleteModalOpen}
         onClose={() => setIsWriterDeleteModalOpen(false)}
         title="글을 삭제하시겠습니까?"
-        description="게시글을 삭제할 시 복구할 수 없습니다."
         buttons={[
           {
             label: "취소",

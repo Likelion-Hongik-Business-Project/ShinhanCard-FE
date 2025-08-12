@@ -2,25 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useInquiryDraftApi } from "@/hooks/inquiry/create/useInquiryDraftApi";
 import { UploadFile } from "@/types/file/file.type";
-import { AssigneeUser, Division, Group, Team } from "@/types/team/user.type";
-
-export interface InquiryDraftFile {
-  fileId: number;
-  fileName: string;
-  fileSize: number;
-}
-
-export interface InquiryDraftResponse {
-  inquiry_id: number;
-  title: string;
-  content: string;
-  assignees: AssigneeUser[];
-  observers: AssigneeUser[];
-  files: InquiryDraftFile[];
-  group: Group;
-  division: Division;
-  team: Team;
-}
+import { GetInquiryDraftResponse } from "@/types/inquiry/inquiryDraftApi.type";
 
 export interface UseInquiryDraftParams {
   teamId: number;
@@ -77,6 +59,9 @@ export const useInquiryDraft = ({
   const [isDraftSaved, setIsDraftSaved] = useState(false);
   const [justSavedDraft, setJustSavedDraft] = useState(false);
 
+  // 한 번이라도 불러오거나(restore) 새로 생성(post)해서 활성화되면 이후엔 PUT 고정
+  const [hasActivatedDraft, setHasActivatedDraft] = useState(false);
+
   const prevRef = useRef({
     title,
     content,
@@ -125,7 +110,34 @@ export const useInquiryDraft = ({
     if (changed) setIsDraftSaved(false);
   }, [title, content, assigneeIds, referenceIds, fileIds, isDraftSaved]);
 
-  const saveDraft = async () => {
+  const markSaved = (snapshot?: {
+    title: string;
+    content: string;
+    assigneeIds: number[];
+    referenceIds: number[];
+    fileIds: number[];
+  }) => {
+    setIsDraftSaved(true);
+    setJustSavedDraft(true);
+    if (snapshot) prevRef.current = snapshot;
+    setTimeout(() => setJustSavedDraft(false), 400);
+  };
+
+  const buildDraftPayload = () => ({
+    title,
+    content,
+    assignee_ids: assigneeIds ?? [],
+    observer_ids: referenceIds ?? [],
+    file_ids: fileIds ?? [],
+  });
+
+  /**
+   * 임시저장 버튼 클릭 핸들러 (요구사항의 "임시저장 x → 클릭 시 바로 Post" / "임시저장 o → 모달")
+   * - 서버에 임시저장 없음 → 바로 POST
+   * - 서버에 임시저장 있음 & 아직 활성화 전(hasActivatedDraft=false) → 모달 오픈
+   * - 이미 활성화됨(hasActivatedDraft=true) → PUT
+   */
+  const handleClickTempSave = async () => {
     const missing = validateFields();
     if (missing) {
       setMissingField(missing);
@@ -133,82 +145,82 @@ export const useInquiryDraft = ({
     }
     if (justSavedDraft) return;
 
-    const draftData = {
-      title,
-      content,
-      assignee_ids: assigneeIds ?? [],
-      observer_ids: referenceIds ?? [],
-      file_ids: fileIds ?? [],
-    };
-
     const { data: latest } = await refetchDraftExists();
     const serverHas = Boolean(latest?.result?.is_present);
     const serverId = latest?.result?.draft_id ?? null;
 
-    if (serverHas && serverId != null) {
-      if (draftId == null) setDraftId(serverId);
-      putDraft(
-        { inquiryId: serverId, teamId, data: draftData },
+    // 1) 서버 드래프트 없음 → 바로 POST
+    if (!serverHas) {
+      const payload = buildDraftPayload();
+      postDraft(
+        { teamId, data: payload },
         {
-          onSuccess: () => {
-            setIsDraftSaved(true);
-            setJustSavedDraft(true);
-            prevRef.current = {
+          onSuccess: res => {
+            setDraftId(res.result.inquiry_id);
+            setHasActivatedDraft(true); // 이후부터 PUT
+            markSaved({
               title,
               content,
               assigneeIds,
               referenceIds,
               fileIds,
-            };
-            setTimeout(() => setJustSavedDraft(false), 400);
+            });
           },
         }
       );
       return;
     }
 
-    postDraft(
-      { teamId, data: draftData },
+    // 2) 서버 드래프트 있음 + 아직 활성화 전 → 모달 오픈
+    if (!hasActivatedDraft) {
+      setIsDraftModalOpen(true);
+      // 드래프트 id 동기화
+      if (serverId != null) setDraftId(serverId);
+      return;
+    }
+
+    // 3) 이미 활성화됨 → PUT
+    const id = draftId ?? serverId;
+    if (id == null) return;
+    putDraft(
+      { inquiryId: id, teamId, data: buildDraftPayload() },
       {
-        onSuccess: res => {
-          setDraftId(res.result.inquiry_id);
-          setIsDraftSaved(true);
-          setJustSavedDraft(true);
-          prevRef.current = {
+        onSuccess: () => {
+          markSaved({
             title,
             content,
             assigneeIds,
             referenceIds,
             fileIds,
-          };
-          setTimeout(() => setJustSavedDraft(false), 400);
+          });
         },
       }
     );
   };
 
+  /** 모달: b. 불러오기 → get draft & 상태 세팅, 이후부터 PUT 고정 */
   const restoreDraft = async () => {
     setIsDraftModalOpen(false);
 
     const { data } = await fetchDraft();
-    const r = data?.result as InquiryDraftResponse | undefined;
+    const r = data?.result as GetInquiryDraftResponse | undefined;
     if (!r) return;
 
-    const restoredAssignees = r.assignees?.map(u => u.user_id) ?? [];
-    const restoredObservers = r.observers?.map(u => u.user_id) ?? [];
+    const restoredAssignees = r.assignees?.map(u => u.userId) ?? [];
+    const restoredObservers = r.observers?.map(u => u.userId) ?? [];
     const restoredFiles = r.files ?? [];
 
     setTitle(r.title);
     setContent(r.content);
     setAssigneeIds(restoredAssignees);
     setReferenceIds(restoredObservers);
-    setFileIds(restoredFiles.map(f => f.fileId));
+    setFileIds(restoredFiles.map(f => f.file_id));
     setFiles(
       restoredFiles.map(file => ({
-        id: file.fileId,
-        fileId: file.fileId,
-        name: file.fileName,
-        size: file.fileSize,
+        id: file.file_id,
+        file_id: file.file_id,
+        file_name: file.file_name,
+        file_size: file.file_size,
         progress: 100,
         status: "done" as const,
       }))
@@ -219,57 +231,76 @@ export const useInquiryDraft = ({
     handleTeamChange(r.team.team_id);
 
     setDraftId(r.inquiry_id);
-    setIsDraftSaved(true);
-    setJustSavedDraft(true);
-
-    prevRef.current = {
+    setHasActivatedDraft(true); // 이후 PUT
+    markSaved({
       title: r.title,
       content: r.content,
       assigneeIds: restoredAssignees,
       referenceIds: restoredObservers,
-      fileIds: restoredFiles.map(f => f.fileId),
-    };
-
-    setTimeout(() => setJustSavedDraft(false), 400);
+      fileIds: restoredFiles.map(f => f.file_id),
+    });
   };
 
-  const resetDraft = () => {
-    if (!draftId || !teamId) return;
+  /** 모달: a. 새로 작성 → delete draft + post draft, 이후부터 PUT 고정 */
+  const resetDraft = async () => {
+    if (!teamId) return;
 
+    const { data: latest } = await refetchDraftExists();
+    const serverId = latest?.result?.draft_id ?? draftId;
+
+    const afterPost = () => {
+      setHasActivatedDraft(true);
+      markSaved({
+        title,
+        content,
+        assigneeIds,
+        referenceIds,
+        fileIds,
+      });
+      setIsDraftModalOpen(false);
+    };
+
+    const doPost = () => {
+      postDraft(
+        { teamId, data: buildDraftPayload() },
+        {
+          onSuccess: res => {
+            setDraftId(res.result.inquiry_id);
+            afterPost();
+          },
+        }
+      );
+    };
+
+    if (serverId) {
+      deleteDraft(
+        { inquiryId: serverId, teamId },
+        {
+          onSuccess: () => doPost(),
+        }
+      );
+    } else {
+      doPost();
+    }
+  };
+
+  /** 최종 등록 전: 임시저장 삭제 helper (delete draft + then callback) */
+  const deleteDraftBeforeSubmit = (onDone?: () => void) => {
+    if (!teamId || !draftId) {
+      onDone?.();
+      return;
+    }
     deleteDraft(
       { inquiryId: draftId, teamId },
       {
         onSuccess: () => {
-          const draftData = {
-            title,
-            content,
-            assignee_ids: assigneeIds ?? [],
-            observer_ids: referenceIds ?? [],
-            file_ids: fileIds ?? [],
-          };
-          postDraft(
-            { teamId, data: draftData },
-            {
-              onSuccess: res => {
-                setDraftId(res.result.inquiry_id);
-                setIsDraftSaved(true);
-                setJustSavedDraft(true);
-                prevRef.current = {
-                  title,
-                  content,
-                  assigneeIds,
-                  referenceIds,
-                  fileIds,
-                };
-                setTimeout(() => setJustSavedDraft(false), 400);
-              },
-            }
-          );
+          onDone?.();
+        },
+        onError: () => {
+          onDone?.();
         },
       }
     );
-
-    setIsDraftModalOpen(false);
   };
 
   const clearDraftState = () => {
@@ -282,14 +313,18 @@ export const useInquiryDraft = ({
     draftId,
     isDraftSaved,
     isDraftModalOpen,
-
     setIsDraftModalOpen,
 
-    saveDraft,
-    restoreDraft,
-    resetDraft,
-    clearDraftState,
+    // 버튼 동작
+    handleClickTempSave, // 임시저장 버튼 onClick에 연결
 
-    deleteDraft,
+    // 모달 액션
+    restoreDraft, // 불러오기
+    resetDraft, // 새로 작성
+
+    // 최종 등록 전 삭제용
+    deleteDraftBeforeSubmit,
+
+    clearDraftState,
   };
 };

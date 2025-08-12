@@ -50,7 +50,6 @@ export const useOrganizationSelector = () => {
     setTeamId(value);
   };
 
-  // ✅ 추가: 편집 모드 등에서 한 번에 값 주입
   const setFromIds = (
     gId?: number | null,
     dId?: number | null,

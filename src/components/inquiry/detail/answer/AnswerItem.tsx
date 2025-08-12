@@ -49,8 +49,8 @@ const AnswerItem = ({
                 key={f.file_id}
                 file={{
                   id: f.file_id,
-                  name: f.file_name,
-                  size: f.file_size ?? 0,
+                  file_name: f.file_name,
+                  file_size: f.file_size ?? 0,
                   progress: 100,
                   status: "done",
                 }}
@@ -122,7 +122,6 @@ const AnswerItem = ({
       <Modal
         isOpen={isDeleteOpen}
         title="답변을 삭제하시겠습니까?"
-        description="딥변을 삭제할 시 복구할 수 없습니다."
         onClose={closeDeleteModal}
         buttons={[
           { type: "gray", label: "취소", onClick: closeDeleteModal },
