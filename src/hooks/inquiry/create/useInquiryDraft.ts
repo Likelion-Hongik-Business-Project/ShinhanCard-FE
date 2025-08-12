@@ -297,7 +297,6 @@ export const useInquiryDraft = ({
           onDone?.();
         },
         onError: () => {
-          // 실패해도 등록은 진행할 수 있게 콜백 실행은 해줌 (정책에 맞게 조정)
           onDone?.();
         },
       }
