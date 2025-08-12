@@ -23,7 +23,6 @@ const InquiryContent = ({
   answersCount,
   inquiryId,
   teamId,
-  onDelete, // 관리자용
   files,
 }: InquiryContentProps) => {
   const navigate = useNavigate();
@@ -52,13 +51,8 @@ const InquiryContent = ({
 
   // 삭제 버튼 클릭 처리
   const handleDeleteClick = () => {
-    if (isAdmin) {
-      // 관리자는 기존 로직 사용
-      onDelete();
-    } else {
-      // 문의자는 새로운 모달 사용
-      setIsWriterDeleteModalOpen(true);
-    }
+    // 문의자, 관리자 둘다 모달의 버튼은 파란색
+    setIsWriterDeleteModalOpen(true);
   };
 
   return (
