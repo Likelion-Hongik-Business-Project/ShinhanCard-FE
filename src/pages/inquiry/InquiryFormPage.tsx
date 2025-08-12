@@ -165,6 +165,8 @@ const InquiryFormPage = () => {
     clearDraftState,
     setFilesSync,
     hasUploadingFiles,
+    draftModalMode,
+    saveCurrentAsDraftReplacingExisting,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
     title,
@@ -428,6 +430,8 @@ const InquiryFormPage = () => {
         onCloseConfirm={() => setIsConfirmModalOpen(false)}
         onConfirmSubmit={confirmSubmit}
         isSubmitting={isBlocking}
+        draftModalMode={draftModalMode}
+        onOverwriteDraft={saveCurrentAsDraftReplacingExisting}
       />
     </section>
   );

@@ -1,51 +1,92 @@
 import Modal from "@/components/common/Modal";
 
 interface Props {
+  // 공통
   missingField: "team" | "title" | "content" | "assignee" | null;
   onCloseMissing: () => void;
+
+  // 임시저장 관련
   isDraftOpen: boolean;
+  draftModalMode: "detect" | "conflict"; // ✅ 추가: 감지 / 충돌 모드
   onCloseDraft: () => void;
-  onRestoreDraft: () => void;
-  onResetDraft: () => void;
+  onRestoreDraft: () => void; // 불러오기
+  onResetDraft: () => void; // 현재 글 유지(닫기만)
+  onOverwriteDraft: () => void; // ✅ 추가: 현재 글로 임시저장 (덮어쓰기)
+
+  // 등록 확인
   isConfirmOpen: boolean;
   onCloseConfirm: () => void;
   onConfirmSubmit: () => void;
+
+  // 공통 진행 상태
   isSubmitting?: boolean;
 }
 
 const InquiryFormModal = ({
+  // 공통
   missingField,
   onCloseMissing,
+
+  // 임시저장
   isDraftOpen,
+  draftModalMode,
   onCloseDraft,
   onRestoreDraft,
   onResetDraft,
+  onOverwriteDraft,
+
+  // 등록 확인
   isConfirmOpen,
   onCloseConfirm,
   onConfirmSubmit,
+
+  // 상태
   isSubmitting,
 }: Props) => {
   return (
     <>
-      {/* 임시저장 감지 모달 */}
-      <Modal
-        isOpen={isDraftOpen}
-        onClose={isSubmitting ? () => {} : onCloseDraft}
-        title={"임시저장된 글이 있습니다.\n불러오시겠습니까?"}
-        description="새로 작성하면 기존 임시저장된 글은 사라집니다."
-        buttons={[
-          {
-            label: "새로 작성",
-            type: "white",
-            onClick: onResetDraft,
-          },
-          {
-            label: "불러오기",
-            type: "blue",
-            onClick: onRestoreDraft,
-          },
-        ]}
-      />
+      {/* 임시저장 감지/충돌 모달 */}
+      {draftModalMode === "detect" ? (
+        <Modal
+          isOpen={isDraftOpen}
+          onClose={isSubmitting ? () => {} : onCloseDraft}
+          title={"임시저장된 글이 있습니다.\n불러오시겠습니까?"}
+          description="저장된 글을 불러올 시 작성중이던 게시글은 삭제됩니다."
+          buttons={[
+            {
+              label: "현재 글 유지",
+              type: "white",
+              onClick: isSubmitting ? () => {} : onResetDraft,
+            },
+            {
+              label: "불러오기",
+              type: "blue",
+              onClick: isSubmitting ? () => {} : onRestoreDraft,
+            },
+          ]}
+        />
+      ) : (
+        <Modal
+          isOpen={isDraftOpen}
+          onClose={isSubmitting ? () => {} : onCloseDraft}
+          title={"해당 팀으로 임시저장된 글이 있습니다.\n덮어쓰시겠습니까?"}
+          description={
+            "임시저장 가능 갯수는 1개까지로\n이전에 임시저장한 글은 삭제됩니다."
+          }
+          buttons={[
+            {
+              label: "뒤로가기",
+              type: "white",
+              onClick: isSubmitting ? () => {} : onCloseDraft,
+            },
+            {
+              label: "덮어쓰기",
+              type: "blue",
+              onClick: isSubmitting ? () => {} : onOverwriteDraft,
+            },
+          ]}
+        />
+      )}
 
       {/* 필수 항목 누락 시 모달 */}
       <Modal
@@ -75,7 +116,8 @@ const InquiryFormModal = ({
         onClose={onCloseConfirm}
         title="게시판에 문의를 등록할까요?"
         description={
-          "등록 시 담당자와 참조자에게 알림이 발송되며,\n답변이 달린 이후에는 글을 수정 및 삭제할 수 없습니다."
+          "등록 시 담당자와 참조자에게 알림이 발송되며,\n" +
+          "답변이 달린 이후에는 글을 수정 및 삭제할 수 없습니다."
         }
         buttons={[
           {
