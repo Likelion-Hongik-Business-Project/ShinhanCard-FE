@@ -1,10 +1,10 @@
-import { ApiResponse } from "@/types/apiResponse.type";
 import {
   PostCommentRequest,
   PostCommentResponse,
   PutCommentRequest,
   PutCommentResponse,
 } from "@/types/comment/commentApi";
+import { ApiResponse } from "@/types/common/apiResponse.type";
 
 import instance from "@/apis/instance";
 

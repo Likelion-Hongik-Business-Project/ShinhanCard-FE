@@ -1,8 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
+import { useParams } from "react-router-dom";
+
 import Pencil from "@/assets/svgs/common/pencil.svg";
 import { FilledUnion, Union } from "@/assets/svgs/followup";
-import { useFollowupApi } from "@/hooks/followup/followupApi";
+import { useFollowupApi } from "@/hooks/inquiry/followup/useFollowupApi";
 import { Assignee } from "@/types/inquiryTypes";
 
 import Button from "../common/Button";
@@ -25,8 +27,14 @@ const FollowupForm = ({
   initialAssigneeId,
   onClose,
 }: Props) => {
-  const { postFollowupsMutation, putFollowupsMutation } =
-    useFollowupApi(inquiryId);
+  const { team_id } = useParams<{ team_id: string }>();
+  const teamIdForKey = Number(team_id);
+
+  const { postFollowupsMutation, putFollowupsMutation } = useFollowupApi(
+    teamIdForKey,
+    inquiryId
+  );
+
   const isMutating =
     postFollowupsMutation.isPending || putFollowupsMutation.isPending;
   const [selectedId, setSelectedId] = useState<number | null>(

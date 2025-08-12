@@ -1,10 +1,9 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import Pencil from "@/assets/svgs/common/pencil.svg";
-import { useCommentApi } from "@/hooks/comment/commentApi";
+import Button from "@/components/common/Button";
+import { useCommentApi } from "@/hooks/inquiry/comment/useCommentApi";
 import { TaggedUser } from "@/types/inquiryTypes";
-
-import Button from "../common/Button";
 
 export type Props = {
   taggedUser: TaggedUser;

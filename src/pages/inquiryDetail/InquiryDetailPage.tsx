@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 
 import Modal from "@/components/common/Modal";
-import AdditionalInquirySection from "@/components/Followup/FollowupSection";
+import FollowUpSection from "@/components/Followup/FollowupSection";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
@@ -168,7 +168,7 @@ const InquiryDetailPage = () => {
           setSelectedFileIds={setSelectedFileIds}
           isEditMode={isEditMode}
         />
-        <AdditionalInquirySection inquiry={inquiryData} />
+        <FollowUpSection inquiry={inquiryData} />
       </div>
       {modalProps && (
         <Modal
