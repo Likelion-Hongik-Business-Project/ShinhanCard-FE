@@ -33,13 +33,6 @@ const ProfileModal = ({
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  console.log(
-    "ProfileModal - isOwnProfile:",
-    isOwnProfile,
-    "profile:",
-    profile
-  );
-
   // 모달 호버 상태 관리
   const hideModalTimerRef = useRef<NodeJS.Timeout | null>(null);
 
