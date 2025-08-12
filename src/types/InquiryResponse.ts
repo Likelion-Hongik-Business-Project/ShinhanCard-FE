@@ -12,7 +12,7 @@ export interface InquiryResponse {
   team: Team;
   answers: AnswerSection;
   files: AttachedFile[];
-  is_scraped: boolean;
+  is_scrapped: boolean;
   created_at: string;
   follow_ups: FollowUpSection;
 }

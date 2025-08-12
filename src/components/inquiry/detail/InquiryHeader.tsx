@@ -15,21 +15,21 @@ const InquiryHeader = ({
 }: InquiryHeaderProps) => {
   const { addScrap, removeScrap } = useScrapApi();
 
-  const [scraped, setScraped] = useState(!!inquiry.is_scrapped);
+  const [scrapped, setScrapped] = useState(!!inquiry.is_scrapped);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(
     !!inquiry.is_notification_enabled
   );
 
   useEffect(() => {
-    setScraped(!!inquiry.is_scrapped);
+    setScrapped(!!inquiry.is_scrapped);
     setIsNotificationEnabled(!!inquiry.is_notification_enabled);
   }, [inquiry.is_scrapped, inquiry.is_notification_enabled]);
 
   const scrapToggling = addScrap.isPending || removeScrap.isPending;
 
   const handleToggleScrap = async () => {
-    const next = !scraped;
-    setScraped(next);
+    const next = !scrapped;
+    setScrapped(next);
     try {
       if (next) {
         await addScrap.mutateAsync(inquiry.inquiry_id);
@@ -37,7 +37,7 @@ const InquiryHeader = ({
         await removeScrap.mutateAsync(inquiry.inquiry_id);
       }
     } catch (e) {
-      setScraped(!next);
+      setScrapped(!next);
       console.error(e);
     }
   };
@@ -90,7 +90,7 @@ const InquiryHeader = ({
           className="w-[20px] h-[20px] relative overflow-hidden cursor-pointer"
           aria-label={inquiry.is_scrapped || false ? "스크랩 취소" : "스크랩"}
         >
-          {scraped ? <StarActive /> : <Star className="text-gray-50" />}
+          {scrapped ? <StarActive /> : <Star className="text-gray-50" />}
         </button>
       </div>
     </div>
