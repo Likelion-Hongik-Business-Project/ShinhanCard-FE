@@ -1,6 +1,33 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useTeamApi } from "@/hooks/team/useTeamApi";
+import { Division, Group, Team } from "@/types/team/user.type";
+
+type Option = {
+  label: string;
+  value: number;
+  active?: boolean;
+  is_active?: boolean;
+  meta?: { active?: boolean };
+};
+
+const getActive = (o: Option) =>
+  typeof o.active === "boolean"
+    ? o.active
+    : typeof o.is_active === "boolean"
+      ? o.is_active
+      : (o.meta?.active ?? true);
+
+const ensureSelected = (
+  filtered: Option[],
+  raw: Option[],
+  selectedId?: number | null
+) => {
+  if (!selectedId) return filtered;
+  if (filtered.some(o => o.value === selectedId)) return filtered;
+  const found = raw.find(o => o.value === selectedId);
+  return found ? [found, ...filtered] : filtered;
+};
 
 export const useOrganizationSelector = () => {
   const [groupId, setGroupId] = useState<number | null>(null);
@@ -17,23 +44,51 @@ export const useOrganizationSelector = () => {
   const { data: divisionData } = useDivisionsByGroupIdQuery(groupId);
   const { data: teamData } = useTeamsByDivisionIdQuery(divisionId);
 
-  const groupOptions =
-    groupData?.result.map(group => ({
-      label: group.group_name,
-      value: Number(group.group_id),
+  // 원본 옵션(활성여부 포함)
+  const groupOptionsRaw: Option[] =
+    groupData?.result.map((g: Group) => ({
+      label: g.group_name,
+      value: Number(g.group_id),
+      active: g.active ?? g.active,
     })) ?? [];
 
-  const divisionOptions =
-    divisionData?.result.map(division => ({
-      label: division.division_name,
-      value: division.division_id,
+  const divisionOptionsRaw: Option[] =
+    divisionData?.result.map((d: Division) => ({
+      label: d.division_name,
+      value: Number(d.division_id),
+      active: d.active ?? d.active,
     })) ?? [];
 
-  const teamOptions =
-    teamData?.result.map(team => ({
-      label: team.team_name,
-      value: team.team_id,
+  const teamOptionsRaw: Option[] =
+    teamData?.result.map((t: Team) => ({
+      label: t.team_name,
+      value: Number(t.team_id),
+      active: t.active ?? t.active,
     })) ?? [];
+
+  // 가나다(ko) 정렬자
+  const koCollator = useMemo(
+    () => new Intl.Collator("ko", { numeric: true, sensitivity: "base" }),
+    []
+  );
+  const byLabel = (a: Option, b: Option) =>
+    koCollator.compare(a.label, b.label);
+
+  // active만 + 가나다순 + 현재 선택 보존
+  const groupOptions = useMemo(() => {
+    const filtered = groupOptionsRaw.filter(getActive).slice().sort(byLabel);
+    return ensureSelected(filtered, groupOptionsRaw, groupId);
+  }, [groupOptionsRaw, groupId]);
+
+  const divisionOptions = useMemo(() => {
+    const filtered = divisionOptionsRaw.filter(getActive).slice().sort(byLabel);
+    return ensureSelected(filtered, divisionOptionsRaw, divisionId);
+  }, [divisionOptionsRaw, divisionId]);
+
+  const teamOptions = useMemo(() => {
+    const filtered = teamOptionsRaw.filter(getActive).slice().sort(byLabel);
+    return ensureSelected(filtered, teamOptionsRaw, teamId);
+  }, [teamOptionsRaw, teamId]);
 
   const handleGroupChange = (value: number) => {
     setGroupId(value);
@@ -60,7 +115,6 @@ export const useOrganizationSelector = () => {
     if (tId !== undefined) setTeamId(tId);
   };
 
-  // (옵션) 전부 리셋하고 싶을 때
   const resetOrg = () => {
     setGroupId(null);
     setDivisionId(null);
