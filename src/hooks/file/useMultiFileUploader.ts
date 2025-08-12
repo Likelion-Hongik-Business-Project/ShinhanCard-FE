@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { UploadingFile } from "@/types/file/file.type";
 
@@ -10,36 +10,58 @@ const MAX_FILE_COUNT = 6;
 
 export const useMultiFileUploader = (
   files: UploadingFile[],
-  setFileIds: React.Dispatch<React.SetStateAction<number[]>>,
+  fileIds: number[],
+  setFileIds: (next: number[]) => void,
   setFiles: React.Dispatch<React.SetStateAction<UploadingFile[]>>
 ) => {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadFile = useS3UploadFile();
 
+  // 최신 fileIds를 항상 참조하기 위한 ref
+  const fileIdsRef = useRef<number[]>(fileIds);
+  useEffect(() => {
+    fileIdsRef.current = fileIds;
+  }, [fileIds]);
+
   const triggerInput = () => inputRef.current?.click();
 
   const updateProgress = (id: number, progress: number) => {
-    setFiles(prev =>
-      prev.map(file => (file.id === id ? { ...file, progress } : file))
-    );
+    setFiles(prev => prev.map(f => (f.id === id ? { ...f, progress } : f)));
+  };
+
+  // ref 기반 안전한 추가/삭제 유틸
+  const pushFileId = (id: number) => {
+    const base = fileIdsRef.current ?? [];
+    if (base.includes(id)) return;
+    const next = [...base, id];
+    fileIdsRef.current = next;
+    setFileIds(next);
+  };
+  const removeFileId = (id: number) => {
+    const base = fileIdsRef.current ?? [];
+    const next = base.filter(x => x !== id);
+    fileIdsRef.current = next;
+    setFileIds(next);
   };
 
   const handleFileSelect = async (fileList: FileList | null) => {
     if (!fileList) return;
-    const filesArray = Array.from(fileList);
 
+    const filesArray = Array.from(fileList);
+    // 현재 카드 수 기준으로 개수 제한
     if (files.length + filesArray.length > MAX_FILE_COUNT) {
       setShowLimitModal(true);
       return;
     }
 
+    // 로컬 아이디 생성 & UI 선반영
     const localIds: number[] = [];
     const newFiles: UploadingFile[] = filesArray.map(file => {
       const id = Date.now() + Math.random();
       localIds.push(id);
       return {
-        id: id,
+        id,
         file_name: file.name,
         file_size: file.size,
         progress: 0,
@@ -47,25 +69,24 @@ export const useMultiFileUploader = (
         controller: undefined,
       };
     });
-
     setFiles(prev => [...prev, ...newFiles]);
 
     await Promise.all(
-      filesArray.map((file, index) => {
-        const localId = localIds[index];
+      filesArray.map((file, idx) => {
+        const localId = localIds[idx];
         const controller = new AbortController();
         const signal = controller.signal;
 
+        // AbortController 저장
         setFiles(prev =>
           prev.map(f => (f.id === localId ? { ...f, controller } : f))
         );
 
-        return uploadFile(
-          file,
-          percent => updateProgress(localId, percent),
-          signal
-        )
+        return uploadFile(file, p => updateProgress(localId, p), signal)
           .then(({ file_id }) => {
+            if (!file_id) return;
+
+            // UI 완료 반영
             setFiles(prev =>
               prev.map(f =>
                 f.id === localId
@@ -79,11 +100,12 @@ export const useMultiFileUploader = (
                   : f
               )
             );
-            setFileIds(prev => [...prev, file_id]);
+
+            pushFileId(file_id);
           })
           .catch(err => {
-            if (err.name === "CanceledError") {
-              console.log("업로드 취소됨:", file.name);
+            if (err?.name === "CanceledError") {
+              console.log("업로드 취소:", file.name);
             } else {
               console.error("파일 업로드 실패:", err);
             }
@@ -100,22 +122,25 @@ export const useMultiFileUploader = (
   };
 
   const handleRemove = async (localId: number, fileId?: number) => {
-    const target = files.find(file => file.id === localId);
+    const target = files.find(f => f.id === localId);
 
+    // 업로드 중이면 취소
     if (target?.status === "uploading" && target.controller) {
       target.controller.abort();
     }
 
+    // 서버 삭제 시도 후 상태 갱신
     if (fileId) {
       try {
         await deleteFile(fileId);
-        setFileIds(prev => prev.filter(id => id !== fileId));
       } catch (e) {
         console.error("파일 삭제 실패", e);
+        // 정책에 따라 실패 시 그대로 두고 리턴할 수도 있음
       }
+      removeFileId(fileId);
     }
 
-    setFiles(prev => prev.filter(file => file.id !== localId));
+    setFiles(prev => prev.filter(f => f.id !== localId));
   };
 
   return {

@@ -163,6 +163,8 @@ const InquiryFormPage = () => {
     resetDraft,
     deleteDraftBeforeSubmit,
     clearDraftState,
+    setFilesSync,
+    hasUploadingFiles,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
     title,
@@ -199,6 +201,19 @@ const InquiryFormPage = () => {
   const getUserId = (u?: { user_id?: number; userId?: number } | null) =>
     (u?.user_id ?? u?.userId ?? 0) as number;
 
+  const fileIdsForSubmit = useMemo(
+    () =>
+      (files ?? [])
+        .filter(
+          f =>
+            f.status === "done" &&
+            typeof f.file_id === "number" &&
+            f.file_id! > 0
+        )
+        .map(f => f.file_id!),
+    [files]
+  );
+
   // 편집 모드 데이터 주입
   useEffect(() => {
     if (!isEdit || !editDetail) return;
@@ -219,16 +234,17 @@ const InquiryFormPage = () => {
 
     const detailFiles = (editDetail.files as InquiryFile[] | undefined) ?? [];
     setFileIds(detailFiles.map(f => f.file_id));
-    setFiles(
+
+    setFilesSync(
       detailFiles.map(f => ({
         id: f.file_id,
+        file_id: f.file_id,
         file_name: f.file_name,
         file_size: f.file_size ?? 0,
         progress: 100,
         status: "done" as const,
       }))
     );
-
     if (
       editDetail.group?.group_id &&
       editDetail.division?.division_id &&
@@ -266,12 +282,17 @@ const InquiryFormPage = () => {
       setMissingField(missing);
       return;
     }
+    if (hasUploadingFiles()) {
+      setMissingField(null);
+      setIsConfirmModalOpen(false);
+      return;
+    }
     if (isEdit && editTeamId && editInquiryId) {
       confirmSubmit();
       return;
     }
     setIsConfirmModalOpen(true);
-  }, [validateFields, isEdit, editTeamId, editInquiryId]);
+  }, [validateFields, isEdit, editTeamId, editInquiryId, hasUploadingFiles]);
 
   const confirmSubmit = useCallback(() => {
     const payload: PostInquiryRequest = {
@@ -279,7 +300,7 @@ const InquiryFormPage = () => {
       content,
       assignee_ids: assigneeIds,
       observer_ids: referenceIds,
-      file_ids: fileIds,
+      file_ids: fileIdsForSubmit,
     };
 
     if (isEdit && editTeamId && editInquiryId) {
@@ -317,6 +338,7 @@ const InquiryFormPage = () => {
     content,
     assigneeIds,
     referenceIds,
+    fileIdsForSubmit,
     fileIds,
     putInquiryMutation,
     postInquiryMutation,

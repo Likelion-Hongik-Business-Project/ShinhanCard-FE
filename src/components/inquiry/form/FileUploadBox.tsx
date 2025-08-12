@@ -15,7 +15,7 @@ interface Props {
   setFiles: React.Dispatch<React.SetStateAction<UploadingFile[]>>;
 }
 
-const FileUploadBox = ({ setFileIds, files, setFiles }: Props) => {
+const FileUploadBox = ({ setFileIds, files, fileIds, setFiles }: Props) => {
   const {
     inputRef,
     showLimitModal,
@@ -23,7 +23,7 @@ const FileUploadBox = ({ setFileIds, files, setFiles }: Props) => {
     triggerInput,
     handleFileSelect,
     handleRemove,
-  } = useMultiFileUploader(files, setFileIds, setFiles);
+  } = useMultiFileUploader(files, fileIds, setFileIds, setFiles);
 
   const { isDragging, dragEventProps } = useDragAndDrop({
     onDrop: handleFileSelect,
