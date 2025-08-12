@@ -28,12 +28,16 @@ export const useAnswerApi = (team_id?: number) => {
       inquiry_id: number;
       data: PostAnswerRequest;
     }) => postAnswer(inquiry_id, data),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
+      const { inquiry_id } = variables;
+
+      // API 응답이 완전한 답변 객체를 반환하지 않으므로 쿼리 무효화 사용
       if (team_id) {
         queryClient.invalidateQueries({
-          queryKey: ["teamInquiry", team_id, variables.inquiry_id],
+          queryKey: ["teamInquiry", team_id, inquiry_id],
         });
       }
+
       // 홈페이지 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["home"] });
     },
@@ -57,8 +61,32 @@ export const useAnswerApi = (team_id?: number) => {
   const deleteAnswerMutation = useMutation({
     mutationFn: ({ answer_id }: { answer_id: number }) =>
       deleteAnswer(answer_id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
+    onSuccess: (_, variables) => {
+      const { answer_id } = variables;
+
+      // 모든 teamInquiry 쿼리에서 해당 답변 제거
+      queryClient.setQueriesData<GlobalResponse<InquiryData>>(
+        { queryKey: ["teamInquiry"] },
+        oldData => {
+          if (!oldData) return oldData;
+
+          const updatedAnswers = oldData.result.answers.answers.filter(
+            answer => answer.answer_id !== answer_id
+          );
+
+          return {
+            ...oldData,
+            result: {
+              ...oldData.result,
+              answers: {
+                count: updatedAnswers.length,
+                answers: updatedAnswers,
+              },
+            },
+          };
+        }
+      );
+
       // 홈페이지 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["home"] });
     },
@@ -76,21 +104,30 @@ export const useAnswerApi = (team_id?: number) => {
         queryClient.getQueryData<GlobalResponse<InquiryData>>(queryKey);
 
       if (previousData) {
+        const updatedAssignees = previousData.result.assignees.map(assignee =>
+          assignee.user_id === currentUserId
+            ? { ...assignee, is_checked: true }
+            : assignee
+        );
+
         const newData = {
           ...previousData,
           result: {
             ...previousData.result,
-            assignees: previousData.result.assignees.map(assignee =>
-              assignee.user_id === currentUserId
-                ? { ...assignee, is_checked: true }
-                : assignee
-            ),
+            assignees: updatedAssignees,
             confirmed_assignees_count:
               previousData.result.confirmed_assignees_count + 1,
           },
         };
         queryClient.setQueryData(queryKey, newData);
       }
+
+      // 상태 변경을 위해 추가로 쿼리 무효화 (서버에서 최신 상태 가져오기)
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["teamInquiry", team_id, inquiry_id],
+        });
+      }, 100);
 
       // 홈페이지 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["home"] });

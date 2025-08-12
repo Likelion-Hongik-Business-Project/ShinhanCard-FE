@@ -20,7 +20,9 @@ export const useInquiryState = (
   const initialMappedState = (STATUS_MAPPING[inquiry.status] ||
     "BEFORE_CONFIRM") as InquiryState;
 
-  const confirmedCount = inquiry.confirmed_assignees_count;
+  // 실제 assignees 배열에서 확인된 담당자 수를 직접 계산
+  const confirmedCount =
+    inquiry.assignees?.filter(assignee => assignee.is_checked).length || 0;
   const totalAssignees = inquiry.assignees?.length || 0;
   const answersCount = inquiry.answers.count;
 
