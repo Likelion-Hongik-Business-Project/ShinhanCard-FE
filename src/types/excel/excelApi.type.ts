@@ -12,4 +12,5 @@ export type GetAssignedExcelRequest = {
 export type ExcelScopedRequest = GetAssignedExcelRequest & {
   scope: "assigned" | "submitted" | "scrapped" | "team";
   teamId: number;
+  userId?: number; // UserSpacePage에서 사용할 user_id
 };

@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import InquiryPageLayout from "@/components/inquiry/layout/InquiryPageLayout";
+import ExportDropdown from "@/components/common/ExportDropdown";
+import InquiryList from "@/components/inquiry/list/InquiryList";
+import TeamTabs from "@/components/inquiry/list/TeamTabs";
 import UserSpaceButton from "@/components/userSpace/UserSpaceButton";
 import UserSpaceProfile from "@/components/userSpace/UserSpaceProfile";
 import { useExcelExport } from "@/hooks/excel/useExcelApi";
@@ -13,9 +15,13 @@ import {
   useSubmittedInquiries,
   useUserProfile,
 } from "@/hooks/userSpace/useUserSpaceApi";
-import { INQUIRY_STATUS_VALUE } from "@/utils/inquiryStatus";
+import {
+  getInquiryStatusLabel,
+  INQUIRY_STATUS_VALUE,
+} from "@/utils/inquiryStatus";
 import { ExportOption } from "@/types/excel/excelApi.type";
 import {
+  InquiryListItem,
   InquiryServerStatus,
   InquiryStatus,
   YearMonth,
@@ -192,6 +198,11 @@ const UserSpacePage = () => {
     selectedTeamId,
   ]);
 
+  // 모달 상태 - 모든 Hook을 최상단에 배치
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+
   // 현재 데이터
   const currentData = getCurrentData();
   const currentTeams = getCurrentTeams();
@@ -229,6 +240,7 @@ const UserSpacePage = () => {
     excelExport.mutate({
       scope,
       teamId: selectedTeamId,
+      userId: userIdNum!, // UserSpacePage에서 사용하는 user_id 추가
       option,
       status,
       date,
@@ -367,6 +379,53 @@ const UserSpacePage = () => {
 
   const tabInfo = getTabInfo();
 
+  const maxVisibleTabs = 3;
+  const hiddenTeams = currentTeams.slice(maxVisibleTabs);
+
+  // InquiryList용 데이터 변환
+  const currentItems = inquiries
+    .map(item => {
+      const statusLabel = getInquiryStatusLabel(
+        item.status as InquiryServerStatus
+      );
+      if (!statusLabel) return null;
+
+      const profile = tabInfo.writer ?? item.writer!;
+      return {
+        id: item.inquiry_id,
+        team_id: selectedTeamId || 0,
+        leftProfiles: [
+          {
+            id: profile.id,
+            name: profile.name,
+            profile_image_url: profile.profile_image_url,
+          },
+        ],
+        title: item.title,
+        status: statusLabel,
+        created_at: item.created_at,
+        is_scrapped: item.is_scrapped,
+      };
+    })
+    .filter((item): item is InquiryListItem => item !== null);
+
+  // 필터링
+  const filteredInquiries =
+    status === "전체"
+      ? currentItems
+      : currentItems.filter(item => item.status === status);
+
+  // 모달 토글 함수
+  const toggleStatusModal = () => {
+    setIsStatusModalOpen(prev => !prev);
+    setIsDateModalOpen(false);
+  };
+
+  const toggleDateModal = () => {
+    setIsDateModalOpen(prev => !prev);
+    setIsStatusModalOpen(false);
+  };
+
   return (
     <section>
       <div className="profile-container">
@@ -376,25 +435,52 @@ const UserSpacePage = () => {
       <UserSpaceButton activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="pt-10">
-        <InquiryPageLayout
-          title={tabInfo.title}
-          description={tabInfo.description}
-          emptyText={tabInfo.emptyText}
-          inquiries={inquiries}
-          teams={currentTeams}
-          selectedTeamId={selectedTeamId || 0}
-          onSelectTeam={handleSelectTeam}
-          writer={tabInfo.writer}
-          totalCount={totalCount}
-          totalPages={totalPages}
-          currentPage={page}
-          onPageChange={setPage}
-          selectedStatus={status}
-          onStatusChange={setStatus}
-          selectedDate={date}
-          onDateChange={setDate}
-          onExport={handleExport}
-        />
+        {/* 상단 텍스트 + Export 버튼 영역 */}
+        <div className="flex justify-between mb-6">
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-gray-80 text-heading1">{tabInfo.title}</h1>
+          </div>
+          {totalCount !== 0 && currentTeams.length > 0 && (
+            <div className="self-end">
+              <ExportDropdown onExport={handleExport} />
+            </div>
+          )}
+        </div>
+
+        {/* 빈 상태 또는 TeamTabs + InquiryList */}
+        {totalCount === 0 || currentTeams.length === 0 ? (
+          <div className="flex w-full h-[calc(100vh-340px)] pb-[118px] justify-center items-center">
+            <p className="text-gray-40 text-heading2-b">{tabInfo.emptyText}</p>
+          </div>
+        ) : (
+          <>
+            <TeamTabs
+              teams={currentTeams}
+              selectedTeamId={selectedTeamId || 0}
+              onSelectTeam={handleSelectTeam}
+              onToggleModal={() => setIsTeamModalOpen(prev => !prev)}
+              isModalOpen={isTeamModalOpen}
+              hiddenTeams={hiddenTeams}
+              onCloseModal={() => setIsTeamModalOpen(false)}
+            />
+            <InquiryList
+              inquiries={filteredInquiries}
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              selectedStatus={status}
+              setSelectedStatus={setStatus}
+              selectedDate={date}
+              setSelectedDate={setDate}
+              isStatusModalOpen={isStatusModalOpen}
+              setIsStatusModalOpen={setIsStatusModalOpen}
+              isDateModalOpen={isDateModalOpen}
+              setIsDateModalOpen={setIsDateModalOpen}
+              toggleStatusModal={toggleStatusModal}
+              toggleDateModal={toggleDateModal}
+            />
+          </>
+        )}
       </div>
     </section>
   );
