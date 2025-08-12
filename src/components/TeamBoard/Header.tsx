@@ -6,21 +6,29 @@ interface Props {
   group_name: string;
   division_name: string;
   team_name: string;
+  team_id: number;
   isActive: boolean;
   hasInquiry: boolean;
   onExport: (option: ExportOption) => void;
   onClickWrite: () => void;
+  openAddMemberSidebar: (teamName: string, teamId: number) => void;
 }
 
 const Header = ({
   group_name,
   division_name,
   team_name,
+  team_id,
   isActive,
   hasInquiry,
   onExport,
   onClickWrite,
+  openAddMemberSidebar,
 }: Props) => {
+  const handleUsersClick = () => {
+    openAddMemberSidebar(team_name, team_id);
+  };
+
   return (
     <div className="flex justify-between items-end">
       <div className="flex flex-col gap-4">
@@ -39,7 +47,10 @@ const Header = ({
           >
             {team_name}
           </h1>
-          <Users className="w-8 h-8 text-gray-40" />
+          <Users
+            className="w-8 h-8 cursor-pointer text-gray-40 hover:text-gray-60 transition-colors"
+            onClick={handleUsersClick}
+          />
         </div>
       </div>
       <div className="flex gap-4">

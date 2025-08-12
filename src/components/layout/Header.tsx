@@ -1,9 +1,9 @@
 import { useCallback, useRef } from "react";
 
 import Down from "@/assets/svgs/common/down.svg";
+import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
 import { Logo, Menu } from "@/assets/svgs/layout";
 import SearchBar from "@/components/searchBar/SearchBar";
-import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 import { useProfileStore } from "@/store/useProfileStore";
 
@@ -43,6 +43,10 @@ const Header = ({
     onProfileHoverChange?.(false);
   }, [onProfileHoverChange]);
 
+  const profileSrc = profile?.profile_image_url?.trim()
+    ? profile.profile_image_url.trim()
+    : profileFallbackUrl;
+
   return (
     <header className="fixed h-16 w-full bg-white border-b border-gray-20 pl-9 pr-11 flex items-center justify-between z-100">
       <div className="flex items-center">
@@ -58,12 +62,12 @@ const Header = ({
       >
         <div className="flex items-center space-x-4">
           <img
-            src={getProfileImageUrl(profile?.profile_image_url || "")}
+            src={profileSrc}
             alt={profile?.name}
             className="w-8 h-8 rounded-full object-cover"
             onError={e => {
               const target = e.target as HTMLImageElement;
-              target.src = "/src/assets/svgs/common/profile.svg";
+              target.src = profileFallbackUrl;
             }}
           />
           <span className="text-gray-80 text-heading2 whitespace-nowrap">

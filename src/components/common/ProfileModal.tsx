@@ -2,13 +2,13 @@ import { useEffect, useRef } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
 import User from "@/assets/svgs/home/icon-user.svg";
 import Logout from "@/assets/svgs/profile/logout.svg";
 import Mail from "@/assets/svgs/profile/mail.svg";
 import Phone from "@/assets/svgs/profile/phone.svg";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useOtherProfile } from "@/hooks/profile/useOtherProfile";
-import { getProfileImageUrl } from "@/utils/profileImgUtils";
 
 import { useProfileStore } from "@/store/useProfileStore";
 
@@ -59,6 +59,10 @@ const ProfileModal = ({
 
   if (!isOpen) return null;
 
+  const profileSrc = profile?.profile_image_url?.trim()
+    ? profile.profile_image_url.trim()
+    : profileFallbackUrl;
+
   return (
     <div
       className="bg-white rounded-[8px] shadow-lg border border-gray-20 w-[345px]"
@@ -81,12 +85,12 @@ const ProfileModal = ({
             {/* 프로필 이미지 */}
             <div className="w-20 h-20 rounded-[8px] overflow-hidden flex-shrink-0 aspect-square">
               <img
-                src={getProfileImageUrl(profile.profile_image_url)}
+                src={profileSrc}
                 alt={profile.name}
                 className="w-full h-full object-cover"
                 onError={e => {
                   const target = e.target as HTMLImageElement;
-                  target.src = "/src/assets/svgs/common/profile.svg";
+                  target.src = profileFallbackUrl;
                 }}
               />
             </div>

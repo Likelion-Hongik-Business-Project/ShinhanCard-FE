@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import Heart from "@/assets/svgs/common/heart.svg";
 import HeartActive from "@/assets/svgs/common/heart-active.svg";
+import profileFallbackUrl from "@/assets/svgs/common/profile.svg?url";
 import Pencil from "@/assets/svgs/layout/pencil.svg";
 import Button from "@/components/common/Button";
-import { getProfileImageUrl } from "@/utils/profileImgUtils";
 import { GetProfileResponse } from "@/types/profile/profileApi.type";
 
 import api from "@/apis/instance";
@@ -62,13 +62,21 @@ export default function UserSpaceProfile({ userId, profile }: Props) {
     checkIsInterested();
   }, [userId]);
 
+  const profileSrc = profile.profile_image_url?.trim()
+    ? profile.profile_image_url.trim()
+    : profileFallbackUrl;
+
   return (
     <div className="flex flex-wrap items-center w-full">
       <div className="w-40 h-40 rounded-full overflow-hidden relative shrink-0">
         <img
-          src={getProfileImageUrl(profile.profile_image_url?.trim() || null)}
+          src={profileSrc}
           alt="프로필 이미지"
           className="w-full h-full object-cover"
+          onError={e => {
+            const target = e.target as HTMLImageElement;
+            target.src = profileFallbackUrl;
+          }}
         />
       </div>
 

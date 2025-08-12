@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import TeamBoardLayout from "@/components/TeamBoard/layout/TeamBoardLayout";
@@ -18,6 +18,11 @@ const TeamBoardPage = () => {
     "전체"
   );
   const [selectedDate, setSelectedDate] = useState<YearMonth[]>([]);
+
+  // Layout에서 전달받은 openAddMemberSidebar 함수
+  const { openAddMemberSidebar } = useOutletContext<{
+    openAddMemberSidebar: (teamName: string, teamId: number) => void;
+  }>();
 
   // export
   const excelExport = useExcelExport();
@@ -72,6 +77,7 @@ const TeamBoardPage = () => {
         currentPage={page}
         setCurrentPage={setPage}
         onExport={handleExport}
+        openAddMemberSidebar={openAddMemberSidebar}
       />
     </section>
   );

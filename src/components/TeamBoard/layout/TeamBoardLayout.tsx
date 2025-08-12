@@ -28,6 +28,7 @@ type Props = {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   onExport: (option: ExportOption) => void;
+  openAddMemberSidebar: (teamName: string, teamId: number) => void;
 };
 
 const TeamBoardLayout = ({
@@ -41,6 +42,7 @@ const TeamBoardLayout = ({
   currentPage,
   setCurrentPage,
   onExport,
+  openAddMemberSidebar,
 }: Props) => {
   const navigate = useNavigate();
 
@@ -76,10 +78,12 @@ const TeamBoardLayout = ({
         group_name={selected_team.group_name}
         division_name={selected_team.division_name}
         team_name={selected_team.team_name}
+        team_id={selected_team.team_id}
         isActive={selected_team.active}
         hasInquiry={hasInquiry}
         onExport={onExport}
         onClickWrite={() => handleWrite()}
+        openAddMemberSidebar={openAddMemberSidebar}
       />
       {hasInquiry ? (
         <>
