@@ -178,7 +178,7 @@ export interface InquiryData {
   can_edit: boolean;
   can_answer: boolean;
   can_notify: boolean;
-  is_scraped: boolean;
+  is_scrapped: boolean;
   confirmed_assignees_count: number;
   confirmed_assignees: Array<{
     user_id: number;

@@ -252,7 +252,7 @@ const HomeMain = ({
           title: item.title,
           status: statusLabel,
           created_at: item.created_at,
-          is_scrapped: item.is_scraped,
+          is_scrapped: item.is_scrapped,
         };
       }
     )
@@ -333,22 +333,30 @@ const HomeMain = ({
               hiddenTeams={hiddenTeams}
               onCloseModal={closeTeamModal}
             />
-            <InquiryList
-              inquiries={filteredInquiries}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              isStatusModalOpen={isStatusModalOpen}
-              setIsStatusModalOpen={setIsStatusModalOpen}
-              isDateModalOpen={isDateModalOpen}
-              setIsDateModalOpen={setIsDateModalOpen}
-              toggleStatusModal={toggleStatusModal}
-              toggleDateModal={toggleDateModal}
-            />
+            {filteredInquiries.length === 0 ? (
+              <div className="flex w-full h-[calc(100vh-340px)] pb-[118px] justify-center items-center">
+                <p className="text-gray-40 text-heading2-b">
+                  미확인 답변이 없습니다
+                </p>
+              </div>
+            ) : (
+              <InquiryList
+                inquiries={filteredInquiries}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                isStatusModalOpen={isStatusModalOpen}
+                setIsStatusModalOpen={setIsStatusModalOpen}
+                isDateModalOpen={isDateModalOpen}
+                setIsDateModalOpen={setIsDateModalOpen}
+                toggleStatusModal={toggleStatusModal}
+                toggleDateModal={toggleDateModal}
+              />
+            )}
           </div>
         )}
 
@@ -364,22 +372,30 @@ const HomeMain = ({
               hiddenTeams={hiddenTeams}
               onCloseModal={closeTeamModal}
             />
-            <InquiryList
-              inquiries={filteredInquiries}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              isStatusModalOpen={isStatusModalOpen}
-              setIsStatusModalOpen={setIsStatusModalOpen}
-              isDateModalOpen={isDateModalOpen}
-              setIsDateModalOpen={setIsDateModalOpen}
-              toggleStatusModal={toggleStatusModal}
-              toggleDateModal={toggleDateModal}
-            />
+            {filteredInquiries.length === 0 ? (
+              <div className="flex w-full h-[calc(100vh-340px)] pb-[118px] justify-center items-center">
+                <p className="text-gray-40 text-heading2-b">
+                  미확인 문의가 없습니다
+                </p>
+              </div>
+            ) : (
+              <InquiryList
+                inquiries={filteredInquiries}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                isStatusModalOpen={isStatusModalOpen}
+                setIsStatusModalOpen={setIsStatusModalOpen}
+                isDateModalOpen={isDateModalOpen}
+                setIsDateModalOpen={setIsDateModalOpen}
+                toggleStatusModal={toggleStatusModal}
+                toggleDateModal={toggleDateModal}
+              />
+            )}
           </div>
         )}
 

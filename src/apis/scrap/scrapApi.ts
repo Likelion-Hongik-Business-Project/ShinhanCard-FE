@@ -1,6 +1,7 @@
 import { ApiResponse } from "@/types/common/apiResponse.type";
 import { GetInquiriesResponse } from "@/types/inquiry/inquiryListApi.type";
 import { PostScrapResponse } from "@/types/scrap/scrapApi.type";
+import { GetUserSpaceScrapResult } from "@/types/userSpace/userSpaceApi.type";
 
 import instance from "@/apis/instance";
 
@@ -38,6 +39,20 @@ export const getScrapInquiriesByTeam = async (
   date?: string
 ): ApiResponse<GetInquiriesResponse> => {
   const response = await instance.get(`/api/scrap/my/${teamId}`, {
+    params: { page, status, date },
+  });
+  return response.data;
+};
+
+// 타인 스페이스 - 스크랩 문의
+export const getScrapInquiriesByUserId = async (
+  user_id: number,
+  team_id: number,
+  page = 1,
+  status?: string,
+  date?: string
+): ApiResponse<GetUserSpaceScrapResult> => {
+  const response = await instance.get(`/api/scrap/${user_id}/${team_id}`, {
     params: { page, status, date },
   });
   return response.data;

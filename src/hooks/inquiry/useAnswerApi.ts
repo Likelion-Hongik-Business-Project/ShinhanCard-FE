@@ -34,6 +34,8 @@ export const useAnswerApi = (team_id?: number) => {
           queryKey: ["teamInquiry", team_id, variables.inquiry_id],
         });
       }
+      // 홈페이지 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 
@@ -47,6 +49,8 @@ export const useAnswerApi = (team_id?: number) => {
     }) => putAnswer(answer_id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
+      // 홈페이지 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 
@@ -55,6 +59,8 @@ export const useAnswerApi = (team_id?: number) => {
       deleteAnswer(answer_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
+      // 홈페이지 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 
@@ -85,6 +91,9 @@ export const useAnswerApi = (team_id?: number) => {
         };
         queryClient.setQueryData(queryKey, newData);
       }
+
+      // 홈페이지 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 
