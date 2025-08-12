@@ -2,7 +2,14 @@
  * PUT /api/teams/{team_id}/inquiries/{inquiry_id}/change-assignee
  */
 export interface PutInquiryAssigneeRequest {
-  assignee_ids: number[];
+  newAssignee_ids: number[];
+}
+
+/**
+ * PATCH /api/teams/{team_id}/inquiries/{inquiry_id}/change-observer
+ */
+export interface PutInquiryObserverRequest {
+  newObserver_ids: number[];
 }
 
 /**

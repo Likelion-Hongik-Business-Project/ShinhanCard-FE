@@ -11,7 +11,10 @@ import { useInquiryState } from "@/hooks/useInquiryState";
 import { InquiryCardProps } from "@/types/inquiryTypes";
 import { AssigneeUser } from "@/types/team/user.type";
 
-import { putInquiryAssignee } from "@/apis/inquiry/detail/inquiryManagementApi";
+import {
+  putInquiryAssignee,
+  putInquiryObserver,
+} from "@/apis/inquiry/detail/inquiryManagementApi";
 
 const InquiryCard = ({
   inquiry,
@@ -70,23 +73,52 @@ const InquiryCard = ({
     setIsEditingAssignees(true);
   };
 
-  // 담당자 수정 완료 (파란 버튼 클릭 시)
+  // 담당자/참조자 수정 완료 처리
   const handleCompleteEditAssignees = async () => {
     try {
-      await putInquiryAssignee(teamId, inquiry.inquiry_id, {
-        newAssignee_ids: tempAssigneeIds,
-      });
+      const originalAssigneeIds = inquiry.assignees.map(a => a.user_id);
+      const originalObserverIds = inquiry.observers.map(o => o.userId);
+
+      // 변경된 것만 API 호출
+      const promises = [];
+
+      // 담당자가 변경된 경우
+      if (
+        JSON.stringify(originalAssigneeIds.sort()) !==
+        JSON.stringify(tempAssigneeIds.sort())
+      ) {
+        promises.push(
+          putInquiryAssignee(teamId, inquiry.inquiry_id, {
+            newAssignee_ids: tempAssigneeIds,
+          })
+        );
+      }
+
+      // 참조자가 변경된 경우
+      if (
+        JSON.stringify(originalObserverIds.sort()) !==
+        JSON.stringify(tempObserverIds.sort())
+      ) {
+        promises.push(
+          putInquiryObserver(teamId, inquiry.inquiry_id, {
+            newObserver_ids: tempObserverIds,
+          })
+        );
+      }
+
+      if (promises.length > 0) {
+        await Promise.all(promises);
+      }
 
       // 성공 시 편집 모드 종료
       setIsEditingAssignees(false);
       setTempAssigneeIds([]);
       setTempObserverIds([]);
 
-      // 페이지 새로고침 또는 데이터 다시 가져오기
+      // 페이지 새로고침
       window.location.reload();
     } catch (error) {
-      console.error("담당자 수정 실패:", error);
-      // 에러 처리 (토스트 메시지 등)
+      console.error("담당자/참조자 수정 실패:", error);
     }
   };
 
