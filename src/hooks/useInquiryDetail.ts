@@ -290,7 +290,7 @@ export const useInquiryDetail = () => {
         team_id: Number(team_id),
         inquiry_id: Number(inquiry_id),
       });
-      navigate(`/teams/${team_id}`);
+      navigate(-1);
     } catch (error) {
       console.error("문의글 삭제 실패:", error);
     }

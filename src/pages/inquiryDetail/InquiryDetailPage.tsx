@@ -109,7 +109,7 @@ const InquiryDetailPage = () => {
   };
 
   const userRole = (inquiryData.role?.toLowerCase() || "default") as UserRole;
-  const isAdmin = userRole === "admin";
+  const isAdmin = inquiryData.team_role === "TEAM_LEADER";
 
   return (
     <div className="min-h-screen bg-gray-5">

@@ -185,6 +185,7 @@ export interface InquiryData {
     active: boolean;
   };
   role: string;
+  team_role: string;
   can_edit: boolean;
   can_answer: boolean;
   can_notify: boolean;

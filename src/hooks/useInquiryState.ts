@@ -15,7 +15,7 @@ export const useInquiryState = (
   const permissions =
     USER_ROLE_PERMISSIONS[userRole] || USER_ROLE_PERMISSIONS["default"];
   const isWriter = inquiry.author.user_id === currentUserId;
-  const isAdmin = userRole === "admin";
+  const isAdmin = inquiry.team_role === "TEAM_LEADER";
 
   const initialMappedState = (STATUS_MAPPING[inquiry.status] ||
     "BEFORE_CONFIRM") as InquiryState;
