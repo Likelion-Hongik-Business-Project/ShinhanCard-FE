@@ -13,5 +13,6 @@ export const getOtherProfile = async (
   id: number
 ): ApiResponse<GetProfileResponse> => {
   const response = await instance.get(`/api/profile/preview/${id}`);
+
   return response.data;
 };
