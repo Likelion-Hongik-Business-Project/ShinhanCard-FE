@@ -42,7 +42,7 @@ const InquiryContent = ({
   const handleWriterDelete = async () => {
     try {
       await deleteInquiry(Number(teamId), Number(inquiryId));
-      navigate("/"); // 홈으로 이동
+      navigate(-1); // 이전 페이지로 이동
     } catch (error) {
       console.error("문의글 삭제 실패:", error);
     } finally {
