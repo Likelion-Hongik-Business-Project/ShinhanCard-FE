@@ -44,10 +44,54 @@ const UserMultiSelectInput = ({
     if (isOpen) onDropdownToggle(false);
   });
 
+  const isOrgActive = (u: AssigneeUser) =>
+    Boolean(u?.group?.active ?? u?.group?.active ?? true) &&
+    Boolean(u?.division?.active ?? u?.division?.active ?? true) &&
+    Boolean(u?.team?.active ?? u?.team?.active ?? true);
+
+  const hasActive = (v: unknown): v is { active: boolean } =>
+    typeof v === "object" &&
+    v !== null &&
+    "active" in v &&
+    typeof (v as { active?: unknown }).active === "boolean";
+
+  // 교체 코드
+  const isUserActive = (u: AssigneeUser) =>
+    (hasActive(u) ? u.active : true) && isOrgActive(u);
+
+  const searchTerm = debouncedInput.trim().toLowerCase();
+
+  const sortByName = (a: AssigneeUser, b: AssigneeUser) => {
+    const nameA = a.username ?? "";
+    const nameB = b.username ?? "";
+
+    const startsA = nameA.toLowerCase().startsWith(searchTerm);
+    const startsB = nameB.toLowerCase().startsWith(searchTerm);
+
+    if (startsA && !startsB) return -1;
+    if (!startsA && startsB) return 1;
+
+    return nameA.localeCompare(nameB, "ko");
+  };
+
+  // 선택된 유저
   const selectedUsers = useMemo(() => {
     if (!selectedIds) return [];
-    return allUsers.filter(user => selectedIds.includes(user.user_id));
+    return allUsers
+      .filter(u => selectedIds.includes(u.user_id) && isUserActive(u))
+      .sort(sortByName);
   }, [allUsers, selectedIds]);
+
+  // 검색 목록
+  const filteredUsers = allUsers
+    .filter(isUserActive)
+    .filter(u =>
+      (u.username ?? "")
+        .toLowerCase()
+        .includes(debouncedInput.trim().toLowerCase())
+    )
+    .filter(u => !selectedIds?.includes(u.user_id))
+    .sort(sortByName);
 
   const handleSelectUser = (user: AssigneeUser) => {
     if (user.user_id === undefined) return;
@@ -66,12 +110,6 @@ const UserMultiSelectInput = ({
   const handleRemoveUser = (id: number) => {
     onChange(selectedIds.filter(userId => userId !== id));
   };
-
-  const filteredUsers = allUsers
-    .filter(u =>
-      u.username?.toLowerCase().includes(debouncedInput.trim().toLowerCase())
-    )
-    .filter(u => !selectedIds?.includes(u.user_id));
 
   useEffect(() => {
     if (selectedIds?.length >= maxCount && inputValue !== "") {
