@@ -37,6 +37,7 @@ const SearchResultPage = () => {
   // SearchResultInquiry를 Inquiry로 변환하는 함수
   const convertToInquiry = (searchInquiry: SearchResultInquiry): Inquiry => ({
     inquiry_id: searchInquiry.inquiry_id,
+    team_id: searchInquiry.team_id,
     title: searchInquiry.title,
     content_preview: searchInquiry.content_preview,
     status: searchInquiry.inquiry_state,

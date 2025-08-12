@@ -77,7 +77,7 @@ const UserSpacePage = () => {
   // 3. 탭별 데이터 조회 (활성 탭에 해당하는 API만 호출)
   const { data: writtenData } = useSubmittedInquiries(
     userIdNum!,
-    selectedTeamId!,
+    selectedTeamId || 0, // null일 때 0을 전달하여 API 호출 방지
     page,
     status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date.length > 0
@@ -90,7 +90,7 @@ const UserSpacePage = () => {
 
   const { data: assignedData } = useAssignedInquiries(
     userIdNum!,
-    selectedTeamId!,
+    selectedTeamId || 0, // null일 때 0을 전달하여 API 호출 방지
     page,
     status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date.length > 0
@@ -103,7 +103,7 @@ const UserSpacePage = () => {
 
   const { data: scrapData } = useScrapInquiries(
     userIdNum!,
-    selectedTeamId!,
+    selectedTeamId || 0, // null일 때 0을 전달하여 API 호출 방지
     page,
     status === "전체" ? undefined : INQUIRY_STATUS_VALUE[status],
     date.length > 0
@@ -117,7 +117,8 @@ const UserSpacePage = () => {
   // 초기 데이터 설정
   useEffect(() => {
     if (userSpaceData) {
-      setSelectedTeamId(userSpaceData.selected_team.team_id);
+      // selected_team이 null일 수 있으므로 안전하게 처리
+      setSelectedTeamId(userSpaceData.selected_team?.team_id || null);
       setTeams(userSpaceData.teams || []);
       setAssignedTeams(userSpaceData.assigned_inquiry_teams || []);
       setScrapTeams(userSpaceData.scrapped_inquiry_teams || []);
@@ -134,6 +135,9 @@ const UserSpacePage = () => {
     const currentTeams = getCurrentTeams();
     if (currentTeams.length > 0) {
       setSelectedTeamId(currentTeams[0].team_id);
+    } else {
+      // 팀이 없으면 selectedTeamId를 null로 설정하여 API 호출 방지
+      setSelectedTeamId(null);
     }
   }, [activeTab, getCurrentTeams]);
 
@@ -143,13 +147,50 @@ const UserSpacePage = () => {
       case "written":
         return writtenData?.result || userSpaceData;
       case "assigned":
-        return assignedData?.result;
+        // assigned 탭에서 팀이 없으면 빈 데이터 구조 반환
+        return (
+          assignedData?.result ||
+          (selectedTeamId === null
+            ? {
+                total_count: 0,
+                inquiries: [],
+                pagination: {
+                  page: 1,
+                  page_size: 10,
+                  total: 0,
+                  has_next: false,
+                },
+              }
+            : undefined)
+        );
       case "scrap":
-        return scrapData?.result;
+        // scrap 탭에서 팀이 없으면 빈 데이터 구조 반환
+        return (
+          scrapData?.result ||
+          (selectedTeamId === null
+            ? {
+                total_count: 0,
+                inquiries: [],
+                pagination: {
+                  page: 1,
+                  page_size: 10,
+                  total: 0,
+                  has_next: false,
+                },
+              }
+            : undefined)
+        );
       default:
         return userSpaceData;
     }
-  }, [activeTab, writtenData, assignedData, scrapData, userSpaceData]);
+  }, [
+    activeTab,
+    writtenData,
+    assignedData,
+    scrapData,
+    userSpaceData,
+    selectedTeamId,
+  ]);
 
   // 현재 데이터
   const currentData = getCurrentData();
@@ -167,7 +208,7 @@ const UserSpacePage = () => {
   const excelExport = useExcelExport();
 
   const handleExport = (option: ExportOption) => {
-    if (!selectedTeamId) return;
+    if (!selectedTeamId || selectedTeamId === 0) return;
 
     // 활성 탭에 따라 적절한 scope 설정
     let scope: "submitted" | "assigned" | "scrapped";
@@ -341,7 +382,7 @@ const UserSpacePage = () => {
           emptyText={tabInfo.emptyText}
           inquiries={inquiries}
           teams={currentTeams}
-          selectedTeamId={selectedTeamId!}
+          selectedTeamId={selectedTeamId || 0}
           onSelectTeam={handleSelectTeam}
           writer={tabInfo.writer}
           totalCount={totalCount}

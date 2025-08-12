@@ -40,11 +40,15 @@ const RecommendSearch = ({
     };
   }, [isOpen, query]);
 
-  const handleCardClick = (inquiry_id: number, title: string) => {
+  const handleCardClick = (
+    inquiry_id: number,
+    team_id: number,
+    title: string
+  ) => {
     setSelectedCardId(inquiry_id);
 
     setTimeout(() => {
-      onCardClick?.(inquiry_id, title);
+      onCardClick?.(inquiry_id, team_id, title);
     }, 100);
   };
 
@@ -104,7 +108,11 @@ const RecommendSearch = ({
                   query={query}
                   isSelected={selectedCardId === result.inquiry_id}
                   onClick={() =>
-                    handleCardClick(result.inquiry_id, result.title)
+                    handleCardClick(
+                      result.inquiry_id,
+                      result.team_id,
+                      result.title
+                    )
                   }
                 />
               ))}

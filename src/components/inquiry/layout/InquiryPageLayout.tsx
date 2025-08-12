@@ -115,14 +115,14 @@ const InquiryPageLayout = <TInquiry extends TInquiryBase>({
             <span className="text-body1-b"> {totalCount}</span>건 있습니다.
           </p>
         </div>
-        {totalCount !== 0 && (
+        {totalCount !== 0 && teams.length > 0 && (
           <div className="self-end">
             <ExportDropdown onExport={onExport} />
           </div>
         )}
       </div>
 
-      {totalCount === 0 ? (
+      {totalCount === 0 || teams.length === 0 ? (
         <div className="flex w-full h-[calc(100vh-340px)] pb-[118px] justify-center items-center">
           <p className="text-gray-40 text-heading2-b">{emptyText}</p>
         </div>

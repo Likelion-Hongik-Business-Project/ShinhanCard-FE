@@ -14,13 +14,21 @@ const RecentSearch = ({
   onClose,
   onKeywordClick,
 }: RecentSearchProps) => {
-  const { data: searchData, isLoading, error } = useRecentSearchKeywords();
+  const {
+    data: searchData,
+    isLoading,
+    error,
+    refetch,
+  } = useRecentSearchKeywords();
   const deleteKeywordMutation = useDeleteRecentSearchKeyword();
 
   const [keywords, setKeywords] = useState<string[]>([]);
 
   useEffect(() => {
     if (isOpen) {
+      // SearchBar가 focus될 때마다 최근 검색어 새로 가져오기
+      refetch();
+
       // API 데이터 설정
       if (searchData?.result?.keywords) {
         setKeywords(searchData.result.keywords);
@@ -37,7 +45,7 @@ const RecentSearch = ({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, searchData]);
+  }, [isOpen, searchData, refetch]);
 
   const handleKeywordRemove = async (keywordToRemove: string) => {
     try {

@@ -14,7 +14,8 @@ export const useRecentSearchKeywords = () => {
   return useQuery({
     queryKey: ["recentSearchKeywords"],
     queryFn: getRecentSearchKeywords,
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0, // 캐싱 비활성화 - SearchBar focus 시마다 항상 새로운 API 요청
+    refetchOnWindowFocus: true, // SearchBar focus 시 최근 검색어 새로 가져오기
   });
 };
 
