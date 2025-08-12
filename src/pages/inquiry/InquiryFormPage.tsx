@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import clsx from "clsx";
-import { useLocation, useSearchParams } from "react-router-dom"; // ✅ 추가
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
@@ -27,8 +27,9 @@ const InquiryFormPage = () => {
 
   const [searchParams] = useSearchParams();
   const location = useLocation() as {
-    state?: { teamId?: number; inquiryId?: number };
+    state?: { teamId?: number; inquiryId?: number; toUserId?: number };
   };
+
   const mode = searchParams.get("mode");
   const isEdit = mode === "edit";
   const teamIdQS = searchParams.get("teamId");
@@ -45,6 +46,8 @@ const InquiryFormPage = () => {
   const editInquiryId =
     inquiryIdFromState ??
     (Number.isFinite(inquiryIdFromQS) ? inquiryIdFromQS : undefined);
+
+  const toUserId = location.state?.toUserId; // 전달받은 담당자 ID
 
   const {
     title,
@@ -73,6 +76,14 @@ const InquiryFormPage = () => {
     handleTeamChange,
     setFromIds,
   } = useOrganizationSelector();
+
+  useEffect(() => {
+    if (isEdit) return;
+    if (!toUserId) return;
+    setAssigneeIds(prev =>
+      prev.includes(toUserId) ? prev : [...prev, toUserId]
+    );
+  }, [toUserId, isEdit, setAssigneeIds]);
 
   // 필드 유효성 검사
   const validateFields = (): typeof missingField => {
@@ -184,6 +195,7 @@ const InquiryFormPage = () => {
     }
     setIsConfirmModalOpen(true);
   };
+
   const confirmSubmit = () => {
     const payload: PostInquiryRequest = {
       title,
