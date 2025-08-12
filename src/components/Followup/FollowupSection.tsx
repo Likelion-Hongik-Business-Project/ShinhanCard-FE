@@ -1,10 +1,11 @@
 import { useState } from "react";
 
+import clsx from "clsx";
+
 import FollowupForm from "@/components/Followup/FollowupForm";
 import FollowupHeader from "@/components/Followup/FollowupHeader";
 import FollowupThread from "@/components/Followup/FollowupThread";
-
-import { InquiryData } from "@/type/inquiryTypes";
+import { InquiryData } from "@/types/inquiryTypes";
 
 type Props = {
   inquiry: InquiryData;
@@ -12,13 +13,20 @@ type Props = {
 
 const FollowupSection = ({ inquiry }: Props) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const hasFollowups = (inquiry.follow_ups?.count ?? 0) > 0;
+  const hasGap = isChatOpen || hasFollowups;
 
   const handleToggleChat = () => {
     setIsChatOpen(prev => !prev);
   };
 
   return (
-    <div className="w-full max-w-[1420px] rounded-[15px] py-14 px-16 bg-white flex flex-col gap-8">
+    <div
+      className={clsx(
+        "w-full max-w-[1420px] rounded-[15px] py-14 px-16 bg-white flex flex-col",
+        hasGap ? "gap-8" : "gap-0"
+      )}
+    >
       {/* 헤더에 onClickNew prop으로 토글 함수 전달 */}
       <FollowupHeader
         follow_ups_cnt={inquiry.follow_ups.count}
