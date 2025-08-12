@@ -25,15 +25,6 @@ type InquiriesResponseWithBase<T extends TInquiryBase = TInquiryBase> = {
 export const useScrapApi = () => {
   const queryClient = useQueryClient();
 
-  // 주어진 query key 캐시에서 특정 inquiry_id를 가진 항목을 찾아 반환
-  const findInquiryInCache = (
-    key: unknown[],
-    inquiryId: number
-  ): TInquiryBase | undefined => {
-    const data = queryClient.getQueryData<InquiriesResponseWithBase>(key);
-    return data?.inquiries.find(i => i.inquiry_id === inquiryId);
-  };
-
   // 모든 "inquiries" 관련 캐시에서 특정 inquiry의 is_scrapped 필드 값을 수정
   const updateScrapField = (inquiryId: number, isScrapped: boolean) => {
     const queries = queryClient
@@ -41,6 +32,7 @@ export const useScrapApi = () => {
       .findAll({ queryKey: ["inquiries"] }); // "inquiries"로 시작하는 모든 쿼리 키 (ex. 내 담당 문의, 스크랩 내역, 내가 쓴 문의)
 
     queries.forEach(q => {
+      if (q.queryKey.includes("scrap")) return;
       const data = queryClient.getQueryData<InquiriesResponseWithBase>(
         q.queryKey
       );
@@ -75,21 +67,6 @@ export const useScrapApi = () => {
 
       // 해당 항목의 is_scrapped = true 로 변경
       updateScrapField(inquiryId, true);
-
-      // 스크랩 목록(init)에 추가
-      const found = findInquiryInCache(
-        ["inquiries", "assigned", "init", 1],
-        inquiryId
-      );
-      if (found) {
-        queryClient.setQueryData<InquiriesResponseWithBase>(
-          ["inquiries", "scrap", "init", 1],
-          old => ({
-            ...old!,
-            inquiries: [found, ...(old?.inquiries ?? [])],
-          })
-        );
-      }
     },
 
     onError: () => {},
@@ -113,16 +90,6 @@ export const useScrapApi = () => {
 
       // 해당 항목의 is_scrapped = false 로 변경
       updateScrapField(inquiryId, false);
-
-      // 스크랩 목록(init)에서 제거
-      queryClient.setQueryData<InquiriesResponseWithBase>(
-        ["inquiries", "scrap", "init", 1],
-        old => ({
-          ...old!,
-          inquiries:
-            old?.inquiries.filter(item => item.inquiry_id !== inquiryId) ?? [],
-        })
-      );
     },
 
     onError: () => {},
