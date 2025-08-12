@@ -14,7 +14,7 @@ export const useTeamInquires = ({
   date,
 }: GetTeamInquiresRequest) => {
   return useQuery<GetTeamInquiresResponse>({
-    queryKey: ["teamInquires", team_id, page, status, date],
+    queryKey: ["inquiries", "team", team_id, page, status, date],
     queryFn: async () => {
       if (!team_id) throw new Error("team_id 가 필요합니다");
       const response = await getTeamInquires(team_id, page, status, date);
