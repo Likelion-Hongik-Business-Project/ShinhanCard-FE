@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-import { GlobalResponse } from "@/types/apiResponse.type";
+import { GlobalResponse } from "@/types/common/apiResponse.type";
 import {
   PostInquiryRequest,
   PutInquiryRequest,

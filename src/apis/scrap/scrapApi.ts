@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/apiResponse.type";
+import { ApiResponse } from "@/types/common/apiResponse.type";
 import { GetInquiriesResponse } from "@/types/inquiry/inquiryListApi.type";
 import { PostScrapResponse } from "@/types/scrap/scrapApi.type";
 

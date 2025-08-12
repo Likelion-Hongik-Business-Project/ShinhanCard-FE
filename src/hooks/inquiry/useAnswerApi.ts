@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useMyProfile } from "@/hooks/profile/useProfileApi";
-import { GlobalResponse } from "@/types/apiResponse.type";
+import { GlobalResponse } from "@/types/common/apiResponse.type";
 import {
   PostAnswerRequest,
   PutAnswerRequest,

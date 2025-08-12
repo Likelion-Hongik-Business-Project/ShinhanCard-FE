@@ -1,5 +1,5 @@
 import RightArrow from "@/assets/svgs/common/right.svg";
-import { RecommendCardProps } from "@/types/search";
+import { RecommendCardProps } from "@/types/search/search";
 
 const RecommendCard = ({
   title,

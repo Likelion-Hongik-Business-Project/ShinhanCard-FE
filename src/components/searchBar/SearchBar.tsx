@@ -27,9 +27,6 @@ const SearchBar = ({ onSearchActiveChange }: Props) => {
     }
   }, [location.pathname]);
 
-  // TODO: 백엔드 API 완료 시 React Query 훅 사용
-  // const addKeywordMutation = useAddRecentSearchKeyword();
-
   const handleSearchFocus = () => {
     setIsSearchActive(true);
     onSearchActiveChange?.(true);
@@ -45,26 +42,8 @@ const SearchBar = ({ onSearchActiveChange }: Props) => {
   };
 
   const handleKeywordClick = async (keyword: string) => {
-    // TODO: 백엔드 API 완료 시 실제 API 호출로 변경
-    // try {
-    //   // 검색어를 최근 검색어에 추가
-    //   await addKeywordMutation.mutateAsync(keyword);
-    //
-    //   // 검색창에 검색어 입력
-    //   setSearchInput(keyword);
-    //
-    //   // TODO: 실제 검색 실행 로직
-    //   console.log("검색어 클릭:", keyword);
-    //
-    //   // 검색 모달 닫기
-    //   setIsSearchActive(false);
-    // } catch (error) {
-    //   console.error('검색어 추가 실패:', error);
-    // }
-
-    // Mock 데이터 사용 시
+    // 검색창에 검색어 입력
     setSearchInput(keyword);
-    console.log("검색어 클릭:", keyword);
 
     // 검색 결과 페이지로 이동
     navigate(`/result?query=${encodeURIComponent(keyword)}`);
@@ -90,24 +69,6 @@ const SearchBar = ({ onSearchActiveChange }: Props) => {
     e.preventDefault();
 
     if (!searchInput.trim()) return;
-
-    // TODO: 백엔드 API 완료 시 실제 API 호출로 변경
-    // try {
-    //   // 검색어를 최근 검색어에 추가
-    //   await addKeywordMutation.mutateAsync(searchInput.trim());
-    //
-    //   // TODO: 실제 검색 실행 로직
-    //   console.log("검색 실행:", searchInput.trim());
-    //
-    //   // 검색 모달 닫기
-    //   setIsSearchActive(false);
-    // } catch (error) {
-    //   console.error('검색어 추가 실패:', error);
-    //   // 에러 처리 (필요시 토스트 메시지 등 추가)
-    // }
-
-    // Mock 데이터 사용 시
-    console.log("검색 실행:", searchInput.trim());
 
     // 검색 결과 페이지로 이동
     navigate(`/result?query=${encodeURIComponent(searchInput.trim())}`);

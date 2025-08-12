@@ -2,7 +2,7 @@ import {
   ApiResponse,
   GlobalResponse,
   NoResponse,
-} from "@/types/apiResponse.type";
+} from "@/types/common/apiResponse.type";
 import {
   GetLastSentMailTimeResponse,
   PutInquiryAssigneeRequest,

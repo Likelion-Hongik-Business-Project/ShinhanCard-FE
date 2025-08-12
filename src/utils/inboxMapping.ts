@@ -1,4 +1,4 @@
-import { InquiryType } from "@/types/inbox";
+import { InquiryType } from "@/types/inbox/inbox.type";
 
 export const getInquiryTypeFromText = (text: string): InquiryType => {
   if (text.includes("답변이 완료되었습니다")) return "ANSWER_COMPLETED";

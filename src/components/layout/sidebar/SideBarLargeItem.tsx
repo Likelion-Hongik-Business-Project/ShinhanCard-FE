@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
   icon: FC<SVGProps<SVGSVGElement>>;
-  label: string;
+  label?: string;
   path?: string;
   onClick?: () => void;
   onMouseEnter?: () => void;
