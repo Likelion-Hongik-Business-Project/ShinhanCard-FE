@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 
 import AdditionalInquirySection from "@/components/AdditionalInquiry/AdditionalInquirySection";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Modal from "@/components/common/Modal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
@@ -54,21 +55,7 @@ const InquiryDetailPage = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <div className="mx-auto w-full">
-          <Header teamInfo={defaultTeamInfo} onDelete={handleDeleteInquiry} />
-          <div className="mt-8 rounded-2xl bg-white p-16 text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-main border-t-transparent"></div>
-              <h2 className="text-xl text-gray-80">
-                데이터를 불러오는 중입니다...
-              </h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen={true} />;
   }
 
   if (isError || !inquiryData) {
