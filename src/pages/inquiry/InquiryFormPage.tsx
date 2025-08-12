@@ -99,10 +99,10 @@ const InquiryFormPage = () => {
     isDraftSaved,
     isDraftModalOpen,
     setIsDraftModalOpen,
-    handleClickTempSave, // ← 임시저장 버튼에 연결
-    restoreDraft, // ← 모달 "불러오기"
-    resetDraft, // ← 모달 "새로 작성"
-    deleteDraftBeforeSubmit, // ← 최종 등록 전에 임시저장 삭제
+    handleClickTempSave, // 임시저장 버튼에 연결
+    restoreDraft, // 모달 불러오기
+    resetDraft, // 모달 새로 작성
+    deleteDraftBeforeSubmit, // 최종 등록 전에 임시저장 삭제
     clearDraftState,
   } = useInquiryDraft({
     teamId: teamId ?? 0,
