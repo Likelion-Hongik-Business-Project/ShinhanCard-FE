@@ -101,6 +101,7 @@ const TeamBoardLayout = ({
               />
             </div>
             <InquiryList
+              team_id={selected_team.team_id}
               group_name={selected_team.group_name}
               division_name={selected_team.division_name}
               team_name={selected_team.team_name}

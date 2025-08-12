@@ -11,6 +11,7 @@ import { truncateText } from "@/utils/truncateText";
 import { Inquiry } from "@/types/teamInquires/teamInquiresApi.type";
 
 interface InquiryItemProps {
+  teamId: number;
   group_name: string;
   division_name: string;
   team_name: string;
@@ -21,6 +22,7 @@ interface InquiryItemProps {
 }
 
 const InquiryItem = ({
+  teamId,
   group_name,
   division_name,
   team_name,
@@ -73,7 +75,7 @@ const InquiryItem = ({
   };
 
   const handleDetailClick = () => {
-    navigate(`/inquiries/${inquiry.inquiry_id}`);
+    navigate(`/teams/${teamId}/inquiries/${inquiry.inquiry_id}`);
   };
 
   return (
