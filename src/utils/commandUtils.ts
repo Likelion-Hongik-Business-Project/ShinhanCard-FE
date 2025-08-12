@@ -1,5 +1,5 @@
 import { toolbarButtons } from "@/constants/toolbarButtons";
-import { EditorCommand } from "@/types/toolbar";
+import { EditorCommand } from "@/types/inquiry/toolbar.type";
 
 export const isToolbarItem = (
   item: (typeof toolbarButtons)[number]

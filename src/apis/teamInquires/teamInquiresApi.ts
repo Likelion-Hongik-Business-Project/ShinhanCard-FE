@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/apiResponse.type";
+import { ApiResponse } from "@/types/common/apiResponse.type";
 import { GetTeamInquiresResponse } from "@/types/teamInquires/teamInquiresApi.type";
 
 import instance from "@/apis/instance";

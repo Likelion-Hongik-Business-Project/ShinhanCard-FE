@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { ErrorResponse } from "@/types/common/api.type";
+import { ErrorResponse } from "@/types/common/apiResponse.type";
 import { PostLoginRequest } from "@/types/login/loginApi.type";
 
 import { useAuthApi } from "./useAuthApi";

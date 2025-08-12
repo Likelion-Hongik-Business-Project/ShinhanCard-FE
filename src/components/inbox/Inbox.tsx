@@ -10,7 +10,7 @@ import {
   useNotificationsInfinite,
   useUnreadCount,
 } from "@/hooks/inbox/useInboxApi";
-import { Tab } from "@/types/inbox";
+import { Tab } from "@/types/inbox/inbox.type";
 
 type Props = {
   isSidebarOpen: boolean;

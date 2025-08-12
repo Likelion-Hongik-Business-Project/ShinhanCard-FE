@@ -2,7 +2,7 @@ import React, { RefObject } from "react";
 
 import { toolbarButtons } from "@/constants/toolbarButtons";
 import { isToolbarItem } from "@/utils/commandUtils";
-import { EditorCommand } from "@/types/toolbar";
+import { EditorCommand } from "@/types/inquiry/toolbar.type";
 
 interface Props {
   fileInputRef: RefObject<HTMLInputElement | null>;
