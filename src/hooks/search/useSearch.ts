@@ -83,8 +83,11 @@ export const useSearchResults = (
       return getSearchResults(request);
     },
     enabled: query.length > 0,
-    staleTime: 1 * 60 * 1000, // 1분
+    staleTime: 0, // 캐싱 비활성화
+    gcTime: 0, // 가비지 컬렉션 시간을 0으로 설정하여 즉시 캐시 제거
+    refetchOnMount: true, // 컴포넌트 마운트 시 항상 재요청
     refetchOnWindowFocus: false,
+    refetchOnReconnect: true, // 네트워크 재연결 시 재요청
     retry: 1,
     retryDelay: 1000,
   });
