@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import Pencil from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
 import EditorToolbar from "@/components/inquiry/form/EditorToolbar";
 import FileUploadBox from "@/components/inquiry/form/FileUploadBox";
 import { useEditor } from "@/hooks/inquiry/useEditor";
+import { normalizeContent } from "@/utils/editorImageUtils";
 import { AnswerEditorProps } from "@/types/inquiryTypes";
 
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -23,32 +24,25 @@ const AnswerEditor = ({
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
 
-  // 내용 변경 감지 및 부모 컴포넌트로 전파
+  // 초기 주입: 정규화 후 세팅
   useEffect(() => {
     const instance = editorRef.current?.getInstance();
     if (!instance) return;
-
-    // 초기값 설정
-    if (instance.getMarkdown() !== initialContent) {
-      instance.setMarkdown(initialContent);
+    const prepared = normalizeContent(initialContent ?? "");
+    if (instance.getMarkdown() !== prepared) {
+      instance.setMarkdown(prepared);
     }
+  }, [initialContent, editorRef]);
 
-    const handleChange = () => {
-      onContentChange(instance.getMarkdown());
-    };
-
-    instance.on("change", handleChange);
-    return () => {
-      instance.off("change");
-    };
-  }, [initialContent, onContentChange, editorRef]);
-
-  const unescapeMarkdown = (md: string) => md.replace(/\\([!()[\]{}])/g, "$1");
+  // 변경 감지: 래퍼 prop 사용
+  const handleChange = useCallback(() => {
+    const md = editorRef.current?.getInstance().getMarkdown() ?? "";
+    onContentChange(md);
+  }, [editorRef, onContentChange]);
 
   const handleSubmit = () => {
     const raw = editorRef.current?.getInstance().getMarkdown() || "";
-    const content = unescapeMarkdown(raw);
-    onSubmit(content, fileIds);
+    onSubmit(normalizeContent(raw), fileIds);
   };
 
   const isEdit = mode === "edit";
@@ -66,13 +60,14 @@ const AnswerEditor = ({
         <div className="min-h-[230px]">
           <Editor
             ref={editorRef}
-            initialValue={initialContent}
+            initialValue={normalizeContent(initialContent ?? "")}
             placeholder="답변 내용을 입력하세요."
             previewStyle="vertical"
             height="auto"
             initialEditType="wysiwyg"
             hideModeSwitch={true}
             toolbarItems={[]}
+            onChange={handleChange}
             language="ko-KR"
           />
         </div>

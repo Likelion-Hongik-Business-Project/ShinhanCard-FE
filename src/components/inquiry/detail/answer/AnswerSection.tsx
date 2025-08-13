@@ -1,16 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import clsx from "clsx";
 
-import { UploadFile } from "@/types/file/file.type";
+import type { UploadFile } from "@/types/file/file.type";
 import type { AnswerSectionProps } from "@/types/inquiryTypes";
 
 import AnswerEditor from "./AnswerEditor";
 import AnswerItem from "./AnswerItem";
 import AnswerList from "./AnswerList";
 
+const mapServerFilesToUploadList = (
+  files: Array<{
+    file_id: number;
+    file_key: string;
+    file_name?: string;
+    file_size?: number;
+  }>
+): UploadFile[] =>
+  files.map(f => ({
+    id: f.file_id,
+    file_id: f.file_id,
+    file_name:
+      f.file_name ?? decodeURIComponent(f.file_key.split("/").pop() ?? "파일"),
+    file_size: f.file_size ?? 0,
+    progress: 100,
+    status: "done",
+  }));
+
 const AnswerSection = (props: AnswerSectionProps) => {
   const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
+
   const {
     inquiry,
     currentUserId,
@@ -30,21 +49,34 @@ const AnswerSection = (props: AnswerSectionProps) => {
     isEditMode,
   } = props;
 
-  // 답변 섹션의 클래스를 조건부로 설정
   const answerSectionClasses = clsx(
     "flex w-full flex-col justify-start items-start rounded-[15px] bg-white p-14",
-    showEditor && "border-[3px] border-main",
-    !showEditor && "border-transparent"
+    showEditor ? "border-[3px] border-main" : "border-transparent"
   );
 
   const meId = currentUserId == null ? null : Number(currentUserId);
   const selId = selectedUserId == null ? null : Number(selectedUserId);
-
   const isMyTabAndWriting =
     meId != null &&
     selId != null &&
     selId === meId &&
     (showEditor || isWritingAnswer);
+
+  useEffect(() => {
+    if (!isMyTabAndWriting) return;
+
+    const serverFiles = selectedComment?.files ?? [];
+    if (!serverFiles.length) {
+      setSelectedFiles([]);
+      setSelectedFileIds([]);
+      return;
+    }
+
+    const mapped = mapServerFilesToUploadList(serverFiles);
+
+    setSelectedFiles(mapped);
+    setSelectedFileIds(mapped.map(f => f.file_id!).filter(Boolean));
+  }, [isMyTabAndWriting, selectedComment, setSelectedFileIds]);
 
   return (
     <div className={answerSectionClasses}>
@@ -59,6 +91,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
           </div>
         </div>
       </div>
+
       <div className="w-full mt-8">
         {/* 답변자 탭 목록 - 답변이 있거나 답변 작성 중일 때 표시 */}
         {tabsToDisplay.length > 0 && (

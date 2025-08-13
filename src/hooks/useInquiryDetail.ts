@@ -21,6 +21,15 @@ import { useInquiryModals } from "./useInquiryModals";
 
 const NOTIFICATION_COOLDOWN = 4 * 60 * 60 * 1000;
 
+const dedupValidIds = (ids: Array<number | null | undefined>) =>
+  Array.from(
+    new Set(
+      (ids ?? [])
+        .map(n => (typeof n === "string" ? Number(n) : (n as number)))
+        .filter(n => Number.isFinite(n) && (n as number) > 0) as number[]
+    )
+  );
+
 export const useInquiryDetail = () => {
   // 훅 호출
   const navigate = useNavigate();
@@ -205,34 +214,40 @@ export const useInquiryDetail = () => {
   const onSubmitAnswer = async () => {
     if (draftContent.trim().length === 0) return;
 
+    // dedup + 정렬(서버에서 순서 민감하지 않더라도 안정성↑)
+    const safeIds = dedupValidIds(selectedFileIds).sort((a, b) => a - b);
+
     try {
       if (editingComment) {
-        // 답변 수정 모드
         await putAnswerMutation.mutateAsync({
           answer_id: editingComment.answer_id,
-          data: { content: draftContent, file_ids: null },
-        });
-        setSelectedUserId(editingComment.user.user_id);
-      } else {
-        // 새 답변 등록 모드
-        await postAnswerMutation.mutateAsync({
-          inquiry_id: Number(inquiry_id),
-          data: { content: draftContent, file_ids: null },
+          data: {
+            content: draftContent,
+            file_ids: safeIds, // ✅ 항상 전체 목록 전달
+          },
         });
 
-        // 답변 작성 후 데이터 업데이트 대기 후 selectedUserId 설정
+        setSelectedUserId(editingComment.user.user_id);
+      } else {
+        await postAnswerMutation.mutateAsync({
+          inquiry_id: Number(inquiry_id),
+          data: {
+            content: draftContent,
+            file_ids: safeIds, // ✅ 새 등록도 현재 선택 전체
+          },
+        });
+
         if (currentUserId) {
-          setTimeout(() => {
-            setSelectedUserId(currentUserId);
-          }, 200); // 쿼리 무효화 후 데이터 업데이트 대기
+          setTimeout(() => setSelectedUserId(currentUserId), 200);
         }
       }
 
-      // 수정/등록 완료 후 모든 편집 상태 초기화
+      // 완료 후 초기화
       setEditingComment(null);
       setDraftContent("");
       setShowEditor(false);
       setIsWritingAnswer(false);
+      setSelectedFileIds([]);
     } catch (error) {
       console.error("답변 처리 실패:", error);
     }
@@ -251,38 +266,34 @@ export const useInquiryDetail = () => {
       console.error("알림 발송 실패:", error);
     }
   };
+
   // 답변 삭제 함수
   const onDeleteAnswer = async (answerId: number) => {
     try {
       await deleteAnswerMutation.mutateAsync({ answer_id: answerId });
 
       // 답변 삭제 성공 후 처리
-      // 현재 선택된 사용자의 답변이 삭제된 경우, 다른 사용자 탭으로 전환
       if (selectedComment?.answer_id === answerId) {
-        // 삭제된 답변이 현재 선택된 답변인 경우
-        // 남아있는 다른 답변 중 첫 번째로 전환
         setTimeout(() => {
-          // API 응답 후 데이터가 업데이트되기를 기다림
           const remainingAnswers = inquiryData?.answers.answers.filter(
             answer => answer.answer_id !== answerId
           );
 
           if (remainingAnswers && remainingAnswers.length > 0) {
-            // 첫 번째 남은 답변의 사용자로 전환
             setSelectedUserId(remainingAnswers[0].user.user_id);
           } else {
-            // 모든 답변이 삭제된 경우
             setSelectedUserId(null);
           }
         }, 100);
       }
 
-      // 내 답변이 삭제된 경우 답변 작성 상태 초기화
+      // 내 답변이 삭제된 경우 편집 상태/파일 선택 초기화
       if (selectedComment?.user.user_id === currentUserId) {
         setShowEditor(false);
         setIsWritingAnswer(false);
         setEditingComment(null);
         setDraftContent("");
+        setSelectedFileIds([]); // ✅ 초기화
       }
     } catch (error) {
       console.error("답변 삭제 실패:", error);
@@ -348,14 +359,14 @@ export const useInquiryDetail = () => {
       setEditingComment(commentToEdit);
       setDraftContent(commentToEdit.content ?? "");
       const fileIds = (commentToEdit.files ?? []).map(f => f.file_id);
-      setSelectedFileIds(fileIds);
+      setSelectedFileIds(dedupValidIds(fileIds)); // ✅ 기존 파일 로드
     } else {
       setEditingComment(null);
       setDraftContent(myComment?.content || "");
+      setSelectedFileIds([]); // ✅ 새 답변 시작 시 초기화
     }
     setShowEditor(true);
-    setIsWritingAnswer(true); // 답변 작성 시작
-    // 답변 작성을 시작할 때 내 탭으로 선택
+    setIsWritingAnswer(true);
     if (currentUserId) {
       setSelectedUserId(currentUserId);
     }
@@ -365,19 +376,14 @@ export const useInquiryDetail = () => {
     setSelectedUserId(userId);
 
     if (userId === currentUserId) {
-      // 내 탭을 클릭한 경우
       if (isWritingAnswer || editingComment) {
-        // 답변 작성 중이거나 수정 중인 경우 - 에디터 표시
         setShowEditor(true);
       } else if (myComment) {
-        // 답변 작성/수정 중이 아니고 내 답변이 있는 경우 - 답변 내용 표시
         setShowEditor(false);
       } else {
-        // 답변 작성/수정 중이 아니고 내 답변이 없는 경우 - 답변 내용 표시
         setShowEditor(false);
       }
     } else {
-      // 다른 사람의 탭을 클릭한 경우 - 에디터 숨김
       setShowEditor(false);
     }
   };

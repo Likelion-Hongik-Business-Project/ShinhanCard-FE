@@ -1,46 +1,54 @@
-/** URL 안전 변환 (한글/공백/괄호/<>) */
+/** \ 이스케이프 복원 */
+export const unescapeMarkdown = (md: string) =>
+  (md ?? "").replace(/\\([!()[\]{}])/g, "$1");
+
+/** URL 안전화 (공백/한글/괄호/따옴표/<> 처리) */
 export const sanitizeUrl = (raw: string) => {
-  let s = (raw || "").trim();
-
-  // ![alt](<url>) 형태 대응
-  if (s.startsWith("<") && s.endsWith(">")) s = s.slice(1, -1);
-
+  let s = (raw ?? "").trim();
+  if (s.startsWith("<") && s.endsWith(">")) s = s.slice(1, -1); // ![...](<url>)
   try {
     s = decodeURI(s);
   } catch {
-    /* ignore */
+    // ignore invalid URI
   }
 
-  // 공백 포함 전체를 퍼센트 인코딩
   s = encodeURI(s);
-
-  // encodeURI가 안 해주는 문제문자 수동 인코딩
-  s = s.replace(
+  return s.replace(
     /[()'"<>]/g,
     ch => "%" + ch.charCodeAt(0).toString(16).toUpperCase()
   );
-
-  return s;
 };
 
 /**
- * 코드블록(``` ```)은 건너뛰고, 마크다운 이미지 문법만 안전하게 변환
- * - ![alt](url "title")
- * - ![alt](<url>)
- * - 공백/한글/특수문자 포함 URL 대응
+ * 코드블록은 건너뛰고, 이미지 문법만 안전 변환
+ * - ![alt](url "title") / ![alt](url 'title') / ![alt](url (title)) / ![alt](<url>)
+ * - URL에 공백 허용 (나중에 sanitizeUrl로 인코딩)
  */
 export const transformImagesSafely = (md: string) => {
-  const parts = (md ?? "").split(/(```[\s\S]*?```)/g); // 코드블록 보존
+  const parts = (md ?? "").split(/(```[\s\S]*?```)/g); // fenced code 보존
   return parts
     .map(part => {
       if (part.startsWith("```")) return part;
 
-      // 핵심 수정: urlB를 공백 허용 + lookahead로 타이틀/닫는 괄호 직전까지 캡처
+      // 1) 괄호 안 전체를 먼저 잡음 (공백 포함)
       return part.replace(
-        /!\[([^\]]*)\]\(\s*(?:<([^>]+)>|([^)]*?))(?=\s*(?:"[^"]*"|'[^']*'|\([^)]*\))?\s*\))/g,
-        (_, alt: string, urlA?: string, urlB?: string) => {
-          const url = sanitizeUrl(urlA || urlB || "");
-          return `![${alt}](${url})`;
+        /!\[([^\]]*)\]\(\s*([^)]*?)\s*\)/g,
+        (_m, alt: string, inner: string) => {
+          let url = inner.trim();
+          let title: string | undefined;
+
+          // 2) 끝에 title이 붙었는지 감지: "..." | '...' | (...) 중 하나
+          const mTitle = url.match(
+            /\s+(?:"([^"]*)"|'([^']*)'|\(([^)]*)\))\s*$/
+          );
+          if (mTitle) {
+            title = mTitle[1] ?? mTitle[2] ?? mTitle[3];
+            url = url.slice(0, mTitle.index).trim();
+          }
+
+          // 3) <url> 케이스 or 일반 url 모두 sanitize
+          const safe = sanitizeUrl(url);
+          return title ? `![${alt}](${safe} "${title}")` : `![${alt}](${safe})`;
         }
       );
     })
