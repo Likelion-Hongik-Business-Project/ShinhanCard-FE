@@ -75,7 +75,7 @@ const FileUploadBox = ({ setFileIds, files, fileIds, setFiles }: Props) => {
         </p>
       </div>
 
-      {files.length > 0 && (
+      {fileIds.length > 0 && (
         <div
           className={clsx(
             "grid gap-4 overflow-y-auto scrollbar-hide",

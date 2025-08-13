@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useInquiryDraftApi } from "@/hooks/inquiry/create/useInquiryDraftApi";
 import { UploadFile } from "@/types/file/file.type";
@@ -10,13 +16,13 @@ export interface UseInquiryDraftParams {
   content: string;
   assigneeIds: number[];
   referenceIds: number[];
-  fileIds: number[];
+  fileIds: number[]; // 외부 상태(백업 소스)
   setTitle: (v: string) => void;
   setContent: (v: string) => void;
   setAssigneeIds: (v: number[]) => void;
   setReferenceIds: (v: number[]) => void;
   setFileIds: (v: number[]) => void;
-  setFiles: (v: UploadFile[]) => void;
+  setFiles: Dispatch<SetStateAction<UploadFile[]>>;
 
   handleGroupChange: (id: number) => void;
   handleDivisionChange: (id: number) => void;
@@ -36,13 +42,18 @@ const arrEq = (a: number[] = [], b: number[] = []) => {
   return true;
 };
 
+const toNum = (v: unknown) => {
+  const n = typeof v === "string" ? Number(v) : (v as number);
+  return Number.isFinite(n) ? (n as number) : NaN;
+};
+
 export const useInquiryDraft = ({
   teamId,
   title,
   content,
   assigneeIds,
   referenceIds,
-  fileIds,
+  fileIds, // 외부 state(보조 소스)
   setTitle,
   setContent,
   setAssigneeIds,
@@ -59,7 +70,7 @@ export const useInquiryDraft = ({
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
   const [justSavedDraft, setJustSavedDraft] = useState(false);
-  const [hasActivatedDraft, setHasActivatedDraft] = useState(false); // restore/reset 이후부터 PUT 고정
+  const [hasActivatedDraft, setHasActivatedDraft] = useState(false);
 
   const [draftModalMode, setDraftModalMode] = useState<"detect" | "conflict">(
     "detect"
@@ -67,7 +78,7 @@ export const useInquiryDraft = ({
   const autoOpenSuppressedRef = useRef(false);
   const lastServerDraftIdRef = useRef<number | null>(null);
 
-  // 항상 최신 스냅샷 비교용
+  // 변경 감지 기준
   const prevRef = useRef({
     title,
     content,
@@ -76,31 +87,59 @@ export const useInquiryDraft = ({
     fileIds,
   });
 
+  // 업로드 파일 스냅샷
   const filesRef = useRef<UploadFile[]>([]);
-  const setFilesSync = (next: UploadFile[]) => {
-    filesRef.current = next;
-    setFiles(next);
-    const ids = Array.from(
-      new Set(
-        next
-          .filter(f => f.status === "done" && typeof f.file_id === "number")
-          .map(f => f.file_id as number)
-      )
-    );
-    if (!arrEq(fileIds, ids)) setFileIds(ids);
-  };
 
-  const getValidFileIds = () =>
-    Array.from(
-      new Set(
-        filesRef.current
-          .filter(f => f.status === "done" && typeof f.file_id === "number")
-          .map(f => f.file_id as number)
+  const setFilesSync: Dispatch<SetStateAction<UploadFile[]>> = next => {
+    const resolved =
+      typeof next === "function"
+        ? (next as (prev: UploadFile[]) => UploadFile[])(filesRef.current)
+        : next;
+
+    filesRef.current = resolved;
+    setFiles(resolved);
+
+    // ref에서 완료된 file_id 수집
+    const fromRef = resolved
+      .filter(
+        f =>
+          f.status === "done" &&
+          f.file_id != null &&
+          !Number.isNaN(toNum(f.file_id))
       )
+      .map(f => toNum(f.file_id));
+
+    // 외부 상태와 병합 뒤 dedup
+    const merged = Array.from(
+      new Set([
+        ...fromRef,
+        ...((fileIds ?? []).filter(
+          n => Number.isFinite(n) && n > 0
+        ) as number[]),
+      ])
     );
+
+    if (!arrEq(fileIds, merged)) setFileIds(merged);
+  };
 
   const getHasUploading = () =>
     filesRef.current.some(f => f.status === "uploading");
+
+  // filesRef + 외부 state 병합하여 안전한 파일 ID 도출
+  const getSafeFileIds = () => {
+    const fromRef = filesRef.current
+      .filter(
+        f =>
+          f.status === "done" &&
+          f.file_id != null &&
+          !Number.isNaN(toNum(f.file_id))
+      )
+      .map(f => toNum(f.file_id));
+    const fromState = (fileIds ?? []).filter(
+      (n): n is number => Number.isFinite(n) && n > 0
+    );
+    return Array.from(new Set([...fromRef, ...fromState]));
+  };
 
   const {
     useCheckDraftExists,
@@ -133,7 +172,7 @@ export const useInquiryDraft = ({
     autoOpenSuppressedRef.current = false;
   }, [teamId]);
 
-  // 팀 선택 시: 서버 초안 존재하면 모달 자동 오픈
+  // 서버 초안 존재 시 자동 오픈
   useEffect(() => {
     if (!teamId) return;
     if (hasActivatedDraft || isDraftModalOpen) return;
@@ -155,10 +194,10 @@ export const useInquiryDraft = ({
     draftExists?.result?.draft_id,
   ]);
 
+  // 팀 변경 시 상태 리셋 및 기준 스냅샷 갱신
   useEffect(() => {
     if (!teamId) return;
 
-    // 팀 바뀌면 이전 팀의 저장 상태/활성화/ID 모두 리셋
     setDraftId(null);
     setHasActivatedDraft(false);
     setIsDraftSaved(false);
@@ -166,17 +205,16 @@ export const useInquiryDraft = ({
     setDraftModalMode("detect");
     autoOpenSuppressedRef.current = false;
 
-    // 변경 감지 기준을 새 팀 기준으로 재설정
     prevRef.current = {
       title,
       content,
       assigneeIds,
       referenceIds,
-      fileIds: getValidFileIds(),
+      fileIds: getSafeFileIds(),
     };
   }, [teamId]);
 
-  // 저장됨 표시 이후 변경 감지
+  // 저장 후 변경 감지
   useEffect(() => {
     if (!isDraftSaved) return;
 
@@ -185,7 +223,7 @@ export const useInquiryDraft = ({
       prevRef.current.content !== content ||
       !arrEq(prevRef.current.assigneeIds, assigneeIds) ||
       !arrEq(prevRef.current.referenceIds, referenceIds) ||
-      !arrEq(prevRef.current.fileIds, getValidFileIds());
+      !arrEq(prevRef.current.fileIds, getSafeFileIds());
 
     if (changed) setIsDraftSaved(false);
   }, [title, content, assigneeIds, referenceIds, fileIds, isDraftSaved]);
@@ -203,22 +241,16 @@ export const useInquiryDraft = ({
     setTimeout(() => setJustSavedDraft(false), 400);
   };
 
-  // payload는 항상 filesRef에서 유효한 file_id만 사용
+  // payload는 항상 안전 파일 ID 사용
   const buildDraftPayload = () => ({
     title,
     content,
     assignee_ids: assigneeIds ?? [],
     observer_ids: referenceIds ?? [],
-    file_ids: getValidFileIds(),
+    file_ids: getSafeFileIds(),
   });
 
-  /**
-   * 임시저장 버튼
-   * - 업로드 중이면 저장 막음
-   * - 서버에 임시저장 없음 → POST
-   * - 서버에 임시저장 있음 & 활성화 전 → 충돌 모달(conflict)
-   * - 활성화 이후 → PUT
-   */
+  /** 임시저장 버튼 */
   const handleClickTempSave = async () => {
     if (justSavedDraft) return;
     if (getHasUploading()) return;
@@ -229,7 +261,7 @@ export const useInquiryDraft = ({
     const serverId = latest?.result?.draft_id ?? null;
     lastServerDraftIdRef.current = serverId;
 
-    // 서버 초안 존재 + 아직 활성화 전이면 → 충돌 모달
+    // 서버 초안 존재 + 아직 활성화 전 → 충돌 모달
     if (serverHas && !hasActivatedDraft) {
       setDraftModalMode("conflict");
       setIsDraftModalOpen(true);
@@ -266,7 +298,6 @@ export const useInquiryDraft = ({
     }
 
     // 이미 활성화됨 → PUT
-
     const id = serverId ?? draftId;
     if (id == null) return;
 
@@ -322,9 +353,9 @@ export const useInquiryDraft = ({
     }
   };
 
-  /** 모달: 불러오기 → get draft & 상태 세팅, 이후부터 PUT 고정 */
+  /** 모달: 불러오기 → 상태 세팅 후 PUT 고정 */
   const restoreDraft = async () => {
-    setHasActivatedDraft(true); // auto-open 차단 먼저
+    setHasActivatedDraft(true);
     setIsDraftModalOpen(false);
 
     const { data } = await fetchDraft();
@@ -361,17 +392,23 @@ export const useInquiryDraft = ({
       content: r.content,
       assigneeIds: restoredAssignees,
       referenceIds: restoredObservers,
-      fileIds: Array.from(new Set(restoredFiles.map(f => f.file_id))),
+      fileIds: Array.from(
+        new Set(
+          restoredFiles
+            .map(f => toNum(f.file_id))
+            .filter(n => Number.isFinite(n) && n > 0)
+        )
+      ),
     });
   };
 
-  /** 모달: 현재 글 유지 → 팝업만 닫기 (자동 재오픈 억제) */
+  /** 모달: 현재 글 유지 → 팝업만 닫기 */
   const resetDraft = () => {
     autoOpenSuppressedRef.current = true;
     setIsDraftModalOpen(false);
   };
 
-  /** 최종 등록 전: 임시저장 삭제 helper (delete draft + then callback) */
+  /** 최종 등록 전: 임시저장 삭제 helper */
   const deleteDraftBeforeSubmit = (onDone?: () => void) => {
     if (!teamId || !draftId) {
       onDone?.();
@@ -404,15 +441,16 @@ export const useInquiryDraft = ({
     handleClickTempSave,
 
     // 모달 액션
-    restoreDraft, // 불러오기
-    resetDraft, // 현재 글 유지(닫기만)
-    saveCurrentAsDraftReplacingExisting, // 충돌 모달의 "현재 글 유지로 임시저장"
+    restoreDraft,
+    resetDraft,
+    saveCurrentAsDraftReplacingExisting,
 
     deleteDraftBeforeSubmit,
-
     clearDraftState,
 
+    // 파일
     setFilesSync,
     hasUploadingFiles: getHasUploading,
+    getSafeFileIds,
   };
 };
