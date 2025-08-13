@@ -25,6 +25,16 @@ export const deleteRecentSearchKeyword = async (
   return response.data;
 };
 
+// 최근 검색어 추가
+export const addRecentSearchKeyword = async (
+  keyword: string
+): ApiResponse<RecentSearchData> => {
+  const response = await instance.post("/api/search/inquiries/recent", {
+    keyword,
+  });
+  return response.data;
+};
+
 // 추천 검색어 조회
 export const getRecommendSearchKeywords = async (
   query: string
