@@ -18,34 +18,40 @@ export const sanitizeUrl = (raw: string) => {
   );
 };
 
-/** 3) 이미지 문법만 안전 변환: 괄호/공백/줄바꿈/타이틀/<> 모두 대응 */
+/** 2.5) URL이 ) 뒤에서 줄바꿈으로 끊긴 케이스 복구: "…%281)\n.png)" -> "…%281).png)" */
+export const fixBrokenUrlLinebreaks = (md: string) =>
+  (md ?? "").replace(/\)\s*\n\s*(\.[A-Za-z0-9]{2,5}\))/g, ")$1");
+
+/** 3) 이미지 문법만 안전 변환 (괄호/공백/줄바꿈/타이틀/<> 모두 대응) */
 export const transformImagesSafely = (md: string) => {
-  const parts = (md ?? "").split(/(```[\s\S]*?```)/g); // fenced code 보존
+  // 먼저 잘린 확장자 줄바꿈을 복구
+  const pre = fixBrokenUrlLinebreaks(md);
+
+  const parts = (pre ?? "").split(/(```[\s\S]*?```)/g); // fenced code 보존
   return parts
     .map(part => {
       if (part.startsWith("```")) return part;
 
-      // 닫는 ) 전까지 전체(inner)를 캡처(줄바꿈 포함)
+      // ⬇️ inner를 greedy(*)로 캡처 + title 옵션 + 닫는 )까지 한 번에 소비
       return part.replace(
-        /!\[([^\]]*)\]\(\s*([\s\S]*?)\s*\)/g,
-        (_m, alt: string, inner: string) => {
-          let body = inner.trim();
+        /!\[([^\]]*)\]\(\s*([\s\S]*)\s*(?:(?:"([^"]*)"|'([^']*)'|\(([^)]*)\))\s*)?\)/g,
+        (
+          _m,
+          alt: string,
+          inner: string,
+          t1?: string,
+          t2?: string,
+          t3?: string
+        ) => {
+          const body = inner.trim();
 
-          // 맨 끝 타이틀(".."/'..'/(..)) 분리
-          const mTitle = body.match(
-            /\s+(?:"([^"]*)"|'([^']*)'|\(([^)]*)\))\s*$/
-          );
-          const title = mTitle
-            ? (mTitle[1] ?? mTitle[2] ?? mTitle[3])
-            : undefined;
-          if (mTitle) body = body.slice(0, mTitle.index).trim();
-
-          // URL 내부 줄바꿈 제거(예: "…%281)\n.png" -> "…%281).png")
+          // URL 내부 줄바꿈 제거 (예: "%281)\n.png" → "%281).png")
           let url = body.replace(/\s*\n\s*/g, "");
 
-          // <url> 케이스 or 일반 url 모두 sanitize
+          // 최종 인코딩 (<url> 케이스 포함)
           url = sanitizeUrl(url);
 
+          const title = t1 ?? t2 ?? t3;
           return title ? `![${alt}](${url} "${title}")` : `![${alt}](${url})`;
         }
       );

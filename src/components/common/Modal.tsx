@@ -34,7 +34,7 @@ const Modal = ({ isOpen, onClose, title, description, buttons }: Props) => {
   const modalHeight = isSingle
     ? hasDescription
       ? "h-[240px]"
-      : "h-[200px]"
+      : "h-[240px]"
     : hasDescription
       ? "h-[298px]"
       : "h-[240px]";
