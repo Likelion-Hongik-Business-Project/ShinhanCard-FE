@@ -41,6 +41,9 @@ type FormLocationState = {
 const firstDefined = <T,>(...vals: Array<T | undefined>) =>
   vals.find(v => v !== undefined);
 
+// 정렬 유틸
+const sortNums = (xs: number[] = []) => [...xs].sort((a, b) => a - b);
+
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -231,27 +234,34 @@ const InquiryFormPage = () => {
     [files]
   );
 
+  const sortedFileIdsForSubmit = useMemo(
+    () => sortNums(fileIdsForSubmit),
+    [fileIdsForSubmit]
+  );
+
   const leaveSnapshot = useMemo(
     () => ({
       teamId,
-      title: title?.trim() ?? "",
-      content: content?.trim() ?? "",
-      assigneeIds: [...assigneeIds].sort(),
-      referenceIds: [...referenceIds].sort(),
-      fileIds: fileIdsForSubmit, // 업로드 완료 파일만
+      title: (title ?? "").trim(),
+      content: (content ?? "").trim(),
+      assigneeIds: sortNums(assigneeIds),
+      referenceIds: sortNums(referenceIds),
+      fileIds: sortedFileIdsForSubmit, // 업로드 완료 파일만
     }),
-    [teamId, title, content, assigneeIds, referenceIds, fileIdsForSubmit]
+    [teamId, title, content, assigneeIds, referenceIds, sortedFileIdsForSubmit]
   );
 
   // prefetch/navigate 동안에도 로딩/가드 OFF를 유지하기 위한 로컬 상태
   const [isRedirecting, setIsRedirecting] = useState(false);
   const mountedRef = useRef(true);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    return () => {
       mountedRef.current = false;
-    },
-    []
-  );
+    };
+  }, []);
+
+  // 편집 하이드레이션 완료되기 전에는 가드 비활성
+  const [hydrationDone, setHydrationDone] = useState(!isEdit);
 
   const {
     modalProps: leaveModal, // { isOpen, onConfirm, onCancel }
@@ -259,9 +269,10 @@ const InquiryFormPage = () => {
     setBaseline,
     runWithBypass,
   } = useLeaveGuard(leaveSnapshot, {
-    enabled: !isBlocking && !isConfirmModalOpen && !isRedirecting, // ⬅️ 보강
+    enabled:
+      hydrationDone && !isBlocking && !isConfirmModalOpen && !isRedirecting,
     initializeClean: !isEdit,
-    beforeUnload: !isBlocking && !isRedirecting,
+    beforeUnload: hydrationDone && !isBlocking && !isRedirecting,
   });
 
   // 편집 모드 데이터 주입
@@ -295,6 +306,7 @@ const InquiryFormPage = () => {
         status: "done" as const,
       }))
     );
+
     if (
       editDetail.group?.group_id &&
       editDetail.division?.division_id &&
@@ -311,11 +323,39 @@ const InquiryFormPage = () => {
 
     clearDraftState();
     appliedEditRef.current = true;
-    setClean();
+
+    // editDetail 기반 정렬된 baseline으로 고정
+    const baselineFromEdit = {
+      teamId: editDetail.team?.team_id ?? editTeamId ?? teamId ?? 0,
+      title: (editDetail.title ?? "").trim(),
+      content: (editDetail.content ?? "").trim(),
+      assigneeIds: sortNums(
+        (editDetail.assignees ?? [])
+          .map(u => u.user_id)
+          .filter((id): id is number => Number.isFinite(id) && id > 0)
+      ),
+      referenceIds: sortNums(
+        (editDetail.observers ?? [])
+          .map(u => u.userId)
+          .filter((id): id is number => Number.isFinite(id) && id > 0)
+      ),
+      fileIds: sortNums(
+        ((editDetail.files ?? []) as InquiryFile[]).map(f => f.file_id)
+      ),
+    };
+
+    const schedule = (fn: () => void) =>
+      queueMicrotask ? queueMicrotask(fn) : setTimeout(fn, 0);
+
+    schedule(() => {
+      setBaseline(baselineFromEdit);
+      setHydrationDone(true);
+    });
   }, [
     isEdit,
     editDetail,
     editTeamId,
+    teamId,
     setTitle,
     setContent,
     setAssigneeIds,
@@ -325,6 +365,7 @@ const InquiryFormPage = () => {
     setFromIds,
     handleTeamChange,
     clearDraftState,
+    setBaseline,
   ]);
 
   const handleSubmit = useCallback(() => {
@@ -351,7 +392,7 @@ const InquiryFormPage = () => {
       content,
       assignee_ids: assigneeIds,
       observer_ids: referenceIds,
-      file_ids: fileIdsForSubmit,
+      file_ids: sortedFileIdsForSubmit,
     };
 
     const cleanSnapshot = {
@@ -363,6 +404,7 @@ const InquiryFormPage = () => {
       fileIds: [] as number[],
     };
 
+    // 편집
     if (isEdit && editTeamId && editInquiryId) {
       putInquiryMutation.mutate(
         { team_id: editTeamId, inquiry_id: editInquiryId, data: payload },
@@ -376,6 +418,7 @@ const InquiryFormPage = () => {
       return;
     }
 
+    // 신규 등록
     if (!teamId) return;
 
     deleteDraftBeforeSubmit(() => {
@@ -415,7 +458,7 @@ const InquiryFormPage = () => {
     content,
     assigneeIds,
     referenceIds,
-    fileIdsForSubmit,
+    sortedFileIdsForSubmit,
     putInquiryMutation,
     postInquiryMutation,
     deleteDraftBeforeSubmit,
