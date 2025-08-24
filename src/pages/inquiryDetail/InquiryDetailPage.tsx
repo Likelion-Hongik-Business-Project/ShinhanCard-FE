@@ -3,6 +3,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Modal from "@/components/common/Modal";
 import FollowUpSection from "@/components/Followup/FollowupSection";
+import InquiryLeaveModal from "@/components/inquiry/common/InquiryLeaveModal";
 import AnswerSection from "@/components/inquiry/detail/answer/AnswerSection";
 import Header from "@/components/inquiry/detail/Header";
 import InquiryCard from "@/components/inquiry/detail/InquiryCard";
@@ -45,6 +46,7 @@ const InquiryDetailPage = () => {
     setSelectedFileIds,
     isEditMode,
     onToggleNotification,
+    leaveModal,
   } = useInquiryDetail();
 
   const { openAddMemberSidebar } = useOutletContext<{
@@ -181,6 +183,7 @@ const InquiryDetailPage = () => {
           buttons={modalProps.buttons}
         />
       )}
+      <InquiryLeaveModal {...leaveModal} />
     </div>
   );
 };
