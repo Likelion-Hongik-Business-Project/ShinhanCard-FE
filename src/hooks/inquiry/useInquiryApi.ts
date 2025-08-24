@@ -1,7 +1,4 @@
-import { useState } from "react";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { GlobalResponse } from "@/types/common/apiResponse.type";
@@ -18,15 +15,9 @@ import {
   putInquiry,
 } from "@/apis/inquiry/inquiryApi";
 
-const is404 = (e: unknown) => (e as AxiosError)?.response?.status === 404;
-const retryIf404 = (failureCount: number, error: unknown) =>
-  is404(error) && failureCount < 15;
-const retryDelay = (attempt: number) => Math.min(300 * 2 ** attempt, 3000); // 0.3s → 3s
-
 export const useInquiryApi = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const postInquiryMutation = useMutation<
     { result: { inquiry_id: number } },
@@ -34,23 +25,6 @@ export const useInquiryApi = () => {
     { teamId: number; data: PostInquiryRequest }
   >({
     mutationFn: ({ teamId, data }) => postInquiry(teamId, data),
-    onSuccess: async (res, variables) => {
-      const inquiryId = res.result.inquiry_id;
-      const teamId = variables.teamId;
-
-      setIsRedirecting(true);
-      try {
-        await queryClient.prefetchQuery({
-          queryKey: ["teamInquiry", teamId, inquiryId],
-          queryFn: () => getInquiryDetail(teamId, inquiryId),
-          retry: retryIf404,
-          retryDelay,
-        });
-        navigate(`/teams/${teamId}/inquiries/${inquiryId}`);
-      } finally {
-        setIsRedirecting(false);
-      }
-    },
   });
 
   // 문의글 삭제
@@ -90,7 +64,7 @@ export const useInquiryApi = () => {
     },
   });
 
-  const isBlocking = postInquiryMutation.isPending || isRedirecting;
+  const isBlocking = postInquiryMutation.isPending;
   return {
     postInquiryMutation,
     deleteInquiryMutation,
