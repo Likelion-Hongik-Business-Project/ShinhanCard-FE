@@ -15,7 +15,12 @@ import {
   putInquiry,
 } from "@/apis/inquiry/inquiryApi";
 
-export const useInquiryApi = () => {
+type NavigateWithBypass = (to: string, options?: { replace?: boolean }) => void;
+
+export const useInquiryApi = (opts?: {
+  navigateWithBypass?: NavigateWithBypass;
+  onPutSuccessBeforeNavigate?: () => void;
+}) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -57,14 +62,21 @@ export const useInquiryApi = () => {
     }) => putInquiry(team_id, inquiry_id, data),
     onSuccess: (_data, vars) => {
       const { team_id, inquiry_id } = vars;
-      // 수정 성공 시, 해당 문의글 상세 정보 새로고침
-      // team_id를 알 수 없으므로, 모든 상세글 쿼리를 무효화
+      // 상세 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["teamInquiry"] });
-      navigate(`/teams/${team_id}/inquiries/${inquiry_id}`, { replace: true });
+      opts?.onPutSuccessBeforeNavigate?.();
+      const to = `/teams/${team_id}/inquiries/${inquiry_id}`;
+      // 주입된 내비게이션이 있다면 가드 우회로 실행
+      if (opts?.navigateWithBypass) {
+        opts.navigateWithBypass(to, { replace: true });
+      } else {
+        navigate(to, { replace: true });
+      }
     },
   });
 
-  const isBlocking = postInquiryMutation.isPending;
+  const isBlocking =
+    postInquiryMutation.isPending || putInquiryMutation.isPending;
   return {
     postInquiryMutation,
     deleteInquiryMutation,

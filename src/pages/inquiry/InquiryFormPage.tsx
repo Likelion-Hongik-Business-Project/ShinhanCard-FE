@@ -197,8 +197,13 @@ const InquiryFormPage = () => {
     setMissingField,
   });
 
-  const { postInquiryMutation, putInquiryMutation, isBlocking } =
-    useInquiryApi();
+  const { postInquiryMutation, putInquiryMutation, isBlocking } = useInquiryApi(
+    {
+      navigateWithBypass: (to, options) =>
+        runWithBypass(() => navigate(to, options)),
+      onPutSuccessBeforeNavigate: () => setClean(),
+    }
+  );
 
   const hasEditIds =
     isEdit && editTeamId !== undefined && editInquiryId !== undefined;
@@ -364,7 +369,6 @@ const InquiryFormPage = () => {
         {
           onSuccess: () => {
             setIsConfirmModalOpen(false);
-            setBaseline(cleanSnapshot);
             clearDraftState();
           },
         }
@@ -381,11 +385,8 @@ const InquiryFormPage = () => {
           onSuccess: async res => {
             const inquiryId = res.result.inquiry_id;
 
-            // 등록 직후: 폼 초기 상태를 baseline으로 고정
             setBaseline(cleanSnapshot);
-            // 외부/드래프트 상태 초기화 (모달은 닫지 않음)
             clearDraftState();
-            // 상세 prefetch & 이동 동안에도 "등록중..." 유지
             setIsRedirecting(true);
             try {
               await runWithBypass(async () => {
