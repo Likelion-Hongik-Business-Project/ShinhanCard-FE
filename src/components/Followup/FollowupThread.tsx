@@ -37,11 +37,16 @@ const FollowupThread = ({
       const id = ce.detail?.followupId;
       if (id != null && editFollowUpId === id) {
         setEditFollowUpId(null);
+        window.dispatchEvent(
+          new CustomEvent("followup:dirty", {
+            detail: { dirty: false, key: `followup:${inquiryId}:edit:${id}` },
+          })
+        );
       }
     };
     window.addEventListener("followup:close-edit", onCloseEdit);
     return () => window.removeEventListener("followup:close-edit", onCloseEdit);
-  }, [editFollowUpId]);
+  }, [editFollowUpId, inquiryId]);
 
   const handleAnswerOpen = (kind: "followup" | "comment", id: number) => {
     setReplyTarget(prev =>
@@ -85,6 +90,7 @@ const FollowupThread = ({
           {/* 추가문의(부모) */}
           {editFollowUpId === fu.follow_up_id ? (
             <FollowupForm
+              key={`followup:${inquiryId}:edit:${fu.follow_up_id}`}
               inquiryId={inquiryId}
               followupId={fu.follow_up_id}
               assignees={assignees}

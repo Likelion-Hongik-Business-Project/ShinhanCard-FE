@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -41,6 +41,14 @@ const FollowupForm = ({
   const isMutating =
     postFollowupsMutation.isPending || putFollowupsMutation.isPending;
 
+  const formId = useMemo(
+    () =>
+      followupId != null
+        ? `followup:${inquiryId}:edit:${followupId}`
+        : `followup:${inquiryId}:new`,
+    [inquiryId, followupId]
+  );
+
   const [selectedId, setSelectedId] = useState<number | null>(
     initialAssigneeId ?? null
   );
@@ -50,7 +58,6 @@ const FollowupForm = ({
   const selectedName = assignees.find(a => a.user_id === selectedId)?.user_name;
   const isCompleteEnabled = selectedId !== null && content.trim().length > 0;
 
-  // ====== 이탈 감지용 더티 브로드캐스트 ======
   const baselineRef = useRef({
     assigneeId: initialAssigneeId ?? null,
     content: initialContent ?? "",
@@ -60,14 +67,11 @@ const FollowupForm = ({
     (selectedId ?? null) !== baselineRef.current.assigneeId ||
     content !== baselineRef.current.content;
 
-  const formKey =
-    followupId != null
-      ? `followup:edit:${followupId}`
-      : `followup:new:${inquiryId}:${initialAssigneeId ?? "na"}`;
+  const formKey = formId;
 
   const emitDirty = (
     dirty: boolean,
-    reason: "open" | "change" | "submit" | "close" | "unmount"
+    reason: "open" | "change" | "submit" | "close" | "unmount" | "reset"
   ) => {
     window.dispatchEvent(
       new CustomEvent("followup:dirty", {
@@ -83,21 +87,37 @@ const FollowupForm = ({
     );
   };
 
-  // 폼 오픈/언마운트 브로드캐스트
   useEffect(() => {
     emitDirty(isDirty, "open");
     return () => {
       emitDirty(false, "unmount");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 내용/담당자 변경 시 더티 상태 브로드캐스트
+  useEffect(() => {
+    setSelectedId(initialAssigneeId ?? null);
+    setContent(initialContent ?? "");
+
+    baselineRef.current = {
+      assigneeId: initialAssigneeId ?? null,
+      content: initialContent ?? "",
+    };
+
+    emitDirty(false, "reset");
+
+    queueMicrotask(() => {
+      if (textareaRef.current) {
+        const el = textareaRef.current;
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + "px";
+      }
+    });
+  }, [formId, initialAssigneeId, initialContent]);
+
   useEffect(() => {
     emitDirty(isDirty, "change");
   }, [isDirty]);
 
-  // 텍스트영역 오토리사이즈
   useEffect(() => {
     if (textareaRef.current) {
       const el = textareaRef.current;
