@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import Pencil from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
@@ -24,25 +24,71 @@ const AnswerEditor = ({
   const { editorRef, fileInputRef, activeSet, execCommand, handleFileChange } =
     useEditor();
 
-  // 초기 주입: 정규화 후 세팅
+  const keyRef = useRef<string>(
+    `answer:${mode}:${Date.now()}:${Math.random().toString(36).slice(2)}`
+  );
+  const answerKey = keyRef.current;
+
+  const baselineRef = useRef<string>("");
+
+  // 에디터 준비될 때까지 초기화 (RAF)
   useEffect(() => {
-    const instance = editorRef.current?.getInstance();
-    if (!instance) return;
-    const prepared = normalizeContent(initialContent ?? "");
-    if (instance.getMarkdown() !== prepared) {
-      instance.setMarkdown(prepared);
-    }
-  }, [initialContent, editorRef]);
+    let raf = 0;
+    let initialized = false;
 
-  // 변경 감지: 래퍼 prop 사용
+    const init = () => {
+      const instance = editorRef.current?.getInstance?.();
+      if (!instance) {
+        raf = requestAnimationFrame(init);
+        return;
+      }
+
+      const prepared = normalizeContent(initialContent ?? "");
+      if (instance.getMarkdown() !== prepared) {
+        instance.setMarkdown(prepared);
+      }
+
+      baselineRef.current = prepared;
+
+      const isDirty = (instance.getMarkdown() ?? "") !== baselineRef.current;
+      const evt = new CustomEvent("followup:dirty", {
+        detail: { dirty: isDirty, reason: "open", key: answerKey },
+      });
+      window.dispatchEvent(evt);
+
+      initialized = true;
+    };
+
+    init();
+
+    return () => {
+      if (!initialized) cancelAnimationFrame(raf);
+      window.dispatchEvent(
+        new CustomEvent("followup:dirty", {
+          detail: { dirty: false, reason: "unmount", key: answerKey },
+        })
+      );
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialContent]);
+
+  // 변경 즉시 더티 방송 (+ 같은 틱 경합 보강)
   const handleChange = useCallback(() => {
-    const md = editorRef.current?.getInstance().getMarkdown() ?? "";
+    const md = editorRef.current?.getInstance?.().getMarkdown?.() ?? "";
     onContentChange(md);
-  }, [editorRef, onContentChange]);
 
-  const handleSubmit = () => {
-    const raw = editorRef.current?.getInstance().getMarkdown() || "";
-    onSubmit(normalizeContent(raw), fileIds);
+    const isDirty = md !== baselineRef.current;
+    const evt = new CustomEvent("followup:dirty", {
+      detail: { dirty: isDirty, reason: "change", key: answerKey },
+    });
+    window.dispatchEvent(evt);
+    queueMicrotask(() => window.dispatchEvent(evt));
+  }, [editorRef, onContentChange, answerKey]);
+
+  const handleSubmit = async () => {
+    const raw = editorRef.current?.getInstance?.().getMarkdown?.() || "";
+    const normalized = normalizeContent(raw);
+    await onSubmit(normalized, fileIds);
   };
 
   const isEdit = mode === "edit";
@@ -72,12 +118,14 @@ const AnswerEditor = ({
           />
         </div>
       </div>
+
       <FileUploadBox
         fileIds={fileIds}
         files={files}
         setFileIds={setFileIds}
         setFiles={setFiles}
       />
+
       <div className="flex justify-end gap-4">
         <Button buttonType="blue" onClick={handleSubmit}>
           <Pencil />

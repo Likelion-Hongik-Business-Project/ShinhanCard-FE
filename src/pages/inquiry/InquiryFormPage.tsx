@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import PencilIcon from "@/assets/svgs/inquiry/pencil.svg";
 import Button from "@/components/common/Button";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import InquiryLeaveModal from "@/components/inquiry/common/InquiryLeaveModal";
 import InquiryForm from "@/components/inquiry/form/InquiryForm";
 import InquiryFormModal from "@/components/inquiry/form/InquiryFormModal";
 import SelectDropdown from "@/components/inquiry/form/SelectDropdown";
@@ -15,10 +17,14 @@ import {
   useGetTeamInquiryDetail,
   useInquiryApi,
 } from "@/hooks/inquiry/useInquiryApi";
+import { useLeaveGuard } from "@/hooks/inquiry/useLeaveGuard";
 import { useInitialOrgSelection } from "@/hooks/team/useInitialOrgSelection";
 import { useOrganizationSelector } from "@/hooks/team/useOrganizationSelector";
+import { retryDelay, retryIf404 } from "@/utils/queryRetryUtils";
 import { InquiryFile } from "@/types/file/file.type";
 import { PostInquiryRequest } from "@/types/inquiry/inquiryApi.type";
+
+import { getInquiryDetail } from "@/apis/inquiry/detail/inquiryDetailApi";
 
 type FormLocationState = {
   teamId?: number;
@@ -35,6 +41,9 @@ type FormLocationState = {
 const firstDefined = <T,>(...vals: Array<T | undefined>) =>
   vals.find(v => v !== undefined);
 
+// 정렬 유틸
+const sortNums = (xs: number[] = []) => [...xs].sort((a, b) => a - b);
+
 const InquiryFormPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -44,6 +53,9 @@ const InquiryFormPage = () => {
 
   const [searchParams] = useSearchParams();
   const location = useLocation() as { state?: FormLocationState };
+
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const mode = searchParams.get("mode");
   const isEdit = mode === "edit";
@@ -188,8 +200,13 @@ const InquiryFormPage = () => {
     setMissingField,
   });
 
-  const { postInquiryMutation, putInquiryMutation, isBlocking } =
-    useInquiryApi();
+  const { postInquiryMutation, putInquiryMutation, isBlocking } = useInquiryApi(
+    {
+      navigateWithBypass: (to, options) =>
+        runWithBypass(() => navigate(to, options)),
+      onPutSuccessBeforeNavigate: () => setClean(),
+    }
+  );
 
   const hasEditIds =
     isEdit && editTeamId !== undefined && editInquiryId !== undefined;
@@ -216,6 +233,47 @@ const InquiryFormPage = () => {
         .map(f => f.file_id!),
     [files]
   );
+
+  const sortedFileIdsForSubmit = useMemo(
+    () => sortNums(fileIdsForSubmit),
+    [fileIdsForSubmit]
+  );
+
+  const leaveSnapshot = useMemo(
+    () => ({
+      teamId,
+      title: (title ?? "").trim(),
+      content: (content ?? "").trim(),
+      assigneeIds: sortNums(assigneeIds),
+      referenceIds: sortNums(referenceIds),
+      fileIds: sortedFileIdsForSubmit, // 업로드 완료 파일만
+    }),
+    [teamId, title, content, assigneeIds, referenceIds, sortedFileIdsForSubmit]
+  );
+
+  // prefetch/navigate 동안에도 로딩/가드 OFF를 유지하기 위한 로컬 상태
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // 편집 하이드레이션 완료되기 전에는 가드 비활성
+  const [hydrationDone, setHydrationDone] = useState(!isEdit);
+
+  const {
+    modalProps: leaveModal, // { isOpen, onConfirm, onCancel }
+    setClean,
+    setBaseline,
+    runWithBypass,
+  } = useLeaveGuard(leaveSnapshot, {
+    enabled:
+      hydrationDone && !isBlocking && !isConfirmModalOpen && !isRedirecting,
+    initializeClean: !isEdit,
+    beforeUnload: hydrationDone && !isBlocking && !isRedirecting,
+  });
 
   // 편집 모드 데이터 주입
   useEffect(() => {
@@ -248,6 +306,7 @@ const InquiryFormPage = () => {
         status: "done" as const,
       }))
     );
+
     if (
       editDetail.group?.group_id &&
       editDetail.division?.division_id &&
@@ -264,10 +323,39 @@ const InquiryFormPage = () => {
 
     clearDraftState();
     appliedEditRef.current = true;
+
+    // editDetail 기반 정렬된 baseline으로 고정
+    const baselineFromEdit = {
+      teamId: editDetail.team?.team_id ?? editTeamId ?? teamId ?? 0,
+      title: (editDetail.title ?? "").trim(),
+      content: (editDetail.content ?? "").trim(),
+      assigneeIds: sortNums(
+        (editDetail.assignees ?? [])
+          .map(u => u.user_id)
+          .filter((id): id is number => Number.isFinite(id) && id > 0)
+      ),
+      referenceIds: sortNums(
+        (editDetail.observers ?? [])
+          .map(u => u.userId)
+          .filter((id): id is number => Number.isFinite(id) && id > 0)
+      ),
+      fileIds: sortNums(
+        ((editDetail.files ?? []) as InquiryFile[]).map(f => f.file_id)
+      ),
+    };
+
+    const schedule = (fn: () => void) =>
+      queueMicrotask ? queueMicrotask(fn) : setTimeout(fn, 0);
+
+    schedule(() => {
+      setBaseline(baselineFromEdit);
+      setHydrationDone(true);
+    });
   }, [
     isEdit,
     editDetail,
     editTeamId,
+    teamId,
     setTitle,
     setContent,
     setAssigneeIds,
@@ -277,6 +365,7 @@ const InquiryFormPage = () => {
     setFromIds,
     handleTeamChange,
     clearDraftState,
+    setBaseline,
   ]);
 
   const handleSubmit = useCallback(() => {
@@ -303,9 +392,19 @@ const InquiryFormPage = () => {
       content,
       assignee_ids: assigneeIds,
       observer_ids: referenceIds,
-      file_ids: fileIdsForSubmit,
+      file_ids: sortedFileIdsForSubmit,
     };
 
+    const cleanSnapshot = {
+      teamId,
+      title: "",
+      content: "",
+      assigneeIds: [] as number[],
+      referenceIds: [] as number[],
+      fileIds: [] as number[],
+    };
+
+    // 편집
     if (isEdit && editTeamId && editInquiryId) {
       putInquiryMutation.mutate(
         { team_id: editTeamId, inquiry_id: editInquiryId, data: payload },
@@ -319,15 +418,33 @@ const InquiryFormPage = () => {
       return;
     }
 
+    // 신규 등록
     if (!teamId) return;
 
     deleteDraftBeforeSubmit(() => {
       postInquiryMutation.mutate(
         { teamId, data: payload },
         {
-          onSuccess: () => {
-            setIsConfirmModalOpen(false);
+          onSuccess: async res => {
+            const inquiryId = res.result.inquiry_id;
+
+            setBaseline(cleanSnapshot);
             clearDraftState();
+            setIsRedirecting(true);
+            try {
+              await runWithBypass(async () => {
+                await queryClient.prefetchQuery({
+                  queryKey: ["teamInquiry", teamId, inquiryId],
+                  queryFn: () => getInquiryDetail(teamId, inquiryId),
+                  retry: retryIf404,
+                  retryDelay,
+                });
+
+                navigate(`/teams/${teamId}/inquiries/${inquiryId}`);
+              });
+            } finally {
+              if (mountedRef.current) setIsRedirecting(false);
+            }
           },
         }
       );
@@ -341,15 +458,19 @@ const InquiryFormPage = () => {
     content,
     assigneeIds,
     referenceIds,
-    fileIdsForSubmit,
-    fileIds,
+    sortedFileIdsForSubmit,
     putInquiryMutation,
     postInquiryMutation,
     deleteDraftBeforeSubmit,
     clearDraftState,
+    setBaseline,
+    navigate,
+    queryClient,
+    runWithBypass,
   ]);
 
   const pageLoading = isLoadingEdit;
+  const isBusy = pageLoading || isBlocking || isRedirecting;
 
   if (pageLoading) {
     return <LoadingSpinner fullscreen={true} />;
@@ -370,21 +491,21 @@ const InquiryFormPage = () => {
             value={groupId ?? 0}
             onChange={handleGroupChange}
             placeholder="그룹 선택"
-            disabled={isEdit || pageLoading}
+            disabled={isEdit || isBusy}
           />
           <SelectDropdown
             options={divisionOptions}
             value={divisionId ?? 0}
             onChange={handleDivisionChange}
             placeholder="본부 선택"
-            disabled={isEdit || !groupId || pageLoading}
+            disabled={isEdit || !groupId || isBusy}
           />
           <SelectDropdown
             options={teamOptions}
             value={teamId ?? 0}
             onChange={handleTeamChange}
             placeholder="팀 선택"
-            disabled={isEdit || !divisionId || pageLoading}
+            disabled={isEdit || !divisionId || isBusy}
           />
         </div>
 
@@ -411,12 +532,12 @@ const InquiryFormPage = () => {
           <Button
             buttonType={isDraftSaved ? "done" : "white"}
             onClick={handleClickTempSave}
-            disabled={isDraftSaved}
+            disabled={isDraftSaved || isBusy}
           >
             {isDraftSaved ? "임시저장완료" : "임시저장"}
           </Button>
         )}
-        <Button buttonType="blue" onClick={handleSubmit} disabled={pageLoading}>
+        <Button buttonType="blue" onClick={handleSubmit} disabled={isBusy}>
           <PencilIcon />
           <span className="text-heading3 text-white">
             {isEdit ? "문의 수정하기" : "문의 등록하기"}
@@ -434,10 +555,12 @@ const InquiryFormPage = () => {
         isConfirmOpen={isConfirmModalOpen}
         onCloseConfirm={() => setIsConfirmModalOpen(false)}
         onConfirmSubmit={confirmSubmit}
-        isSubmitting={isBlocking}
+        isSubmitting={isBlocking || isRedirecting}
         draftModalMode={draftModalMode}
         onOverwriteDraft={saveCurrentAsDraftReplacingExisting}
       />
+
+      <InquiryLeaveModal {...leaveModal} />
     </section>
   );
 };

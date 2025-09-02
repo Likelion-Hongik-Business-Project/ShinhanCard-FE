@@ -1,31 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import clsx from "clsx";
 
+import InquiryLeaveModal from "@/components/inquiry/common/InquiryLeaveModal";
+import { useLeaveGuard } from "@/hooks/inquiry/useLeaveGuard";
+import {
+  buildFileSig,
+  mapServerFilesToUploadList,
+} from "@/utils/leaveModalUtils";
 import type { UploadFile } from "@/types/file/file.type";
 import type { AnswerSectionProps } from "@/types/inquiryTypes";
 
 import AnswerEditor from "./AnswerEditor";
 import AnswerItem from "./AnswerItem";
 import AnswerList from "./AnswerList";
-
-const mapServerFilesToUploadList = (
-  files: Array<{
-    file_id: number;
-    file_key: string;
-    file_name?: string;
-    file_size?: number;
-  }>
-): UploadFile[] =>
-  files.map(f => ({
-    id: f.file_id,
-    file_id: f.file_id,
-    file_name:
-      f.file_name ?? decodeURIComponent(f.file_key.split("/").pop() ?? "파일"),
-    file_size: f.file_size ?? 0,
-    progress: 100,
-    status: "done",
-  }));
 
 const AnswerSection = (props: AnswerSectionProps) => {
   const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
@@ -62,21 +50,128 @@ const AnswerSection = (props: AnswerSectionProps) => {
     selId === meId &&
     (showEditor || isWritingAnswer);
 
+  const guardEnabled = showEditor || isWritingAnswer;
+
+  // 파일 시그니처(임시/완료 포함)
+  const fileSig = useMemo(() => buildFileSig(selectedFiles), [selectedFiles]);
+
+  const prevFilesDigestRef = useRef<string>("");
   useEffect(() => {
-    if (!isMyTabAndWriting) return;
+    if (!guardEnabled) return;
+
+    const digest = JSON.stringify({
+      ids: (selectedFileIds ?? []).slice().sort((a, b) => a - b),
+      sig: fileSig,
+    });
+
+    if (prevFilesDigestRef.current === "") {
+      // 최초 진입 시 클린 상태 브로드캐스트(선택 사항)
+      window.dispatchEvent(
+        new CustomEvent("followup:dirty", {
+          detail: { dirty: false, reason: "files-init", key: "answer:files" },
+        })
+      );
+    } else if (digest !== prevFilesDigestRef.current) {
+      // 파일 목록/상태가 달라지면 더티로 브로드캐스트
+      window.dispatchEvent(
+        new CustomEvent("followup:dirty", {
+          detail: { dirty: true, reason: "files-change", key: "answer:files" },
+        })
+      );
+      // 같은 틱 경합 보강
+      queueMicrotask(() =>
+        window.dispatchEvent(
+          new CustomEvent("followup:dirty", {
+            detail: {
+              dirty: true,
+              reason: "files-change",
+              key: "answer:files",
+            },
+          })
+        )
+      );
+    }
+    prevFilesDigestRef.current = digest;
+  }, [guardEnabled, selectedFileIds, fileSig]);
+
+  // Answer 전용 이탈 가드 (로컬 액션만 가드, 라우터 차단 X)
+  const {
+    modalProps: leaveModalForAnswer,
+    setBaseline,
+    setClean,
+    runWithBypass,
+    tryLeave,
+  } = useLeaveGuard(
+    { content: draftContent ?? "", fileIds: selectedFileIds, fileSig },
+    {
+      enabled: guardEnabled,
+      initializeClean: false, // 기준선은 세션 전환시 useEffect에서 설정
+      beforeUnload: true,
+      eventPrefixes: ["answer:"], // editor 변화 + files-change 모두 "answer:"로 브로드캐스트
+      routerBlock: false, // ← 페이지 훅과 충돌 방지
+    }
+  );
+
+  const sessionKey = useMemo(() => {
+    const targetId = selectedComment?.answer_id ?? "none";
+    return `${isMyTabAndWriting ? "on" : "off"}|${isEditMode ? "edit" : "create"}|${targetId}`;
+  }, [isMyTabAndWriting, isEditMode, selectedComment]);
+
+  // 세션키가 바뀌는 순간에만 baseline 및 초기 파일 세팅
+  const lastSessionKeyRef = useRef<string>("");
+  useEffect(() => {
+    if (!isMyTabAndWriting) {
+      lastSessionKeyRef.current = sessionKey;
+      setSelectedFiles([]);
+      setSelectedFileIds([]);
+      // 세션 종료 시 파일 더티도 클린으로 브로드캐스트
+      window.dispatchEvent(
+        new CustomEvent("followup:dirty", {
+          detail: { dirty: false, reason: "files-reset", key: "answer:files" },
+        })
+      );
+      prevFilesDigestRef.current = "";
+      return;
+    }
+
+    if (lastSessionKeyRef.current === sessionKey) return;
+    lastSessionKeyRef.current = sessionKey;
 
     const serverFiles = selectedComment?.files ?? [];
     if (!serverFiles.length) {
       setSelectedFiles([]);
       setSelectedFileIds([]);
+      setBaseline({ content: draftContent ?? "", fileIds: [], fileSig: [] });
+      prevFilesDigestRef.current = JSON.stringify({ ids: [], sig: [] });
       return;
     }
 
     const mapped = mapServerFilesToUploadList(serverFiles);
-
     setSelectedFiles(mapped);
-    setSelectedFileIds(mapped.map(f => f.file_id!).filter(Boolean));
-  }, [isMyTabAndWriting, selectedComment, setSelectedFileIds]);
+    const ids = mapped.map(f => f.file_id!).filter(Boolean);
+    setSelectedFileIds(ids);
+
+    const initialSig = buildFileSig(mapped);
+    setBaseline({
+      content: draftContent ?? "",
+      fileIds: ids,
+      fileSig: initialSig,
+    });
+    prevFilesDigestRef.current = JSON.stringify({
+      ids: ids.slice().sort((a, b) => a - b),
+      sig: initialSig,
+    });
+  }, [sessionKey]);
+
+  const onSelectUserGuarded = (uid: number) => {
+    tryLeave(() => handleSelectTab(uid));
+  };
+
+  const onStartAnswerGuarded = (
+    ...args: Parameters<typeof handleStartAnswer>
+  ) => {
+    tryLeave(() => handleStartAnswer(...args));
+  };
 
   return (
     <div className={answerSectionClasses}>
@@ -98,7 +193,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
           <AnswerList
             answerers={tabsToDisplay}
             selectedUserId={selectedUserId}
-            onSelectUser={handleSelectTab}
+            onSelectUser={onSelectUserGuarded}
           />
         )}
 
@@ -106,10 +201,16 @@ const AnswerSection = (props: AnswerSectionProps) => {
         {isMyTabAndWriting ? (
           // 내 탭이 선택되고 답변 작성 중인 경우 에디터 표시
           <AnswerEditor
+            key={sessionKey} // 세션 전환 시 에디터 강제 재마운트
             mode={isEditMode ? "edit" : "create"}
             initialContent={draftContent}
             onContentChange={setDraftContent}
-            onSubmit={onEditorSubmit}
+            onSubmit={async (content, fileIds) => {
+              await runWithBypass(async () => {
+                await onEditorSubmit(content, fileIds);
+                setClean(); // 제출 성공 시 현재를 기준선으로
+              });
+            }}
             fileIds={selectedFileIds}
             files={selectedFiles}
             setFileIds={setSelectedFileIds}
@@ -121,7 +222,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
             comment={selectedComment}
             isOnlyComment={inquiry.answers.answers.length === 1}
             currentUserId={currentUserId}
-            onStartEdit={handleStartAnswer}
+            onStartEdit={onStartAnswerGuarded}
             onDelete={onDeleteAnswer}
           />
         ) : (
@@ -135,6 +236,9 @@ const AnswerSection = (props: AnswerSectionProps) => {
           </div>
         )}
       </div>
+
+      {/* Answer 전용 이탈 모달 */}
+      <InquiryLeaveModal {...leaveModalForAnswer} />
     </div>
   );
 };

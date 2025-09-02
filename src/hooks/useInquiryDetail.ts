@@ -1,3 +1,4 @@
+// src/hooks/useInquiryDetail.ts
 import { useEffect, useMemo, useState } from "react";
 
 import { AxiosError } from "axios";
@@ -12,6 +13,7 @@ import {
   useGetLastSentMailTime,
   useInquiryManagementApi,
 } from "@/hooks/inquiry/useInquiryManagementApi";
+import { useLeaveGuard } from "@/hooks/inquiry/useLeaveGuard";
 import { useMyProfile } from "@/hooks/profile/useProfileApi";
 import { formatRemain, parseUtc } from "@/utils/dateUtils";
 import type { Comment, User } from "@/types/inquiryTypes";
@@ -31,7 +33,6 @@ const dedupValidIds = (ids: Array<number | null | undefined>) =>
   );
 
 export const useInquiryDetail = () => {
-  // 훅 호출
   const navigate = useNavigate();
   const { team_id, inquiry_id } = useParams<{
     team_id: string;
@@ -44,6 +45,7 @@ export const useInquiryDetail = () => {
     isError,
     error,
   } = useGetTeamInquiryDetail(Number(team_id), Number(inquiry_id));
+
   const { data: myProfileResponse } = useMyProfile();
   const {
     postAnswerMutation,
@@ -92,7 +94,6 @@ export const useInquiryDetail = () => {
   // 탭 목록에 현재 사용자 포함 (답변 작성 중일 때)
   const tabsToDisplay = useMemo(() => {
     if (!inquiryData || !currentUserId) return [];
-
     const answerers = inquiryData.answers.answers
       .map(c => c.user)
       .filter((user): user is NonNullable<typeof user> => !!user);
@@ -115,9 +116,7 @@ export const useInquiryDetail = () => {
 
       // 중복 제거를 위해 기존 답변자 중에 내가 없을 때만 추가
       const hasMyTab = uniqueAnswerers.some(a => a.user_id === currentUserId);
-      if (!hasMyTab) {
-        uniqueAnswerers.push(myInfo);
-      }
+      if (!hasMyTab) uniqueAnswerers.push(myInfo);
     }
 
     return uniqueAnswerers.map(a => ({
@@ -146,12 +145,11 @@ export const useInquiryDetail = () => {
   useEffect(() => {
     if (inquiryData && !selectedUserId) {
       const firstAnswerer = inquiryData.answers.answers.find(c => c.user);
-      if (firstAnswerer) {
-        setSelectedUserId(firstAnswerer.user.user_id);
-      }
+      if (firstAnswerer) setSelectedUserId(firstAnswerer.user.user_id);
     }
   }, [inquiryData, selectedUserId]);
 
+  // 메일 쿨다운 타이머
   useEffect(() => {
     // 404면 쿨다운 없음
     if (
@@ -173,7 +171,7 @@ export const useInquiryDetail = () => {
         setRemainingTime("");
         return;
       }
-      const diff = Date.now() - +base; // 경과
+      const diff = Date.now() - +base;
       const remain = NOTIFICATION_COOLDOWN - diff;
       if (remain <= 0) {
         setNotificationSent(false);
@@ -185,7 +183,6 @@ export const useInquiryDetail = () => {
     };
 
     tick();
-
     const id = window.setInterval(tick, 1000);
 
     // 탭 복귀 시 보정
@@ -200,7 +197,30 @@ export const useInquiryDetail = () => {
     };
   }, [lastSentTimeResponse, isMailTimeError, mailTimeError]);
 
-  // 실제 API를 호출하는 콜백 함수들
+  // 이탈 가드
+  const leaveSnapshot = useMemo(
+    () => ({
+      editing: Boolean(editingComment || isWritingAnswer || showEditor),
+      content: draftContent.trim(),
+      fileIds: dedupValidIds(selectedFileIds).sort((a, b) => a - b),
+    }),
+    [editingComment, isWritingAnswer, showEditor, draftContent, selectedFileIds]
+  );
+
+  const {
+    modalProps: leaveModal,
+    setBaseline,
+    setClean,
+    runWithBypass,
+  } = useLeaveGuard(leaveSnapshot, {
+    enabled: Boolean(editingComment || isWritingAnswer || showEditor),
+    initializeClean: false, // 자동 기준선 금지
+    beforeUnload: true,
+    eventPrefixes: ["answer:", "followup:"],
+    routerBlock: true, // 페이지 레벨에서만 true
+  });
+
+  // 실제 API 콜백들
   const onConfirmInquiry = async () => {
     try {
       await postInquiryConfirmMutation.mutateAsync({
@@ -214,35 +234,28 @@ export const useInquiryDetail = () => {
   const onSubmitAnswer = async () => {
     if (draftContent.trim().length === 0) return;
 
-    // dedup + 정렬(서버에서 순서 민감하지 않더라도 안정성↑)
     const safeIds = dedupValidIds(selectedFileIds).sort((a, b) => a - b);
 
     try {
       if (editingComment) {
         await putAnswerMutation.mutateAsync({
           answer_id: editingComment.answer_id,
-          data: {
-            content: draftContent,
-            file_ids: safeIds, // ✅ 항상 전체 목록 전달
-          },
+          data: { content: draftContent, file_ids: safeIds },
         });
-
         setSelectedUserId(editingComment.user.user_id);
       } else {
         await postAnswerMutation.mutateAsync({
           inquiry_id: Number(inquiry_id),
-          data: {
-            content: draftContent,
-            file_ids: safeIds, // ✅ 새 등록도 현재 선택 전체
-          },
+          data: { content: draftContent, file_ids: safeIds },
         });
-
         if (currentUserId) {
           setTimeout(() => setSelectedUserId(currentUserId), 200);
         }
       }
 
-      // 완료 후 초기화
+      setClean();
+
+      // 폼 초기화
       setEditingComment(null);
       setDraftContent("");
       setShowEditor(false);
@@ -254,10 +267,8 @@ export const useInquiryDetail = () => {
   };
 
   const onSendNotification = async () => {
-    // UX 즉시 반응: 4시간 쿨다운 시작
     setNotificationSent(true);
     setRemainingTime(formatRemain(NOTIFICATION_COOLDOWN));
-
     try {
       await postInquiryNotifyMutation.mutateAsync({
         inquiry_id: Number(inquiry_id),
@@ -267,18 +278,16 @@ export const useInquiryDetail = () => {
     }
   };
 
-  // 답변 삭제 함수
+  // 답변 삭제
   const onDeleteAnswer = async (answerId: number) => {
     try {
       await deleteAnswerMutation.mutateAsync({ answer_id: answerId });
 
-      // 답변 삭제 성공 후 처리
       if (selectedComment?.answer_id === answerId) {
         setTimeout(() => {
           const remainingAnswers = inquiryData?.answers.answers.filter(
             answer => answer.answer_id !== answerId
           );
-
           if (remainingAnswers && remainingAnswers.length > 0) {
             setSelectedUserId(remainingAnswers[0].user.user_id);
           } else {
@@ -293,27 +302,27 @@ export const useInquiryDetail = () => {
         setIsWritingAnswer(false);
         setEditingComment(null);
         setDraftContent("");
-        setSelectedFileIds([]); // ✅ 초기화
+        setSelectedFileIds([]);
       }
     } catch (error) {
       console.error("답변 삭제 실패:", error);
     }
   };
 
-  // 문의글 삭제 함수
+  // 문의글 삭제
   const onDeletePost = async () => {
     try {
       await deleteInquiryMutation.mutateAsync({
         team_id: Number(team_id),
         inquiry_id: Number(inquiry_id),
       });
-      navigate(-1);
+      runWithBypass(() => navigate(-1));
     } catch (error) {
       console.error("문의글 삭제 실패:", error);
     }
   };
 
-  // 모달을 여는 함수들을 생성
+  // 모달 구성
   const modals = useInquiryModals({
     setModalProps,
     callbacks: {
@@ -324,7 +333,7 @@ export const useInquiryDetail = () => {
     },
   });
 
-  // 핸들러 함수
+  // 담당자 모달
   const handleOpenAssigneeModal = () => {
     const initialAssignees =
       inquiryData?.assignees.map(a => ({
@@ -335,11 +344,7 @@ export const useInquiryDetail = () => {
     setSelectedAssignees(initialAssignees);
     setIsAssigneeModalOpen(true);
   };
-
-  const handleCloseAssigneeModal = () => {
-    setIsAssigneeModalOpen(false);
-  };
-
+  const handleCloseAssigneeModal = () => setIsAssigneeModalOpen(false);
   const handleUpdateAssignees = async () => {
     const assigneeIds = selectedAssignees.map(a => a.id);
     try {
@@ -354,35 +359,44 @@ export const useInquiryDetail = () => {
     }
   };
 
+  // **핵심**: 편집 시작 시 baseline을 "가장 먼저" 고정하고, 그 다음 상태 세팅
   const handleStartAnswer = (commentToEdit?: Comment) => {
     if (commentToEdit) {
+      const fileIds = (commentToEdit.files ?? []).map(f => f.file_id);
+      const safe = dedupValidIds(fileIds).sort((a, b) => a - b);
+
+      setBaseline({
+        editing: true,
+        content: (commentToEdit.content ?? "").trim(),
+        fileIds: safe,
+      });
+
       setEditingComment(commentToEdit);
       setDraftContent(commentToEdit.content ?? "");
-      const fileIds = (commentToEdit.files ?? []).map(f => f.file_id);
-      setSelectedFileIds(dedupValidIds(fileIds)); // ✅ 기존 파일 로드
+      setSelectedFileIds(safe);
     } else {
+      setBaseline({
+        editing: true,
+        content: "",
+        fileIds: [],
+      });
+
+      // 2) 이후에 상태 변경
       setEditingComment(null);
       setDraftContent(myComment?.content || "");
-      setSelectedFileIds([]); // ✅ 새 답변 시작 시 초기화
+      setSelectedFileIds([]);
     }
+
     setShowEditor(true);
     setIsWritingAnswer(true);
-    if (currentUserId) {
-      setSelectedUserId(currentUserId);
-    }
+    if (currentUserId) setSelectedUserId(currentUserId);
   };
 
   const handleSelectTab = (userId: number) => {
     setSelectedUserId(userId);
-
     if (userId === currentUserId) {
-      if (isWritingAnswer || editingComment) {
-        setShowEditor(true);
-      } else if (myComment) {
-        setShowEditor(false);
-      } else {
-        setShowEditor(false);
-      }
+      if (isWritingAnswer || editingComment) setShowEditor(true);
+      else setShowEditor(false);
     } else {
       setShowEditor(false);
     }
@@ -401,17 +415,14 @@ export const useInquiryDetail = () => {
   const handleDeleteInquiry = () => modals.openDeletePostModal();
   const handleNotify = () => modals.openSendNotificationModal();
 
-  // 개인 알림 설정 토글 함수
   const onToggleNotification = async () => {
     if (!inquiryData) return;
-
     try {
-      const newNotificationState = !inquiryData.is_notification_enabled;
-
+      const newFlag = !inquiryData.is_notification_enabled;
       await putInquiryNotificationMutation.mutateAsync({
         team_id: Number(team_id),
         inquiry_id: Number(inquiry_id),
-        is_notification_enabled: newNotificationState,
+        is_notification_enabled: newFlag,
       });
     } catch (error) {
       console.error("알림 설정 변경 실패:", error);
@@ -436,6 +447,7 @@ export const useInquiryDetail = () => {
     isWritingAnswer,
     notificationSent,
     remainingTime,
+
     isAssigneeModalOpen,
     selectedAssignees,
     setSelectedAssignees,
@@ -443,8 +455,10 @@ export const useInquiryDetail = () => {
     handleCloseAssigneeModal,
     handleUpdateAssignees,
     putInquiryAssigneeMutation,
+
     modalProps,
     closeModal: () => setModalProps(null),
+
     handleStartAnswer,
     handleSelectTab,
     onEditorSubmit,
@@ -452,9 +466,12 @@ export const useInquiryDetail = () => {
     handleDeleteInquiry,
     handleNotify,
     onDeleteAnswer,
+
     selectedFileIds,
     setSelectedFileIds,
     isEditMode: !!editingComment,
     onToggleNotification,
+
+    leaveModal,
   };
 };
