@@ -12,11 +12,12 @@ import Button from "../common/Button";
 type Props = {
   inquiryId: number;
   assignees: Assignee[];
-  // 수정시
   followupId?: number;
   initialContent?: string;
   initialAssigneeId?: number;
   onClose: () => void;
+  onSubmitSuccess?: () => void;
+  onSubmittedClose?: () => void;
 };
 
 const FollowupForm = ({
@@ -26,6 +27,8 @@ const FollowupForm = ({
   initialContent,
   initialAssigneeId,
   onClose,
+  onSubmitSuccess,
+  onSubmittedClose,
 }: Props) => {
   const { team_id } = useParams<{ team_id: string }>();
   const teamIdForKey = Number(team_id);
@@ -37,6 +40,7 @@ const FollowupForm = ({
 
   const isMutating =
     postFollowupsMutation.isPending || putFollowupsMutation.isPending;
+
   const [selectedId, setSelectedId] = useState<number | null>(
     initialAssigneeId ?? null
   );
@@ -44,14 +48,61 @@ const FollowupForm = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedName = assignees.find(a => a.user_id === selectedId)?.user_name;
-
   const isCompleteEnabled = selectedId !== null && content.trim().length > 0;
 
+  // ====== 이탈 감지용 더티 브로드캐스트 ======
+  const baselineRef = useRef({
+    assigneeId: initialAssigneeId ?? null,
+    content: initialContent ?? "",
+  });
+
+  const isDirty =
+    (selectedId ?? null) !== baselineRef.current.assigneeId ||
+    content !== baselineRef.current.content;
+
+  const formKey =
+    followupId != null
+      ? `followup:edit:${followupId}`
+      : `followup:new:${inquiryId}:${initialAssigneeId ?? "na"}`;
+
+  const emitDirty = (
+    dirty: boolean,
+    reason: "open" | "change" | "submit" | "close" | "unmount"
+  ) => {
+    window.dispatchEvent(
+      new CustomEvent("followup:dirty", {
+        detail: {
+          dirty,
+          reason,
+          key: formKey,
+          scope: followupId != null ? "edit" : "new",
+          inquiryId,
+          followupId: followupId ?? null,
+        },
+      })
+    );
+  };
+
+  // 폼 오픈/언마운트 브로드캐스트
+  useEffect(() => {
+    emitDirty(isDirty, "open");
+    return () => {
+      emitDirty(false, "unmount");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 내용/담당자 변경 시 더티 상태 브로드캐스트
+  useEffect(() => {
+    emitDirty(isDirty, "change");
+  }, [isDirty]);
+
+  // 텍스트영역 오토리사이즈
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+      const el = textareaRef.current;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
     }
   }, [content, selectedId]);
 
@@ -68,7 +119,10 @@ const FollowupForm = ({
       } else {
         await postFollowupsMutation.mutateAsync(payload);
       }
-      onClose();
+      onSubmitSuccess?.();
+
+      emitDirty(false, "submit");
+      (onSubmittedClose ?? onClose)();
     } catch (error) {
       console.error("Failed to submit followup", error);
     }
@@ -76,16 +130,15 @@ const FollowupForm = ({
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
-
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+      const el = textareaRef.current;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
     }
   };
 
   return (
-    <div className="w-full rounded-[15px] p-8 border-3 border-main flex gap-8 ">
+    <div className="w-full rounded-[15px] p-8 border-3 border-main flex gap-8">
       <div className="flex-1 min-h-[150px] flex flex-col gap-8">
         <div className="flex gap-5 items-center">
           <span className="text-body2 text-gray-50">문의대상</span>
@@ -103,20 +156,14 @@ const FollowupForm = ({
             ))}
           </div>
         </div>
+
         <div>
           <span className="text-body2-b text-state-progress-02">
             {selectedName}
           </span>
           <textarea
             ref={textareaRef}
-            className="
-              flex-1
-              w-full 
-              focus:outline-none   
-              resize-none
-              text-body2
-              disabled:opacity-60
-            "
+            className="flex-1 w-full focus:outline-none resize-none text-body2 disabled:opacity-60"
             placeholder=""
             value={content}
             onChange={handleChange}

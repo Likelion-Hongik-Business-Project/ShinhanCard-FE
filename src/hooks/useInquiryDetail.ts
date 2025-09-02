@@ -1,3 +1,4 @@
+// src/hooks/useInquiryDetail.ts
 import { useEffect, useMemo, useState } from "react";
 
 import { AxiosError } from "axios";
@@ -93,7 +94,6 @@ export const useInquiryDetail = () => {
   // 탭 목록에 현재 사용자 포함 (답변 작성 중일 때)
   const tabsToDisplay = useMemo(() => {
     if (!inquiryData || !currentUserId) return [];
-
     const answerers = inquiryData.answers.answers
       .map(c => c.user)
       .filter((user): user is NonNullable<typeof user> => !!user);
@@ -171,7 +171,7 @@ export const useInquiryDetail = () => {
         setRemainingTime("");
         return;
       }
-      const diff = Date.now() - +base; // 경과
+      const diff = Date.now() - +base;
       const remain = NOTIFICATION_COOLDOWN - diff;
       if (remain <= 0) {
         setNotificationSent(false);
@@ -214,8 +214,10 @@ export const useInquiryDetail = () => {
     runWithBypass,
   } = useLeaveGuard(leaveSnapshot, {
     enabled: Boolean(editingComment || isWritingAnswer || showEditor),
-    initializeClean: true,
+    initializeClean: false, // 자동 기준선 금지
     beforeUnload: true,
+    eventPrefixes: ["answer:", "followup:"],
+    routerBlock: true, // 페이지 레벨에서만 true
   });
 
   // 실제 API 콜백들
@@ -276,12 +278,11 @@ export const useInquiryDetail = () => {
     }
   };
 
-  // 답변 삭제 함수
+  // 답변 삭제
   const onDeleteAnswer = async (answerId: number) => {
     try {
       await deleteAnswerMutation.mutateAsync({ answer_id: answerId });
 
-      // 답변 삭제 성공 후 처리
       if (selectedComment?.answer_id === answerId) {
         setTimeout(() => {
           const remainingAnswers = inquiryData?.answers.answers.filter(
@@ -308,7 +309,7 @@ export const useInquiryDetail = () => {
     }
   };
 
-  // 문의글 삭제 함수
+  // 문의글 삭제
   const onDeletePost = async () => {
     try {
       await deleteInquiryMutation.mutateAsync({
@@ -321,7 +322,7 @@ export const useInquiryDetail = () => {
     }
   };
 
-  // 모달을 여는 함수들을 생성
+  // 모달 구성
   const modals = useInquiryModals({
     setModalProps,
     callbacks: {
@@ -332,7 +333,7 @@ export const useInquiryDetail = () => {
     },
   });
 
-  // 핸들러 함수
+  // 담당자 모달
   const handleOpenAssigneeModal = () => {
     const initialAssignees =
       inquiryData?.assignees.map(a => ({
@@ -343,11 +344,7 @@ export const useInquiryDetail = () => {
     setSelectedAssignees(initialAssignees);
     setIsAssigneeModalOpen(true);
   };
-
-  const handleCloseAssigneeModal = () => {
-    setIsAssigneeModalOpen(false);
-  };
-
+  const handleCloseAssigneeModal = () => setIsAssigneeModalOpen(false);
   const handleUpdateAssignees = async () => {
     const assigneeIds = selectedAssignees.map(a => a.id);
     try {
@@ -362,29 +359,32 @@ export const useInquiryDetail = () => {
     }
   };
 
+  // **핵심**: 편집 시작 시 baseline을 "가장 먼저" 고정하고, 그 다음 상태 세팅
   const handleStartAnswer = (commentToEdit?: Comment) => {
     if (commentToEdit) {
-      setEditingComment(commentToEdit);
-      setDraftContent(commentToEdit.content ?? "");
       const fileIds = (commentToEdit.files ?? []).map(f => f.file_id);
       const safe = dedupValidIds(fileIds).sort((a, b) => a - b);
-      setSelectedFileIds(safe);
 
       setBaseline({
         editing: true,
         content: (commentToEdit.content ?? "").trim(),
         fileIds: safe,
       });
-    } else {
-      setEditingComment(null);
-      setDraftContent(myComment?.content || "");
-      setSelectedFileIds([]);
 
+      setEditingComment(commentToEdit);
+      setDraftContent(commentToEdit.content ?? "");
+      setSelectedFileIds(safe);
+    } else {
       setBaseline({
         editing: true,
         content: "",
         fileIds: [],
       });
+
+      // 2) 이후에 상태 변경
+      setEditingComment(null);
+      setDraftContent(myComment?.content || "");
+      setSelectedFileIds([]);
     }
 
     setShowEditor(true);
@@ -415,7 +415,6 @@ export const useInquiryDetail = () => {
   const handleDeleteInquiry = () => modals.openDeletePostModal();
   const handleNotify = () => modals.openSendNotificationModal();
 
-  // 개인 알림 설정 토글 함수
   const onToggleNotification = async () => {
     if (!inquiryData) return;
     try {
